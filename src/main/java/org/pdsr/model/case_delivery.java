@@ -1,0 +1,155 @@
+package org.pdsr.model;
+
+import java.io.Serializable;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapsId;
+import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
+@Entity
+public class case_delivery implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	@NotNull
+	@Size(min = 1, max = 80)
+	private String delivery_uuid;
+
+	@MapsId
+	@OneToOne(optional = false, cascade = CascadeType.ALL)
+	@JoinColumn(name = "case_uuid", referencedColumnName = "case_uuid", insertable = true, updatable = true)
+	private case_identifiers case_uuid;
+
+	@NotNull
+	@Column
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
+	private java.util.Date delivery_date;
+
+	@NotNull
+	@Column
+	private Integer delivery_hour;
+	
+	@NotNull
+	@Column
+	private Integer delivery_minute;
+	
+	@NotNull
+	@Column
+	@Temporal(TemporalType.TIME)
+	@DateTimeFormat(pattern = "HH:mm a")
+	private java.util.Date delivery_time;
+
+	@NotNull
+	@Column
+	private Integer delivery_period;//dawn,morning,afternoon,evening,night
+	
+	@NotNull
+	@Column
+	private Integer delivery_mode;
+		
+	public String getDelivery_uuid() {
+		return delivery_uuid;
+	}
+
+	public void setDelivery_uuid(String delivery_uuid) {
+		this.delivery_uuid = delivery_uuid;
+	}
+
+	public case_identifiers getCase_uuid() {
+		return case_uuid;
+	}
+
+	public void setCase_uuid(case_identifiers case_uuid) {
+		this.case_uuid = case_uuid;
+	}
+
+	public java.util.Date getDelivery_date() {
+		return delivery_date;
+	}
+
+	public void setDelivery_date(java.util.Date delivery_date) {
+		this.delivery_date = delivery_date;
+	}
+
+	public Integer getDelivery_hour() {
+		return delivery_hour;
+	}
+
+	public void setDelivery_hour(Integer delivery_hour) {
+		this.delivery_hour = delivery_hour;
+	}
+
+	public Integer getDelivery_minute() {
+		return delivery_minute;
+	}
+
+	public void setDelivery_minute(Integer delivery_minute) {
+		this.delivery_minute = delivery_minute;
+	}
+
+	public Integer getDelivery_mode() {
+		return delivery_mode;
+	}
+
+	public void setDelivery_mode(Integer delivery_mode) {
+		this.delivery_mode = delivery_mode;
+	}
+
+	public Integer getDelivery_period() {
+		return delivery_period;
+	}
+
+	public void setDelivery_period(Integer delivery_period) {
+		this.delivery_period = delivery_period;
+	}
+
+	public java.util.Date getDelivery_time() {
+		return delivery_time;
+	}
+
+	public void setDelivery_time(java.util.Date delivery_time) {
+		this.delivery_time = delivery_time;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((delivery_uuid == null) ? 0 : delivery_uuid.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		case_delivery other = (case_delivery) obj;
+		if (delivery_uuid == null) {
+			if (other.delivery_uuid != null)
+				return false;
+		} else if (!delivery_uuid.equals(other.delivery_uuid))
+			return false;
+		return true;
+	}
+		
+
+}

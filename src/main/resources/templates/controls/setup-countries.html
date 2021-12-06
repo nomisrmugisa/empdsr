@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html
+	th:replace="~{layout/controls :: layout(_,~{},~{},~{::content},~{})}">
+
+<content>
+<div class="col-md-12 py-3 my-3 mx-auto p-5 rounded box-shadow"
+	style="background-color: #92c7f2;">
+	<form action="#" th:action="@{/controls/region}"
+		th:object="${selected}" method="POST" class="needs-validation"
+		novalidate>
+		<div th:if="${success}" class="alert alert-success"
+			th:text="${success}"></div>
+
+		<table class="table table-light table-responsive-sm">
+			<thead>
+				<tr>
+					<th th:text="#{th.setup_country}"></th>
+					<th th:text="#{th.setup_region}"></th>
+					<th>&nbsp;</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="item : ${countryList}">
+					<td th:text="${item.country_name}"></td>
+					<td>
+						<div th:each="subitem: ${item.regionList}">[[${subitem.region_name}]]</div>
+					</td>
+					<td><a
+						th:href="@{/controls/region/{id}(id=${item.country_uuid})}"
+						th:text="#{th.regions.link}"></a></td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</div>
+</content>
+
+</html>
