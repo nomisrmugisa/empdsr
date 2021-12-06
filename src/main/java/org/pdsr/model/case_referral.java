@@ -106,6 +106,10 @@ public class case_referral implements Serializable {
 	@Column
 	private byte[] referral_file;
 
+	@Lob
+	@Column
+	private String referral_json;
+
 	@Transient
 	private MultipartFile file;
 
@@ -251,6 +255,14 @@ public class case_referral implements Serializable {
 
 	public void setReferral_atime(java.util.Date referral_atime) {
 		this.referral_atime = referral_atime;
+	}
+
+	public String getReferral_json() {
+		return referral_json;
+	}
+
+	public void setReferral_json(String referral_json) {
+		this.referral_json = referral_json;
 	}
 
 	@Override
