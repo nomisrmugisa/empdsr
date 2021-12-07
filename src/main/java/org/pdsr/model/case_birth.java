@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
@@ -122,6 +123,18 @@ public class case_birth implements Serializable {
 	@NotNull
 	@Column
 	private Integer birth_babyoutcome;
+
+	@Lob
+	@Column
+	private String birth_json;
+
+	public String getBirth_json() {
+		return birth_json;
+	}
+
+	public void setBirth_json(String birth_json) {
+		this.birth_json = birth_json;
+	}
 
 	public String getBirth_uuid() {
 		return birth_uuid;

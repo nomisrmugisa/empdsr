@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
@@ -62,6 +63,18 @@ public class case_delivery implements Serializable {
 	@Column
 	private Integer delivery_mode;
 		
+	@Lob
+	@Column
+	private String delivery_json;
+		
+	public String getDelivery_json() {
+		return delivery_json;
+	}
+
+	public void setDelivery_json(String delivery_json) {
+		this.delivery_json = delivery_json;
+	}
+
 	public String getDelivery_uuid() {
 		return delivery_uuid;
 	}

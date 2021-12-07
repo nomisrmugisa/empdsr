@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
@@ -113,6 +114,18 @@ public class case_labour implements Serializable {
 
 	@Transient
 	private String new_complications;
+
+	@Lob
+	@Column
+	private String labour_json;
+
+	public String getLabour_json() {
+		return labour_json;
+	}
+
+	public void setLabour_json(String labour_json) {
+		this.labour_json = labour_json;
+	}
 
 	public String getLabour_uuid() {
 		return labour_uuid;

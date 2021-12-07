@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
@@ -41,6 +42,18 @@ public class case_fetalheart implements Serializable {
 	@NotNull
 	@Column
 	private Integer fetalheart_lastheard;
+
+	@Lob
+	@Column
+	private String fetalheart_json;
+
+	public String getFetalheart_json() {
+		return fetalheart_json;
+	}
+
+	public void setFetalheart_json(String fetalheart_json) {
+		this.fetalheart_json = fetalheart_json;
+	}
 
 	public String getFetalheart_uuid() {
 		return fetalheart_uuid;

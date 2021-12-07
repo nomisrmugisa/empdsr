@@ -1,6 +1,7 @@
 package org.pdsr.controller;
 
 import java.security.Principal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -330,6 +331,7 @@ public class CaseEntryController {
 			try {
 				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getBiodata()));
 				selected.getBiodata().setBiodata_json(arrayToJson);
+				
 				bioRepo.save(selected.getBiodata());
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
@@ -341,6 +343,7 @@ public class CaseEntryController {
 			try {
 				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getPregnancy()));
 				selected.getPregnancy().setPregnancy_json(arrayToJson);
+				
 				preRepo.save(selected.getPregnancy());
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
@@ -348,147 +351,196 @@ public class CaseEntryController {
 			break;
 		}
 		case 3: {
-			java.util.Date time = selected.getReferral().getReferral_time();
-			selected.getReferral().setReferral_hour(time.getHours());
-			selected.getReferral().setReferral_minute(time.getMinutes());
+			try {
+				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getReferral()));
+				selected.getReferral().setReferral_json(arrayToJson);
+				
+				java.util.Date time = selected.getReferral().getReferral_time();
+				selected.getReferral().setReferral_hour(time.getHours());
+				selected.getReferral().setReferral_minute(time.getMinutes());
 
-			java.util.Date atime = selected.getReferral().getReferral_atime();
-			selected.getReferral().setReferral_ahour(atime.getHours());
-			selected.getReferral().setReferral_aminute(atime.getMinutes());
+				java.util.Date atime = selected.getReferral().getReferral_atime();
+				selected.getReferral().setReferral_ahour(atime.getHours());
+				selected.getReferral().setReferral_aminute(atime.getMinutes());
 
-			refRepo.save(selected.getReferral());
+				refRepo.save(selected.getReferral());
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
 			break;
 		}
 		case 4: {
-			java.util.Date time = selected.getDelivery().getDelivery_time();
-			selected.getDelivery().setDelivery_hour(time.getHours());
-			selected.getDelivery().setDelivery_minute(time.getMinutes());
+			try {
+				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getDelivery()));
+				selected.getDelivery().setDelivery_json(arrayToJson);
+				
+				java.util.Date time = selected.getDelivery().getDelivery_time();
+				selected.getDelivery().setDelivery_hour(time.getHours());
+				selected.getDelivery().setDelivery_minute(time.getMinutes());
 
-			delRepo.save(selected.getDelivery());
+				delRepo.save(selected.getDelivery());
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
 			break;
 		}
 		case 5: {
+			try {
+				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getAntenatal()));
+				selected.getAntenatal().setAntenatal_json(arrayToJson);
+				
+				String data = selected.getAntenatal().getNew_risks();
+				List<risk_table> items = selected.getAntenatal().getRisks();
+				if (data != null && !data.isBlank()) {
+					String[] tokens = data.split("\n\r");
 
-			String data = selected.getAntenatal().getNew_risks();
-			List<risk_table> items = selected.getAntenatal().getRisks();
-			if (data != null && !data.isBlank()) {
-				String[] tokens = data.split("\n\r");
+					List<risk_table> table = new ArrayList<>();
+					for (String elem : tokens) {
+						risk_table item = new risk_table();
+						item.setRisk_name(elem);
+						item.setRisk_desc(elem);
+						table.add(item);
+						items.add(item);
+					}
+					riskRepo.saveAll(table);
 
-				List<risk_table> table = new ArrayList<>();
-				for (String elem : tokens) {
-					risk_table item = new risk_table();
-					item.setRisk_name(elem);
-					item.setRisk_desc(elem);
-					table.add(item);
-					items.add(item);
 				}
-				riskRepo.saveAll(table);
-
+				selected.getAntenatal().setRisks(items);
+				antRepo.save(selected.getAntenatal());
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
 			}
-			selected.getAntenatal().setRisks(items);
-			antRepo.save(selected.getAntenatal());
+
 			break;
 		}
 		case 6: {
-			java.util.Date seetime = selected.getLabour().getLabour_seetime();
-			selected.getLabour().setLabour_seehour(seetime.getHours());
-			selected.getLabour().setLabour_seeminute(seetime.getMinutes());
+			try {
+				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getLabour()));
+				selected.getLabour().setLabour_json(arrayToJson);
+				
+				java.util.Date seetime = selected.getLabour().getLabour_seetime();
+				selected.getLabour().setLabour_seehour(seetime.getHours());
+				selected.getLabour().setLabour_seeminute(seetime.getMinutes());
 
-			java.util.Date lasttime1 = selected.getLabour().getLabour_lasttime1();
-			selected.getLabour().setLabour_lasthour1(lasttime1.getHours());
-			selected.getLabour().setLabour_lastminute1(lasttime1.getMinutes());
+				java.util.Date lasttime1 = selected.getLabour().getLabour_lasttime1();
+				selected.getLabour().setLabour_lasthour1(lasttime1.getHours());
+				selected.getLabour().setLabour_lastminute1(lasttime1.getMinutes());
 
-			java.util.Date lasttime2 = selected.getLabour().getLabour_lasttime2();
-			selected.getLabour().setLabour_lasthour2(lasttime2.getHours());
-			selected.getLabour().setLabour_lastminute2(lasttime2.getMinutes());
+				java.util.Date lasttime2 = selected.getLabour().getLabour_lasttime2();
+				selected.getLabour().setLabour_lasthour2(lasttime2.getHours());
+				selected.getLabour().setLabour_lastminute2(lasttime2.getMinutes());
 
-			String data = selected.getLabour().getNew_complications();
-			List<complication_table> items = selected.getLabour().getComplications();
-			if (data != null && !data.isBlank()) {
-				String[] tokens = data.split("\n\r");
+				String data = selected.getLabour().getNew_complications();
+				List<complication_table> items = selected.getLabour().getComplications();
+				if (data != null && !data.isBlank()) {
+					String[] tokens = data.split("\n\r");
 
-				List<complication_table> table = new ArrayList<>();
-				for (String elem : tokens) {
-					complication_table item = new complication_table();
-					item.setComplication_name(elem);
-					item.setComplication_desc(elem);
-					table.add(item);
-					items.add(item);
+					List<complication_table> table = new ArrayList<>();
+					for (String elem : tokens) {
+						complication_table item = new complication_table();
+						item.setComplication_name(elem);
+						item.setComplication_desc(elem);
+						table.add(item);
+						items.add(item);
+					}
+					compRepo.saveAll(table);
+
 				}
-				compRepo.saveAll(table);
+				selected.getLabour().setComplications(items);
 
+				labRepo.save(selected.getLabour());
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
 			}
-			selected.getLabour().setComplications(items);
-
-			labRepo.save(selected.getLabour());
 			break;
 		}
 		case 7: {
-			java.util.Date cstime = selected.getBirth().getBirth_csproposetime();
-			selected.getBirth().setBirth_csproposehour(cstime.getHours());
-			selected.getBirth().setBirth_csproposeminute(cstime.getMinutes());
+			try {
+				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getBirth()));
+				selected.getBirth().setBirth_json(arrayToJson);
+				
+				java.util.Date cstime = selected.getBirth().getBirth_csproposetime();
+				selected.getBirth().setBirth_csproposehour(cstime.getHours());
+				selected.getBirth().setBirth_csproposeminute(cstime.getMinutes());
 
-			String data1 = selected.getBirth().getNew_abnormalities();
-			List<abnormality_table> items1 = selected.getBirth().getAbnormalities();
-			if (data1 != null && !data1.isBlank()) {
-				String[] tokens = data1.split("\n\r");
+				String data1 = selected.getBirth().getNew_abnormalities();
+				List<abnormality_table> items1 = selected.getBirth().getAbnormalities();
+				if (data1 != null && !data1.isBlank()) {
+					String[] tokens = data1.split("\n\r");
 
-				List<abnormality_table> table = new ArrayList<>();
-				for (String elem : tokens) {
-					abnormality_table item = new abnormality_table();
-					item.setAbnormal_name(elem);
-					item.setAbnormal_desc(elem);
-					table.add(item);
-					items1.add(item);
+					List<abnormality_table> table = new ArrayList<>();
+					for (String elem : tokens) {
+						abnormality_table item = new abnormality_table();
+						item.setAbnormal_name(elem);
+						item.setAbnormal_desc(elem);
+						table.add(item);
+						items1.add(item);
+					}
+					abnoRepo.saveAll(table);
 				}
-				abnoRepo.saveAll(table);
-			}
 
-			String data2 = selected.getBirth().getNew_cordfaults();
-			List<cordfault_table> items2 = selected.getBirth().getCordfaults();
-			if (data2 != null && !data2.isBlank()) {
-				String[] tokens = data2.split("\n\r");
+				String data2 = selected.getBirth().getNew_cordfaults();
+				List<cordfault_table> items2 = selected.getBirth().getCordfaults();
+				if (data2 != null && !data2.isBlank()) {
+					String[] tokens = data2.split("\n\r");
 
-				List<cordfault_table> table = new ArrayList<>();
-				for (String elem : tokens) {
-					cordfault_table item = new cordfault_table();
-					item.setCordfault_name(elem);
-					item.setCordfault_desc(elem);
-					table.add(item);
-					items2.add(item);
+					List<cordfault_table> table = new ArrayList<>();
+					for (String elem : tokens) {
+						cordfault_table item = new cordfault_table();
+						item.setCordfault_name(elem);
+						item.setCordfault_desc(elem);
+						table.add(item);
+						items2.add(item);
+					}
+					cordRepo.saveAll(table);
 				}
-				cordRepo.saveAll(table);
-			}
 
-			String data3 = selected.getBirth().getNew_placentachecks();
-			List<placentacheck_table> items3 = selected.getBirth().getPlacentachecks();
-			if (data3 != null && !data3.isBlank()) {
-				String[] tokens = data3.split("\n\r");
+				String data3 = selected.getBirth().getNew_placentachecks();
+				List<placentacheck_table> items3 = selected.getBirth().getPlacentachecks();
+				if (data3 != null && !data3.isBlank()) {
+					String[] tokens = data3.split("\n\r");
 
-				List<placentacheck_table> table = new ArrayList<>();
-				for (String elem : tokens) {
-					placentacheck_table item = new placentacheck_table();
-					item.setPlacentacheck_name(elem);
-					item.setPlacentacheck_desc(elem);
-					table.add(item);
-					items3.add(item);
+					List<placentacheck_table> table = new ArrayList<>();
+					for (String elem : tokens) {
+						placentacheck_table item = new placentacheck_table();
+						item.setPlacentacheck_name(elem);
+						item.setPlacentacheck_desc(elem);
+						table.add(item);
+						items3.add(item);
+					}
+					placRepo.saveAll(table);
 				}
-				placRepo.saveAll(table);
+
+				selected.getBirth().setAbnormalities(items1);
+				selected.getBirth().setCordfaults(items2);
+				selected.getBirth().setPlacentachecks(items3);
+
+				birRepo.save(selected.getBirth());
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
 			}
-
-			selected.getBirth().setAbnormalities(items1);
-			selected.getBirth().setCordfaults(items2);
-			selected.getBirth().setPlacentachecks(items3);
-
-			birRepo.save(selected.getBirth());
 			break;
 		}
 		case 8: {
-			fetRepo.save(selected.getFetalheart());
+			try {
+				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getFetalheart()));
+				selected.getFetalheart().setFetalheart_json(arrayToJson);
+				
+				fetRepo.save(selected.getFetalheart());
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
 			break;
 		}
 		case 9: {
-			notRepo.save(selected.getNotes());
+			try {
+				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getNotes()));
+				selected.getNotes().setNotes_json(arrayToJson);
+				
+				notRepo.save(selected.getNotes());
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
 			break;
 		}
 		default: {
@@ -830,7 +882,8 @@ public class CaseEntryController {
 	private List<json_data> processListOf(case_biodata o) {
 		List<json_data> list = Stream
 				.of(new json_data(getQuestion("label.biodata_sex"), getAnswer("sex_options", o.getBiodata_sex())),
-						new json_data(getQuestion("label.biodata_mage"), o.getBiodata_mage() + getQuestion("txt.years")),
+						new json_data(getQuestion("label.biodata_mage"),
+								o.getBiodata_mage() + getQuestion("txt.years")),
 						new json_data(getQuestion("label.biodata_medu"), getAnswer("edu_options", o.getBiodata_medu())))
 				.collect(Collectors.toList());
 
@@ -838,11 +891,88 @@ public class CaseEntryController {
 	}
 
 	private List<json_data> processListOf(case_pregnancy o) {
-		List<json_data> list = Stream
-				.of(new json_data(getQuestion("label.pregnancy_gest")
-						, o.getPregnancy_weeks() + getQuestion("txt.weeks") + "/" + o.getPregnancy_days() + getQuestion("txt.days")),
-						new json_data(getQuestion("label.pregnancy_type"), getAnswer("ptype_options", o.getPregnancy_type())))
+		List<json_data> list = Stream.of(
+				new json_data(getQuestion("label.pregnancy_gest"),
+						o.getPregnancy_weeks() + getQuestion("txt.weeks") + "/" + o.getPregnancy_days()
+								+ getQuestion("txt.days")),
+				new json_data(getQuestion("label.pregnancy_type"), getAnswer("ptype_options", o.getPregnancy_type())))
 				.collect(Collectors.toList());
+
+		return list;
+	}
+
+	private List<json_data> processListOf(case_referral o) {
+		List<json_data> list = Stream.of(
+				new json_data(getQuestion("label.referral_case"), getAnswer("yesnodk_options", o.getReferral_case())),
+				new json_data(getQuestion("label.referral_patient"),
+						getAnswer("patient_options", o.getReferral_patient())),
+				new json_data(getQuestion("label.referral_source"),
+						getAnswer("source_options", o.getReferral_source())),
+				new json_data(getQuestion("label.referral_facility"), o.getReferral_facility()),
+				new json_data(getQuestion("label.referral_datetime"),
+						new SimpleDateFormat("dd-MMM-yyyy").format(o.getReferral_date()) + o.getReferral_hour()
+								+ getQuestion("txt.hours") + o.getReferral_minute() + getQuestion("txt.minutes")),
+				new json_data(getQuestion("label.referral_adatetime"), 
+						new SimpleDateFormat("dd-MMM-yyyy").format(o.getReferral_adate()) + o.getReferral_ahour()
+						+ getQuestion("txt.hours") + o.getReferral_aminute() + getQuestion("txt.minutes")),
+				new json_data(getQuestion("label.referral_transport"), getAnswer("trans_options", o.getReferral_transport())),
+				new json_data(getQuestion("label.referral_file"), o.getReferral_file().toString()),
+				new json_data(getQuestion("label.referral_notes"), o.getReferral_notes())
+
+		).collect(Collectors.toList());
+
+		return list;
+	}
+
+	private List<json_data> processListOf(case_delivery o) {
+		List<json_data> list = Stream.of(
+				new json_data(getQuestion("label.delivery_datetime"),
+						new SimpleDateFormat("dd-MMM-yyyy").format(o.getDelivery_date()) + o.getDelivery_hour()
+								+ getQuestion("txt.hours") + o.getDelivery_minute() + getQuestion("txt.minutes")),
+				new json_data(getQuestion("label.delivery_period"), getAnswer("period_options", o.getDelivery_period())),
+				new json_data(getQuestion("label.delivery_mode"), getAnswer("mode_options", o.getDelivery_mode()))
+				)
+				.collect(Collectors.toList());
+
+		return list;
+	}
+
+	private List<json_data> processListOf(case_antenatal o) {
+		List<json_data> list = Stream.of(new json_data())
+				.collect(Collectors.toList());
+
+		return list;
+	}
+
+	private List<json_data> processListOf(case_labour o) {
+		List<json_data> list = Stream.of(new json_data())
+				.collect(Collectors.toList());
+
+		return list;
+	}
+
+	private List<json_data> processListOf(case_birth o) {
+		List<json_data> list = Stream.of(new json_data())
+				.collect(Collectors.toList());
+
+		return list;
+	}
+
+	private List<json_data> processListOf(case_fetalheart o) {
+		List<json_data> list = Stream.of(
+				new json_data(getQuestion("label.fetalheart_refered"), getAnswer("yesnodk_options", o.getFetalheart_refered())),
+				new json_data(getQuestion("label.fetalheart_arrival"), getAnswer("yesnodk_options", o.getFetalheart_arrival())),
+				new json_data(getQuestion("label.fetalheart_lastheard"), getAnswer("lastheard_options", o.getFetalheart_lastheard()))
+				).collect(Collectors.toList());
+
+		return list;
+	}
+
+	private List<json_data> processListOf(case_notes o) {
+		List<json_data> list = Stream.of(
+				new json_data(getQuestion("label.notes_file"), o.getNotes_file().toString()),
+				new json_data(getQuestion("label.notes_text"), o.getNotes_text())
+				).collect(Collectors.toList());
 
 		return list;
 	}

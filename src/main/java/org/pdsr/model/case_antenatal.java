@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
@@ -103,9 +104,21 @@ public class case_antenatal implements Serializable {
 	@JoinTable(name = "antenatal_risks", joinColumns = @JoinColumn(name = "antenatal_uuid"), inverseJoinColumns = @JoinColumn(name = "risk_name"))
 	private List<risk_table> risks = new ArrayList<>();
 
+	
 	@Transient
 	private String new_risks;
 
+	@Lob
+	@Column
+	private String antenatal_json;
+
+	public String getAntenatal_json() {
+		return antenatal_json;
+	}
+
+	public void setAntenatal_json(String antenatal_json) {
+		this.antenatal_json = antenatal_json;
+	}
 
 	public String getAntenatal_uuid() {
 		return antenatal_uuid;

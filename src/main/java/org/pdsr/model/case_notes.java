@@ -45,6 +45,18 @@ public class case_notes implements Serializable {
 	
 	@Transient
 	private MultipartFile file;
+	
+	@Lob
+	@Column
+	private String notes_json;
+
+	public String getNotes_json() {
+		return notes_json;
+	}
+
+	public void setNotes_json(String notes_json) {
+		this.notes_json = notes_json;
+	}
 
 	public String getNotes_uuid() {
 		return notes_uuid;
