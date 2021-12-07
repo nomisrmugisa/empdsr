@@ -331,7 +331,7 @@ public class CaseEntryController {
 			try {
 				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getBiodata()));
 				selected.getBiodata().setBiodata_json(arrayToJson);
-				
+
 				bioRepo.save(selected.getBiodata());
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
@@ -343,7 +343,7 @@ public class CaseEntryController {
 			try {
 				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getPregnancy()));
 				selected.getPregnancy().setPregnancy_json(arrayToJson);
-				
+
 				preRepo.save(selected.getPregnancy());
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
@@ -354,7 +354,7 @@ public class CaseEntryController {
 			try {
 				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getReferral()));
 				selected.getReferral().setReferral_json(arrayToJson);
-				
+
 				java.util.Date time = selected.getReferral().getReferral_time();
 				selected.getReferral().setReferral_hour(time.getHours());
 				selected.getReferral().setReferral_minute(time.getMinutes());
@@ -373,7 +373,7 @@ public class CaseEntryController {
 			try {
 				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getDelivery()));
 				selected.getDelivery().setDelivery_json(arrayToJson);
-				
+
 				java.util.Date time = selected.getDelivery().getDelivery_time();
 				selected.getDelivery().setDelivery_hour(time.getHours());
 				selected.getDelivery().setDelivery_minute(time.getMinutes());
@@ -386,9 +386,6 @@ public class CaseEntryController {
 		}
 		case 5: {
 			try {
-				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getAntenatal()));
-				selected.getAntenatal().setAntenatal_json(arrayToJson);
-				
 				String data = selected.getAntenatal().getNew_risks();
 				List<risk_table> items = selected.getAntenatal().getRisks();
 				if (data != null && !data.isBlank()) {
@@ -406,6 +403,10 @@ public class CaseEntryController {
 
 				}
 				selected.getAntenatal().setRisks(items);
+
+				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getAntenatal()));
+				selected.getAntenatal().setAntenatal_json(arrayToJson);
+
 				antRepo.save(selected.getAntenatal());
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
@@ -415,9 +416,7 @@ public class CaseEntryController {
 		}
 		case 6: {
 			try {
-				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getLabour()));
-				selected.getLabour().setLabour_json(arrayToJson);
-				
+
 				java.util.Date seetime = selected.getLabour().getLabour_seetime();
 				selected.getLabour().setLabour_seehour(seetime.getHours());
 				selected.getLabour().setLabour_seeminute(seetime.getMinutes());
@@ -448,6 +447,9 @@ public class CaseEntryController {
 				}
 				selected.getLabour().setComplications(items);
 
+				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getLabour()));
+				selected.getLabour().setLabour_json(arrayToJson);
+
 				labRepo.save(selected.getLabour());
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
@@ -456,9 +458,6 @@ public class CaseEntryController {
 		}
 		case 7: {
 			try {
-				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getBirth()));
-				selected.getBirth().setBirth_json(arrayToJson);
-				
 				java.util.Date cstime = selected.getBirth().getBirth_csproposetime();
 				selected.getBirth().setBirth_csproposehour(cstime.getHours());
 				selected.getBirth().setBirth_csproposeminute(cstime.getMinutes());
@@ -515,6 +514,9 @@ public class CaseEntryController {
 				selected.getBirth().setCordfaults(items2);
 				selected.getBirth().setPlacentachecks(items3);
 
+				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getBirth()));
+				selected.getBirth().setBirth_json(arrayToJson);
+
 				birRepo.save(selected.getBirth());
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
@@ -525,7 +527,7 @@ public class CaseEntryController {
 			try {
 				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getFetalheart()));
 				selected.getFetalheart().setFetalheart_json(arrayToJson);
-				
+
 				fetRepo.save(selected.getFetalheart());
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
@@ -536,7 +538,7 @@ public class CaseEntryController {
 			try {
 				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getNotes()));
 				selected.getNotes().setNotes_json(arrayToJson);
-				
+
 				notRepo.save(selected.getNotes());
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
@@ -912,10 +914,11 @@ public class CaseEntryController {
 				new json_data(getQuestion("label.referral_datetime"),
 						new SimpleDateFormat("dd-MMM-yyyy").format(o.getReferral_date()) + o.getReferral_hour()
 								+ getQuestion("txt.hours") + o.getReferral_minute() + getQuestion("txt.minutes")),
-				new json_data(getQuestion("label.referral_adatetime"), 
+				new json_data(getQuestion("label.referral_adatetime"),
 						new SimpleDateFormat("dd-MMM-yyyy").format(o.getReferral_adate()) + o.getReferral_ahour()
-						+ getQuestion("txt.hours") + o.getReferral_aminute() + getQuestion("txt.minutes")),
-				new json_data(getQuestion("label.referral_transport"), getAnswer("trans_options", o.getReferral_transport())),
+								+ getQuestion("txt.hours") + o.getReferral_aminute() + getQuestion("txt.minutes")),
+				new json_data(getQuestion("label.referral_transport"),
+						getAnswer("trans_options", o.getReferral_transport())),
 				new json_data(getQuestion("label.referral_file"), o.getReferral_file().toString()),
 				new json_data(getQuestion("label.referral_notes"), o.getReferral_notes())
 
@@ -929,50 +932,106 @@ public class CaseEntryController {
 				new json_data(getQuestion("label.delivery_datetime"),
 						new SimpleDateFormat("dd-MMM-yyyy").format(o.getDelivery_date()) + o.getDelivery_hour()
 								+ getQuestion("txt.hours") + o.getDelivery_minute() + getQuestion("txt.minutes")),
-				new json_data(getQuestion("label.delivery_period"), getAnswer("period_options", o.getDelivery_period())),
-				new json_data(getQuestion("label.delivery_mode"), getAnswer("mode_options", o.getDelivery_mode()))
-				)
+				new json_data(getQuestion("label.delivery_period"),
+						getAnswer("period_options", o.getDelivery_period())),
+				new json_data(getQuestion("label.delivery_mode"), getAnswer("mode_options", o.getDelivery_mode())))
 				.collect(Collectors.toList());
 
 		return list;
 	}
 
 	private List<json_data> processListOf(case_antenatal o) {
-		List<json_data> list = Stream.of(new json_data())
-				.collect(Collectors.toList());
+		String items = "";
+		for (risk_table elem : o.getRisks()) {
+			items += elem.getRisk_name() + "<br/>";
+		}
+		List<json_data> list = Stream.of(
+				new json_data(getQuestion("label.antenatal_gravida"), "" + o.getAntenatal_gravida()),
+				new json_data(getQuestion("label.antenatal_para"), "" + o.getAntenatal_para()),
+				new json_data(getQuestion("label.antenatal_attend"),
+						getAnswer("yesnodk_options", o.getAntenatal_attend())),
+				new json_data(getQuestion("label.antenatal_attendno"), "" + o.getAntenatal_attendno()),
+				new json_data(getQuestion("label.antenatal_facility"), "" + o.getAntenatal_facility()),
+				new json_data(getQuestion("label.antenatal_gestage"),
+						o.getAntenatal_weeks() + getQuestion("txt.weeks") + "/" + o.getAntenatal_days()
+								+ getQuestion("txt.days")),
+				new json_data(getQuestion("label.antenatal_risks"),
+						getAnswer("yesnodk_options", o.getAntenatal_risks())),
+				new json_data(getQuestion("label.risks"), items),
+				new json_data(getQuestion("label.antenatal_hiv"), getAnswer("hiv_options", o.getAntenatal_hiv())),
+				new json_data(getQuestion("label.antenatal_alcohol"),
+						getAnswer("yesnodk_options", o.getAntenatal_alcohol())),
+				new json_data(getQuestion("label.antenatal_smoker"),
+						getAnswer("yesnodk_options", o.getAntenatal_smoker())),
+				new json_data(getQuestion("label.antenatal_herbal"),
+						getAnswer("yesnodk_options", o.getAntenatal_herbal())),
+				new json_data(getQuestion("label.antenatal_folicacid"),
+						getAnswer("yesnodk_options", o.getAntenatal_folicacid())),
+				new json_data(getQuestion("label.antenatal_folicacid3m"),
+						getAnswer("yesnodk_options", o.getAntenatal_folicacid3m())),
+				new json_data(getQuestion("label.antenatal_tetanus"),
+						getAnswer("yesnodk_options", o.getAntenatal_tetanus())),
+				new json_data(getQuestion("label.antenatal_malprophy"),
+						getAnswer("yesnodk_options", o.getAntenatal_malprophy()))
+
+		).collect(Collectors.toList());
 
 		return list;
 	}
 
 	private List<json_data> processListOf(case_labour o) {
-		List<json_data> list = Stream.of(new json_data())
-				.collect(Collectors.toList());
+		String items = "";
+		for (complication_table elem : o.getComplications()) {
+			items += elem.getComplication_name() + "<br/>";
+		}
+
+		List<json_data> list = Stream.of(
+				new json_data(getQuestion("label.labour_datetime"),
+						new SimpleDateFormat("dd-MMM-yyyy").format(o.getLabour_seedate()) + o.getLabour_seehour()
+								+ getQuestion("txt.hours") + o.getLabour_seeminute() + getQuestion("txt.minutes")),
+				new json_data(getQuestion("label.labour_seeperiod"),
+						getAnswer("period_options", o.getLabour_seeperiod())),
+				new json_data(getQuestion("label.labour_startmode"),
+						getAnswer("startmode_options", o.getLabour_startmode())),
+				new json_data(getQuestion("label.labour_herbalaug"),
+						getAnswer("yesnodk_options", o.getLabour_herbalaug())),
+				new json_data(getQuestion("label.labour_partograph"),
+						getAnswer("yesnodk_options", o.getLabour_partograph())),
+				new json_data(getQuestion("label.labour_lasttime") + " " + getQuestion("label.labour_lasttime1"),
+						o.getLabour_lasthour1() + getQuestion("txt.hours") + o.getLabour_lastminute1()
+								+ getQuestion("txt.minutes")),
+				new json_data(getQuestion("label.labour_lasttime") + " " + getQuestion("label.labour_lasttime2"),
+						o.getLabour_lasthour2() + getQuestion("txt.hours") + o.getLabour_lastminute2()
+								+ getQuestion("txt.minutes")),
+				new json_data(getQuestion("label.labour_complications"),
+						getAnswer("yesnodk_options", o.getLabour_complications())),
+				new json_data(getQuestion("label.complications"), items)).collect(Collectors.toList());
 
 		return list;
 	}
 
 	private List<json_data> processListOf(case_birth o) {
-		List<json_data> list = Stream.of(new json_data())
-				.collect(Collectors.toList());
+		List<json_data> list = Stream.of(new json_data()).collect(Collectors.toList());
 
 		return list;
 	}
 
 	private List<json_data> processListOf(case_fetalheart o) {
 		List<json_data> list = Stream.of(
-				new json_data(getQuestion("label.fetalheart_refered"), getAnswer("yesnodk_options", o.getFetalheart_refered())),
-				new json_data(getQuestion("label.fetalheart_arrival"), getAnswer("yesnodk_options", o.getFetalheart_arrival())),
-				new json_data(getQuestion("label.fetalheart_lastheard"), getAnswer("lastheard_options", o.getFetalheart_lastheard()))
-				).collect(Collectors.toList());
+				new json_data(getQuestion("label.fetalheart_refered"),
+						getAnswer("yesnodk_options", o.getFetalheart_refered())),
+				new json_data(getQuestion("label.fetalheart_arrival"),
+						getAnswer("yesnodk_options", o.getFetalheart_arrival())),
+				new json_data(getQuestion("label.fetalheart_lastheard"),
+						getAnswer("lastheard_options", o.getFetalheart_lastheard())))
+				.collect(Collectors.toList());
 
 		return list;
 	}
 
 	private List<json_data> processListOf(case_notes o) {
-		List<json_data> list = Stream.of(
-				new json_data(getQuestion("label.notes_file"), o.getNotes_file().toString()),
-				new json_data(getQuestion("label.notes_text"), o.getNotes_text())
-				).collect(Collectors.toList());
+		List<json_data> list = Stream.of(new json_data(getQuestion("label.notes_file"), o.getNotes_file().toString()),
+				new json_data(getQuestion("label.notes_text"), o.getNotes_text())).collect(Collectors.toList());
 
 		return list;
 	}
