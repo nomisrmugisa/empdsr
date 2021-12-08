@@ -912,8 +912,8 @@ public class CaseEntryController {
 						getAnswer("source_options", o.getReferral_source())),
 				new json_data(getQuestion("label.referral_facility"), o.getReferral_facility()),
 				new json_data(getQuestion("label.referral_datetime"),
-						new SimpleDateFormat("dd-MMM-yyyy").format(o.getReferral_date()) + o.getReferral_hour()
-								+ getQuestion("txt.hours") + o.getReferral_minute() + getQuestion("txt.minutes")),
+						new SimpleDateFormat("dd-MMM-yyyy").format(o.getReferral_date()) + " at "
+								+ new SimpleDateFormat("HH:mm a").format(o.getReferral_date())),
 				new json_data(getQuestion("label.referral_adatetime"),
 						new SimpleDateFormat("dd-MMM-yyyy").format(o.getReferral_adate()) + o.getReferral_ahour()
 								+ getQuestion("txt.hours") + o.getReferral_aminute() + getQuestion("txt.minutes")),
@@ -1005,13 +1005,44 @@ public class CaseEntryController {
 								+ getQuestion("txt.minutes")),
 				new json_data(getQuestion("label.labour_complications"),
 						getAnswer("yesnodk_options", o.getLabour_complications())),
-				new json_data(getQuestion("label.complications"), items)).collect(Collectors.toList());
+				new json_data(getQuestion("label.complications"), items)
+				).collect(Collectors.toList());
 
 		return list;
 	}
 
 	private List<json_data> processListOf(case_birth o) {
-		List<json_data> list = Stream.of(new json_data()).collect(Collectors.toList());
+		String items = "", items1 = "", items2 = "";
+		for (abnormality_table elem : o.getAbnormalities()) {
+			items += elem.getAbnormal_name() + "<br/>";
+		}
+
+		for (cordfault_table elem : o.getCordfaults()) {
+			items1 += elem.getCordfault_name() + "<br/>";
+		}
+
+		for (placentacheck_table elem : o.getPlacentachecks()) {
+			items2 += elem.getPlacentacheck_name() + "<br/>";
+		}
+
+		List<json_data> list = Stream.of(
+				new json_data(getQuestion("label.birth_mode"), getAnswer("mode_options", o.getBirth_mode())),
+				new json_data(getQuestion("label.birth_insistnormal"), getAnswer("yesnodk_options", o.getBirth_insistnormal())),
+				new json_data(getQuestion("label.birth_csproposetime"), new SimpleDateFormat("HH:mm a").format(o.getBirth_csproposetime())),
+				new json_data(getQuestion("label.birth_provider"), getAnswer("provider_options", o.getBirth_provider())),
+				new json_data(getQuestion("label.birth_facility"), getAnswer("birthloc_options", o.getBirth_facility())),
+				new json_data(getQuestion("label.birth_abnormalities"), getAnswer("yesnodk_options", o.getBirth_abnormalities())),
+				new json_data(getQuestion("label.abnormalities"), items),
+				new json_data(getQuestion("label.birth_cordfaults"), getAnswer("yesnodk_options", o.getBirth_cordfaults())),
+				new json_data(getQuestion("label.cordfaults"), items1),
+				new json_data(getQuestion("label.birth_placentachecks"), getAnswer("yesnodk_options", o.getBirth_placentachecks())),
+				new json_data(getQuestion("label.placentachecks"), items2),
+				new json_data(getQuestion("label.birth_liqourvolume"), getAnswer("liqourvolume_options", o.getBirth_liqourvolume())),
+				new json_data(getQuestion("label.birth_liqourcolor"), getAnswer("liqourcolor_options", o.getBirth_liqourcolor())),
+				new json_data(getQuestion("label.birth_liqourodour"), getAnswer("liqourodour_options", o.getBirth_liqourodour())),
+				new json_data(getQuestion("label.birth_babyoutcome"), getAnswer("babyoutcome_options", o.getBirth_babyoutcome())),
+				new json_data(getQuestion("label.birth_motheroutcome"), getAnswer("motheroutcome_options", o.getBirth_motheroutcome()))
+				).collect(Collectors.toList());
 
 		return list;
 	}
