@@ -86,24 +86,12 @@ public class case_labour implements Serializable {
 	
 	@NotNull
 	@Column
-	@Temporal(TemporalType.TIME)
-	@DateTimeFormat(pattern = "HH:mm a")
-	private java.util.Date labour_lasttime1;
-
-	@NotNull
-	@Column
 	private Integer labour_lasthour2;
 	
 	@NotNull
 	@Column
 	private Integer labour_lastminute2;
 	
-	@NotNull
-	@Column
-	@Temporal(TemporalType.TIME)
-	@DateTimeFormat(pattern = "HH:mm a")
-	private java.util.Date labour_lasttime2;
-
 	@NotNull
 	@Column
 	private Integer labour_complications;
@@ -237,22 +225,6 @@ public class case_labour implements Serializable {
 
 	public void setLabour_seetime(java.util.Date labour_seetime) {
 		this.labour_seetime = labour_seetime;
-	}
-
-	public java.util.Date getLabour_lasttime1() {
-		return labour_lasttime1;
-	}
-
-	public void setLabour_lasttime1(java.util.Date labour_lasttime1) {
-		this.labour_lasttime1 = labour_lasttime1;
-	}
-
-	public java.util.Date getLabour_lasttime2() {
-		return labour_lasttime2;
-	}
-
-	public void setLabour_lasttime2(java.util.Date labour_lasttime2) {
-		this.labour_lasttime2 = labour_lasttime2;
 	}
 
 	public Integer getLabour_complications() {
