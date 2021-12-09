@@ -2,10 +2,14 @@ package org.pdsr.controller;
 
 import java.security.Principal;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.pdsr.CONSTANTS;
+import org.pdsr.model.audit_audit;
+import org.pdsr.model.audit_case;
 import org.pdsr.model.case_identifiers;
+import org.pdsr.repo.AuditCaseRepository;
 import org.pdsr.repo.CaseRepository;
 import org.pdsr.repo.SyncTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +30,9 @@ public class CaseAuditController {
 
 	@Autowired
 	private CaseRepository caseRepo;
+	
+	@Autowired
+	private AuditCaseRepository acaseRepo;
 
 	@GetMapping("")
 	public String list(Principal principal, Model model) {
@@ -35,10 +42,21 @@ public class CaseAuditController {
 			return "home";
 		}
 
-		model.addAttribute("items", caseRepo.findByCase_status(1));
+		model.addAttribute("items", caseRepo.findByPendingCase_status(1));
 		model.addAttribute("back", "back");
 
 		return "auditing/audit-retrieve";
+	}
+	
+	@PostMapping("")
+	public String list(Principal principal) {
+
+		List<case_identifiers> pendingAudit = caseRepo.findByPendingCase_status(1);//find all submitted cases but not audited
+		
+		
+
+
+		return "redirect:/auditing";
 	}
 
 	@GetMapping("/edit/{id}")
@@ -49,14 +67,18 @@ public class CaseAuditController {
 			return "home";
 		}
 
-		case_identifiers selected = caseRepo.findById(case_uuid).get();
+		audit_case acase = acaseRepo.findById(case_uuid).get();
+		audit_audit selected = new audit_audit();
+		selected.setAudit_uuid(case_uuid);
+		selected.setAudit_case(acase);
 		
-
+		
 		model.addAttribute("selected", selected);
 
 		return "auditing/audit-create";
 	}
 
+	
 	@PostMapping("/submit/{id}")
 	public String submit(Principal principal, @PathVariable("id") String case_uuid) {
 		case_identifiers selected = caseRepo.findById(case_uuid).get();
