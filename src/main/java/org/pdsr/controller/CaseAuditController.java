@@ -1,11 +1,13 @@
 package org.pdsr.controller;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.pdsr.CONSTANTS;
+import org.pdsr.json.json_data;
 import org.pdsr.model.audit_audit;
 import org.pdsr.model.audit_case;
 import org.pdsr.model.case_identifiers;
@@ -21,6 +23,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 @Controller
 @RequestMapping("/auditing")
 public class CaseAuditController {
@@ -30,7 +37,7 @@ public class CaseAuditController {
 
 	@Autowired
 	private CaseRepository caseRepo;
-	
+
 	@Autowired
 	private AuditCaseRepository acaseRepo;
 
@@ -47,14 +54,52 @@ public class CaseAuditController {
 
 		return "auditing/audit-retrieve";
 	}
-	
+
 	@PostMapping("")
 	public String list(Principal principal) {
+		//prepare a mapping reference type for converting the json strings to objects
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+		TypeReference<List<json_data>> mapType = new TypeReference<List<json_data>>(){};
 
-		List<case_identifiers> pendingAudit = caseRepo.findByPendingCase_status(1);//find all submitted cases but not audited
-		
-		
-
+		List<case_identifiers> pendingAudit = caseRepo.findByPendingCase_status(1);// find all submitted cases but not
+										
+		// create a bucket for the selected cases for auditing
+		List<audit_case> selectedForAuditing = new ArrayList<>();
+		int selectionCounter = 0;
+		try {
+			for (case_identifiers scase : pendingAudit) {
+				
+				
+				//check each case against the algorithm
+				
+				//create a new audit for the case
+				audit_case acase = new audit_case();
+				acase.setAudit_date(new java.util.Date());
+				acase.setAudit_uuid(scase.getCase_uuid());
+				
+				List<json_data> fulldata = new ArrayList<>();
+				//extract the json array from the case into a list object
+				List<json_data> biodata = objectMapper.readValue(scase.getBiodata().getBiodata_json(), mapType);
+				fulldata.addAll(biodata);
+				List<json_data> pregdata = objectMapper.readValue(scase.getPregnancy().getPregnancy_json(), mapType);
+				fulldata.add
+				
+				//combine the lists into one and convert back to JSON data
+				//add the combined JSON data to the new audit for the case
+				
+				//add the new audit for case into the bucket of selected cases for auditing
+				selectedForAuditing.add(acase);
+				
+				//check the size of the bucket against the number of cases needed for auditing 
+				if(selectedForAuditing.size()==3) {break;}
+				
+			}
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// save them to the audit_case
 
 		return "redirect:/auditing";
 	}
@@ -71,25 +116,22 @@ public class CaseAuditController {
 		audit_audit selected = new audit_audit();
 		selected.setAudit_uuid(case_uuid);
 		selected.setAudit_case(acase);
-		
-		
+
 		model.addAttribute("selected", selected);
 
 		return "auditing/audit-create";
 	}
 
-	
 	@PostMapping("/submit/{id}")
 	public String submit(Principal principal, @PathVariable("id") String case_uuid) {
 		case_identifiers selected = caseRepo.findById(case_uuid).get();
 		selected.setCase_status(1);
 
-
 		caseRepo.save(selected);
 
 		return "redirect:/registry?page=1&success=yes";
 	}
-	
+
 	@ModelAttribute("death_options")
 	public Map<Integer, String> deathOptionsSelectOne() {
 		final Map<Integer, String> map = new LinkedHashMap<>();
@@ -425,6 +467,5 @@ public class CaseAuditController {
 
 		return map;
 	}
-
 
 }// end class
