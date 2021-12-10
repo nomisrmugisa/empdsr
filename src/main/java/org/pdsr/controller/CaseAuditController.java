@@ -78,15 +78,41 @@ public class CaseAuditController {
 				acase.setAudit_date(new java.util.Date());
 				acase.setAudit_uuid(scase.getCase_uuid());
 				
+				//extract the json array from the case into a one big list object
 				List<json_data> fulldata = new ArrayList<>();
-				//extract the json array from the case into a list object
+				
 				List<json_data> biodata = objectMapper.readValue(scase.getBiodata().getBiodata_json(), mapType);
 				fulldata.addAll(biodata);
-				List<json_data> pregdata = objectMapper.readValue(scase.getPregnancy().getPregnancy_json(), mapType);
-				fulldata.add
 				
-				//combine the lists into one and convert back to JSON data
+				List<json_data> pregdata = objectMapper.readValue(scase.getPregnancy().getPregnancy_json(), mapType);
+				fulldata.addAll(pregdata);
+				
+				List<json_data> refdata = objectMapper.readValue(scase.getReferral().getReferral_json(), mapType);
+				fulldata.addAll(refdata);
+				
+				List<json_data> deldata = objectMapper.readValue(scase.getDelivery().getDelivery_json(), mapType);
+				fulldata.addAll(deldata);
+				
+				List<json_data> antedata = objectMapper.readValue(scase.getAntenatal().getAntenatal_json(), mapType);
+				fulldata.addAll(antedata);
+				
+				List<json_data> labdata = objectMapper.readValue(scase.getLabour().getLabour_json(), mapType);
+				fulldata.addAll(labdata);
+				
+				List<json_data> birdata = objectMapper.readValue(scase.getBirth().getBirth_json(), mapType);
+				fulldata.addAll(birdata);
+				
+				List<json_data> fetdata = objectMapper.readValue(scase.getFetalheart().getFetalheart_json(), mapType);
+				fulldata.addAll(fetdata);
+				
+				List<json_data> notedata = objectMapper.readValue(scase.getNotes().getNotes_json(), mapType);
+				fulldata.addAll(notedata);
+
+				//convert the big list back to JSON data String
+				final String arrayToJson = objectMapper.writeValueAsString(fulldata);
+
 				//add the combined JSON data to the new audit for the case
+				acase.setAudit_data(arrayToJson);
 				
 				//add the new audit for case into the bucket of selected cases for auditing
 				selectedForAuditing.add(acase);
