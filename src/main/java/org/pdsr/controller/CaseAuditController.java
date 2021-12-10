@@ -126,7 +126,7 @@ public class CaseAuditController {
 			e.printStackTrace();
 		}
 		// save them to the audit_case
-
+		
 		return "redirect:/auditing";
 	}
 
