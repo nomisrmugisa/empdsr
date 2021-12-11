@@ -30,6 +30,11 @@ public class CONSTANTS {
         return Files.readAllBytes(path);
     }
 
+    public static final byte[] readICD10(String filename) throws IOException {
+        Path path = Paths.get(ROOT_LOCATION, new String[0]).resolve(filename);
+        return Files.readAllBytes(path);
+    }
+
     public static final boolean removeFromDisk(final String USER, final String MEMO, String filename) throws IOException {
         Path path = Paths.get(ROOT_LOCATION, new String[0]).resolve(USER).resolve(MEMO).resolve(filename);
         return Files.deleteIfExists(path);

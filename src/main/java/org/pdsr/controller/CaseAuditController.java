@@ -1,10 +1,13 @@
 package org.pdsr.controller;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.transaction.Transactional;
 
 import org.pdsr.CONSTANTS;
 import org.pdsr.json.json_data;
@@ -12,6 +15,7 @@ import org.pdsr.json.json_list;
 import org.pdsr.model.audit_audit;
 import org.pdsr.model.audit_case;
 import org.pdsr.model.case_identifiers;
+import org.pdsr.model.icd_codes;
 import org.pdsr.repo.AuditAuditRepository;
 import org.pdsr.repo.AuditCaseRepository;
 import org.pdsr.repo.CaseRepository;
@@ -29,6 +33,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
 
 @Controller
 @RequestMapping("/auditing")
@@ -144,6 +150,8 @@ public class CaseAuditController {
 			return "home";
 		}
 
+		// load the ICD 10 codes
+		
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 		TypeReference<json_list> mapType = new TypeReference<json_list>() {
@@ -181,14 +189,40 @@ public class CaseAuditController {
 
 	@PostMapping("/edit/{id}")
 	public String submit(Principal principal, @ModelAttribute("selected") audit_audit selected,
-			@PathVariable("id") String case_uuid) {		
+			@PathVariable("id") String case_uuid) {
 
 		selected.setAudit_uuid(case_uuid);
 		selected.setAudit_case(acaseRepo.findById(case_uuid).get());
-		
+
 		tcaseRepo.save(selected);
 
 		return "redirect:/auditing?success=yes";
+	}
+
+
+	@ModelAttribute("icdcodes")
+	public List<icd_codes> loadICD() {
+		
+		byte[] bytes = new byte[0];
+
+		try {
+			bytes = CONSTANTS.readICD10("ICD_CODES.csv");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		try (Reader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)))) {
+
+			CsvToBean<icd_codes> csvToBean = new CsvToBeanBuilder<icd_codes>(reader).withType(icd_codes.class)
+					.withIgnoreLeadingWhiteSpace(true).build();
+
+			return csvToBean.parse();
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		return new ArrayList<>();
 	}
 
 }// end class
