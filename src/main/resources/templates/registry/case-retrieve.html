@@ -23,7 +23,7 @@
 							th:text="#{edit.link}"></a></th>
 					<td th:text="${item.case_date}"></td>
 					<td th:text="${item.case_mname}"></td>
-					<td th:text="${item.case_death == 1}?'Stillbirth':'Neonatal'"></td>
+					<td th:text="${item.case_death == 1}?#{label.still.birth}:#{label.neonatal.death}"></td>
 					<td>
 						<a th:href="@{/registry/edit/{id}?page=1(id=${item.case_uuid})}">
 							<span class="badge" th:classappend="${item.biodata}?'bg-success':'bg-danger'">Profile</span>

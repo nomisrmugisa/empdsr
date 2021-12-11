@@ -19,13 +19,15 @@
 			<thead>
 				<tr class="table-dark">
 					<th th:text="#{th.action.link}"></th>
+					<th th:text="#{th.case.type}"></th>
 					<th th:text="#{th.date.entered}"></th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="item : ${items}" th:class="'table-success'">
+				<tr th:each="item : ${items}" th:class="'table-danger'">
 					<th><a href="#" th:href="@{/auditing/edit/{id}(id=${item.audit_uuid})}" th:text="#{audit.link}"></a>
 					</th>
+					<td th:text="${item.case_death == 1}?#{label.still.birth}:#{label.neonatal.death}"></td>
 					<td th:text="${item.audit_date}"></td>
 				</tr>
 			</tbody>

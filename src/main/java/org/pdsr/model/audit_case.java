@@ -30,6 +30,10 @@ public class audit_case implements Serializable {
 	
 	@NotNull
 	@Column
+	private Integer case_death;//1 stillbirth or 2 early neonatal
+
+	@NotNull
+	@Column
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private java.util.Date audit_date;
@@ -44,6 +48,13 @@ public class audit_case implements Serializable {
 	}
 	public void setAudit_uuid(String audit_uuid) {
 		this.audit_uuid = audit_uuid;
+	}
+	
+	public Integer getCase_death() {
+		return case_death;
+	}
+	public void setCase_death(Integer case_death) {
+		this.case_death = case_death;
 	}
 	public java.util.Date getAudit_date() {
 		return audit_date;
