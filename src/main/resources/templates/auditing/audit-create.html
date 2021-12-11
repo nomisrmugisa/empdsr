@@ -11,8 +11,8 @@
 			<div class="row mb-3">
 				<div class="col-md-6">
 					<div class="bg-light p-2 rounded">
-						<div class="nav nav-pills mb-0 border-bottom small nav-justified" id="v-pills-tab" role="tablist"
-							aria-orientation="horizontal">
+						<div class="nav nav-pills mb-0 border-bottom small nav-justified" id="v-pills-tab"
+							role="tablist" aria-orientation="horizontal">
 
 							<button class="nav-link active" id="v-pills-biodata-tab" data-bs-toggle="pill"
 								data-bs-target="#v-pills-biodata" type="button" role="tab"
@@ -217,17 +217,20 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-md-5">
-			<div class="row">
-				<div class="col-auto">
-					<label class="text-secondary" th:text=#{label.date.audit}></label> 
-					<i th:text="${#dates.format(selected.audit_case.audit_date,'dd-MMM-yyyy')}"></i>
+				<div class="col-md-6">
+					<div class="row">
+						<div class="col-auto">
+							<label class="text-secondary" th:text=#{label.date.audit}></label>
+							<i th:text="${#dates.format(selected.audit_case.audit_date,'dd-MMM-yyyy')}"></i>
+						</div>
+						<div class="col-auto">
+							<label class="text-secondary" th:text=#{label.case.type}></label>
+							<i
+								th:text="${selected.audit_case.case_death == 1}?#{label.still.birth}:#{label.neonatal.death}"></i>
+						</div>
+					</div>
+					<div class="border-bottom"></div>
 				</div>
-				<div class="col-auto">
-					<label class="text-secondary" th:text=#{label.case.type}></label> 
-					<i th:text="${selected.audit_case.case_death == 1}?#{label.still.birth}:#{label.neonatal.death}"></i>
-				</div>
-			</div>
 			</div>
 		</form>
 	</div>

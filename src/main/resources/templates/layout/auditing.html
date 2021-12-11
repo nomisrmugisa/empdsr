@@ -37,7 +37,7 @@
 			<a href="#">Place your sublinks here!</a>
 		</div>
 
-		<div class="overflow-auto mx-auto box-shadow">
+		<div class="mx-auto box-shadow">
 			<a th:href="@{/}" class="btn btn-warning" th:utext="#{main.menu}"></a>
 			<a th:unless="${back}" class="btn btn-dark" th:href="@{/auditing}" th:utext="#{back.button}"></a>
 			<div th:replace="${content}">
@@ -46,6 +46,7 @@
 		</div>
 
 	</div>
+	<div class="clearfix"></div>
 	<footer class="text-light text-center mb-4">
 		[(#{app.version})]
 		<!-- common scripts -->

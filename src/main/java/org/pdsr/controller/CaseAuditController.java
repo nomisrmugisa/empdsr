@@ -12,6 +12,7 @@ import org.pdsr.json.json_list;
 import org.pdsr.model.audit_audit;
 import org.pdsr.model.audit_case;
 import org.pdsr.model.case_identifiers;
+import org.pdsr.repo.AuditAuditRepository;
 import org.pdsr.repo.AuditCaseRepository;
 import org.pdsr.repo.CaseRepository;
 import org.pdsr.repo.SyncTableRepository;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +42,9 @@ public class CaseAuditController {
 
 	@Autowired
 	private AuditCaseRepository acaseRepo;
+
+	@Autowired
+	private AuditAuditRepository tcaseRepo;
 
 	@GetMapping("")
 	public String list(Principal principal, Model model) {
@@ -123,7 +128,7 @@ public class CaseAuditController {
 
 			// save them to the audit_case
 			acaseRepo.saveAll(selectedForAuditing);
-			
+
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -152,9 +157,9 @@ public class CaseAuditController {
 		model.addAttribute("selected", selected);
 
 		try {
-			
+
 			json_list dataset = objectMapper.readValue(acase.getAudit_data(), mapType);
-			
+
 			model.addAttribute("casebiodata", dataset.getBiodata());
 			model.addAttribute("casepregnancy", dataset.getPregnancy());
 			model.addAttribute("casereferral", dataset.getReferral());
@@ -164,7 +169,7 @@ public class CaseAuditController {
 			model.addAttribute("casebirth", dataset.getBirth());
 			model.addAttribute("casefetalheart", dataset.getFetalheart());
 			model.addAttribute("casenotes", dataset.getNotes());
-			
+
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
@@ -174,14 +179,16 @@ public class CaseAuditController {
 		return "auditing/audit-create";
 	}
 
-	@PostMapping("/submit/{id}")
-	public String submit(Principal principal, @PathVariable("id") String case_uuid) {
-		case_identifiers selected = caseRepo.findById(case_uuid).get();
-		selected.setCase_status(1);
+	@PostMapping("/edit/{id}")
+	public String submit(Principal principal, @ModelAttribute("selected") audit_audit selected,
+			@PathVariable("id") String case_uuid) {		
 
-		caseRepo.save(selected);
+		selected.setAudit_uuid(case_uuid);
+		selected.setAudit_case(acaseRepo.findById(case_uuid).get());
+		
+		tcaseRepo.save(selected);
 
-		return "redirect:/registry?page=1&success=yes";
+		return "redirect:/auditing?success=yes";
 	}
 
 }// end class
