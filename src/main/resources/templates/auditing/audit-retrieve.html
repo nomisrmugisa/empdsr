@@ -6,27 +6,27 @@
 </subnav>
 
 <content>
-	<div class="table-responsive mt-2">
+	<hr />
+	<div th:if="${#lists.isEmpty(items)}">
+		<form action="#" th:action="@{/auditing}" method="POST">
+			<div class="text-center">
+				<button class="btn btn-primary btn-lg" type="submit" th:utext="#{load.cases.button}"></button>
+			</div>
+		</form>
+	</div>
+	<div class="table-responsive mt-2" th:unless="${#lists.isEmpty(items)}">
 		<table class="table table-hover table-bordered table-sm table-responsive-sm small">
 			<thead>
 				<tr class="table-dark">
 					<th th:text="#{th.action.link}"></th>
 					<th th:text="#{th.date.entered}"></th>
-					<th th:text="#{th.case.type}"></th>
-					<th th:text="#{th.case.sex}"></th>
-					<th th:text="#{th.case.mage}"></th>
-					<th th:text="#{th.audit.status}"></th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr th:each="item : ${items}" th:class="'table-success'">
-					<th><a href="#" th:href="@{/auditing/edit/{id}(id=${item.case_uuid})}" th:text="#{audit.link}"></a>
+					<th><a href="#" th:href="@{/auditing/edit/{id}(id=${item.audit_uuid})}" th:text="#{audit.link}"></a>
 					</th>
-					<td th:text="${item.case_date}"></td>
-					<td th:text="${item.case_death == 1}?'Stillbirth':'Neonatal'"></td>
-					<td th:text="${item.biodata.biodata_sex == 1}?'Male':'Female'"></td>
-					<td th:text="${item.biodata.biodata_mage}"></td>
-					<td>Pending/Completed</td>
+					<td th:text="${item.audit_date}"></td>
 				</tr>
 			</tbody>
 		</table>

@@ -3,21 +3,226 @@
 
 
 <content>
-	<div class="float-end" th:text="${selected.facility.facility_code}"></div>
+	<div class="float-end" th:text="${facility_code}"></div>
 	<div class="col-md-12 py-3 my-3 mx-auto p-5 rounded box-shadow" style="background-color: #92c7f2;">
-		<form action="#" th:action="@{/auditiing/edit/{id}(id=${selected.case_uuid})}" th:object="${selected}"
+		<form action="#" th:action="@{/auditiing/edit/{id}(id=${selected.audit_uuid})}" th:object="${selected}"
 			method="POST" class="needs-validation" novalidate>
 			<div th:if="${success}" class="alert alert-warning" th:text="${success}"></div>
 			<div class="row mb-3">
-			<div class="col-md-6">
-			content
+				<div class="col-md-7">
+					<div class="d-flex align-items-start bg-light p-2 rounded">
+						<div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist"
+							aria-orientation="vertical">
+
+							<button class="nav-link active" id="v-pills-biodata-tab" data-bs-toggle="pill"
+								data-bs-target="#v-pills-biodata" type="button" role="tab"
+								aria-controls="v-pills-biodata" aria-selected="true">Profile</button>
+
+							<button class="nav-link" id="v-pills-pregnancy-tab" data-bs-toggle="pill"
+								data-bs-target="#v-pills-pregnancy" type="button" role="tab"
+								aria-controls="v-pills-pregnancy" aria-selected="false">Pregnancy</button>
+
+							<button class="nav-link" id="v-pills-referral-tab" data-bs-toggle="pill"
+								data-bs-target="#v-pills-referral" type="button" role="tab"
+								aria-controls="v-pills-referral" aria-selected="false">Referral</button>
+
+							<button class="nav-link" id="v-pills-delivery-tab" data-bs-toggle="pill"
+								data-bs-target="#v-pills-delivery" type="button" role="tab"
+								aria-controls="v-pills-delivery" aria-selected="false">Delivery</button>
+
+							<button class="nav-link" id="v-pills-antenatal-tab" data-bs-toggle="pill"
+								data-bs-target="#v-pills-antenatal" type="button" role="tab"
+								aria-controls="v-pills-antenatal" aria-selected="false">Antenatal</button>
+
+							<button class="nav-link" id="v-pills-labour-tab" data-bs-toggle="pill"
+								data-bs-target="#v-pills-labour" type="button" role="tab" aria-controls="v-pills-labour"
+								aria-selected="false">Labour</button>
+
+							<button class="nav-link" id="v-pills-birth-tab" data-bs-toggle="pill"
+								data-bs-target="#v-pills-birth" type="button" role="tab" aria-controls="v-pills-birth"
+								aria-selected="false">Birth</button>
+
+							<button class="nav-link" id="v-pills-fetalheart-tab" data-bs-toggle="pill"
+								data-bs-target="#v-pills-fetalheart" type="button" role="tab"
+								aria-controls="v-pills-fetalheart" aria-selected="false">Fetalheart</button>
+
+							<button class="nav-link" id="v-pills-notes-tab" data-bs-toggle="pill"
+								data-bs-target="#v-pills-notes" type="button" role="tab" aria-controls="v-pills-notes"
+								aria-selected="false">Notes</button>
+
+						</div>
+						<div class="tab-content" id="v-pills-tabContent">
+							<div class="tab-pane fade show active" id="v-pills-biodata" role="tabpanel"
+								aria-labelledby="v-pills-biodata-tab">
+								<div class="overflow-auto" style="height: 400px;">
+									<table class="table">
+										<thead>
+											<tr>
+												<th colspan="2" th:text="#{title.biodata}"></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="item : ${casebiodata}">
+												<td th:utext="${item.question}" class="text-secondary"></td>
+												<td th:utext="${item.answer}" style="width: 50%;"></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							<div class="tab-pane fade" id="v-pills-pregnancy" role="tabpanel"
+								aria-labelledby="v-pills-pregnancy-tab">
+								<div class="overflow-auto" style="height: 400px;">
+									<table class="table">
+										<thead>
+											<tr>
+												<th colspan="2" th:text="#{title.pregnancy}"></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="item : ${casepregnancy}">
+												<td th:utext="${item.question}" class="text-secondary"></td>
+												<td th:utext="${item.answer}" style="width: 50%;"></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							<div class="tab-pane fade" id="v-pills-referral" role="tabpanel"
+								aria-labelledby="v-pills-referral-tab">
+								<div class="overflow-auto" style="height: 400px;">
+									<table class="table">
+										<thead>
+											<tr>
+												<th colspan="2" th:text="#{title.referral}"></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="item : ${casereferral}">
+												<td th:utext="${item.question}" class="text-secondary"></td>
+												<td th:utext="${item.answer}" style="width: 50%;"></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							<div class="tab-pane fade" id="v-pills-delivery" role="tabpanel"
+								aria-labelledby="v-pills-delivery-tab">
+								<div class="overflow-auto" style="height: 400px;">
+									<table class="table">
+										<thead>
+											<tr>
+												<th colspan="2" th:text="#{title.delivery}"></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="item : ${casedelivery}">
+												<td th:utext="${item.question}" class="text-secondary"></td>
+												<td th:utext="${item.answer}" style="width: 50%;"></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							<div class="tab-pane fade" id="v-pills-antenatal" role="tabpanel"
+								aria-labelledby="v-pills-antenatal-tab">
+								<div class="overflow-auto" style="height: 400px;">
+									<table class="table">
+										<thead>
+											<tr>
+												<th colspan="2" th:text="#{title.antenatal}"></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="item : ${caseantenatal}">
+												<td th:utext="${item.question}" class="text-secondary"></td>
+												<td th:utext="${item.answer}" style="width: 50%;"></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							<div class="tab-pane fade" id="v-pills-labour" role="tabpanel"
+								aria-labelledby="v-pills-labour-tab">
+								<div class="overflow-auto" style="height: 400px;">
+									<table class="table">
+										<thead>
+											<tr>
+												<th colspan="2" th:text="#{title.labour}"></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="item : ${caselabour}">
+												<td th:utext="${item.question}" class="text-secondary"></td>
+												<td th:utext="${item.answer}" style="width: 50%;"></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							<div class="tab-pane fade" id="v-pills-birth" role="tabpanel"
+								aria-labelledby="v-pills-birth-tab">
+								<div class="overflow-auto" style="height: 400px;">
+									<table class="table">
+										<thead>
+											<tr>
+												<th colspan="2" th:text="#{title.birth}"></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="item : ${casebirth}">
+												<td th:utext="${item.question}" class="text-secondary"></td>
+												<td th:utext="${item.answer}" style="width: 50%;"></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							<div class="tab-pane fade" id="v-pills-fetalheart" role="tabpanel"
+								aria-labelledby="v-pills-fetalheart-tab">
+								<div class="overflow-auto" style="height: 400px;">
+									<table class="table">
+										<thead>
+											<tr>
+												<th colspan="2" th:text="#{title.birth}"></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="item : ${casefetalheart}">
+												<td th:utext="${item.question}" class="text-secondary"></td>
+												<td th:utext="${item.answer}" style="width: 50%;"></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							<div class="tab-pane fade" id="v-pills-notes" role="tabpanel"
+								aria-labelledby="v-pills-notes-tab">
+								<div class="overflow-auto" style="height: 400px;">
+									<table class="table">
+										<thead>
+											<tr>
+												<th colspan="2" th:text="#{title.notes}"></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="item : ${casenotes}">
+												<td th:utext="${item.question}" class="text-secondary"></td>
+												<td th:utext="${item.answer}" style="width: 50%;"></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-5">
+					audit
+				</div>
+
 			</div>
-			<div class="col-md-6">
-			audit
-			</div>
-			
-			</div >
-			
+
 		</form>
 	</div>
 </content>

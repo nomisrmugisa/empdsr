@@ -30,7 +30,7 @@ public class audit_audit implements Serializable {
 	
 	@MapsId
 	@OneToOne(optional = false, cascade = CascadeType.ALL)
-	@JoinColumn(name = "audit_case", referencedColumnName = "audit_uuid", insertable = true, updatable = true)
+	@JoinColumn(name = "audit_uuid", referencedColumnName = "audit_uuid", insertable = true, updatable = true)
 	private audit_case audit_case;
 
 	@Column
