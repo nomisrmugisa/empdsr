@@ -913,7 +913,7 @@ public class CaseEntryController {
 	private List<json_data> processListOf(case_pregnancy o) {
 		List<json_data> list = Stream.of(
 				new json_data(getQuestion("label.pregnancy_gest"),
-						o.getPregnancy_weeks() + getQuestion("txt.weeks") + "/" + o.getPregnancy_days()
+						o.getPregnancy_weeks() + getQuestion("txt.weeks") + " and " + o.getPregnancy_days()
 								+ getQuestion("txt.days")),
 				new json_data(getQuestion("label.pregnancy_type"), getAnswer("ptype_options", o.getPregnancy_type())))
 				.collect(Collectors.toList());
@@ -971,7 +971,7 @@ public class CaseEntryController {
 				new json_data(getQuestion("label.antenatal_attendno"), "" + o.getAntenatal_attendno()),
 				new json_data(getQuestion("label.antenatal_facility"), "" + o.getAntenatal_facility()),
 				new json_data(getQuestion("label.antenatal_gestage"),
-						o.getAntenatal_weeks() + getQuestion("txt.weeks") + "/" + o.getAntenatal_days()
+						o.getAntenatal_weeks() + getQuestion("txt.weeks") + " and " + o.getAntenatal_days()
 								+ getQuestion("txt.days")),
 				new json_data(getQuestion("label.antenatal_risks"),
 						getAnswer("yesnodk_options", o.getAntenatal_risks())),
@@ -1006,7 +1006,7 @@ public class CaseEntryController {
 		List<json_data> list = Stream.of(
 				new json_data(getQuestion("label.labour_datetime"),
 						new SimpleDateFormat("dd-MMM-yyyy").format(o.getLabour_seedate())
-								+ new SimpleDateFormat("HH:mm a").format(o.getLabour_seetime())),
+								+" at "+new SimpleDateFormat("HH:mm a").format(o.getLabour_seetime())),
 				new json_data(getQuestion("label.labour_seeperiod"),
 						getAnswer("period_options", o.getLabour_seeperiod())),
 				new json_data(getQuestion("label.labour_startmode"),
@@ -1016,10 +1016,10 @@ public class CaseEntryController {
 				new json_data(getQuestion("label.labour_partograph"),
 						getAnswer("yesnodk_options", o.getLabour_partograph())),
 				new json_data(getQuestion("label.labour_lasttime1"),
-						o.getLabour_lasthour1() + getQuestion("txt.hours") + o.getLabour_lastminute1()
+						o.getLabour_lasthour1() + getQuestion("txt.hours") +" and "+ o.getLabour_lastminute1()
 								+ getQuestion("txt.minutes")),
 				new json_data(getQuestion("label.labour_lasttime2"),
-						o.getLabour_lasthour2() + getQuestion("txt.hours") + o.getLabour_lastminute2()
+						o.getLabour_lasthour2() + getQuestion("txt.hours") +" and " + o.getLabour_lastminute2()
 								+ getQuestion("txt.minutes")),
 				new json_data(getQuestion("label.labour_complications"),
 						getAnswer("yesnodk_options", o.getLabour_complications())),

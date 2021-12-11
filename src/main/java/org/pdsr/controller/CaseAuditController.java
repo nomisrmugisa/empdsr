@@ -4,6 +4,8 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.pdsr.CONSTANTS;
 import org.pdsr.json.json_data;
 import org.pdsr.json.json_list;
@@ -121,6 +123,7 @@ public class CaseAuditController {
 
 			// save them to the audit_case
 			acaseRepo.saveAll(selectedForAuditing);
+			
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
