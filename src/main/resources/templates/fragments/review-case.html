@@ -1,5 +1,9 @@
 <div th:fragment="case_review">
-	<div class="overflow-auto" style="height: 400px;">
+	<div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+		[[${success}]]
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+	<div class="overflow-auto" style="height: 450px;">
 		<div class="row mb-3">
 			<label class="col-form-label" th:text="#{label.audit_death}"></label>
 			<div class="col-md-11">
@@ -15,7 +19,8 @@
 				<select id="audit_icd10" class="form-control form-control-sm" th:field="*{audit_icd10}">
 					<option disabled="disabled" selected="selected" value="" th:unless="${icdsel}">
 						--select--</option>
-					<option th:if="${icdsel}" th:value="${icdsel.icd_code}" th:text="|${icdsel.icd_code} : ${icdsel.icd_desc}|">--selected
+					<option th:if="${icdsel}" th:value="${icdsel.icd_code}"
+						th:text="|${icdsel.icd_code} : ${icdsel.icd_desc}|">--selected
 						icd--</option>
 				</select>
 			</div>
@@ -26,7 +31,8 @@
 				<select id="audit_icdpm" class="form-control form-control-sm" th:field="*{audit_icdpm}" required>
 					<option disabled="disabled" selected="selected" value="" th:unless="${pmsel}">
 						--select--</option>
-					<option th:if="${pmsel}" th:value="${pmsel.pm_code}" th:text="|${pmsel.pm_code} : ${pmsel.pm_desc}|">--selected
+					<option th:if="${pmsel}" th:value="${pmsel.pm_code}"
+						th:text="|${pmsel.pm_code} : ${pmsel.pm_desc}|">--selected
 						pm--</option>
 				</select>
 			</div>
@@ -148,8 +154,7 @@
 			<input th:field="*{audit_uuid}" />
 		</fieldset>
 	</div>
-	<hr class="mb-2 bg-secondary" />
-	<div class="">
-		<button class="btn btn-primary" type="submit" th:utext="#{save.button}"></button>
+	<div class="d-grid gap-2 mt-3">
+		<button class="btn btn-primary btn-lg" type="submit" th:utext="#{submit.button}"></button>
 	</div>
 </div>

@@ -7,9 +7,8 @@
 	<div class="col-md-12 py-3 my-3 mx-auto p-1 rounded box-shadow" style="background-color: #92c7f2;">
 		<form action="#" th:action="@{/auditing/edit/{id}(id=${selected.audit_uuid})}" th:object="${selected}"
 			method="POST" class="needs-validation" novalidate>
-			<div th:if="${success}" class="alert alert-warning" th:text="${success}"></div>
 			<div class="row mb-3">
-				<div class="col-md-6">
+				<div class="col-md-6 mb-3">
 					<div class="bg-light p-2 rounded">
 						<div class="nav nav-pills mb-0 border-bottom small nav-justified" id="v-pills-tab"
 							role="tablist" aria-orientation="horizontal">

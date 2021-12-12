@@ -153,13 +153,17 @@ public class CaseAuditController {
 	}
 
 	@GetMapping("/edit/{id}")
-	public String submit(Principal principal, Model model, @PathVariable("id") String case_uuid) {
+	public String submit(Principal principal, Model model, @PathVariable("id") String case_uuid,
+			@RequestParam(name = "success", required = false) String success) {
 
 		if (syncRepo.findById(CONSTANTS.FACILITY_ID).isEmpty()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
 
+		if (success != null) {
+			model.addAttribute("success", "Saved Successfully");
+		}
 		// load the ICD 10 codes
 
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -244,7 +248,7 @@ public class CaseAuditController {
 
 		tcaseRepo.save(selected);
 
-		return "redirect:/auditing/edit/" + case_uuid + "?success=yes";
+		return "redirect:/auditing?success=yes";
 	}
 
 	@GetMapping(value = "/icdcodes")
