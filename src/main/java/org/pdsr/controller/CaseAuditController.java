@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.pdsr.CONSTANTS;
@@ -167,11 +168,49 @@ public class CaseAuditController {
 		};
 
 		audit_case acase = acaseRepo.findById(case_uuid).get();
-		audit_audit selected = new audit_audit();
-		selected.setAudit_uuid(case_uuid);
-		selected.setAudit_case(acase);
+		Optional<audit_audit> selected = tcaseRepo.findById(case_uuid);
 
-		model.addAttribute("selected", selected);
+		if (selected.isPresent()) {
+			audit_audit tcase = selected.get();
+
+			model.addAttribute("selected", tcase);
+
+			if (icdRepo.findById(tcase.getAudit_icd10()).isPresent()) {
+				model.addAttribute("icdsel", icdRepo.findById(tcase.getAudit_icd10()).get());
+			}
+
+			final Integer death = tcase.getAudit_death();
+			switch (death) {
+			case 1: {
+				if (!icdRepo.findIntrapartumPMByICD(tcase.getAudit_icdpm()).isEmpty()) {
+					icd_codes icd = icdRepo.findIntrapartumPMByICD(tcase.getAudit_icdpm()).get(0);
+					model.addAttribute("pmsel", new icdpm(icd.getIcd_pmi(), icd.getIcd_pmi_desc()));
+				}
+				break;
+			}
+			case 2: {
+				if (!icdRepo.findAntepartumPMByICD(tcase.getAudit_icdpm()).isEmpty()) {
+					icd_codes icd = icdRepo.findAntepartumPMByICD(tcase.getAudit_icdpm()).get(0);
+					model.addAttribute("pmsel", new icdpm(icd.getIcd_pma(), icd.getIcd_pma_desc()));
+				}
+				break;
+			}
+			case 3: {
+				if (!icdRepo.findNeonatalPMByICD(tcase.getAudit_icdpm()).isEmpty()) {
+					icd_codes icd = icdRepo.findNeonatalPMByICD(tcase.getAudit_icdpm()).get(0);
+					model.addAttribute("pmsel", new icdpm(icd.getIcd_pmn(), icd.getIcd_pmn_desc()));
+				}
+				break;
+			}
+			}
+
+		} else {
+			audit_audit tcase = new audit_audit();
+			tcase.setAudit_uuid(case_uuid);
+			tcase.setAudit_case(acase);
+			model.addAttribute("selected", tcase);
+
+		}
 
 		try {
 
@@ -205,7 +244,7 @@ public class CaseAuditController {
 
 		tcaseRepo.save(selected);
 
-		return "redirect:/auditing?success=yes";
+		return "redirect:/auditing/edit/" + case_uuid + "?success=yes";
 	}
 
 	@GetMapping(value = "/icdcodes")
@@ -265,6 +304,27 @@ public class CaseAuditController {
 		}
 
 		return new LinkedHashSet<icdpm>();
+	}
+
+	@GetMapping(value = "/pmselect")
+	public @ResponseBody icdpm findPMCode(@RequestParam(value = "audit_death", required = true) Integer audit_death,
+			@RequestParam(value = "audit_icd10", required = true) String audit_icd10) {
+
+		if (!"".equals(audit_icd10)) {
+			icd_codes icd = icdRepo.findPMByICD(audit_icd10).get();
+
+			if (audit_death == 1) {
+				return new icdpm(icd.getIcd_pmi(), icd.getIcd_pmi_desc());
+
+			} else if (audit_death == 2) {
+				return new icdpm(icd.getIcd_pma(), icd.getIcd_pma_desc());
+
+			} else if (audit_death == 3) {
+				return new icdpm(icd.getIcd_pmn(), icd.getIcd_pmn_desc());
+
+			}
+		}
+		return new icdpm(null, null);
 	}
 
 	@ModelAttribute("death_options")

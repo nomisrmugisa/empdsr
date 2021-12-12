@@ -44,7 +44,6 @@ public class audit_audit implements Serializable {
 	private String audit_icdpm;
 	
 	@Column
-	@NotNull
 	private String audit_csc;
 	
 	@Column

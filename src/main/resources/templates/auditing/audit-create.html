@@ -5,7 +5,7 @@
 <content>
 	<div class="float-end" th:text="${facility_code}"></div>
 	<div class="col-md-12 py-3 my-3 mx-auto p-1 rounded box-shadow" style="background-color: #92c7f2;">
-		<form action="#" th:action="@{/auditiing/edit/{id}(id=${selected.audit_uuid})}" th:object="${selected}"
+		<form action="#" th:action="@{/auditing/edit/{id}(id=${selected.audit_uuid})}" th:object="${selected}"
 			method="POST" class="needs-validation" novalidate>
 			<div th:if="${success}" class="alert alert-warning" th:text="${success}"></div>
 			<div class="row mb-3">
@@ -259,7 +259,7 @@
 		})();
 	</script>
 	<script>
-		$('#audit_death').change(
+		$('#audit_death').click(
 			function () {
 				$.getJSON("http://localhost:5000/auditing/icdcodes", {
 					audit_death: $(this).val(),
@@ -269,17 +269,15 @@
 					var len = data.length;
 					for (var i = 0; i < len; i++) {
 						html += '<option value="' + data[i].icd_code + '">'
-							+ data[i].icd_code +" : "+ data[i].icd_desc + '</option>';
+							+ data[i].icd_code + " : " + data[i].icd_desc + '</option>';
 					}
 					html += '</option>';
 					$('#audit_icd10').html(html);
-					
-					
 				});
 			});
 	</script>
 	<script>
-		$('#audit_death').change(
+		$('#audit_death').click(
 			function () {
 				$.getJSON("http://localhost:5000/auditing/pmcodes", {
 					audit_death: $(this).val(),
@@ -289,10 +287,22 @@
 					var len = data.length;
 					for (var i = 0; i < len; i++) {
 						html += '<option value="' + data[i].pm_code + '">'
-							+ data[i].pm_code +" : "+ data[i].pm_desc + '</option>';
+							+ data[i].pm_code + " : " + data[i].pm_desc + '</option>';
 					}
 					html += '</option>';
 					$('#audit_icdpm').html(html);
+				});
+			});
+	</script>
+	<script>
+		$('#audit_icd10').change(
+			function () {
+				$.getJSON("http://localhost:5000/auditing/pmselect", {
+					audit_death: $('#audit_death').val(),
+					audit_icd10: $(this).val(),
+					ajax: 'true'
+				}, function (data) {
+					document.getElementById("audit_icdpm").value = data.pm_code;
 				});
 			});
 	</script>
