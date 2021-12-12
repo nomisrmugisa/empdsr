@@ -1,0 +1,149 @@
+<div th:fragment="case_review">
+	<div class="overflow-auto" style="height: 400px;">
+		<div class="row mb-3">
+			<label class="col-form-label" th:text="#{label.audit_death}"></label>
+			<div class="col-md-11">
+				<select id="audit_death" class="form-control form-control-sm" th:field="*{audit_death}" required>
+					<option th:each="option : ${death_options}" th:value="${option.key}" th:text="${option.value}">
+					</option>
+				</select>
+			</div>
+		</div>
+		<div class="row mb-3">
+			<label class="col-form-label" th:text="#{label.audit_icd10}"></label>
+			<div class="col-md-11">
+				<select id="audit_icd10" class="form-control form-control-sm" th:field="*{audit_icd10}" required>
+					<option disabled="disabled" selected="selected" value="">--select--</option>
+				</select>
+			</div>
+		</div>
+		<div class="row mb-3">
+			<label class="col-form-label" th:text="#{label.audit_icdpm}"></label>
+			<div class="col-md-11">
+				<select id="audit_icdpm" class="form-control form-control-sm" th:field="*{audit_icdpm}" required>
+					<option disabled="disabled" selected="selected" value="">--select--</option>
+				</select >
+			</div>
+		</div>
+		<div class="row mb-3">
+			<label class="col-form-label" th:text="#{label.audit_csc}"></label>
+			<div class="col-md-11">
+				<input type="text" class="form-control form-control-sm" th:field="*{audit_csc}" required />
+			</div>
+		</div>
+		<div class="row mb-1">
+			<div class=" alert alert-warning col-md-11">
+				<div class="row">
+					<label class="col-md-8 col-form-label" th:text="#{label.audit_delay1}"></label>
+					<div class="col-auto">
+						<select class="form-control form-control-sm" th:field="*{audit_delay1}" required>
+							<option th:each="option : ${yesnodk_options}" th:value="${option.key}"
+								th:text="${option.value}"></option>
+						</select>
+					</div>
+					<small class="text-dark" th:utext="#{notes.audit_delay1}"></small>
+				</div>
+			</div>
+		</div>
+		<div class="row mb-1">
+			<div class=" alert alert-warning col-md-11">
+				<div class="row">
+					<label class="col-md-8 col-form-label" th:text="#{label.audit_delay2}"></label>
+					<div class="col-auto">
+						<select class="form-control form-control-sm" th:field="*{audit_delay2}" required>
+							<option th:each="option : ${yesnodk_options}" th:value="${option.key}"
+								th:text="${option.value}"></option>
+						</select>
+					</div>
+					<small class="text-dark" th:utext="#{notes.audit_delay2}"></small>
+				</div>
+			</div>
+		</div>
+		<div class="row mb-1">
+			<div class=" alert alert-warning col-md-11">
+				<h6 th:text="#{label.audit_delay3}"></h6>
+				<small class="text-dark" th:utext="#{notes.audit_delay3}"></small>
+				<hr />
+				<div class="row mb-2 border-bottom">
+					<label class="col-md-8 col-form-label" th:text="#{label.audit_delay3a}"></label>
+					<div class="col-auto">
+						<select class="form-control form-control-sm" th:field="*{audit_delay3a}" required>
+							<option th:each="option : ${yesnodk_options}" th:value="${option.key}"
+								th:text="${option.value}"></option>
+						</select>
+					</div>
+				</div>
+				<div class="row mb-2 border-bottom">
+					<label class="col-md-8 col-form-label" th:text="#{label.audit_delay3b}"></label>
+					<div class="col-auto">
+						<select class="form-control form-control-sm" th:field="*{audit_delay3b}" required>
+							<option th:each="option : ${yesnodk_options}" th:value="${option.key}"
+								th:text="${option.value}"></option>
+						</select>
+					</div>
+				</div>
+				<div class="row">
+					<label class="col-md-8 col-form-label" th:text="#{label.audit_delay3c}"></label>
+					<div class="col-auto">
+						<select class="form-control form-control-sm" th:field="*{audit_delay3c}" required>
+							<option th:each="option : ${yesnodk_options}" th:value="${option.key}"
+								th:text="${option.value}"></option>
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row mb-1">
+			<div class=" alert alert-success col-md-11">
+				<div class="row">
+					<h6 th:text="#{label.audit_ifcmfs}"></h6>
+					<small class="text-dark" th:utext="#{notes.audit_ifcmfs}"></small>
+					<div class="col-md-12">
+						<textarea rows="5" class="form-control form-control-sm" th:field="*{audit_ifcmfs}"></textarea>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row mb-1">
+			<div class=" alert alert-success col-md-11">
+				<div class="row">
+					<h6 th:text="#{label.audit_sysmfs}"></h6>
+					<small class="text-dark" th:utext="#{notes.audit_sysmfs}"></small>
+					<div class="col-md-12">
+						<textarea rows="5" class="form-control form-control-sm" th:field="*{audit_sysmfs}"></textarea>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row mb-1">
+			<div class=" alert alert-success col-md-11">
+				<div class="row">
+					<h6 th:text="#{label.audit_facmfs}"></h6>
+					<small class="text-dark" th:utext="#{notes.audit_facmfs}"></small>
+					<div class="col-md-12">
+						<textarea rows="5" class="form-control form-control-sm" th:field="*{audit_facmfs}"></textarea>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row mb-1">
+			<div class=" alert alert-success col-md-11">
+				<div class="row">
+					<h6 th:text="#{label.audit_hwkmfs}"></h6>
+					<small class="text-dark mb-2" th:utext="#{notes.audit_hwkmfs}"></small>
+					<div class="col-md-12">
+						<textarea rows="5" class="form-control form-control-sm" th:field="*{audit_hwkmfs}"></textarea>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<fieldset hidden=true>
+			<input th:field="*{audit_uuid}" />
+		</fieldset>
+	</div>
+	<hr class="mb-2 bg-secondary" />
+	<div class="">
+		<button class="btn btn-primary" type="submit" th:utext="#{save.button}"></button>
+	</div>
+</div>

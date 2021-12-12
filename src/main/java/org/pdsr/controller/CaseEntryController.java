@@ -576,8 +576,8 @@ public class CaseEntryController {
 		final Map<Integer, String> map = new LinkedHashMap<>();
 
 		map.put(null, "Select one");
-		map.put(1, "Stillbirth");
-		map.put(2, "Early Neonatal Death");
+		map.put(1, getQuestion("label.still.birth"));
+		map.put(2, getQuestion("label.neonatal.death"));
 
 		return map;
 	}

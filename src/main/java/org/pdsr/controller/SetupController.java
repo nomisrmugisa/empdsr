@@ -1,7 +1,13 @@
 package org.pdsr.controller;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,11 +17,13 @@ import org.pdsr.CONSTANTS;
 import org.pdsr.model.country_table;
 import org.pdsr.model.district_table;
 import org.pdsr.model.facility_table;
+import org.pdsr.model.icd_codes;
 import org.pdsr.model.region_table;
 import org.pdsr.model.sync_table;
 import org.pdsr.repo.CountryTableRepository;
 import org.pdsr.repo.DistrictTableRepository;
 import org.pdsr.repo.FacilityTableRepository;
+import org.pdsr.repo.IcdCodesRepository;
 import org.pdsr.repo.RegionTableRepository;
 import org.pdsr.repo.SyncTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +36,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
 
 @Controller
 @RequestMapping("/controls")
@@ -47,6 +58,9 @@ public class SetupController {
 
 	@Autowired
 	private CountryTableRepository countryRepo;
+	
+	@Autowired
+	private IcdCodesRepository icdRepo;
 
 	@GetMapping("")
 	public String sync(Principal principal, Model model,
@@ -91,6 +105,15 @@ public class SetupController {
 		selected.setSync_name(facility.getFacility_name());
 		selected.setSync_uuid(facility.getFacility_uuid());
 		syncRepo.save(selected);
+		
+		try {
+			List<icd_codes> icds = loadICD();
+			icdRepo.saveAll(icds);
+		} catch (IOException e) {
+			results.rejectValue("sync_code", "invalid.icds");
+			e.printStackTrace();
+			return "controls/dashboard";	
+		}
 		
 		return "redirect:/controls?success=yes";
 	}
@@ -175,6 +198,7 @@ public class SetupController {
 	public String district(Principal principal, Model model, @ModelAttribute("selected") region_table selected,
 			@PathVariable("id") String uuid) {
 
+		
 		regionRepo.save(selected);
 
 		model.addAttribute("success", "Saved Successfully");
@@ -221,6 +245,27 @@ public class SetupController {
 
 		return "redirect:/controls/facility/" + selected.getDistrict_uuid() + "?success=yes";
 	}
+	
+	private List<icd_codes> loadICD() throws IOException {
+		
+		byte[] bytes = new byte[0];
+
+			bytes = CONSTANTS.readICD10("icd_code.csv");
+
+		try (Reader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)))) {
+
+			CsvToBean<icd_codes> csvToBean = new CsvToBeanBuilder<icd_codes>(reader).withType(icd_codes.class)
+					.withIgnoreLeadingWhiteSpace(true).build();
+
+			return csvToBean.parse();
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		return new ArrayList<>();
+	}
+
 
 }
 // end class

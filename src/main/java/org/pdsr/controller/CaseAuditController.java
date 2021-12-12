@@ -1,13 +1,13 @@
 package org.pdsr.controller;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import org.pdsr.CONSTANTS;
 import org.pdsr.json.json_data;
@@ -16,11 +16,14 @@ import org.pdsr.model.audit_audit;
 import org.pdsr.model.audit_case;
 import org.pdsr.model.case_identifiers;
 import org.pdsr.model.icd_codes;
+import org.pdsr.pojos.icdpm;
 import org.pdsr.repo.AuditAuditRepository;
 import org.pdsr.repo.AuditCaseRepository;
 import org.pdsr.repo.CaseRepository;
+import org.pdsr.repo.IcdCodesRepository;
 import org.pdsr.repo.SyncTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,13 +31,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.opencsv.bean.CsvToBean;
-import com.opencsv.bean.CsvToBeanBuilder;
 
 @Controller
 @RequestMapping("/auditing")
@@ -51,6 +54,12 @@ public class CaseAuditController {
 
 	@Autowired
 	private AuditAuditRepository tcaseRepo;
+
+	@Autowired
+	private IcdCodesRepository icdRepo;
+
+	@Autowired
+	private MessageSource msg;
 
 	@GetMapping("")
 	public String list(Principal principal, Model model) {
@@ -151,7 +160,7 @@ public class CaseAuditController {
 		}
 
 		// load the ICD 10 codes
-		
+
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 		TypeReference<json_list> mapType = new TypeReference<json_list>() {
@@ -199,30 +208,90 @@ public class CaseAuditController {
 		return "redirect:/auditing?success=yes";
 	}
 
+	@GetMapping(value = "/icdcodes")
+	public @ResponseBody List<icd_codes> findICDCodes(
+			@RequestParam(value = "audit_death", required = true) Integer audit_death) {
 
-	@ModelAttribute("icdcodes")
-	public List<icd_codes> loadICD() {
-		
-		byte[] bytes = new byte[0];
+		if (audit_death == 1) {
 
-		try {
-			bytes = CONSTANTS.readICD10("ICD_CODES.csv");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			return icdRepo.findIntrapartumICD("xx");
 
-		try (Reader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)))) {
+		} else if (audit_death == 2) {
 
-			CsvToBean<icd_codes> csvToBean = new CsvToBeanBuilder<icd_codes>(reader).withType(icd_codes.class)
-					.withIgnoreLeadingWhiteSpace(true).build();
+			return icdRepo.findAntepartumICD("xx");
 
-			return csvToBean.parse();
+		} else if (audit_death == 3) {
 
-		} catch (Exception ex) {
-			ex.printStackTrace();
+			return icdRepo.findNeonatalICD("xx");
 		}
 
 		return new ArrayList<>();
+	}
+
+	@GetMapping(value = "/pmcodes")
+	public @ResponseBody Set<icdpm> findPMCodes(
+			@RequestParam(value = "audit_death", required = true) Integer audit_death) {
+
+		if (audit_death == 1) {
+
+			Set<icdpm> pmset = new LinkedHashSet<>();
+
+			for (icd_codes elem : icdRepo.findIntrapartumICD("xx")) {
+				pmset.add(new icdpm(elem.getIcd_pmi(), elem.getIcd_pmi_desc()));
+			}
+
+			return pmset;
+
+		} else if (audit_death == 2) {
+
+			Set<icdpm> pmset = new LinkedHashSet<>();
+
+			for (icd_codes elem : icdRepo.findAntepartumICD("xx")) {
+				pmset.add(new icdpm(elem.getIcd_pma(), elem.getIcd_pma_desc()));
+			}
+
+			return pmset;
+
+		} else if (audit_death == 3) {
+
+			Set<icdpm> pmset = new LinkedHashSet<>();
+
+			for (icd_codes elem : icdRepo.findNeonatalICD("xx")) {
+				pmset.add(new icdpm(elem.getIcd_pmn(), elem.getIcd_pmn_desc()));
+			}
+
+			return pmset;
+
+		}
+
+		return new LinkedHashSet<icdpm>();
+	}
+
+	@ModelAttribute("death_options")
+	public Map<Integer, String> deathOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(0, "Select one");
+		map.put(1, getQuestion("label.still.birth.intra"));
+		map.put(2, getQuestion("label.still.birth.antep"));
+		map.put(3, getQuestion("label.neonatal.death"));
+
+		return map;
+	}
+
+	@ModelAttribute("yesnodk_options")
+	public Map<Integer, String> yesnodkOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		map.put(1, getQuestion("label.yes"));
+		map.put(2, getQuestion("label.no"));
+
+		return map;
+	}
+
+	private String getQuestion(String code) {
+		return msg.getMessage(code, null, Locale.getDefault());
 	}
 
 }// end class

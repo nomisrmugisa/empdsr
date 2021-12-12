@@ -218,7 +218,7 @@
 					</div>
 				</div>
 				<div class="col-md-6">
-					<div class="row">
+					<div class="row mb-3">
 						<div class="col-auto">
 							<label class="text-secondary" th:text=#{label.date.audit}></label>
 							<i th:text="${#dates.format(selected.audit_case.audit_date,'dd-MMM-yyyy')}"></i>
@@ -229,7 +229,7 @@
 								th:text="${selected.audit_case.case_death == 1}?#{label.still.birth}:#{label.neonatal.death}"></i>
 						</div>
 					</div>
-					<div class="border-bottom"></div>
+					<div th:insert="fragments/review-case :: case_review"></div>
 				</div>
 			</div>
 		</form>
@@ -257,6 +257,44 @@
 				});
 			}, false);
 		})();
+	</script>
+	<script>
+		$('#audit_death').change(
+			function () {
+				$.getJSON("http://localhost:5000/auditing/icdcodes", {
+					audit_death: $(this).val(),
+					ajax: 'true'
+				}, function (data) {
+					var html = '<option value="">--select--</option>';
+					var len = data.length;
+					for (var i = 0; i < len; i++) {
+						html += '<option value="' + data[i].icd_code + '">'
+							+ data[i].icd_code +" : "+ data[i].icd_desc + '</option>';
+					}
+					html += '</option>';
+					$('#audit_icd10').html(html);
+					
+					
+				});
+			});
+	</script>
+	<script>
+		$('#audit_death').change(
+			function () {
+				$.getJSON("http://localhost:5000/auditing/pmcodes", {
+					audit_death: $(this).val(),
+					ajax: 'true'
+				}, function (data) {
+					var html = '<option value="">--select--</option>';
+					var len = data.length;
+					for (var i = 0; i < len; i++) {
+						html += '<option value="' + data[i].pm_code + '">'
+							+ data[i].pm_code +" : "+ data[i].pm_desc + '</option>';
+					}
+					html += '</option>';
+					$('#audit_icdpm').html(html);
+				});
+			});
 	</script>
 </scripts>
 
