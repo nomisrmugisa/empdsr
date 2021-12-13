@@ -9,7 +9,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AuditCaseRepository extends JpaRepository<audit_case, String> {
-	@Query("select a FROM audit_case a LEFT JOIN audit_audit t ON(a.audit_uuid=t.audit_uuid) WHERE t.audit_uuid IS NULL")
-	List<audit_case> findBySelectedCases();
+	@Query("select DISTINCT a FROM audit_case a LEFT JOIN audit_audit t ON(a.audit_uuid=t.audit_uuid) WHERE t.audit_uuid IS NULL")
+	List<audit_case> findByPendingAudit();
 
+	@Query("select DISTINCT t.audit_case FROM audit_audit t INNER JOIN audit_recommendation r ON(t.audit_uuid=r.audit_uuid) WHERE r.recommendation_status=?1")
+	List<audit_case> findByStatusOfRecommenedCases(Integer status);
 }

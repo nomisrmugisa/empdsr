@@ -48,6 +48,10 @@
     MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('death_options',1,'Stillbirth');
     MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('death_options',2,'Early Neonatal Death');
     
+    MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('adeath_options',1,'Stillbirth Intrapartum');
+    MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('adeath_options',2,'Stillbirth Antepartum');
+    MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('adeath_options',3,'Early Neonatal Death');
+
     MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('sex_options',1,'Male');
     MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('sex_options',2,'Female');
     

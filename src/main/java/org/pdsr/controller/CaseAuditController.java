@@ -1,6 +1,7 @@
 package org.pdsr.controller;
 
 import java.security.Principal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -9,18 +10,23 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.pdsr.CONSTANTS;
 import org.pdsr.json.json_data;
 import org.pdsr.json.json_list;
 import org.pdsr.model.audit_audit;
 import org.pdsr.model.audit_case;
+import org.pdsr.model.case_biodata;
 import org.pdsr.model.case_identifiers;
+import org.pdsr.model.datamapPK;
 import org.pdsr.model.icd_codes;
 import org.pdsr.pojos.icdpm;
 import org.pdsr.repo.AuditAuditRepository;
 import org.pdsr.repo.AuditCaseRepository;
 import org.pdsr.repo.CaseRepository;
+import org.pdsr.repo.DatamapRepository;
 import org.pdsr.repo.IcdCodesRepository;
 import org.pdsr.repo.SyncTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +66,9 @@ public class CaseAuditController {
 	private IcdCodesRepository icdRepo;
 
 	@Autowired
+	private DatamapRepository mapRepo;
+
+	@Autowired
 	private MessageSource msg;
 
 	@GetMapping("")
@@ -70,7 +79,8 @@ public class CaseAuditController {
 			return "home";
 		}
 
-		model.addAttribute("items", acaseRepo.findBySelectedCases());
+		model.addAttribute("items", acaseRepo.findByPendingAudit());
+		model.addAttribute("items1", tcaseRepo.findByPendingRecommendation());
 		model.addAttribute("back", "back");
 
 		return "auditing/audit-retrieve";
@@ -242,11 +252,22 @@ public class CaseAuditController {
 	@PostMapping("/edit/{id}")
 	public String submit(Principal principal, @ModelAttribute("selected") audit_audit selected,
 			@PathVariable("id") String case_uuid) {
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-		selected.setAudit_uuid(case_uuid);
-		selected.setAudit_case(acaseRepo.findById(case_uuid).get());
+		try {
+			selected.setAudit_uuid(case_uuid);
+			selected.setAudit_cdate(new java.util.Date());
+			selected.setAudit_case(acaseRepo.findById(case_uuid).get());
 
-		tcaseRepo.save(selected);
+			String arrayToJson;
+			arrayToJson = objectMapper.writeValueAsString(processListOf(selected));
+			selected.setAudit_json(arrayToJson);
+			tcaseRepo.save(selected);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return "auditing/audit-create";
+		}
 
 		return "redirect:/auditing?success=yes";
 	}
@@ -356,6 +377,71 @@ public class CaseAuditController {
 
 	private String getQuestion(String code) {
 		return msg.getMessage(code, null, Locale.getDefault());
+	}
+
+	private String getAnswer(String feature, Integer value) {
+		if (mapRepo.findById(new datamapPK(feature, value)).isPresent()) {
+			return mapRepo.findById(new datamapPK(feature, value)).get().getMap_label();
+		}
+		
+		return "NA";
+	}
+
+	private String getIcdDesc(String icd) {
+		if (icd != null) {
+			return icd + " : " + icdRepo.findById(icd).get().getIcd_desc();
+		} else {
+			return "NA";
+		}
+	}
+
+	private String getPMDesc(final Integer death, final String pm) {
+		switch (death) {
+		case 1: {
+			if (!icdRepo.findIntrapartumPMByICD(pm).isEmpty()) {
+				icd_codes icd = icdRepo.findIntrapartumPMByICD(pm).get(0);
+				return pm + " : " + icd.getIcd_pmi_desc();
+			}
+		}
+		case 2: {
+			if (!icdRepo.findAntepartumPMByICD(pm).isEmpty()) {
+				icd_codes icd = icdRepo.findAntepartumPMByICD(pm).get(0);
+				return pm + " : " + icd.getIcd_pma_desc();
+			}
+		}
+		case 3: {
+			if (!icdRepo.findNeonatalPMByICD(pm).isEmpty()) {
+				icd_codes icd = icdRepo.findNeonatalPMByICD(pm).get(0);
+				return pm + " : " + icd.getIcd_pmi_desc();
+			}
+		}
+		default: {
+			return "NA";
+		}
+		}
+
+	}
+
+	private List<json_data> processListOf(audit_audit o) {
+		List<json_data> list = Stream.of(
+				new json_data(getQuestion("label.audit_death"), getAnswer("adeath_options", o.getAudit_death())),
+				new json_data(getQuestion("label.audit_icd10"), getIcdDesc(o.getAudit_icd10())),
+				new json_data(getQuestion("label.audit_icdpm"), getPMDesc(o.getAudit_death(), o.getAudit_icdpm())),
+				new json_data(getQuestion("label.audit_csc"), o.getAudit_csc()),
+				new json_data(getQuestion("label.audit_delay1"), getAnswer("yesnodk_options", o.getAudit_delay1())),
+				new json_data(getQuestion("label.audit_delay2"), getAnswer("yesnodk_options", o.getAudit_delay2())),
+				new json_data(getQuestion("label.audit_delay3a"), getAnswer("yesnodk_options", o.getAudit_delay3a())),
+				new json_data(getQuestion("label.audit_delay3b"), getAnswer("yesnodk_options", o.getAudit_delay3b())),
+				new json_data(getQuestion("label.audit_delay3b"), getAnswer("yesnodk_options", o.getAudit_delay3c())),
+				new json_data(getQuestion("label.audit_ifcmfs"), o.getAudit_ifcmfs()),
+				new json_data(getQuestion("label.audit_sysmfs"), o.getAudit_sysmfs()),
+				new json_data(getQuestion("label.audit_facmfs"), o.getAudit_facmfs()),
+				new json_data(getQuestion("label.audit_hwkmfs"), o.getAudit_hwkmfs()),
+				new json_data(getQuestion("label.audit_cdate"),
+						new SimpleDateFormat("dd-MMM-yyyy").format(o.getAudit_cdate())))
+				.collect(Collectors.toList());
+
+		return list;
 	}
 
 }// end class

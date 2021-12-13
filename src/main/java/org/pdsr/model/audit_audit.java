@@ -1,6 +1,8 @@
 package org.pdsr.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
@@ -10,9 +12,16 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.MapsId;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.hibernate.envers.NotAudited;
+import org.springframework.format.annotation.DateTimeFormat;
+
 
 @Entity
 public class audit_audit implements Serializable {
@@ -82,6 +91,19 @@ public class audit_audit implements Serializable {
 	@Column
 	private String audit_hwkmfs;
 
+	@NotNull
+	@Column
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private java.util.Date audit_cdate;
+
+	@Lob
+	@Column
+	private String audit_json;
+
+	@NotAudited
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "audit_uuid")
+	private List<audit_recommendation> recommendations = new ArrayList<>();
 
 	
 	public String getAudit_uuid() {
@@ -175,6 +197,26 @@ public class audit_audit implements Serializable {
 	}
 	public void setAudit_case(audit_case audit_case) {
 		this.audit_case = audit_case;
+	}
+	
+	public java.util.Date getAudit_cdate() {
+		return audit_cdate;
+	}
+	public void setAudit_cdate(java.util.Date audit_cdate) {
+		this.audit_cdate = audit_cdate;
+	}
+	
+	public String getAudit_json() {
+		return audit_json;
+	}
+	public void setAudit_json(String audit_json) {
+		this.audit_json = audit_json;
+	}
+	public List<audit_recommendation> getRecommendations() {
+		return recommendations;
+	}
+	public void setRecommendations(List<audit_recommendation> recommendations) {
+		this.recommendations = recommendations;
 	}
 	@Override
 	public int hashCode() {
