@@ -5,22 +5,50 @@
 <content>
 	<div class="float-end" th:text="${facility_code}"></div>
 	<div class="col-md-12 py-3 my-3 mx-auto p-1 rounded box-shadow" style="background-color: #92c7f2;">
-		<form action="#" th:action="@{/auditing/recommend/{id}(id=${selected.audit_uuid})}" th:object="${selected}"
-			method="POST" class="needs-validation" novalidate>
-			<div class="row mb-3">
+		<form action="#" th:action="@{/auditing/recommend/{id}(id=${selected.audit_uuid.audit_uuid})}"
+			th:object="${selected}" method="POST" class="needs-validation" novalidate>
+			<div class="row">
 				<div class="col-md-6 mb-3">
 					<div class="bg-light p-2 rounded">
-						<div class="overflow-auto" style="height: 400px;">
-							<table class="table">
+						<table class="table">
+							<thead>
+								<tr>
+									<th th:text="#{title.audited}"></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="item : ${caseaudited}">
+									<td>
+										<span class="text-muted">[(${item.question})]]</span>:
+										<span class="fw-bold">[(${item.answer})]</span>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<div>
+							<h4 th:text="#{title.recommendation}" class="badge bg-primary d-grid"></h4>
+							<table class="table table-dark small">
 								<thead>
 									<tr>
-										<th colspan="2" th:text="#{title.audited}"></th>
+										<th th:text="#{recommendation.date}"></th>
+										<th th:text="#{recommendation.task}"></th>
+										<th th:text="#{recommendation.lead}"></th>
+										<th th:text="#{recommendation.memb}"></th>
+										<th th:text="#{recommendation.dead}"></th>
 									</tr>
 								</thead>
 								<tbody>
-									<tr th:each="item : ${caseaudited}">
-										<td th:utext="${item.question}" class="text-secondary"></td>
-										<td th:utext="${item.answer}" style="width: 50%;"></td>
+									<tr th:each="item : ${recommendations}" th:class="${item.rec_color}">
+										<td th:text="${item.recommendation_date}">
+										</td>
+										<td th:text="${item.recommendation_title}">
+										</td>
+										<td th:text="${item.recommendation_leader}">
+										</td>
+										<td th:text="${item.recommendation_reporter}">
+										</td>
+										<td th:text="${#dates.format(item.recommendation_deadline,'dd-MMM-yyyy')}">
+										</td>
 									</tr>
 								</tbody>
 							</table>
@@ -36,6 +64,17 @@
 </content>
 
 <scripts>
+	<script>
+		$(function () {
+			$(".datepicker").datepicker({
+				dateFormat: 'dd/mm/yy',
+				changeMonth: true,
+				changeYear: true,
+				minDate: new Date()
+			});
+		});
+	</script>
+
 	<script>
 		(function () {
 			'use strict';
@@ -56,54 +95,6 @@
 				});
 			}, false);
 		})();
-	</script>
-	<script>
-		$('#audit_death').click(
-			function () {
-				$.getJSON("http://localhost:5000/auditing/icdcodes", {
-					audit_death: $(this).val(),
-					ajax: 'true'
-				}, function (data) {
-					var html = '<option value="">--select--</option>';
-					var len = data.length;
-					for (var i = 0; i < len; i++) {
-						html += '<option value="' + data[i].icd_code + '">'
-							+ data[i].icd_code + " : " + data[i].icd_desc + '</option>';
-					}
-					html += '</option>';
-					$('#audit_icd10').html(html);
-				});
-			});
-	</script>
-	<script>
-		$('#audit_death').click(
-			function () {
-				$.getJSON("http://localhost:5000/auditing/pmcodes", {
-					audit_death: $(this).val(),
-					ajax: 'true'
-				}, function (data) {
-					var html = '<option value="">--select--</option>';
-					var len = data.length;
-					for (var i = 0; i < len; i++) {
-						html += '<option value="' + data[i].pm_code + '">'
-							+ data[i].pm_code + " : " + data[i].pm_desc + '</option>';
-					}
-					html += '</option>';
-					$('#audit_icdpm').html(html);
-				});
-			});
-	</script>
-	<script>
-		$('#audit_icd10').change(
-			function () {
-				$.getJSON("http://localhost:5000/auditing/pmselect", {
-					audit_death: $('#audit_death').val(),
-					audit_icd10: $(this).val(),
-					ajax: 'true'
-				}, function (data) {
-					document.getElementById("audit_icdpm").value = data.pm_code;
-				});
-			});
 	</script>
 </scripts>
 

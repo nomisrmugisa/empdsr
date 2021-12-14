@@ -10,21 +10,25 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.transaction.Transactional;
 
 import org.pdsr.CONSTANTS;
 import org.pdsr.json.json_data;
 import org.pdsr.json.json_list;
 import org.pdsr.model.audit_audit;
 import org.pdsr.model.audit_case;
-import org.pdsr.model.case_biodata;
+import org.pdsr.model.audit_recommendation;
 import org.pdsr.model.case_identifiers;
 import org.pdsr.model.datamapPK;
 import org.pdsr.model.icd_codes;
 import org.pdsr.pojos.icdpm;
 import org.pdsr.repo.AuditAuditRepository;
 import org.pdsr.repo.AuditCaseRepository;
+import org.pdsr.repo.AuditRecommendRepository;
 import org.pdsr.repo.CaseRepository;
 import org.pdsr.repo.DatamapRepository;
 import org.pdsr.repo.IcdCodesRepository;
@@ -63,6 +67,9 @@ public class CaseAuditController {
 	private AuditAuditRepository tcaseRepo;
 
 	@Autowired
+	private AuditRecommendRepository rcaseRepo;
+
+	@Autowired
 	private IcdCodesRepository icdRepo;
 
 	@Autowired
@@ -81,6 +88,32 @@ public class CaseAuditController {
 
 		model.addAttribute("items", acaseRepo.findByPendingAudit());
 		model.addAttribute("items1", tcaseRepo.findByPendingRecommendation());
+
+		List<audit_recommendation> recommendations = new ArrayList<>();
+		for (audit_recommendation elem : rcaseRepo.findAll()) {
+
+			if (elem.getRecommendation_status() == 2) {
+				elem.setRec_color("table-success");
+
+			} else if (elem.getRecommendation_date().before(elem.getRecommendation_deadline())) {// date passed but not
+																									// completed
+
+				if (elem.getRecommendation_status() == 1) {
+					elem.setRec_color("table-warning");
+				} else {
+					elem.setRec_color("table-light");
+				}
+
+			} else {
+				elem.setRec_color("table-danger");
+				elem.setBg_color("fw-bold text-danger");
+			}
+
+			recommendations.add(elem);
+		}
+
+		model.addAttribute("items2", recommendations);
+
 		model.addAttribute("back", "back");
 
 		return "auditing/audit-retrieve";
@@ -272,6 +305,111 @@ public class CaseAuditController {
 		return "redirect:/auditing?success=yes";
 	}
 
+	@GetMapping("/recommend/{id}")
+	public String recommendation(Principal principal, Model model, @PathVariable("id") String case_uuid,
+			@RequestParam(name = "success", required = false) String success) {
+
+		if (syncRepo.findById(CONSTANTS.FACILITY_ID).isEmpty()) {
+			model.addAttribute("activated", "0");
+			return "home";
+		}
+
+		if (success != null) {
+			model.addAttribute("success", "Saved Successfully");
+		}
+		// load the ICD 10 codes
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+		TypeReference<List<json_data>> mapType = new TypeReference<List<json_data>>() {
+		};
+
+		Optional<audit_audit> audit = tcaseRepo.findById(case_uuid);
+
+		List<json_data> dataset;
+		try {
+			dataset = objectMapper.readValue(audit.get().getAudit_json(), mapType);
+		} catch (JsonProcessingException e) {
+			dataset = new ArrayList<>();
+			e.printStackTrace();
+		}
+		model.addAttribute("caseaudited", dataset);
+		List<audit_recommendation> recommendations = new ArrayList<>();
+		for (audit_recommendation elem : audit.get().getRecommendations()) {
+
+			if (elem.getRecommendation_status() == 2) {
+				elem.setRec_color("table-success");
+
+			} else if (elem.getRecommendation_date().before(elem.getRecommendation_deadline())) {// date passed but not
+																									// completed
+
+				if (elem.getRecommendation_status() == 1) {
+					elem.setRec_color("table-warning");
+				} else {
+					elem.setRec_color("table-light");
+				}
+
+			} else {
+				elem.setRec_color("table-danger");
+			}
+
+			recommendations.add(elem);
+		}
+
+		model.addAttribute("recommendations", recommendations);
+
+		audit_recommendation selected = new audit_recommendation();
+		selected.setRecommendation_uuid(UUID.randomUUID().toString());
+		selected.setAudit_uuid(audit.get());
+
+		model.addAttribute("selected", selected);
+
+		return "auditing/audit-recommend";
+
+	}
+
+	@Transactional
+	@PostMapping("/recommend/{id}")
+	public String recommendation(Principal principal, @ModelAttribute("selected") audit_recommendation selected,
+			@PathVariable("id") String case_uuid) {
+
+		audit_audit audit = tcaseRepo.findById(case_uuid).get();
+		if (audit.getRecommendations() == null) {
+			audit.setRecommendations(new ArrayList<>());
+		}
+
+		selected.setRecommendation_uuid(UUID.randomUUID().toString());
+		selected.setRecommendation_date(new java.util.Date());
+		selected.setRecommendation_status(0);
+		selected.setAudit_uuid(audit);
+
+		audit.getRecommendations().add(selected);
+
+		tcaseRepo.save(audit);
+
+		return "redirect:/auditing/recommend/" + case_uuid + "?success=yes";
+	}
+
+	@GetMapping("/recommend/started/{id}")
+	public String recommendStarted(Principal principal, @PathVariable("id") String recommendation_uuid) {
+
+		audit_recommendation recommend = rcaseRepo.findById(recommendation_uuid).get();
+		recommend.setRecommendation_status(1);
+		rcaseRepo.save(recommend);
+
+		return "redirect:/auditing";
+	}
+
+	@GetMapping("/recommend/completed/{id}")
+	public String recommendCompleted(Principal principal, @PathVariable("id") String recommendation_uuid) {
+
+		audit_recommendation recommend = rcaseRepo.findById(recommendation_uuid).get();
+		recommend.setRecommendation_status(2);
+		rcaseRepo.save(recommend);
+
+		return "redirect:/auditing";
+	}
+
 	@GetMapping(value = "/icdcodes")
 	public @ResponseBody List<icd_codes> findICDCodes(
 			@RequestParam(value = "audit_death", required = true) Integer audit_death) {
@@ -383,7 +521,7 @@ public class CaseAuditController {
 		if (mapRepo.findById(new datamapPK(feature, value)).isPresent()) {
 			return mapRepo.findById(new datamapPK(feature, value)).get().getMap_label();
 		}
-		
+
 		return "NA";
 	}
 
@@ -424,10 +562,10 @@ public class CaseAuditController {
 
 	private List<json_data> processListOf(audit_audit o) {
 		List<json_data> list = Stream.of(
-				new json_data(getQuestion("label.audit_death"), getAnswer("adeath_options", o.getAudit_death())),
-				new json_data(getQuestion("label.audit_icd10"), getIcdDesc(o.getAudit_icd10())),
-				new json_data(getQuestion("label.audit_icdpm"), getPMDesc(o.getAudit_death(), o.getAudit_icdpm())),
-				new json_data(getQuestion("label.audit_csc"), o.getAudit_csc()),
+//				new json_data(getQuestion("label.audit_death"), getAnswer("adeath_options", o.getAudit_death())),
+//				new json_data(getQuestion("label.audit_icd10"), getIcdDesc(o.getAudit_icd10())),
+//				new json_data(getQuestion("label.audit_icdpm"), getPMDesc(o.getAudit_death(), o.getAudit_icdpm())),
+//				new json_data(getQuestion("label.audit_csc"), o.getAudit_csc()),
 				new json_data(getQuestion("label.audit_delay1"), getAnswer("yesnodk_options", o.getAudit_delay1())),
 				new json_data(getQuestion("label.audit_delay2"), getAnswer("yesnodk_options", o.getAudit_delay2())),
 				new json_data(getQuestion("label.audit_delay3a"), getAnswer("yesnodk_options", o.getAudit_delay3a())),

@@ -11,6 +11,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -63,7 +64,7 @@ public class audit_recommendation implements Serializable {
 	@NotNull
 	@Column
 	@Temporal(TemporalType.DATE)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private java.util.Date recommendation_deadline;
 
 	@Column
@@ -79,6 +80,29 @@ public class audit_recommendation implements Serializable {
 	@Column
 	@NotNull
 	private String recommendation_comments;
+	
+	@Transient
+	private String rec_color;
+
+	@Transient
+	private String bg_color;
+
+	
+	public String getBg_color() {
+		return bg_color;
+	}
+
+	public void setBg_color(String bg_color) {
+		this.bg_color = bg_color;
+	}
+
+	public String getRec_color() {
+		return rec_color;
+	}
+
+	public void setRec_color(String rec_color) {
+		this.rec_color = rec_color;
+	}
 
 	public String getRecommendation_uuid() {
 		return recommendation_uuid;

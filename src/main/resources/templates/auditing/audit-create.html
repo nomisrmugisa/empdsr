@@ -293,7 +293,7 @@
 				});
 			});
 	</script>
-	<script>
+	<script th:inline="javascript">
 		$('#audit_icd10').change(
 			function () {
 				$.getJSON("http://localhost:5000/auditing/pmselect", {
@@ -301,7 +301,46 @@
 					audit_icd10: $(this).val(),
 					ajax: 'true'
 				}, function (data) {
-					document.getElementById("audit_icdpm").value = data.pm_code;
+					$("#div_pmwarn").html('');
+					$("#div_pmcode").html('');
+					if (data.pm_code != null) {
+						var sel_pm = $('#audit_icdpm').val();
+						var htmlcode = '<span class="fw-bold text-danger">' + data.pm_code + '</span>&nbsp;';
+						var htmldesc = '<span class="fw-bold text-dark">' + data.pm_desc + '</span>';
+						$("#div_pmcode").html(htmlcode + htmldesc);
+						if (sel_pm != data.pm_code && sel_pm != '') {
+							var expected = /*[[#{pm.icd.mismatch}]]*/ "";
+							var selected = /*[[#{pm.icd.selected}]]*/ "";
+							$("#div_pmwarn").html(expected + '&nbsp;' + htmlcode + htmldesc + '&nbsp;' + selected + '&nbsp;<b class="text-danger">' + sel_pm + '</b>');
+							//document.getElementById('audit_icdpm').value = '';
+						}
+					}
+				});
+			});
+	</script>
+	<script th:inline="javascript">
+		$('#audit_icdpm').change(
+			function () {
+				$.getJSON("http://localhost:5000/auditing/pmselect", {
+					audit_death: $('#audit_death').val(),
+					audit_icd10: $('#audit_icd10').val(),
+					ajax: 'true'
+				}, function (data) {
+					var sel_icd = $('#audit_icd10').val();
+					$("#div_pmwarn").html('');
+					$("#div_pmcode").html('');
+					if (sel_icd != '') {
+						var sel_pm = $('#audit_icdpm').val();
+						var htmlcode = '<span class="fw-bold text-danger">' + data.pm_code + '</span>&nbsp;';
+						var htmldesc = '<span class="fw-bold text-dark">' + data.pm_desc + '</span>';
+						$("#div_pmcode").html(htmlcode + htmldesc);
+						if (sel_pm != data.pm_code) {
+							var expected = /*[[#{pm.icd.mismatch}]]*/ "";
+							var selected = /*[[#{pm.icd.selected}]]*/ "";
+							$("#div_pmwarn").html(expected + '&nbsp;' + htmlcode + htmldesc + '&nbsp;' + selected + '&nbsp;<b class="text-danger">' + sel_pm + '</b>');
+							//document.getElementById('audit_icdpm').value = '';
+						}
+					}
 				});
 			});
 	</script>
