@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html th:replace="~{layout/auditing :: layout(_,~{},~{::scripts},~{::content},~{})}">
 
-
 <content>
 	<div class="float-end" th:text="${facility_code}"></div>
 	<div class="col-md-12 py-3 my-3 mx-auto p-1 rounded box-shadow" style="background-color: #92c7f2;">
@@ -343,6 +342,10 @@
 					}
 				});
 			});
+	</script>
+	<script>
+		$('#audit_icd10').editableSelect();
+		$('#audit_icdpm').editableSelect();
 	</script>
 </scripts>
 

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org">
+
+<head>
+
+<title>Error</title>
+<base href="/">
+<!-- common links -->
+<link href="webjars/bootstrap/4.4.1/css/bootstrap.min.css"
+	rel="stylesheet">
+
+</head>
+
+<body class="ml-5 mr-5 mb-5 mt-2 bg-light">
+	<div
+		class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light text-danger">
+		<p class="p-lg-2 mx-auto my-5 lead font-weight-normal text-light">
+			Error message</p>
+		<h1 class="display-4 font-weight-normal">[[${message}]]</h1>
+		<div class="p-lg-2 mx-auto my-5">
+			<input class="btn btn-outline-dark col-md-3 col-xs-12"
+				onclick='javascript:window.history.back()' value='&lt;&lt; Back'
+				type='button' />
+		</div>
+
+	</div>
+
+	<footer class="text-center">
+
+		&copy; 2020 Kintampo Health Research Centre
+
+		<!-- common scripts -->
+		<script src="webjars/jquery/3.4.1/jquery.min.js"></script>
+		<script src="webjars/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+	</footer>
+
+</body>
+</html>

@@ -112,7 +112,6 @@
 						<th th:utext="#{label.recommend.need}"></th>
 						<th th:utext="#{label.recommend.note}"></th>
 						<th th:utext="#{label.recommend.stat}"></th>
-						<th th:utext="#{label.recommend.acts}"></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -125,10 +124,10 @@
 							th:class="|${item.bg_color}|"></td>
 						<td th:text="${item.recommendation_resources}"></td>
 						<td th:text="${item.recommendation_comments}"></td>
-						<td
-							th:text="${item.recommendation_status==0}?#{status.not.started}:(${item.recommendation_status==1}?#{status.started}:'')">
-						</td>
 						<td>
+							<div th:unless="${item.recommendation_status==2}"
+								th:text="${item.recommendation_status==0}?#{status.not.started}:(${item.recommendation_status==1}?#{status.started}:'')">
+							</div>
 							<div class="dropdown" th:unless="${item.recommendation_status==2}">
 								<button class="btn btn-primary dropdown-toggle" type="button"
 									data-toggle="dropdown">[[#{button.change.status}]]
