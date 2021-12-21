@@ -163,95 +163,105 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.referral_case}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{referral.referral_case}" required>
+			<select id="referral_case" class="form-control form-control-sm" th:field="*{referral.referral_case}"
+				onchange="changeOtherToNA(this)" required>
 				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
 		</div>
 	</div>
-	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.referral_patient}"></label>
-		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{referral.referral_patient}" required>
-				<option th:each="option : ${patient_options}" th:value="${option.key}" th:text="${option.value}">
-				</option>
-			</select>
+	<fieldset id="referral_fieldset">
+		<div class="row mb-3">
+			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.referral_patient}"></label>
+			<div class="col-auto">
+				<select id="referral_patient" class="form-control form-control-sm"
+					th:field="*{referral.referral_patient}" required>
+					<option th:each="option : ${patient_options}" th:value="${option.key}" th:text="${option.value}">
+					</option>
+				</select>
+			</div>
 		</div>
-	</div>
-	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.referral_source}"></label>
-		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{referral.referral_source}" required>
-				<option th:each="option : ${source_options}" th:value="${option.key}" th:text="${option.value}">
-				</option>
-			</select>
+		<div class="row mb-3">
+			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.referral_source}"></label>
+			<div class="col-auto">
+				<select id="referral_source" class="form-control form-control-sm" th:field="*{referral.referral_source}"
+					required>
+					<option th:each="option : ${source_options}" th:value="${option.key}" th:text="${option.value}">
+					</option>
+				</select>
+			</div>
 		</div>
-	</div>
-	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.referral_facility}"></label>
-		<div class="col-md-6">
-			<input class="form-control form-control-sm" th:field="*{referral.referral_facility}" />
+		<div class="row mb-3">
+			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.referral_facility}"></label>
+			<div class="col-md-6">
+				<input id="referral_facility" class="form-control form-control-sm"
+					th:field="*{referral.referral_facility}" />
+			</div>
 		</div>
-	</div>
-	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.referral_datetime}"></label>
-		<div class="col-auto">
-			<div class="row">
-				<div class="col-auto">
-					<input class="form-control form-control-sm datepicker" th:field="*{referral.referral_date}" />
-				</div>
-				<div class="col-auto">
-					<div class="row">
-						<div class="col-auto">
-							<input class="form-control form-control-sm timepicker"
-								th:field="*{referral.referral_time}" />
+		<div class="row mb-3" id="referral_datetime">
+			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.referral_datetime}"></label>
+			<div class="col-auto">
+				<div class="row">
+					<div class="col-auto">
+						<input id="referral_date" class="form-control form-control-sm datepicker"
+							th:field="*{referral.referral_date}" />
+					</div>
+					<div class="col-auto">
+						<div class="row">
+							<div class="col-auto">
+								<input id="referral_time" class="form-control form-control-sm timepicker"
+									th:field="*{referral.referral_time}" />
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.referral_adatetime}"></label>
-		<div class="col-auto">
-			<div class="row">
-				<div class="col-auto">
-					<input class="form-control form-control-sm datepicker" th:field="*{referral.referral_adate}" />
-				</div>
-				<div class="col-auto">
-					<div class="row">
-						<div class="col-auto">
-							<input class="form-control form-control-sm timepicker"
-								th:field="*{referral.referral_atime}" />
+		<div class="row mb-3">
+			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.referral_adatetime}"></label>
+			<div class="col-auto">
+				<div class="row">
+					<div class="col-auto">
+						<input id="referral_adate" class="form-control form-control-sm datepicker"
+							th:field="*{referral.referral_adate}" />
+					</div>
+					<div class="col-auto">
+						<div class="row">
+							<div class="col-auto">
+								<input id="referral_atime" class="form-control form-control-sm timepicker"
+									th:field="*{referral.referral_atime}" />
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.referral_transport}"></label>
-		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{referral.referral_transport}" required>
-				<option th:each="option : ${trans_options}" th:value="${option.key}" th:text="${option.value}"></option>
-			</select>
-		</div>
-	</div>
-	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.referral_file}"></label>
-		<div class="col-auto">
-			<div class="custom-file">
-				<input type="file" class="custom-file-input" id="customFile" th:field="*{referral.referral_file}">
+		<div class="row mb-3">
+			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.referral_transport}"></label>
+			<div class="col-auto">
+				<select id="referral_transport" class="form-control form-control-sm"
+					th:field="*{referral.referral_transport}" required>
+					<option th:each="option : ${trans_options}" th:value="${option.key}" th:text="${option.value}">
+					</option>
+				</select>
 			</div>
 		</div>
-	</div>
-	<div class="row mb-3">
-		<label class="col-md-4 col-form-label" th:text="#{label.referral_notes}"></label>
-		<div class="col-md-8">
-			<textarea rows="5" class="form-control form-control-sm" th:field="*{referral.referral_notes}"
-				placeholder="Optional notes"></textarea>
+		<div class="row mb-3">
+			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.referral_file}"></label>
+			<div class="col-auto">
+				<div id="referral_file" class="custom-file">
+					<input type="file" class="custom-file-input" id="customFile" th:field="*{referral.referral_file}">
+				</div>
+			</div>
 		</div>
-	</div>
+		<div class="row mb-3">
+			<label class="col-md-4 col-form-label" th:text="#{label.referral_notes}"></label>
+			<div class="col-md-8">
+				<textarea id="referral_notes" rows="5" class="form-control form-control-sm"
+					th:field="*{referral.referral_notes}" placeholder="Optional notes"></textarea>
+			</div>
+		</div>
+	</fieldset>
 	<fieldset hidden=true>
 		<input th:field="*{referral.referral_uuid}" /> <input th:field="*{referral.case_uuid}" />
 	</fieldset>
@@ -353,51 +363,61 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_attend}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{antenatal.antenatal_attend}" required>
+			<select id="antenatal_attend" class="form-control form-control-sm" th:field="*{antenatal.antenatal_attend}"
+				onchange="changeAntenatalOtherToNA(this)" required>
 				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
 		</div>
 	</div>
-	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_attendno}"></label>
-		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{antenatal.antenatal_attendno}" required>
-				<option th:each="option : ${attendno_options}" th:value="${option.key}" th:text="${option.value}">
-				</option>
-			</select>
+
+	<fieldset id="antenatal_attend_fieldset">
+		<div class="row mb-3">
+			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_attendno}"></label>
+			<div class="col-auto">
+				<select id="antenatal_attendno" class="form-control form-control-sm"
+					th:field="*{antenatal.antenatal_attendno}" required>
+					<option th:each="option : ${attendno_options}" th:value="${option.key}" th:text="${option.value}">
+					</option>
+				</select>
+			</div>
 		</div>
-	</div>
-	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_facility}"></label>
-		<div class="col-md-6">
-			<input type="text" class="form-control form-control-sm" th:field="*{antenatal.antenatal_facility}">
+		<div class="row mb-3">
+			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_facility}"></label>
+			<div class="col-md-6">
+				<input id="antenatal_facility" type="text" class="form-control form-control-sm"
+					th:field="*{antenatal.antenatal_facility}">
+			</div>
 		</div>
-	</div>
-	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_gestage}"></label>
-		<div class="col-auto">
-			<div class="row">
-				<div class="col-auto">
-					<select class="form-control form-control-sm" th:field="*{antenatal.antenatal_weeks}" required>
-						<option th:each="option : ${pweeks_options}" th:value="${option.key}" th:text="${option.value}">
-						</option>
-					</select>
-				</div>
-				<div class="col-auto">
-					<div class="row">
-						<div class="col-auto">
-							<select class="form-control form-control-sm" th:field="*{antenatal.antenatal_days}"
-								required>
-								<option th:each="option : ${pdays_options}" th:value="${option.key}"
-									th:text="${option.value}"></option>
-							</select>
+		<div class="row mb-3">
+			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_gestage}"></label>
+			<div class="col-auto">
+				<div class="row">
+					<div class="col-auto">
+						<select id="antenatal_weeks" class="form-control form-control-sm"
+							th:field="*{antenatal.antenatal_weeks}" required>
+							<option value="" th:text="#{in.weeks}"></option>
+							<option th:each="option : ${pweeks_options}" th:value="${option.key}"
+								th:text="${option.value}">
+							</option>
+						</select>
+					</div>
+					<div class="col-auto">
+						<div class="row">
+							<div class="col-auto">
+								<select id="antenatal_days" class="form-control form-control-sm"
+									th:field="*{antenatal.antenatal_days}" required>
+									<option value="" th:text="#{in.days}"></option>
+									<option th:each="option : ${pdays_options}" th:value="${option.key}"
+										th:text="${option.value}"></option>
+								</select>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	</fieldset>
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_risks}"></label>
 		<div class="col-auto">
@@ -915,6 +935,112 @@
 	</div>
 </div>
 <!-- fetal heart end -->
+
+<div th:fragment="case_babydeath">
+	<div th:insert="fragments/update-case :: core_data"></div>
+	<h4 th:text="#{title.baby}" class="text-end"></h4>
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.baby_cry}"></label>
+		<div class="col-auto">
+			<select class="form-control form-control-sm" th:field="*{babydeath.baby_cry}" required>
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.baby_resuscitation}"></label>
+		<div class="col-auto">
+			<select class="form-control form-control-sm" th:field="*{babydeath.baby_resuscitation}" required>
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label" th:text="#{label.resuscitation}"></label>
+		<div class="col-md-8">
+			<div class="row">
+				<div class="col-md-6" th:each="option : ${resuscitation_options}">
+					<label class="form-label fw-bold"> <input type="checkbox" th:field="*{babydeath.resuscitations}"
+							th:value="${option.resuscitation_name}" />
+						[[${option.resuscitation_name}]]
+					</label>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.new_resuscitation}"></label>
+		<div class="col-md-8">
+			<textarea rows="5" class="form-control form-control-sm" th:field="*{babydeath.new_resuscitaton}"
+				th:placeholder="#{hold.resuscitation.new_line}"></textarea>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.baby_apgar1}"></label>
+		<div class="col-auto">
+			<select class="form-control form-control-sm" th:field="*{babydeath.baby_apgar1}" required>
+				<option th:each="option : ${apgar_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.baby_apgar5}"></label>
+		<div class="col-auto">
+			<select class="form-control form-control-sm" th:field="*{babydeath.baby_apgar5}" required>
+				<option th:each="option : ${apgar_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.baby_admitted}"></label>
+		<div class="col-auto">
+			<select class="form-control form-control-sm" th:field="*{babydeath.baby_admitted}" required>
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label" th:text="#{label.diagnoses}"></label>
+		<div class="col-md-8">
+			<div class="row">
+				<div class="col-md-6" th:each="option : ${diagnoses_options}">
+					<label class="form-label fw-bold"> <input type="checkbox" th:field="*{babydeath.diagnoses}"
+							th:value="${option.diagnosis_name}" />
+						[[${option.diagnosis_name}]]
+					</label>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.new_diagnoses}"></label>
+		<div class="col-md-8">
+			<textarea rows="5" class="form-control form-control-sm" th:field="*{birth.new_diagnoses}"
+				th:placeholder="#{hold.diagnosis.new_line}"></textarea>
+		</div>
+	</div>
+
+	<fieldset hidden=true>
+		<input th:field="*{babydeath.baby_uuid}" /> <input th:field="*{babydeath.case_uuid}" />
+	</fieldset>
+
+	<hr class="mb-2 bg-secondary">
+	<div class="">
+		<a class="btn btn-light" th:utext="#{prev.button}"
+			th:href="@{/registry/edit/{id}?page=7(id=${selected.case_uuid})}"></a>
+		<button class="btn btn-primary" type="submit" th:utext="#{save.button}"></button>
+		<a class="btn btn-light" th:utext="#{next.button}"
+			th:href="@{/registry/edit/{id}?page=9(id=${selected.case_uuid})}"></a>
+	</div>
+</div>
+<!-- baby death end -->
 
 
 

@@ -14,7 +14,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -105,7 +104,8 @@ public class case_antenatal implements Serializable {
 	private List<risk_table> risks = new ArrayList<>();
 
 	
-	@Transient
+	@Lob
+	@Column
 	private String new_risks;
 
 	@Lob

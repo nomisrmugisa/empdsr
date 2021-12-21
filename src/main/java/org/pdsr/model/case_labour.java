@@ -16,7 +16,6 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -100,7 +99,8 @@ public class case_labour implements Serializable {
 	@JoinTable(name = "labour_complications", joinColumns = @JoinColumn(name = "complication_uuid"), inverseJoinColumns = @JoinColumn(name = "complication_name"))
 	private List<complication_table> complications = new ArrayList<>();
 
-	@Transient
+	@Lob
+	@Column
 	private String new_complications;
 
 	@Lob

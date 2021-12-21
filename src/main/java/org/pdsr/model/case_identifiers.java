@@ -89,6 +89,9 @@ public class case_identifiers implements Serializable {
 
 	@OneToOne(cascade = CascadeType.PERSIST, mappedBy = "case_uuid")
 	private case_birth birth;
+	
+	@OneToOne(cascade = CascadeType.PERSIST, mappedBy = "case_uuid")
+	private case_babydeath babydeath;
 
 	@OneToOne(cascade = CascadeType.PERSIST, mappedBy = "case_uuid")
 	private case_notes notes;
@@ -212,6 +215,14 @@ public class case_identifiers implements Serializable {
 
 	public void setBirth(case_birth birth) {
 		this.birth = birth;
+	}
+
+	public case_babydeath getBabydeath() {
+		return babydeath;
+	}
+
+	public void setBaby(case_babydeath babydeath) {
+		this.babydeath = babydeath;
 	}
 
 	public case_notes getNotes() {

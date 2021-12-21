@@ -29,6 +29,105 @@
 
 <scripts>
 	<script>
+		function changeReferralView() {
+			var objCombo = document.getElementById("referral_case");
+
+			if (objCombo.value != '1') {
+				$('#referral_fieldset').hide();
+
+			} else {
+				$('#referral_fieldset').show();
+			}
+		}
+		changeReferralView();
+	</script>
+	<script>
+		function changeOtherToNA(objCombo) {
+			var rpat = document.getElementById("referral_patient");
+			var rsrc = document.getElementById("referral_source");
+			var rfac = document.getElementById("referral_facility");
+			var rdate = document.getElementById("referral_date");
+			var rtime = document.getElementById("referral_time");
+			var radate = document.getElementById("referral_adate");
+			var ratime = document.getElementById("referral_atime");
+			var rtrans = document.getElementById("referral_transport");
+			var rfile = document.getElementById("referral_file");
+			var rnotes = document.getElementById("referral_notes");
+
+			if (objCombo.value != '1') {
+				rpat.value = '99';
+				rsrc.value = '99';
+				rfac.value = "NA";
+				rfac.readOnly = true;
+				rdate.value = "01/01/1970";
+				rtime.value = "12:00 PM";
+				radate.value = "01/01/1970";
+				ratime.value = "12:00 PM";
+				rtrans.value = '99';
+				rfile.hidden = true;
+				rnotes.readOnly = true;
+
+				$('#referral_fieldset').hide('fade');
+
+			} else {
+				$('#referral_fieldset').show('fade');
+
+				rpat.value = '';
+				rsrc.value = '';
+				rfac.value = "";
+				rfac.readOnly = false;
+				rdate.value = "";
+				rtime.value = "";
+				radate.value = "";
+				ratime.value = "";
+				rtrans.value = '';
+				rfile.hidden = false;
+				rnotes.readOnly = false;
+			}
+		}
+	</script>
+	<script>
+		function changeAntenatalView() {
+			var objCombo = document.getElementById("antenatal_attend");
+
+			if (objCombo.value != '1') {
+				$('#antenatal_attend_fieldset').hide();
+
+			} else {
+				$('#antenatal_attend_fieldset').show();
+			}
+		}
+		changeAntenatalView();
+	</script>
+	<script>
+		function changeAntenatalOtherToNA(objCombo) {
+			var attno = document.getElementById("antenatal_attendno");
+			var atfac = document.getElementById("antenatal_facility");
+			var atwks = document.getElementById("antenatal_weeks");
+			var atdys = document.getElementById("antenatal_days");
+
+			if (objCombo.value != '1') {
+				attno.value = '99';
+				atfac.value = "NA";
+				atfac.readOnly = true;
+				atwks.value = '99';
+				atdys.value = '99';
+
+				$('#antenatal_attend_fieldset').hide('fade');
+
+			} else {
+				$('#antenatal_attend_fieldset').show('fade');
+
+				attno.value = '';
+				atfac.value = "";
+				atfac.readOnly = false;
+				atwks.value = '';
+				atdys.value = '';
+			}
+		}
+	</script>
+
+	<script>
 		$(function () {
 			$(".datepicker").datepicker({
 				dateFormat: 'dd/mm/yy',
@@ -68,6 +167,8 @@
 
 					}, false);
 				});
+
+
 			}, false);
 		})();
 	</script>

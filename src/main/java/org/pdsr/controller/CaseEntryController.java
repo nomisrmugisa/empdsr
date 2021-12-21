@@ -2,12 +2,13 @@ package org.pdsr.controller;
 
 import java.security.Principal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -18,6 +19,7 @@ import org.pdsr.CONSTANTS;
 import org.pdsr.json.json_data;
 import org.pdsr.model.abnormality_table;
 import org.pdsr.model.case_antenatal;
+import org.pdsr.model.case_babydeath;
 import org.pdsr.model.case_biodata;
 import org.pdsr.model.case_birth;
 import org.pdsr.model.case_delivery;
@@ -31,12 +33,15 @@ import org.pdsr.model.complication_table;
 import org.pdsr.model.cordfault_table;
 import org.pdsr.model.datamap;
 import org.pdsr.model.datamapPK;
+import org.pdsr.model.diagnoses_table;
 import org.pdsr.model.facility_table;
 import org.pdsr.model.placentacheck_table;
+import org.pdsr.model.resuscitation_table;
 import org.pdsr.model.risk_table;
 import org.pdsr.model.sync_table;
 import org.pdsr.repo.AbnormalityTableRepository;
 import org.pdsr.repo.CaseAntenatalRepository;
+import org.pdsr.repo.CaseBabyRepository;
 import org.pdsr.repo.CaseBiodataRepository;
 import org.pdsr.repo.CaseBirthRepository;
 import org.pdsr.repo.CaseDeliveryRepository;
@@ -120,6 +125,9 @@ public class CaseEntryController {
 
 	@Autowired
 	private CaseFetalheartRepository fetRepo;
+
+	@Autowired
+	private CaseBabyRepository babyRepo;
 
 	@Autowired
 	private CaseNotesRepository notRepo;
@@ -280,11 +288,17 @@ public class CaseEntryController {
 		}
 
 		case 8: {
-			if (selected.getFetalheart() == null) {
+			if (selected.getFetalheart() == null & selected.getCase_death() == 1) {
 				case_fetalheart data = new case_fetalheart();
 				data.setFetalheart_uuid(UUID.randomUUID().toString());
 				data.setCase_uuid(selected);
 				selected.setFetalheart(data);
+
+			} else if (selected.getBabydeath() == null & selected.getCase_death() == 2) {
+				case_babydeath data = new case_babydeath();
+				data.setBaby_uuid(UUID.randomUUID().toString());
+				data.setCase_uuid(selected);
+				selected.setBaby(data);
 			}
 			break;
 		}
@@ -386,24 +400,6 @@ public class CaseEntryController {
 		}
 		case 5: {
 			try {
-				String data = selected.getAntenatal().getNew_risks();
-				List<risk_table> items = selected.getAntenatal().getRisks();
-				if (data != null && !data.isBlank()) {
-					String[] tokens = data.split("\n\r");
-
-					List<risk_table> table = new ArrayList<>();
-					for (String elem : tokens) {
-						risk_table item = new risk_table();
-						item.setRisk_name(elem);
-						item.setRisk_desc(elem);
-						table.add(item);
-						items.add(item);
-					}
-					riskRepo.saveAll(table);
-
-				}
-				selected.getAntenatal().setRisks(items);
-
 				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getAntenatal()));
 				selected.getAntenatal().setAntenatal_json(arrayToJson);
 
@@ -421,24 +417,6 @@ public class CaseEntryController {
 				selected.getLabour().setLabour_seehour(seetime.getHours());
 				selected.getLabour().setLabour_seeminute(seetime.getMinutes());
 
-				String data = selected.getLabour().getNew_complications();
-				List<complication_table> items = selected.getLabour().getComplications();
-				if (data != null && !data.isBlank()) {
-					String[] tokens = data.split("\n\r");
-
-					List<complication_table> table = new ArrayList<>();
-					for (String elem : tokens) {
-						complication_table item = new complication_table();
-						item.setComplication_name(elem);
-						item.setComplication_desc(elem);
-						table.add(item);
-						items.add(item);
-					}
-					compRepo.saveAll(table);
-
-				}
-				selected.getLabour().setComplications(items);
-
 				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getLabour()));
 				selected.getLabour().setLabour_json(arrayToJson);
 
@@ -454,58 +432,6 @@ public class CaseEntryController {
 				selected.getBirth().setBirth_csproposehour(cstime.getHours());
 				selected.getBirth().setBirth_csproposeminute(cstime.getMinutes());
 
-				String data1 = selected.getBirth().getNew_abnormalities();
-				List<abnormality_table> items1 = selected.getBirth().getAbnormalities();
-				if (data1 != null && !data1.isBlank()) {
-					String[] tokens = data1.split("\n\r");
-
-					List<abnormality_table> table = new ArrayList<>();
-					for (String elem : tokens) {
-						abnormality_table item = new abnormality_table();
-						item.setAbnormal_name(elem);
-						item.setAbnormal_desc(elem);
-						table.add(item);
-						items1.add(item);
-					}
-					abnoRepo.saveAll(table);
-				}
-
-				String data2 = selected.getBirth().getNew_cordfaults();
-				List<cordfault_table> items2 = selected.getBirth().getCordfaults();
-				if (data2 != null && !data2.isBlank()) {
-					String[] tokens = data2.split("\n\r");
-
-					List<cordfault_table> table = new ArrayList<>();
-					for (String elem : tokens) {
-						cordfault_table item = new cordfault_table();
-						item.setCordfault_name(elem);
-						item.setCordfault_desc(elem);
-						table.add(item);
-						items2.add(item);
-					}
-					cordRepo.saveAll(table);
-				}
-
-				String data3 = selected.getBirth().getNew_placentachecks();
-				List<placentacheck_table> items3 = selected.getBirth().getPlacentachecks();
-				if (data3 != null && !data3.isBlank()) {
-					String[] tokens = data3.split("\n\r");
-
-					List<placentacheck_table> table = new ArrayList<>();
-					for (String elem : tokens) {
-						placentacheck_table item = new placentacheck_table();
-						item.setPlacentacheck_name(elem);
-						item.setPlacentacheck_desc(elem);
-						table.add(item);
-						items3.add(item);
-					}
-					placRepo.saveAll(table);
-				}
-
-				selected.getBirth().setAbnormalities(items1);
-				selected.getBirth().setCordfaults(items2);
-				selected.getBirth().setPlacentachecks(items3);
-
 				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getBirth()));
 				selected.getBirth().setBirth_json(arrayToJson);
 
@@ -516,13 +442,26 @@ public class CaseEntryController {
 			break;
 		}
 		case 8: {
-			try {
-				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getFetalheart()));
-				selected.getFetalheart().setFetalheart_json(arrayToJson);
+			if (selected.getCase_death() == 1) {
+				try {
+					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getFetalheart()));
+					selected.getFetalheart().setFetalheart_json(arrayToJson);
 
-				fetRepo.save(selected.getFetalheart());
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
+					fetRepo.save(selected.getFetalheart());
+				} catch (JsonProcessingException e) {
+					e.printStackTrace();
+				}
+				
+			} else if (selected.getCase_death() == 2) {
+				try {
+					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getBabydeath()));
+					selected.getBabydeath().setBaby_json(arrayToJson);
+
+					babyRepo.save(selected.getBabydeath());
+				} catch (JsonProcessingException e) {
+					e.printStackTrace();
+				}
+
 			}
 			break;
 		}
@@ -587,8 +526,9 @@ public class CaseEntryController {
 		final Map<Integer, String> map = new LinkedHashMap<>();
 
 		map.put(null, "Select one");
-		map.put(1, "Male");
-		map.put(2, "Female");
+		for (datamap elem : mapRepo.findByMap_feature("sex_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
 
 		return map;
 	}
@@ -609,30 +549,22 @@ public class CaseEntryController {
 	public Map<Integer, String> pweeksOptionsSelectOne() {
 		final Map<Integer, String> map = new LinkedHashMap<>();
 
-		map.put(null, "In Weeks");
-		for (int i = 4; i < 45; i++) {
-			map.put(i, i + " Weeks");
+		for (datamap elem : mapRepo.findByMap_feature("pweeks_options")) {
+			map.put(elem.getMap_value(), elem.getMap_value() + " " + elem.getMap_label());
 		}
-		map.put(88, "Not stated");
 
-		return map;
+		return new TreeMap<Integer, String>(map);
 	}
 
 	@ModelAttribute("pdays_options")
 	public Map<Integer, String> pdaysOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
+		final Map<Integer, String> map = new HashMap<>();
 
-		map.put(null, "In days");
-		map.put(0, "0 Days");
-		map.put(1, "1 Day");
-		map.put(2, "2 Days");
-		map.put(3, "3 Days");
-		map.put(4, "4 Days");
-		map.put(5, "5 Days");
-		map.put(6, "6 Days");
-		map.put(88, "Not stated");
+		for (datamap elem : mapRepo.findByMap_feature("pdays_options")) {
+			map.put(elem.getMap_value(), elem.getMap_value() + " " + elem.getMap_label());
+		}
 
-		return map;
+		return new TreeMap<Integer, String>(map);
 	}
 
 	@ModelAttribute("ptype_options")
@@ -740,6 +672,7 @@ public class CaseEntryController {
 			map.put(i, i + "");
 		}
 		map.put(88, "Not stated");
+		map.put(99, "Not Applicable");
 
 		return map;
 	}
@@ -891,6 +824,42 @@ public class CaseEntryController {
 		return map;
 	}
 
+	@ModelAttribute("apgar_options")
+	public Map<Integer, String> apgarOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("apgar_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("resuscitation_options")
+	public Map<Integer, String> resuscitationOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("resuscitation_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("diagnoses_options")
+	public Map<Integer, String> diagnosesOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("diagnoses_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
 	private String getQuestion(String code) {
 		return msg.getMessage(code, null, Locale.getDefault());
 	}
@@ -1005,8 +974,8 @@ public class CaseEntryController {
 
 		List<json_data> list = Stream.of(
 				new json_data(getQuestion("label.labour_datetime"),
-						new SimpleDateFormat("dd-MMM-yyyy").format(o.getLabour_seedate())
-								+" at "+new SimpleDateFormat("HH:mm a").format(o.getLabour_seetime())),
+						new SimpleDateFormat("dd-MMM-yyyy").format(o.getLabour_seedate()) + " at "
+								+ new SimpleDateFormat("HH:mm a").format(o.getLabour_seetime())),
 				new json_data(getQuestion("label.labour_seeperiod"),
 						getAnswer("period_options", o.getLabour_seeperiod())),
 				new json_data(getQuestion("label.labour_startmode"),
@@ -1016,10 +985,10 @@ public class CaseEntryController {
 				new json_data(getQuestion("label.labour_partograph"),
 						getAnswer("yesnodk_options", o.getLabour_partograph())),
 				new json_data(getQuestion("label.labour_lasttime1"),
-						o.getLabour_lasthour1() + getQuestion("txt.hours") +" and "+ o.getLabour_lastminute1()
+						o.getLabour_lasthour1() + getQuestion("txt.hours") + " and " + o.getLabour_lastminute1()
 								+ getQuestion("txt.minutes")),
 				new json_data(getQuestion("label.labour_lasttime2"),
-						o.getLabour_lasthour2() + getQuestion("txt.hours") +" and " + o.getLabour_lastminute2()
+						o.getLabour_lasthour2() + getQuestion("txt.hours") + " and " + o.getLabour_lastminute2()
 								+ getQuestion("txt.minutes")),
 				new json_data(getQuestion("label.labour_complications"),
 						getAnswer("yesnodk_options", o.getLabour_complications())),
@@ -1033,14 +1002,17 @@ public class CaseEntryController {
 		for (abnormality_table elem : o.getAbnormalities()) {
 			items += elem.getAbnormal_name() + "<br/>";
 		}
+		items += o.getNew_abnormalities();
 
 		for (cordfault_table elem : o.getCordfaults()) {
 			items1 += elem.getCordfault_name() + "<br/>";
 		}
+		items1 += o.getNew_cordfaults();
 
 		for (placentacheck_table elem : o.getPlacentachecks()) {
 			items2 += elem.getPlacentacheck_name() + "<br/>";
 		}
+		items2 += o.getNew_placentachecks();
 
 		List<json_data> list = Stream
 				.of(new json_data(getQuestion("label.birth_mode"), getAnswer("mode_options", o.getBirth_mode())),
@@ -1085,6 +1057,37 @@ public class CaseEntryController {
 				new json_data(getQuestion("label.fetalheart_lastheard"),
 						getAnswer("lastheard_options", o.getFetalheart_lastheard())))
 				.collect(Collectors.toList());
+
+		return list;
+	}
+
+	private List<json_data> processListOf(case_babydeath o) {
+		String items = "", items1 = "";
+		for (resuscitation_table elem : o.getResuscitations()) {
+			items += elem.getResuscitation_name() + "<br/>";
+		}
+		items += o.getNew_resuscitation();
+
+		for (diagnoses_table elem : o.getDiagnoses()) {
+			items += elem.getDiagnosis_name() + "<br/>";
+		}
+		items += o.getNew_diagnoses();
+
+		List<json_data> list = Stream.of(
+				new json_data(getQuestion("label.baby_cry"), getAnswer("yesnodk_options", o.getBaby_cry())),
+						new json_data(getQuestion("label.baby_resuscitation"),
+								getAnswer("yesnodk_options", o.getBaby_resuscitation())),
+						new json_data(getQuestion("label.baby_resuscitation"), items),
+						new json_data(getQuestion("label.baby_apgar1"), "" + o.getBaby_apgar1()),
+						new json_data(getQuestion("label.baby_apgar5"), "" + o.getBaby_apgar5()),
+						new json_data(getQuestion("label.baby_admitted"),
+								getAnswer("yesnodk_options", o.getBaby_admitted())),
+						new json_data(getQuestion("label.baby_diagnoses"), items1),
+						new json_data(getQuestion("label.baby_ddatetime"),
+								new SimpleDateFormat("dd-MMM-yyyy").format(o.getBaby_ddate()) + " at "
+										+ new SimpleDateFormat("HH:mm a").format(o.getBaby_dtime()))
+
+				).collect(Collectors.toList());
 
 		return list;
 	}

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DatamapRepository extends JpaRepository<datamap, datamapPK> {
 
-	@Query("select d from datamap d where d.map_feature=?1")
+	@Query("select d from datamap d where d.map_feature=?1 ORDER BY d.map_value")
 	List<datamap> findByMap_feature(String map_feature);
 
 }
