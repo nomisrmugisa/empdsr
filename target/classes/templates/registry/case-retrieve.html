@@ -46,8 +46,11 @@
 						<a th:href="@{/registry/edit/{id}?page=7(id=${item.case_uuid})}">
 							<span class="badge" th:classappend="${item.birth}?'bg-success':'bg-danger'">Birth</span>
 						</a>
-						<a th:href="@{/registry/edit/{id}?page=8(id=${item.case_uuid})}">
+						<a th:href="@{/registry/edit/{id}?page=8(id=${item.case_uuid})}" th:if="${item.case_death==1}">
 							<span class="badge" th:classappend="${item.fetalheart}?'bg-success':'bg-danger'">Fetal Heart</span>
+						</a>
+						<a th:href="@{/registry/edit/{id}?page=8(id=${item.case_uuid})}" th:if="${item.case_death==2}">
+							<span class="badge" th:classappend="${item.babydeath}?'bg-success':'bg-danger'">Baby's Death</span>
 						</a>
 						<a th:href="@{/registry/edit/{id}?page=9(id=${item.case_uuid})}">
 							<span class="badge" th:classappend="${item.notes}?'bg-success':'bg-danger'">Notes</span>

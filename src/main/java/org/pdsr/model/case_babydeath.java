@@ -168,7 +168,7 @@ public class case_babydeath implements Serializable {
 		return baby_admitted;
 	}
 
-	public void setBaby_admited(Integer baby_admitted) {
+	public void setBaby_admitted(Integer baby_admitted) {
 		this.baby_admitted = baby_admitted;
 	}
 

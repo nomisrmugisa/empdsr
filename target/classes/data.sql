@@ -44,6 +44,22 @@
     MERGE INTO placentacheck_table KEY(placentacheck_name) values('More placenta','none');
     MERGE INTO placentacheck_table KEY(placentacheck_name) values('Very placenta','none');
 
+	MERGE INTO resuscitation_table KEY(resuscitation_name) values('Suction and stimulation','Suction and stimulation');
+	MERGE INTO resuscitation_table KEY(resuscitation_name) values('IPPV bag and mask','IPPV bag and mask');
+	MERGE INTO resuscitation_table KEY(resuscitation_name) values('Oxygen','Oxygen');
+	MERGE INTO resuscitation_table KEY(resuscitation_name) values('Chest compression','Chest compression');
+
+	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Prematurity','Prematurity');
+	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Neonatal Jaundice','Neonatal Jaundice');
+	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Difficulty breathing','Difficulty breathing');
+	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Convulsions/seizures','Convulsions/seizures');
+	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Hypothermia','Hypothermia');
+	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Bulging fontanelle','Bulging fontanelle');
+	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Anaemia','Anaemia');
+	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Hypoglycaemia','Hypoglycaemia');
+	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Poor feeding','Poor feeding');
+	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Infection','Infection');
+	
 
     MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('death_options',1,'Stillbirth');
     MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('death_options',2,'Early Neonatal Death');
@@ -239,21 +255,4 @@
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('apgar_options',7,'APGAR');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('apgar_options',8,'APGAR');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('apgar_options',9,'APGAR');
-	
-	
-	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('resuscitation_options','Suction and stimulation','Suction and stimulation');
-	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('resuscitation_options','IPPV bag and mask','IPPV bag and mask');
-	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('resuscitation_options','Oxygen','Oxygen');
-	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('resuscitation_options','Chest compression','Chest compression');
-
-	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('diagnoses_options','Prematurity','Prematurity');
-	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('diagnoses_options','Neonatal Jaundice','Neonatal Jaundice');
-	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('diagnoses_options','Difficulty breathing','Difficulty breathing');
-	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('diagnoses_options','Convulsions/seizures','Convulsions/seizures');
-	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('diagnoses_options','Hypothermia','Hypothermia');
-	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('diagnoses_options','Bulging fontanelle','Bulging fontanelle');
-	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('diagnoses_options','Anaemia','Anaemia');
-	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('diagnoses_options','Hypoglycaemia','Hypoglycaemia');
-	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('diagnoses_options','Poor feeding','Poor feeding');
-	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('diagnoses_options','Infection','Infection');
 	

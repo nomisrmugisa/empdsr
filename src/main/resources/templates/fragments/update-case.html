@@ -958,7 +958,7 @@
 		</div>
 	</div>
 	<div class="row mb-3">
-		<label class="col-md-4 col-form-label" th:text="#{label.resuscitation}"></label>
+		<label class="col-md-4 col-form-label" th:text="#{label.resuscitations}"></label>
 		<div class="col-md-8">
 			<div class="row">
 				<div class="col-md-6" th:each="option : ${resuscitation_options}">
@@ -973,7 +973,7 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.new_resuscitation}"></label>
 		<div class="col-md-8">
-			<textarea rows="5" class="form-control form-control-sm" th:field="*{babydeath.new_resuscitaton}"
+			<textarea rows="5" class="form-control form-control-sm" th:field="*{babydeath.new_resuscitation}"
 				th:placeholder="#{hold.resuscitation.new_line}"></textarea>
 		</div>
 	</div>
@@ -1022,8 +1022,26 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.new_diagnoses}"></label>
 		<div class="col-md-8">
-			<textarea rows="5" class="form-control form-control-sm" th:field="*{birth.new_diagnoses}"
+			<textarea rows="5" class="form-control form-control-sm" th:field="*{babydeath.new_diagnoses}"
 				th:placeholder="#{hold.diagnosis.new_line}"></textarea>
+		</div>
+	</div>
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.baby_ddatetime}"></label>
+		<div class="col-auto">
+			<div class="row">
+				<div class="col-auto">
+					<input class="form-control form-control-sm datepicker" th:field="*{babydeath.baby_ddate}" />
+				</div>
+				<div class="col-auto">
+					<div class="row">
+						<div class="col-auto">
+							<input class="form-control form-control-sm timepicker"
+								th:field="*{babydeath.baby_dtime}" />
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 

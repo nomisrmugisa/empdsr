@@ -54,8 +54,10 @@ import org.pdsr.repo.CaseRepository;
 import org.pdsr.repo.ComplicationTableRepository;
 import org.pdsr.repo.CordfaultTableRepository;
 import org.pdsr.repo.DatamapRepository;
+import org.pdsr.repo.DiagnosesTableRepository;
 import org.pdsr.repo.FacilityTableRepository;
 import org.pdsr.repo.PlacentacheckTableRepository;
+import org.pdsr.repo.ResuscitationTableRepository;
 import org.pdsr.repo.RiskTableRepository;
 import org.pdsr.repo.SyncTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +85,12 @@ public class CaseEntryController {
 
 	@Autowired
 	private ComplicationTableRepository compRepo;
+
+	@Autowired
+	private ResuscitationTableRepository resusRepo;
+
+	@Autowired
+	private DiagnosesTableRepository diagRepo;
 
 	@Autowired
 	private RiskTableRepository riskRepo;
@@ -288,17 +296,24 @@ public class CaseEntryController {
 		}
 
 		case 8: {
-			if (selected.getFetalheart() == null & selected.getCase_death() == 1) {
-				case_fetalheart data = new case_fetalheart();
-				data.setFetalheart_uuid(UUID.randomUUID().toString());
-				data.setCase_uuid(selected);
-				selected.setFetalheart(data);
+			if (selected.getCase_death() == 1) {
+				if (selected.getFetalheart() == null) {
+					case_fetalheart data = new case_fetalheart();
+					data.setFetalheart_uuid(UUID.randomUUID().toString());
+					data.setCase_uuid(selected);
+					selected.setFetalheart(data);
 
-			} else if (selected.getBabydeath() == null & selected.getCase_death() == 2) {
-				case_babydeath data = new case_babydeath();
-				data.setBaby_uuid(UUID.randomUUID().toString());
-				data.setCase_uuid(selected);
-				selected.setBaby(data);
+				}
+			} else if (selected.getCase_death() == 2) {
+
+				if (selected.getBabydeath() == null) {
+					case_babydeath data = new case_babydeath();
+					data.setBaby_uuid(UUID.randomUUID().toString());
+					data.setCase_uuid(selected);
+					selected.setBabydeath(data);
+				}
+				model.addAttribute("diagnoses_options", diagRepo.findAll());
+				model.addAttribute("resuscitation_options", resusRepo.findAll());
 			}
 			break;
 		}
@@ -451,9 +466,13 @@ public class CaseEntryController {
 				} catch (JsonProcessingException e) {
 					e.printStackTrace();
 				}
-				
+
 			} else if (selected.getCase_death() == 2) {
 				try {
+					java.util.Date time = selected.getBabydeath().getBaby_dtime();
+					selected.getBabydeath().setBaby_dhour(time.getHours());
+					selected.getBabydeath().setBaby_dminute(time.getMinutes());
+					
 					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getBabydeath()));
 					selected.getBabydeath().setBaby_json(arrayToJson);
 
@@ -830,35 +849,12 @@ public class CaseEntryController {
 
 		map.put(null, "Select one");
 		for (datamap elem : mapRepo.findByMap_feature("apgar_options")) {
-			map.put(elem.getMap_value(), elem.getMap_label());
+			map.put(elem.getMap_value(), ""+elem.getMap_value());
 		}
 
 		return map;
 	}
 
-	@ModelAttribute("resuscitation_options")
-	public Map<Integer, String> resuscitationOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("resuscitation_options")) {
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
-
-		return map;
-	}
-
-	@ModelAttribute("diagnoses_options")
-	public Map<Integer, String> diagnosesOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("diagnoses_options")) {
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
-
-		return map;
-	}
 
 	private String getQuestion(String code) {
 		return msg.getMessage(code, null, Locale.getDefault());
@@ -1073,8 +1069,8 @@ public class CaseEntryController {
 		}
 		items += o.getNew_diagnoses();
 
-		List<json_data> list = Stream.of(
-				new json_data(getQuestion("label.baby_cry"), getAnswer("yesnodk_options", o.getBaby_cry())),
+		List<json_data> list = Stream
+				.of(new json_data(getQuestion("label.baby_cry"), getAnswer("yesnodk_options", o.getBaby_cry())),
 						new json_data(getQuestion("label.baby_resuscitation"),
 								getAnswer("yesnodk_options", o.getBaby_resuscitation())),
 						new json_data(getQuestion("label.baby_resuscitation"), items),
@@ -1082,7 +1078,7 @@ public class CaseEntryController {
 						new json_data(getQuestion("label.baby_apgar5"), "" + o.getBaby_apgar5()),
 						new json_data(getQuestion("label.baby_admitted"),
 								getAnswer("yesnodk_options", o.getBaby_admitted())),
-						new json_data(getQuestion("label.baby_diagnoses"), items1),
+						new json_data(getQuestion("label.diagnoses"), items1),
 						new json_data(getQuestion("label.baby_ddatetime"),
 								new SimpleDateFormat("dd-MMM-yyyy").format(o.getBaby_ddate()) + " at "
 										+ new SimpleDateFormat("HH:mm a").format(o.getBaby_dtime()))

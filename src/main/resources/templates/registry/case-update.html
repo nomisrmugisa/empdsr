@@ -16,7 +16,8 @@
 			<div th:if="${page==5}" th:insert="fragments/update-case :: case_antenatal"></div>
 			<div th:if="${page==6}" th:insert="fragments/update-case :: case_labour"></div>
 			<div th:if="${page==7}" th:insert="fragments/update-case :: case_birth"></div>
-			<div th:if="${page==8}" th:insert="fragments/update-case :: case_fetalheart"></div>
+			<div th:if="${page==8 and selected.case_death==1}" th:insert="fragments/update-case :: case_fetalheart"></div>
+			<div th:if="${page==8 and selected.case_death==2}" th:insert="fragments/update-case :: case_babydeath"></div>
 			<div th:if="${page==9}" th:insert="fragments/update-case :: case_notes"></div>
 
 		</form>

@@ -221,7 +221,7 @@ public class case_identifiers implements Serializable {
 		return babydeath;
 	}
 
-	public void setBaby(case_babydeath babydeath) {
+	public void setBabydeath(case_babydeath babydeath) {
 		this.babydeath = babydeath;
 	}
 
