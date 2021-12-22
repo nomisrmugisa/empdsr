@@ -47,20 +47,20 @@
 	<div class="row">
 		<div class="col-md-3">
 			<label class="control-label" th:text="#{label.case_date}"></label>&nbsp;
-			<strong class="control-label" th:text="${selected.case_date}"></strong>
+			<div class="control-label fw-bold" th:text="${selected.case_date}"></div>
 		</div>
 		<div class="col-md-3">
 			<label class="control-label" th:text="#{label.case_id}"></label>&nbsp;
-			<strong class="control-label" th:text="${selected.case_id}"></strong>
+			<div class="control-label fw-bold" th:text="${selected.case_id}"></div>
 		</div>
 		<div class="col-md-3">
 			<label class="control-label" th:text="#{label.case_mname}"></label>&nbsp;
-			<strong class="control-label" th:text="${selected.case_mname}"></strong>
+			<div class="control-label fw-bold" th:text="${selected.case_mname}"></div>
 		</div>
 		<div class="col-md-3">
 			<label class="control-label" th:text="#{label.case_death}"></label>&nbsp;
-			<strong class="control-label"
-				th:text="${selected.case_death==1}?'Stillbirth':'Early Neonatal Death'"></strong>
+			<div class="control-label fw-bold" th:text="${selected.case_death==1}?'Stillbirth':'Early Neonatal Death'">
+			</div>
 		</div>
 	</div>
 	<fieldset hidden=true>
@@ -164,7 +164,7 @@
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.referral_case}"></label>
 		<div class="col-auto">
 			<select id="referral_case" class="form-control form-control-sm" th:field="*{referral.referral_case}"
-				onchange="changeOtherToNA(this)" required>
+				onchange="changeReferralOtherToNA(this)" required>
 				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -421,32 +421,35 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_risks}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{antenatal.antenatal_risks}" required>
+			<select id="antenatal_risks" class="form-control form-control-sm" th:field="*{antenatal.antenatal_risks}"
+				required onchange="changeAntenatalRiskOtherToNA(this)">
 				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
 		</div>
 	</div>
-	<div class="row mb-3">
-		<label class="col-md-4 col-form-label" th:text="#{label.risks}"></label>
-		<div class="col-md-8">
-			<div class="row">
-				<div class="col-md-6" th:each="option : ${risk_options}">
-					<label class="form-label fw-bold"> <input type="checkbox" th:field="*{antenatal.risks}"
-							th:value="${option.risk_name}" />
-						[[${option.risk_name}]]
-					</label>
+	<fieldset id="antenatal_risks_fieldset">
+		<div class="row mb-3">
+			<label class="col-md-4 col-form-label" th:text="#{label.risks}"></label>
+			<div class="col-md-8">
+				<div class="row">
+					<div class="col-md-6" th:each="option : ${risk_options}">
+						<label class="form-label fw-bold"> <input class="risk_options" type="checkbox"
+								th:field="*{antenatal.risks}" th:value="${option.risk_name}" />
+							[[${option.risk_name}]]
+						</label>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.new_risks}"></label>
-		<div class="col-md-8">
-			<textarea rows="5" class="form-control form-control-sm" th:field="*{antenatal.new_risks}"
-				th:placeholder="#{hold.risk.new_line}"></textarea>
+		<div class="row mb-3">
+			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.new_risks}"></label>
+			<div class="col-md-8">
+				<textarea id="new_risks" rows="5" class="form-control form-control-sm" th:field="*{antenatal.new_risks}"
+					th:placeholder="#{hold.risk.new_line}"></textarea>
+			</div>
 		</div>
-	</div>
+	</fieldset>
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_hiv}"></label>
 		<div class="col-auto">
@@ -485,21 +488,25 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_folicacid}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{antenatal.antenatal_folicacid}" required>
+			<select id="antenatal_folicacid" class="form-control form-control-sm"
+				th:field="*{antenatal.antenatal_folicacid}" required onchange="changeAntenatalFolicOtherToNA(this)">
 				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
 		</div>
 	</div>
-	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_folicacid3m}"></label>
-		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{antenatal.antenatal_folicacid3m}" required>
-				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
-				</option>
-			</select>
+	<fieldset id="antenatal_folic_fieldset">
+		<div class="row mb-3">
+			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_folicacid3m}"></label>
+			<div class="col-auto">
+				<select id="antenatal_folicacid3m" class="form-control form-control-sm"
+					th:field="*{antenatal.antenatal_folicacid3m}" required>
+					<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+					</option>
+				</select>
+			</div>
 		</div>
-	</div>
+	</fieldset>
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_tetanus}"></label>
 		<div class="col-auto">
@@ -1036,8 +1043,7 @@
 				<div class="col-auto">
 					<div class="row">
 						<div class="col-auto">
-							<input class="form-control form-control-sm timepicker"
-								th:field="*{babydeath.baby_dtime}" />
+							<input class="form-control form-control-sm timepicker" th:field="*{babydeath.baby_dtime}" />
 						</div>
 					</div>
 				</div>

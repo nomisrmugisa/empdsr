@@ -44,6 +44,10 @@
 								data-bs-target="#v-pills-fetalheart" type="button" role="tab"
 								aria-controls="v-pills-fetalheart" aria-selected="false">Fetalheart</button>
 
+							<button class="nav-link" id="v-pills-babydeath-tab" data-bs-toggle="pill"
+								data-bs-target="#v-pills-babydeath" type="button" role="tab"
+								aria-controls="v-pills-babydeath" aria-selected="false">Baby's Death</button>
+
 							<button class="nav-link" id="v-pills-notes-tab" data-bs-toggle="pill"
 								data-bs-target="#v-pills-notes" type="button" role="tab" aria-controls="v-pills-notes"
 								aria-selected="false">Notes</button>
@@ -182,11 +186,29 @@
 									<table class="table">
 										<thead>
 											<tr>
-												<th colspan="2" th:text="#{title.birth}"></th>
+												<th colspan="2" th:text="#{title.fetalheart}"></th>
 											</tr>
 										</thead>
 										<tbody>
 											<tr th:each="item : ${casefetalheart}">
+												<td th:utext="${item.question}" class="text-secondary"></td>
+												<td th:utext="${item.answer}" style="width: 50%;"></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							<div class="tab-pane fade" id="v-pills-babydeath" role="tabpanel"
+								aria-labelledby="v-pills-babydeath-tab">
+								<div class="overflow-auto" style="height: 400px;">
+									<table class="table">
+										<thead>
+											<tr>
+												<th colspan="2" th:text="#{title.baby}"></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="item : ${casebabydeath}">
 												<td th:utext="${item.question}" class="text-secondary"></td>
 												<td th:utext="${item.answer}" style="width: 50%;"></td>
 											</tr>

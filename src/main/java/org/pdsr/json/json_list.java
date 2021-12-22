@@ -13,7 +13,7 @@ public class json_list implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private List<json_data> biodata, pregnancy, referral, delivery, antenatal, labour, birth, fetalheart, notes;
+	private List<json_data> biodata, pregnancy, referral, delivery, antenatal, labour, birth, fetalheart, babydeath, notes;
 	
 	
 
@@ -115,6 +115,18 @@ public class json_list implements Serializable{
 
 	public void setFetalheart(List<json_data> fetalheart) {
 		this.fetalheart = fetalheart;
+	}
+
+
+
+	public List<json_data> getBabydeath() {
+		return babydeath;
+	}
+
+
+
+	public void setBabydeath(List<json_data> babydeath) {
+		this.babydeath = babydeath;
 	}
 
 

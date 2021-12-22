@@ -72,7 +72,7 @@
 					</tr>
 				</tbody>
 			</table>
-			<div class="border-bottom bg-light">
+			<div class="border-bottom bg-light small">
 				<small>
 					<span class="badge bg-secondary">[[#{th.audit.delay1}]]</span>
 					[[#{label.audit_delay1}]]&nbsp;&nbsp;
@@ -98,12 +98,15 @@
 		</div>
 		<h4 class="text-secondary text-center" th:if="${#lists.isEmpty(items2)}" th:text="#{no.recommend.cases}"></h4>
 	</div>
-	<div>
-		<h4 th:text="#{title.recommendation}" class="badge bg-primary d-grid"></h4>
+	<hr class="bg-light text-light"/>
+	<div class="mt-5">
 		<div class="table-responsive" th:unless="${#lists.isEmpty(items1)}">
 			<table class="table table-sm table-bordered  table-responsive-sm small mb-0">
-				<thead class="table-light small">
-					<tr>
+				<thead class="table-info">
+					<tr class="table-light">
+						<th th:utext="#{title.recommendation}" colspan="8"></th>
+					</tr >
+					<tr class="small">
 						<th th:utext="#{label.recommend.date}" style="width: 10%"></th>
 						<th th:utext="#{label.recommend.task}"></th>
 						<th th:utext="#{label.recommend.lead}"></th>
@@ -112,7 +115,7 @@
 						<th th:utext="#{label.recommend.need}"></th>
 						<th th:utext="#{label.recommend.note}"></th>
 						<th th:utext="#{label.recommend.stat}"></th>
-					</tr>
+					</tr >
 				</thead>
 				<tbody>
 					<tr th:each="item,itemStat : ${items2}" th:class="${item.rec_color}">
@@ -123,32 +126,24 @@
 						<td th:text="${#dates.format(item.recommendation_deadline,'dd-MMM-yyyy')}"
 							th:class="|${item.bg_color}|"></td>
 						<td th:text="${item.recommendation_resources}"></td>
-						<td th:text="${item.recommendation_comments}"></td>
 						<td>
 							<div th:unless="${item.recommendation_status==2}"
 								th:text="${item.recommendation_status==0}?#{status.not.started}:(${item.recommendation_status==1}?#{status.started}:'')">
 							</div>
-							<div class="dropdown" th:unless="${item.recommendation_status==2}">
-								<button class="btn btn-primary dropdown-toggle" type="button"
-									data-toggle="dropdown">[[#{button.change.status}]]
-								</button>
-								<ul class="dropdown-menu">
-									<li th:if="${item.recommendation_status==0}"><a href="#"
-											th:href="@{/auditing/recommend/started/{id}(id=${item.recommendation_uuid})}">[[#{button.started}]]</a>
-									</li>
-									<li><a href="#"
-											th:href="@{/auditing/recommend/completed/{id}(id=${item.recommendation_uuid})}">[[#{button.completed}]]</a>
-									</li>
-								</ul>
-							</div>
-							<span th:if="${item.recommendation_status==2}">[[#{status.completed}]]</span>
+							<div th:if="${item.recommendation_status==2}">[[#{status.completed}]]</div>
+
+							<i>[[${item.recommendation_comments}]]</i>
+						</td>
+						<td>
+							<a href="#" class="btn small btn-primary"
+								th:href="@{/auditing/recommend/cstatus/{id}(id=${item.recommendation_uuid})}">[[#{button.change.status}]]</a>
 						</td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
 		<h4 class="text-secondary text-center" th:if="${#lists.isEmpty(items1)}" th:text="#{no.action.cases}"></h4>
-	</div>
+	</div >
 </content>
 <scripts>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

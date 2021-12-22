@@ -23,6 +23,7 @@ import org.pdsr.model.audit_audit;
 import org.pdsr.model.audit_case;
 import org.pdsr.model.audit_recommendation;
 import org.pdsr.model.case_identifiers;
+import org.pdsr.model.datamap;
 import org.pdsr.model.datamapPK;
 import org.pdsr.model.icd_codes;
 import org.pdsr.pojos.icdpm;
@@ -168,8 +169,16 @@ public class CaseAuditController {
 				List<json_data> birdata = objectMapper.readValue(scase.getBirth().getBirth_json(), mapType);
 				fulldata.setBirth(birdata);
 
-				List<json_data> fetdata = objectMapper.readValue(scase.getFetalheart().getFetalheart_json(), mapType);
-				fulldata.setFetalheart(fetdata);
+				if (scase.getCase_death() == 1) {
+					List<json_data> fetdata = objectMapper.readValue(scase.getFetalheart().getFetalheart_json(),
+							mapType);
+					fulldata.setFetalheart(fetdata);
+				}
+
+				if (scase.getCase_death() == 2) {
+					List<json_data> bdtdata = objectMapper.readValue(scase.getBabydeath().getBaby_json(), mapType);
+					fulldata.setBabydeath(bdtdata);
+				}
 
 				List<json_data> notedata = objectMapper.readValue(scase.getNotes().getNotes_json(), mapType);
 				fulldata.setNotes(notedata);
@@ -271,6 +280,7 @@ public class CaseAuditController {
 			model.addAttribute("caselabour", dataset.getLabour());
 			model.addAttribute("casebirth", dataset.getBirth());
 			model.addAttribute("casefetalheart", dataset.getFetalheart());
+			model.addAttribute("casebabydeath", dataset.getBabydeath());
 			model.addAttribute("casenotes", dataset.getNotes());
 
 		} catch (JsonProcessingException e) {
@@ -390,24 +400,48 @@ public class CaseAuditController {
 		return "redirect:/auditing/recommend/" + case_uuid + "?success=yes";
 	}
 
-	@GetMapping("/recommend/started/{id}")
-	public String recommendStarted(Principal principal, @PathVariable("id") String recommendation_uuid) {
+	@GetMapping("/recommend/cstatus/{id}")
+	public String recommendStarted(Principal principal, Model model, @PathVariable("id") String recommendation_uuid,
+			@RequestParam(name = "success", required = false) String success) {
 
-		audit_recommendation recommend = rcaseRepo.findById(recommendation_uuid).get();
-		recommend.setRecommendation_status(1);
-		rcaseRepo.save(recommend);
+		audit_recommendation selected = rcaseRepo.findById(recommendation_uuid).get();
+		if (selected.getRecommendation_status() == 2) {
+			selected.setRec_color("alert alert-success");
 
-		return "redirect:/auditing";
+		} else if (selected.getRecommendation_date().before(selected.getRecommendation_deadline())) {// date passed but
+																										// not
+			// completed
+
+			if (selected.getRecommendation_status() == 1) {
+				selected.setRec_color("alert alert-warning");
+			} else {
+				selected.setRec_color("alert alert-light");
+			}
+
+		} else {
+			selected.setRec_color("alert alert-danger");
+		}
+
+		model.addAttribute("selected", selected);
+
+		if (success != null) {
+			model.addAttribute("success", "Saved Successfully");
+		}
+
+		return "auditing/audit-status";
 	}
 
-	@GetMapping("/recommend/completed/{id}")
-	public String recommendCompleted(Principal principal, @PathVariable("id") String recommendation_uuid) {
+	@PostMapping("/recommend/cstatus/{id}")
+	public String recommendStarted(Principal principal, @ModelAttribute("selected") audit_recommendation selected,
+			@PathVariable("id") String recommendation_uuid) {
 
 		audit_recommendation recommend = rcaseRepo.findById(recommendation_uuid).get();
-		recommend.setRecommendation_status(2);
+		recommend.setRecommendation_status(selected.getRecommendation_status());
+		recommend.setRecommendation_comments(selected.getRecommendation_comments());
+		
 		rcaseRepo.save(recommend);
 
-		return "redirect:/auditing";
+		return "redirect:/auditing/recommend/cstatus/" + recommendation_uuid + "?success=yes";
 	}
 
 	@GetMapping(value = "/icdcodes")
@@ -490,6 +524,18 @@ public class CaseAuditController {
 		return new icdpm(null, null);
 	}
 
+	@ModelAttribute("cstatus_options")
+	public Map<Integer, String> cstatusOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("cstatus_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
 	@ModelAttribute("death_options")
 	public Map<Integer, String> deathOptionsSelectOne() {
 		final Map<Integer, String> map = new LinkedHashMap<>();
@@ -525,40 +571,40 @@ public class CaseAuditController {
 		return "NA";
 	}
 
-	private String getIcdDesc(String icd) {
-		if (icd != null) {
-			return icd + " : " + icdRepo.findById(icd).get().getIcd_desc();
-		} else {
-			return "NA";
-		}
-	}
-
-	private String getPMDesc(final Integer death, final String pm) {
-		switch (death) {
-		case 1: {
-			if (!icdRepo.findIntrapartumPMByICD(pm).isEmpty()) {
-				icd_codes icd = icdRepo.findIntrapartumPMByICD(pm).get(0);
-				return pm + " : " + icd.getIcd_pmi_desc();
-			}
-		}
-		case 2: {
-			if (!icdRepo.findAntepartumPMByICD(pm).isEmpty()) {
-				icd_codes icd = icdRepo.findAntepartumPMByICD(pm).get(0);
-				return pm + " : " + icd.getIcd_pma_desc();
-			}
-		}
-		case 3: {
-			if (!icdRepo.findNeonatalPMByICD(pm).isEmpty()) {
-				icd_codes icd = icdRepo.findNeonatalPMByICD(pm).get(0);
-				return pm + " : " + icd.getIcd_pmi_desc();
-			}
-		}
-		default: {
-			return "NA";
-		}
-		}
-
-	}
+//	private String getIcdDesc(String icd) {
+//		if (icd != null) {
+//			return icd + " : " + icdRepo.findById(icd).get().getIcd_desc();
+//		} else {
+//			return "NA";
+//		}
+//	}
+//
+//	private String getPMDesc(final Integer death, final String pm) {
+//		switch (death) {
+//		case 1: {
+//			if (!icdRepo.findIntrapartumPMByICD(pm).isEmpty()) {
+//				icd_codes icd = icdRepo.findIntrapartumPMByICD(pm).get(0);
+//				return pm + " : " + icd.getIcd_pmi_desc();
+//			}
+//		}
+//		case 2: {
+//			if (!icdRepo.findAntepartumPMByICD(pm).isEmpty()) {
+//				icd_codes icd = icdRepo.findAntepartumPMByICD(pm).get(0);
+//				return pm + " : " + icd.getIcd_pma_desc();
+//			}
+//		}
+//		case 3: {
+//			if (!icdRepo.findNeonatalPMByICD(pm).isEmpty()) {
+//				icd_codes icd = icdRepo.findNeonatalPMByICD(pm).get(0);
+//				return pm + " : " + icd.getIcd_pmi_desc();
+//			}
+//		}
+//		default: {
+//			return "NA";
+//		}
+//		}
+//
+//	}
 
 	private List<json_data> processListOf(audit_audit o) {
 		List<json_data> list = Stream.of(

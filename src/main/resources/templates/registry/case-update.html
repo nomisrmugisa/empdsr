@@ -16,8 +16,10 @@
 			<div th:if="${page==5}" th:insert="fragments/update-case :: case_antenatal"></div>
 			<div th:if="${page==6}" th:insert="fragments/update-case :: case_labour"></div>
 			<div th:if="${page==7}" th:insert="fragments/update-case :: case_birth"></div>
-			<div th:if="${page==8 and selected.case_death==1}" th:insert="fragments/update-case :: case_fetalheart"></div>
-			<div th:if="${page==8 and selected.case_death==2}" th:insert="fragments/update-case :: case_babydeath"></div>
+			<div th:if="${page==8 and selected.case_death==1}" th:insert="fragments/update-case :: case_fetalheart">
+			</div>
+			<div th:if="${page==8 and selected.case_death==2}" th:insert="fragments/update-case :: case_babydeath">
+			</div>
 			<div th:if="${page==9}" th:insert="fragments/update-case :: case_notes"></div>
 
 		</form>
@@ -43,7 +45,7 @@
 		changeReferralView();
 	</script>
 	<script>
-		function changeOtherToNA(objCombo) {
+		function changeReferralOtherToNA(objCombo) {
 			var rpat = document.getElementById("referral_patient");
 			var rsrc = document.getElementById("referral_source");
 			var rfac = document.getElementById("referral_facility");
@@ -124,6 +126,76 @@
 				atfac.readOnly = false;
 				atwks.value = '';
 				atdys.value = '';
+			}
+		}
+	</script>
+	<script>
+		function changeAntenatalRiskView() {
+			var objCombo = document.getElementById("antenatal_risks");
+
+			if (objCombo.value != '1') {
+				$('#antenatal_risks_fieldset').hide();
+
+			} else {
+				$('#antenatal_risks_fieldset').show();
+			}
+		}
+		changeAntenatalRiskView();
+	</script>
+	<script>
+		function changeAntenatalRiskOtherToNA(objCombo) {
+			var rskopt = document.getElementsByClassName("risk_options");
+			var nwrsks = document.getElementById("new_risks");
+
+			if (objCombo.value != '1') {
+				
+				for (var i = 0; i < rskopt.length; i++) {
+					if (rskopt[i].type == 'checkbox') {
+						rskopt[i].checked = false;
+					}
+				} 
+				
+				nwrsks.value = "";
+				nwrsks.readOnly = true;
+
+				$('#antenatal_risks_fieldset').hide('fade');
+
+			} else {
+				$('#antenatal_risks_fieldset').show('fade');
+
+				atfac.value = "";
+				atfac.readOnly = false;
+			}
+		}
+	</script>
+	<script>
+		function changeAntenatalFolicView() {
+			var objCombo = document.getElementById("antenatal_folicacid");
+
+			if (objCombo.value != '1') {
+				$('#antenatal_folic_fieldset').hide();
+
+			} else {
+				$('#antenatal_folic_fieldset').show();
+			}
+		}
+		changeAntenatalFolicView();
+	</script>
+	<script>
+		function changeAntenatalFolicOtherToNA(objCombo) {
+			var folic3m = document.getElementById("antenatal_folicacid3m");
+
+			if (objCombo.value != '1') {
+				
+				folic3m.value = "";
+
+				$('#antenatal_folic_fieldset').hide('fade');
+
+			} else {
+				$('#antenatal_folic_fieldset').show('fade');
+
+				atfac.value = "";
+				atfac.readOnly = false;
 			}
 		}
 	</script>

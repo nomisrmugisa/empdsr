@@ -213,8 +213,8 @@ public class CaseEntryController {
 
 		final boolean completed = selected.getBiodata() != null && selected.getPregnancy() != null
 				&& selected.getReferral() != null && selected.getDelivery() != null && selected.getAntenatal() != null
-				&& selected.getLabour() != null && selected.getBirth() != null && selected.getFetalheart() != null
-				&& selected.getNotes() != null;
+				&& selected.getLabour() != null && selected.getBirth() != null
+				&& (selected.getFetalheart() != null || selected.getBabydeath() != null) && selected.getNotes() != null;
 
 		if (completed) {
 			model.addAttribute("completed", completed);
@@ -472,7 +472,7 @@ public class CaseEntryController {
 					java.util.Date time = selected.getBabydeath().getBaby_dtime();
 					selected.getBabydeath().setBaby_dhour(time.getHours());
 					selected.getBabydeath().setBaby_dminute(time.getMinutes());
-					
+
 					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getBabydeath()));
 					selected.getBabydeath().setBaby_json(arrayToJson);
 
@@ -849,12 +849,11 @@ public class CaseEntryController {
 
 		map.put(null, "Select one");
 		for (datamap elem : mapRepo.findByMap_feature("apgar_options")) {
-			map.put(elem.getMap_value(), ""+elem.getMap_value());
+			map.put(elem.getMap_value(), "" + elem.getMap_value());
 		}
 
 		return map;
 	}
-
 
 	private String getQuestion(String code) {
 		return msg.getMessage(code, null, Locale.getDefault());
