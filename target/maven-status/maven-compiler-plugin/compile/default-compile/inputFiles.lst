@@ -1,5 +1,7 @@
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\model\placentacheck_table.java
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\model\datamapPK.java
+C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\repo\ResuscitationTableRepository.java
+C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\repo\DiagnosesTableRepository.java
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\repo\SyncTableRepository.java
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\repo\DatamapRepository.java
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\Utils.java
@@ -14,9 +16,11 @@ C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\model\complication
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\repo\CaseDeliveryRepository.java
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\model\case_labour.java
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\repo\GroupTableRepository.java
+C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\controller\UsersController.java
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\repo\IcdCodesRepository.java
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\repo\PlacentacheckTableRepository.java
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\MessageSourceConfig.java
+C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\model\case_babydeath.java
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\repo\UserTableRepository.java
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\model\case_biodata.java
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\model\case_identifiers.java
@@ -39,6 +43,7 @@ C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\json\json_data.jav
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\model\case_delivery.java
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\model\group_table.java
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\model\audit_case.java
+C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\model\diagnoses_table.java
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\repo\AuditAuditRepository.java
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\model\case_referral.java
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\model\icd_codes.java
@@ -53,6 +58,7 @@ C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\model\audit_audit.
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\model\country_table.java
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\pojos\icdpm.java
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\json\json_list.java
+C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\repo\CaseBabyRepository.java
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\repo\CaseBiodataRepository.java
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\repo\RegionTableRepository.java
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\repo\CaseNotesRepository.java
@@ -73,3 +79,4 @@ C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\model\datamap.java
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\model\abnormality_table.java
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\model\case_fetalheart.java
 C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\repo\CasePregnancyRepository.java
+C:\Users\Lenovo\eclipse-workspace\pdsr\src\main\java\org\pdsr\model\resuscitation_table.java

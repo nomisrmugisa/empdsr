@@ -610,6 +610,18 @@ public class CaseEntryController {
 		return map;
 	}
 
+	@ModelAttribute("yesnodkna_options")
+	public Map<Integer, String> yesnodknaOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("yesnodkna_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
 	@ModelAttribute("hiv_options")
 	public Map<Integer, String> hivOptionsSelectOne() {
 		final Map<Integer, String> map = new LinkedHashMap<>();
@@ -950,7 +962,7 @@ public class CaseEntryController {
 				new json_data(getQuestion("label.antenatal_folicacid"),
 						getAnswer("yesnodk_options", o.getAntenatal_folicacid())),
 				new json_data(getQuestion("label.antenatal_folicacid3m"),
-						getAnswer("yesnodk_options", o.getAntenatal_folicacid3m())),
+						getAnswer("yesnodkna_options", o.getAntenatal_folicacid3m())),
 				new json_data(getQuestion("label.antenatal_tetanus"),
 						getAnswer("yesnodk_options", o.getAntenatal_tetanus())),
 				new json_data(getQuestion("label.antenatal_malprophy"),

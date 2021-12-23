@@ -1,5 +1,11 @@
  
   
+    MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_ENTRY', 'Enter cases into the system');
+    MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_AUDIT', 'Review and recommend actions on submitted cases');
+    MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_TASKS', 'Monitor and change action status');
+	MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_SETUP', 'Manage users, facility code from the controls section');
+
+
     MERGE INTO user_table(username, enabled, password, usercontact, useremail, userfullname) KEY(username) 
     VALUES (
 	    'webadmin'
@@ -10,17 +16,15 @@
 	    , 'ROOT ADMINISTRATOR'
     );
 
-    MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_ENTRY', 'DATA ENTRY');
-    MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_AUDIT', 'AUDIT AND RECOMMEND');
-	MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_SETUP', 'SECURITY AND SETUP');
+
 
 	DELETE FROM user_group WHERE username='webadmin';
     MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_ENTRY');
     MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_AUDIT');
+    MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_TASKS');
     MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_SETUP');
 
 
-	
     MERGE INTO country_table KEY(country_uuid) values('1','Ghana');
 
 
@@ -146,6 +150,12 @@
     MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('yesnodk_options',1,'Yes');
     MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('yesnodk_options',77,'Unknown');
     MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('yesnodk_options',88,'Not Stated');
+
+    MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('yesnodkna_options',0,'No');
+    MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('yesnodkna_options',1,'Yes');
+    MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('yesnodkna_options',77,'Unknown');
+    MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('yesnodkna_options',88,'Not Stated');
+    MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('yesnodkna_options',99,'Not Applicable');
 
     MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('hiv_options',0,'Negative(-ve)');
     MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('hiv_options',1,'Positive(+ve)');

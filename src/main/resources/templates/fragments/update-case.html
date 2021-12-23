@@ -121,6 +121,7 @@
 			<div class="row">
 				<div class="col-auto">
 					<select class="form-control form-control-sm" th:field="*{pregnancy.pregnancy_weeks}" required>
+						<option value="" th:text="#{in.weeks}"></option>
 						<option th:each="option : ${pweeks_options}" th:value="${option.key}" th:text="${option.value}">
 						</option>
 					</select>
@@ -128,6 +129,7 @@
 				<div class="col-auto">
 					<select class="form-control form-control-sm col-md-4" th:field="*{pregnancy.pregnancy_days}"
 						required>
+						<option value="" th:text="#{in.days}"></option>
 						<option th:each="option : ${pdays_options}" th:value="${option.key}" th:text="${option.value}">
 						</option>
 					</select>
@@ -501,7 +503,7 @@
 			<div class="col-auto">
 				<select id="antenatal_folicacid3m" class="form-control form-control-sm"
 					th:field="*{antenatal.antenatal_folicacid3m}" required>
-					<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+					<option th:each="option : ${yesnodkna_options}" th:value="${option.key}" th:text="${option.value}">
 					</option>
 				</select>
 			</div>
