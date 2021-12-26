@@ -5,7 +5,7 @@
 <content>
 	<div class="float-end" th:text="${facility_code}"></div>
 	<div class="col-md-12 py-3 my-3 mx-auto p-1 rounded box-shadow" style="background-color: #92c7f2;">
-		<form action="#" th:action="@{/auditing/recommend/cstatus/{id}(id=${selected.recommendation_uuid})}"
+		<form action="#" th:action="@{/auditing/cstatus/{id}(id=${selected.recommendation_uuid})}"
 			th:object="${selected}" method="POST" class="needs-validation" novalidate>
 			<div class="row">
 				<div class="col-md-6">

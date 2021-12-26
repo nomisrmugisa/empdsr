@@ -1,12 +1,17 @@
 package org.pdsr.controller;
 
 import java.security.Principal;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.Optional;
 
+import org.pdsr.CONSTANTS;
+import org.pdsr.model.sync_table;
 import org.pdsr.model.user_table;
+import org.pdsr.repo.FacilityTableRepository;
+import org.pdsr.repo.GroupTableRepository;
+import org.pdsr.repo.SyncTableRepository;
 import org.pdsr.repo.UserTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,13 +27,26 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class UsersController {
 
 	@Autowired
+	private SyncTableRepository syncRepo;
+
+	@Autowired
 	private UserTableRepository userRepo;
+
+	@Autowired
+	private GroupTableRepository groupRepo;
+
+	@Autowired
+	private FacilityTableRepository facRepo;
+
+	@Autowired
+	private BCryptPasswordEncoder bCrypt;
 
 	@GetMapping("")
 	public String listUsers(Principal principal, final Model model) {
 
-		model.addAttribute("is_users", "active");
+		model.addAttribute("usr", "active");
 		model.addAttribute("items", userRepo.findAll());
+		model.addAttribute("add", "add");
 
 		return "controls/user-list";
 	}
@@ -37,8 +55,17 @@ public class UsersController {
 	public String addUser(Principal principal, final Model model,
 			@RequestParam(name = "success", required = false) String success) {
 
+		Optional<sync_table> sync = syncRepo.findById(CONSTANTS.FACILITY_ID);
+		if (sync.isEmpty()) {
+			model.addAttribute("activated", "0");
+			return "home";
+		}
+
 		model.addAttribute("selected", new user_table());
-		model.addAttribute("is_users", "active");
+
+		model.addAttribute("usr", "active");
+		model.addAttribute("user_groups", groupRepo.findAll());
+		model.addAttribute("user_facilities", facRepo.findAll());
 
 		if (success != null) {
 			model.addAttribute("success", "Saved successfully");
@@ -48,7 +75,25 @@ public class UsersController {
 	}
 
 	@PostMapping("/add")
-	public String addUser(Principal principal, @ModelAttribute user_table selected) {
+	public String addUser(Principal principal, @ModelAttribute("selected") user_table selected, BindingResult result) {
+
+		boolean userExists = userRepo.findById(selected.getUsername()).isPresent();
+		boolean emailExists = userRepo.findByUser_email(selected.getUseremail()).isPresent();
+
+		if (userExists) {
+			result.rejectValue("username", "user.exists");
+		}
+		if (emailExists) {
+			result.rejectValue("useremail", "email.exists");
+		}
+
+		if (result.hasErrors()) {
+			return "controls/user-create";
+		}
+
+		String password = selected.getPassword();
+		String encodedPassword = bCrypt.encode(password);
+		selected.setPassword(encodedPassword);
 
 		userRepo.save(selected);
 
@@ -62,7 +107,9 @@ public class UsersController {
 		user_table user = userRepo.findById(user_id).get();
 
 		model.addAttribute("selected", user);
-		model.addAttribute("is_users", "active");
+		model.addAttribute("usr", "active");
+		model.addAttribute("user_groups", groupRepo.findAll());
+		model.addAttribute("user_facilities", facRepo.findAll());
 
 		if (success != null) {
 			model.addAttribute("success", "Saved successfully");
@@ -86,7 +133,7 @@ public class UsersController {
 		user_table user = userRepo.findById(user_id).get();
 
 		model.addAttribute("selected", user);
-		model.addAttribute("is_users", "active");
+		model.addAttribute("usr", "active");
 
 		if (user_id.equals(user.getUsername()))
 			model.addAttribute("currentuser", "currentuser");
@@ -120,19 +167,6 @@ public class UsersController {
 
 		return "redirect:/controls/users/{id}/password?success=1";
 
-	}
-
-	@ModelAttribute("role_options")
-	public Map<String, String> roleOptionsSelectOne() {
-		final Map<String, String> map = new LinkedHashMap<>();
-
-		map.put("ROLE_ADMIN", "");
-		map.put("ROLE_ENTRY", "");
-		map.put("ROLE_AUDIT", "");
-		map.put("ROLE_TASKS", "Change Status of Action to be taken");
-		map.put("ROLE_VIEWS", "View reports and statistics summaries");
-
-		return map;
 	}
 
 }// end class

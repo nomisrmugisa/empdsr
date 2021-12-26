@@ -15,14 +15,17 @@ public class json_data implements Serializable {
 	
 	private String question;
 	private String answer;
+	private boolean canreview;
+	
 	public json_data() {
 		super();
 	}
 	
-	public json_data(String question, String answer) {
+	public json_data(String question, String answer, boolean canreview) {
 		super();
 		this.question = question;
 		this.answer = answer;
+		this.canreview = canreview;
 	}
 
 	public String getQuestion() {
@@ -37,6 +40,13 @@ public class json_data implements Serializable {
 	public void setAnswer(String answer) {
 		this.answer = answer;
 	}
-	
+
+	public boolean isCanreview() {
+		return canreview;
+	}
+
+	public void setCanreview(boolean canreview) {
+		this.canreview = canreview;
+	}	
 	
 }

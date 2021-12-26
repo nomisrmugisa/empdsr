@@ -193,6 +193,7 @@ public class CaseEntryController {
 		selected.setCase_uuid(UUID.randomUUID().toString());
 		selected.setCase_id("T" + selected.getCase_death() + "C" + (new java.util.Date().getTime()));
 		selected.setCase_status(0);
+		selected.setCase_sync(syncRepo.findById(CONSTANTS.FACILITY_ID).get().getSync_code());
 
 		caseRepo.save(selected);
 
@@ -353,6 +354,8 @@ public class CaseEntryController {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
+		
+		selected.setCase_status(0);
 
 		switch (page) {
 		case 1: {
@@ -843,6 +846,18 @@ public class CaseEntryController {
 		return map;
 	}
 
+	@ModelAttribute("neocod_options")
+	public Map<Integer, String> neocodOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("neocod_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
 	@ModelAttribute("lastheard_options")
 	public Map<Integer, String> lastheardOptionsSelectOne() {
 		final Map<Integer, String> map = new LinkedHashMap<>();
@@ -876,11 +891,10 @@ public class CaseEntryController {
 	}
 
 	private List<json_data> processListOf(case_biodata o) {
-		List<json_data> list = Stream
-				.of(new json_data(getQuestion("label.biodata_sex"), getAnswer("sex_options", o.getBiodata_sex())),
-						new json_data(getQuestion("label.biodata_mage"),
-								o.getBiodata_mage() + getQuestion("txt.years")),
-						new json_data(getQuestion("label.biodata_medu"), getAnswer("edu_options", o.getBiodata_medu())))
+		List<json_data> list = Stream.of(
+				new json_data(getQuestion("label.biodata_sex"), getAnswer("sex_options", o.getBiodata_sex()), true),
+				new json_data(getQuestion("label.biodata_mage"), o.getBiodata_mage() + getQuestion("txt.years"), true),
+				new json_data(getQuestion("label.biodata_medu"), getAnswer("edu_options", o.getBiodata_medu()), true))
 				.collect(Collectors.toList());
 
 		return list;
@@ -890,31 +904,37 @@ public class CaseEntryController {
 		List<json_data> list = Stream.of(
 				new json_data(getQuestion("label.pregnancy_gest"),
 						o.getPregnancy_weeks() + getQuestion("txt.weeks") + " and " + o.getPregnancy_days()
-								+ getQuestion("txt.days")),
-				new json_data(getQuestion("label.pregnancy_type"), getAnswer("ptype_options", o.getPregnancy_type())))
+								+ getQuestion("txt.days"),
+						true),
+				new json_data(getQuestion("label.pregnancy_type"), getAnswer("ptype_options", o.getPregnancy_type()),
+						true))
 				.collect(Collectors.toList());
 
 		return list;
 	}
 
 	private List<json_data> processListOf(case_referral o) {
+		boolean isreferral = (o.getReferral_case() == 1);
 		List<json_data> list = Stream.of(
-				new json_data(getQuestion("label.referral_case"), getAnswer("yesnodk_options", o.getReferral_case())),
+				new json_data(getQuestion("label.referral_case"), getAnswer("yesnodk_options", o.getReferral_case()),
+						true),
 				new json_data(getQuestion("label.referral_patient"),
-						getAnswer("patient_options", o.getReferral_patient())),
-				new json_data(getQuestion("label.referral_source"),
-						getAnswer("source_options", o.getReferral_source())),
-				new json_data(getQuestion("label.referral_facility"), o.getReferral_facility()),
+						getAnswer("patient_options", o.getReferral_patient()), isreferral),
+				new json_data(getQuestion("label.referral_source"), getAnswer("source_options", o.getReferral_source()),
+						isreferral),
+				new json_data(getQuestion("label.referral_facility"), o.getReferral_facility(), isreferral),
 				new json_data(getQuestion("label.referral_datetime"),
 						new SimpleDateFormat("dd-MMM-yyyy").format(o.getReferral_date()) + " at "
-								+ new SimpleDateFormat("HH:mm a").format(o.getReferral_time())),
+								+ new SimpleDateFormat("HH:mm a").format(o.getReferral_time()),
+						isreferral),
 				new json_data(getQuestion("label.referral_adatetime"),
 						new SimpleDateFormat("dd-MMM-yyyy").format(o.getReferral_adate()) + " at "
-								+ new SimpleDateFormat("HH:mm a").format(o.getReferral_atime())),
+								+ new SimpleDateFormat("HH:mm a").format(o.getReferral_atime()),
+						isreferral),
 				new json_data(getQuestion("label.referral_transport"),
-						getAnswer("trans_options", o.getReferral_transport())),
-				new json_data(getQuestion("label.referral_file"), o.getReferral_file().toString()),
-				new json_data(getQuestion("label.referral_notes"), o.getReferral_notes())
+						getAnswer("trans_options", o.getReferral_transport()), isreferral),
+				new json_data(getQuestion("label.referral_file"), o.getReferral_file().toString(), isreferral),
+				new json_data(getQuestion("label.referral_notes"), o.getReferral_notes(), isreferral)
 
 		).collect(Collectors.toList());
 
@@ -925,48 +945,54 @@ public class CaseEntryController {
 		List<json_data> list = Stream.of(
 				new json_data(getQuestion("label.delivery_datetime"),
 						new SimpleDateFormat("dd-MMM-yyyy").format(o.getDelivery_date()) + " at "
-								+ new SimpleDateFormat("HH:mm a").format(o.getDelivery_time())),
-				new json_data(getQuestion("label.delivery_period"),
-						getAnswer("period_options", o.getDelivery_period())),
-				new json_data(getQuestion("label.delivery_mode"), getAnswer("mode_options", o.getDelivery_mode())))
+								+ new SimpleDateFormat("HH:mm a").format(o.getDelivery_time()),
+						true),
+				new json_data(getQuestion("label.delivery_period"), getAnswer("period_options", o.getDelivery_period()),
+						true),
+				new json_data(getQuestion("label.delivery_mode"), getAnswer("mode_options", o.getDelivery_mode()),
+						true))
 				.collect(Collectors.toList());
 
 		return list;
 	}
 
 	private List<json_data> processListOf(case_antenatal o) {
+		boolean isattend = o.getAntenatal_attend() == 1;
+		boolean hasrisks = o.getAntenatal_risks() == 1;
+		boolean hasfolic = o.getAntenatal_folicacid() == 1;
 		String items = "";
 		for (risk_table elem : o.getRisks()) {
 			items += elem.getRisk_name() + "<br/>";
 		}
 		List<json_data> list = Stream.of(
-				new json_data(getQuestion("label.antenatal_gravida"), "" + o.getAntenatal_gravida()),
-				new json_data(getQuestion("label.antenatal_para"), "" + o.getAntenatal_para()),
+				new json_data(getQuestion("label.antenatal_gravida"), "" + o.getAntenatal_gravida(), true),
+				new json_data(getQuestion("label.antenatal_para"), "" + o.getAntenatal_para(), true),
 				new json_data(getQuestion("label.antenatal_attend"),
-						getAnswer("yesnodk_options", o.getAntenatal_attend())),
-				new json_data(getQuestion("label.antenatal_attendno"), "" + o.getAntenatal_attendno()),
-				new json_data(getQuestion("label.antenatal_facility"), "" + o.getAntenatal_facility()),
+						getAnswer("yesnodk_options", o.getAntenatal_attend()), true),
+				new json_data(getQuestion("label.antenatal_attendno"), "" + o.getAntenatal_attendno(), isattend),
+				new json_data(getQuestion("label.antenatal_facility"), "" + o.getAntenatal_facility(), isattend),
 				new json_data(getQuestion("label.antenatal_gestage"),
 						o.getAntenatal_weeks() + getQuestion("txt.weeks") + " and " + o.getAntenatal_days()
-								+ getQuestion("txt.days")),
+								+ getQuestion("txt.days"),
+						isattend),
 				new json_data(getQuestion("label.antenatal_risks"),
-						getAnswer("yesnodk_options", o.getAntenatal_risks())),
-				new json_data(getQuestion("label.risks"), items),
-				new json_data(getQuestion("label.antenatal_hiv"), getAnswer("hiv_options", o.getAntenatal_hiv())),
+						getAnswer("yesnodk_options", o.getAntenatal_risks()), true),
+				new json_data(getQuestion("label.risks"), items, hasrisks),
+				new json_data(getQuestion("label.antenatal_hiv"), getAnswer("hiv_options", o.getAntenatal_hiv()), true),
 				new json_data(getQuestion("label.antenatal_alcohol"),
-						getAnswer("yesnodk_options", o.getAntenatal_alcohol())),
+						getAnswer("yesnodk_options", o.getAntenatal_alcohol()), true),
 				new json_data(getQuestion("label.antenatal_smoker"),
-						getAnswer("yesnodk_options", o.getAntenatal_smoker())),
+						getAnswer("yesnodk_options", o.getAntenatal_smoker()), true),
 				new json_data(getQuestion("label.antenatal_herbal"),
-						getAnswer("yesnodk_options", o.getAntenatal_herbal())),
+						getAnswer("yesnodk_options", o.getAntenatal_herbal()), true),
 				new json_data(getQuestion("label.antenatal_folicacid"),
-						getAnswer("yesnodk_options", o.getAntenatal_folicacid())),
+						getAnswer("yesnodk_options", o.getAntenatal_folicacid()), true),
 				new json_data(getQuestion("label.antenatal_folicacid3m"),
-						getAnswer("yesnodkna_options", o.getAntenatal_folicacid3m())),
+						getAnswer("yesnodkna_options", o.getAntenatal_folicacid3m()), hasfolic),
 				new json_data(getQuestion("label.antenatal_tetanus"),
-						getAnswer("yesnodk_options", o.getAntenatal_tetanus())),
+						getAnswer("yesnodk_options", o.getAntenatal_tetanus()), true),
 				new json_data(getQuestion("label.antenatal_malprophy"),
-						getAnswer("yesnodk_options", o.getAntenatal_malprophy()))
+						getAnswer("yesnodk_options", o.getAntenatal_malprophy()), true)
 
 		).collect(Collectors.toList());
 
@@ -974,37 +1000,48 @@ public class CaseEntryController {
 	}
 
 	private List<json_data> processListOf(case_labour o) {
+		boolean hascomplications = o.getLabour_complications() == 1;
+
 		String items = "";
 		for (complication_table elem : o.getComplications()) {
 			items += elem.getComplication_name() + "<br/>";
 		}
 
-		List<json_data> list = Stream.of(
-				new json_data(getQuestion("label.labour_datetime"),
+		List<json_data> list = Stream
+				.of(new json_data(getQuestion("label.labour_datetime"),
 						new SimpleDateFormat("dd-MMM-yyyy").format(o.getLabour_seedate()) + " at "
-								+ new SimpleDateFormat("HH:mm a").format(o.getLabour_seetime())),
-				new json_data(getQuestion("label.labour_seeperiod"),
-						getAnswer("period_options", o.getLabour_seeperiod())),
-				new json_data(getQuestion("label.labour_startmode"),
-						getAnswer("startmode_options", o.getLabour_startmode())),
-				new json_data(getQuestion("label.labour_herbalaug"),
-						getAnswer("yesnodk_options", o.getLabour_herbalaug())),
-				new json_data(getQuestion("label.labour_partograph"),
-						getAnswer("yesnodk_options", o.getLabour_partograph())),
-				new json_data(getQuestion("label.labour_lasttime1"),
-						o.getLabour_lasthour1() + getQuestion("txt.hours") + " and " + o.getLabour_lastminute1()
-								+ getQuestion("txt.minutes")),
-				new json_data(getQuestion("label.labour_lasttime2"),
-						o.getLabour_lasthour2() + getQuestion("txt.hours") + " and " + o.getLabour_lastminute2()
-								+ getQuestion("txt.minutes")),
-				new json_data(getQuestion("label.labour_complications"),
-						getAnswer("yesnodk_options", o.getLabour_complications())),
-				new json_data(getQuestion("label.complications"), items)).collect(Collectors.toList());
+								+ new SimpleDateFormat("HH:mm a").format(o.getLabour_seetime()),
+						true),
+						new json_data(getQuestion("label.labour_seeperiod"),
+								getAnswer("period_options", o.getLabour_seeperiod()), true),
+						new json_data(getQuestion("label.labour_startmode"),
+								getAnswer("startmode_options", o.getLabour_startmode()), true),
+						new json_data(getQuestion("label.labour_herbalaug"),
+								getAnswer("yesnodk_options", o.getLabour_herbalaug()), true),
+						new json_data(getQuestion("label.labour_partograph"),
+								getAnswer("yesnodk_options", o.getLabour_partograph()), true),
+						new json_data(getQuestion("label.labour_lasttime1"),
+								o.getLabour_lasthour1() + getQuestion("txt.hours") + " and " + o.getLabour_lastminute1()
+										+ getQuestion("txt.minutes"),
+								true),
+						new json_data(getQuestion("label.labour_lasttime2"),
+								o.getLabour_lasthour2() + getQuestion("txt.hours") + " and " + o.getLabour_lastminute2()
+										+ getQuestion("txt.minutes"),
+								true),
+						new json_data(getQuestion("label.labour_complications"),
+								getAnswer("yesnodk_options", o.getLabour_complications()), true),
+						new json_data(getQuestion("label.complications"), items, hascomplications))
+				.collect(Collectors.toList());
 
 		return list;
 	}
 
 	private List<json_data> processListOf(case_birth o) {
+		boolean forcenormal = o.getBirth_insistnormal() == 1;
+		boolean hasabnormal = o.getBirth_abnormalities() == 1;
+		boolean hascordfaults = o.getBirth_cordfaults() == 1;
+		boolean hasplacentack = o.getBirth_placentachecks() == 1;
+
 		String items = "", items1 = "", items2 = "";
 		for (abnormality_table elem : o.getAbnormalities()) {
 			items += elem.getAbnormal_name() + "<br/>";
@@ -1022,53 +1059,56 @@ public class CaseEntryController {
 		items2 += o.getNew_placentachecks();
 
 		List<json_data> list = Stream
-				.of(new json_data(getQuestion("label.birth_mode"), getAnswer("mode_options", o.getBirth_mode())),
+				.of(new json_data(getQuestion("label.birth_mode"), getAnswer("mode_options", o.getBirth_mode()), true),
 						new json_data(getQuestion("label.birth_insistnormal"),
-								getAnswer("yesnodk_options", o.getBirth_insistnormal())),
+								getAnswer("yesnodk_options", o.getBirth_insistnormal()), true),
 						new json_data(getQuestion("label.birth_csproposetime"),
-								new SimpleDateFormat("HH:mm a").format(o.getBirth_csproposetime())),
+								new SimpleDateFormat("HH:mm a").format(o.getBirth_csproposetime()), forcenormal),
 						new json_data(getQuestion("label.birth_provider"),
-								getAnswer("provider_options", o.getBirth_provider())),
+								getAnswer("provider_options", o.getBirth_provider()), true),
 						new json_data(getQuestion("label.birth_facility"),
-								getAnswer("birthloc_options", o.getBirth_facility())),
+								getAnswer("birthloc_options", o.getBirth_facility()), true),
 						new json_data(getQuestion("label.birth_abnormalities"),
-								getAnswer("yesnodk_options", o.getBirth_abnormalities())),
-						new json_data(getQuestion("label.abnormalities"), items),
+								getAnswer("yesnodk_options", o.getBirth_abnormalities()), true),
+						new json_data(getQuestion("label.abnormalities"), items, hasabnormal),
 						new json_data(getQuestion("label.birth_cordfaults"),
-								getAnswer("yesnodk_options", o.getBirth_cordfaults())),
-						new json_data(getQuestion("label.cordfaults"), items1),
+								getAnswer("yesnodk_options", o.getBirth_cordfaults()), true),
+						new json_data(getQuestion("label.cordfaults"), items1, hascordfaults),
 						new json_data(getQuestion("label.birth_placentachecks"),
-								getAnswer("yesnodk_options", o.getBirth_placentachecks())),
-						new json_data(getQuestion("label.placentachecks"), items2),
+								getAnswer("yesnodk_options", o.getBirth_placentachecks()), true),
+						new json_data(getQuestion("label.placentachecks"), items2, hasplacentack),
 						new json_data(getQuestion("label.birth_liqourvolume"),
-								getAnswer("liqourvolume_options", o.getBirth_liqourvolume())),
+								getAnswer("liqourvolume_options", o.getBirth_liqourvolume()), true),
 						new json_data(getQuestion("label.birth_liqourcolor"),
-								getAnswer("liqourcolor_options", o.getBirth_liqourcolor())),
+								getAnswer("liqourcolor_options", o.getBirth_liqourcolor()), true),
 						new json_data(getQuestion("label.birth_liqourodour"),
-								getAnswer("liqourodour_options", o.getBirth_liqourodour())),
+								getAnswer("liqourodour_options", o.getBirth_liqourodour()), true),
 						new json_data(getQuestion("label.birth_babyoutcome"),
-								getAnswer("babyoutcome_options", o.getBirth_babyoutcome())),
+								getAnswer("babyoutcome_options", o.getBirth_babyoutcome()), true),
 						new json_data(getQuestion("label.birth_motheroutcome"),
-								getAnswer("motheroutcome_options", o.getBirth_motheroutcome())))
+								getAnswer("motheroutcome_options", o.getBirth_motheroutcome()), true))
 				.collect(Collectors.toList());
 
 		return list;
 	}
 
 	private List<json_data> processListOf(case_fetalheart o) {
-		List<json_data> list = Stream.of(
-				new json_data(getQuestion("label.fetalheart_refered"),
-						getAnswer("yesnodk_options", o.getFetalheart_refered())),
-				new json_data(getQuestion("label.fetalheart_arrival"),
-						getAnswer("yesnodk_options", o.getFetalheart_arrival())),
-				new json_data(getQuestion("label.fetalheart_lastheard"),
-						getAnswer("lastheard_options", o.getFetalheart_lastheard())))
+		List<json_data> list = Stream
+				.of(new json_data(getQuestion("label.fetalheart_refered"),
+						getAnswer("yesnodk_options", o.getFetalheart_refered()), true),
+						new json_data(getQuestion("label.fetalheart_arrival"),
+								getAnswer("yesnodk_options", o.getFetalheart_arrival()), true),
+						new json_data(getQuestion("label.fetalheart_lastheard"),
+								getAnswer("lastheard_options", o.getFetalheart_lastheard()), true))
 				.collect(Collectors.toList());
 
 		return list;
 	}
 
 	private List<json_data> processListOf(case_babydeath o) {
+		boolean isresus = o.getBaby_resuscitation() == 1;
+		boolean isadmit = o.getBaby_admitted() == 1;
+
 		String items = "", items1 = "";
 		for (resuscitation_table elem : o.getResuscitations()) {
 			items += elem.getResuscitation_name() + "<br/>";
@@ -1081,18 +1121,19 @@ public class CaseEntryController {
 		items += o.getNew_diagnoses();
 
 		List<json_data> list = Stream
-				.of(new json_data(getQuestion("label.baby_cry"), getAnswer("yesnodk_options", o.getBaby_cry())),
+				.of(new json_data(getQuestion("label.baby_cry"), getAnswer("yesnodk_options", o.getBaby_cry()), true),
 						new json_data(getQuestion("label.baby_resuscitation"),
-								getAnswer("yesnodk_options", o.getBaby_resuscitation())),
-						new json_data(getQuestion("label.baby_resuscitation"), items),
-						new json_data(getQuestion("label.baby_apgar1"), "" + o.getBaby_apgar1()),
-						new json_data(getQuestion("label.baby_apgar5"), "" + o.getBaby_apgar5()),
+								getAnswer("yesnodk_options", o.getBaby_resuscitation()), true),
+						new json_data(getQuestion("label.baby_resuscitation"), items, isresus),
+						new json_data(getQuestion("label.baby_apgar1"), "" + o.getBaby_apgar1(), true),
+						new json_data(getQuestion("label.baby_apgar5"), "" + o.getBaby_apgar5(), true),
 						new json_data(getQuestion("label.baby_admitted"),
-								getAnswer("yesnodk_options", o.getBaby_admitted())),
-						new json_data(getQuestion("label.diagnoses"), items1),
+								getAnswer("yesnodk_options", o.getBaby_admitted()), true),
+						new json_data(getQuestion("label.diagnoses"), items1, isadmit),
 						new json_data(getQuestion("label.baby_ddatetime"),
 								new SimpleDateFormat("dd-MMM-yyyy").format(o.getBaby_ddate()) + " at "
-										+ new SimpleDateFormat("HH:mm a").format(o.getBaby_dtime()))
+										+ new SimpleDateFormat("HH:mm a").format(o.getBaby_dtime()),
+								isadmit)
 
 				).collect(Collectors.toList());
 
@@ -1100,8 +1141,10 @@ public class CaseEntryController {
 	}
 
 	private List<json_data> processListOf(case_notes o) {
-		List<json_data> list = Stream.of(new json_data(getQuestion("label.notes_file"), o.getNotes_file().toString()),
-				new json_data(getQuestion("label.notes_text"), o.getNotes_text())).collect(Collectors.toList());
+		List<json_data> list = Stream
+				.of(new json_data(getQuestion("label.notes_file"), o.getNotes_file().toString(), true),
+						new json_data(getQuestion("label.notes_text"), o.getNotes_text(), true))
+				.collect(Collectors.toList());
 
 		return list;
 	}

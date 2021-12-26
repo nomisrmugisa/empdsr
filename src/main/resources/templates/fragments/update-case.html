@@ -67,7 +67,7 @@
 		<input th:field="*{case_uuid}" readonly /> <input th:field="*{case_date}" readonly /> <input
 			th:field="*{facility}" readonly /> <input th:field="*{case_id}" readonly /> <input th:field="*{case_mid}"
 			readonly /> <input th:field="*{case_mname}" readonly /> <input th:field="*{case_death}" readonly /><input
-			th:field="*{case_status}" readonly />
+			th:field="*{case_status}" readonly /><input th:field="*{case_sync}" readonly />
 	</fieldset>
 	<hr class="bg-primary" />
 </div>
@@ -1050,6 +1050,15 @@
 					</div>
 				</div>
 			</div>
+		</div>
+	</div>
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.baby_medicalcod}"></label>
+		<div class="col-auto">
+			<select class="form-control form-control-sm" th:field="*{babydeath.baby_medicalcod}" required>
+				<option th:each="option : ${neocod_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
 		</div>
 	</div>
 

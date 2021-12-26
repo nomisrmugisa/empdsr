@@ -40,7 +40,7 @@ public class user_table implements Serializable {
 	private boolean enabled;
 
 	@NotNull
-	@Column(name = "useremail")
+	@Column(name = "useremail", unique = true)
 	@Size(min = 1, max = 255)
 	private String useremail;
 
@@ -50,7 +50,7 @@ public class user_table implements Serializable {
 	private String userfullname;
 
 	@NotNull
-	@Column(name = "usercontact")
+	@Column(name = "usercontact", unique = true)
 	@Size(min = 1, max = 20)
 	private String usercontact;
 

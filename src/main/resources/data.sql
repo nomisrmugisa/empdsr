@@ -4,6 +4,7 @@
     MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_AUDIT', 'Review and recommend actions on submitted cases');
     MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_TASKS', 'Monitor and change action status');
 	MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_SETUP', 'Manage users, facility code from the controls section');
+	MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_VIEWS', 'View analysis and reports');
 
 
     MERGE INTO user_table(username, enabled, password, usercontact, useremail, userfullname) KEY(username) 
@@ -22,6 +23,7 @@
     MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_ENTRY');
     MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_AUDIT');
     MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_TASKS');
+    MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_VIEWS');
     MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_SETUP');
 
 
@@ -243,6 +245,7 @@
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('babyoutcome_options',1,'Macerated stillbirth');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('babyoutcome_options',77,'Unknown');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('babyoutcome_options',88,'Not Stated');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('babyoutcome_options',99,'Not Applicable');
     
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('motheroutcome_options',0,'Alive');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('motheroutcome_options',1,'Dead');
@@ -270,4 +273,10 @@
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('cstatus_options',0,'Not Started');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('cstatus_options',1,'Started');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('cstatus_options',2,'Completed');
+	
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',1,'Asphyxia');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',2,'Preterm birth complications');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',3,'Infections');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',4,'Congenital anomalies');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',5,'Special case');
 	

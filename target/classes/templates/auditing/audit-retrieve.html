@@ -32,7 +32,7 @@
 		</div>
 		<h4 class="text-secondary text-center" th:if="${#lists.isEmpty(items)}" th:text="#{no.audit.cases}"></h4>
 	</div>
-	<div class="border-bottom p-2 mb-3">
+	<div class="border-bottom p-2 mb-3" th:unless="${done}">
 		<form action="#" th:action="@{/auditing}" method="POST">
 			<div class="text-center">
 				<button class="btn btn-info btn-lg" type="submit" th:utext="#{load.cases.button}"></button>
@@ -136,7 +136,7 @@
 						</td>
 						<td>
 							<a href="#" class="btn small btn-primary"
-								th:href="@{/auditing/recommend/cstatus/{id}(id=${item.recommendation_uuid})}">[[#{button.change.status}]]</a>
+								th:href="@{/auditing/cstatus/{id}(id=${item.recommendation_uuid})}">[[#{button.change.status}]]</a>
 						</td>
 					</tr>
 				</tbody>

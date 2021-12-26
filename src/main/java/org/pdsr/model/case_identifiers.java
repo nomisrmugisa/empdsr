@@ -40,6 +40,11 @@ public class case_identifiers implements Serializable {
 	@NotNull
 	@Column
 	@Size(min=1, max = 80)
+	private String case_sync;
+	
+	@NotNull
+	@Column
+	@Size(min=1, max = 80)
 	private String case_id;
 	
 	@NotNull
@@ -58,10 +63,7 @@ public class case_identifiers implements Serializable {
 	
 	@Column
 	private Integer case_status;//0 entry, 1 auditing new submissions, 2 auditing started auditing, 3 process complete
-    
-	@Column
-	private Integer case_select;//0 not selected for auditing 1 selected for auditing
-	
+    	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "facility", referencedColumnName = "facility_uuid", insertable = true, updatable = true)
 	private facility_table facility;
@@ -111,6 +113,14 @@ public class case_identifiers implements Serializable {
 
 	public void setCase_date(java.util.Date case_date) {
 		this.case_date = case_date;
+	}
+
+	public String getCase_sync() {
+		return case_sync;
+	}
+
+	public void setCase_sync(String case_sync) {
+		this.case_sync = case_sync;
 	}
 
 	public String getCase_id() {
@@ -239,14 +249,6 @@ public class case_identifiers implements Serializable {
 
 	public void setCase_status(Integer case_status) {
 		this.case_status = case_status;
-	}
-
-	public Integer getCase_select() {
-		return case_select;
-	}
-
-	public void setCase_select(Integer case_select) {
-		this.case_select = case_select;
 	}
 
 	@Override

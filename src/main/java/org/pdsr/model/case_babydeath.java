@@ -95,7 +95,9 @@ public class case_babydeath implements Serializable {
 	@DateTimeFormat(pattern = "HH:mm a")
 	private java.util.Date baby_dtime;
 
-	
+	@Column
+	private Integer baby_medicalcod;
+
 	@Lob
 	@Column
 	private String baby_json;
@@ -218,6 +220,14 @@ public class case_babydeath implements Serializable {
 
 	public void setBaby_dtime(java.util.Date baby_dtime) {
 		this.baby_dtime = baby_dtime;
+	}
+
+	public Integer getBaby_medicalcod() {
+		return baby_medicalcod;
+	}
+
+	public void setBaby_medicalcod(Integer baby_medicalcod) {
+		this.baby_medicalcod = baby_medicalcod;
 	}
 
 	public String getBaby_json() {

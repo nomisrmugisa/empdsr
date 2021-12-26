@@ -42,11 +42,11 @@
 
 							<button class="nav-link" id="v-pills-fetalheart-tab" data-bs-toggle="pill"
 								data-bs-target="#v-pills-fetalheart" type="button" role="tab"
-								aria-controls="v-pills-fetalheart" aria-selected="false">Fetalheart</button>
+								aria-controls="v-pills-fetalheart" aria-selected="false" th:if="${casefetalheart}">Fetalheart</button>
 
 							<button class="nav-link" id="v-pills-babydeath-tab" data-bs-toggle="pill"
 								data-bs-target="#v-pills-babydeath" type="button" role="tab"
-								aria-controls="v-pills-babydeath" aria-selected="false">Baby's Death</button>
+								aria-controls="v-pills-babydeath" aria-selected="false" th:if="${casebabydeath}">Baby's Death</button>
 
 							<button class="nav-link" id="v-pills-notes-tab" data-bs-toggle="pill"
 								data-bs-target="#v-pills-notes" type="button" role="tab" aria-controls="v-pills-notes"
@@ -64,7 +64,7 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr th:each="item : ${casebiodata}">
+											<tr th:each="item : ${casebiodata}" th:if="${item.canreview}">
 												<td th:utext="${item.question}" class="text-secondary"></td>
 												<td th:utext="${item.answer}" style="width: 50%;"></td>
 											</tr>
@@ -82,7 +82,7 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr th:each="item : ${casepregnancy}">
+											<tr th:each="item : ${casepregnancy}" th:if="${item.canreview}">
 												<td th:utext="${item.question}" class="text-secondary"></td>
 												<td th:utext="${item.answer}" style="width: 50%;"></td>
 											</tr>
@@ -100,7 +100,7 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr th:each="item : ${casereferral}">
+											<tr th:each="item : ${casereferral}" th:if="${item.canreview}">
 												<td th:utext="${item.question}" class="text-secondary"></td>
 												<td th:utext="${item.answer}" style="width: 50%;"></td>
 											</tr>
@@ -118,7 +118,7 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr th:each="item : ${casedelivery}">
+											<tr th:each="item : ${casedelivery}" th:if="${item.canreview}">
 												<td th:utext="${item.question}" class="text-secondary"></td>
 												<td th:utext="${item.answer}" style="width: 50%;"></td>
 											</tr>
@@ -136,7 +136,7 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr th:each="item : ${caseantenatal}">
+											<tr th:each="item : ${caseantenatal}" th:if="${item.canreview}">
 												<td th:utext="${item.question}" class="text-secondary"></td>
 												<td th:utext="${item.answer}" style="width: 50%;"></td>
 											</tr>
@@ -154,7 +154,7 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr th:each="item : ${caselabour}">
+											<tr th:each="item : ${caselabour}" th:if="${item.canreview}">
 												<td th:utext="${item.question}" class="text-secondary"></td>
 												<td th:utext="${item.answer}" style="width: 50%;"></td>
 											</tr>
@@ -172,7 +172,7 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr th:each="item : ${casebirth}">
+											<tr th:each="item : ${casebirth}" th:if="${item.canreview}">
 												<td th:utext="${item.question}" class="text-secondary"></td>
 												<td th:utext="${item.answer}" style="width: 50%;"></td>
 											</tr>
@@ -181,7 +181,7 @@
 								</div>
 							</div>
 							<div class="tab-pane fade" id="v-pills-fetalheart" role="tabpanel"
-								aria-labelledby="v-pills-fetalheart-tab">
+								aria-labelledby="v-pills-fetalheart-tab" th:if="${casefetalheart}">
 								<div class="overflow-auto" style="height: 400px;">
 									<table class="table">
 										<thead>
@@ -190,7 +190,7 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr th:each="item : ${casefetalheart}">
+											<tr th:each="item : ${casefetalheart}" th:if="${item.canreview}">
 												<td th:utext="${item.question}" class="text-secondary"></td>
 												<td th:utext="${item.answer}" style="width: 50%;"></td>
 											</tr>
@@ -199,7 +199,7 @@
 								</div>
 							</div>
 							<div class="tab-pane fade" id="v-pills-babydeath" role="tabpanel"
-								aria-labelledby="v-pills-babydeath-tab">
+								aria-labelledby="v-pills-babydeath-tab" th:if="${casebabydeath}">
 								<div class="overflow-auto" style="height: 400px;">
 									<table class="table">
 										<thead>
@@ -208,7 +208,7 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr th:each="item : ${casebabydeath}">
+											<tr th:each="item : ${casebabydeath}" th:if="${item.canreview}">
 												<td th:utext="${item.question}" class="text-secondary"></td>
 												<td th:utext="${item.answer}" style="width: 50%;"></td>
 											</tr>
@@ -226,7 +226,7 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr th:each="item : ${casenotes}">
+											<tr th:each="item : ${casenotes}" th:if="${item.canreview}">
 												<td th:utext="${item.question}" class="text-secondary"></td>
 												<td th:utext="${item.answer}" style="width: 50%;"></td>
 											</tr>

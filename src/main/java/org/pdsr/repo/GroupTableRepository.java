@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface GroupTableRepository extends JpaRepository<group_table, Integer> {
+public interface GroupTableRepository extends JpaRepository<group_table, String> {
 
 }

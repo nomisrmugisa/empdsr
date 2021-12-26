@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -36,6 +37,11 @@ public class sync_table implements Serializable {
 	@NotNull
 	@Size(min = 1, max = 80)	
 	private String sync_name;
+	
+	
+	@Lob
+	@Column
+	private String sync_json;
 
 	public String getSync_id() {
 		return sync_id;
@@ -67,6 +73,14 @@ public class sync_table implements Serializable {
 
 	public void setSync_name(String sync_name) {
 		this.sync_name = sync_name;
+	}
+
+	public String getSync_json() {
+		return sync_json;
+	}
+
+	public void setSync_json(String sync_json) {
+		this.sync_json = sync_json;
 	}
 
 	@Override

@@ -58,7 +58,7 @@ public class SetupController {
 
 	@Autowired
 	private CountryTableRepository countryRepo;
-	
+
 	@Autowired
 	private IcdCodesRepository icdRepo;
 
@@ -77,6 +77,8 @@ public class SetupController {
 			model.addAttribute("selected", selected);
 		}
 
+		model.addAttribute("back", "back");
+
 		if (success != null) {
 			model.addAttribute("success", "Synced Successfully!");
 		}
@@ -87,34 +89,34 @@ public class SetupController {
 	@PostMapping("")
 	public String sync(Principal principal, @ModelAttribute("selected") sync_table selected, BindingResult results) {
 
-		//do the sync operations here
+		// do the sync operations here
 		Optional<facility_table> object = facilityRepo.findByFacility_code(selected.getSync_code());
-		
-		if(object.isEmpty()) {
+
+		if (object.isEmpty()) {
 			results.rejectValue("sync_code", "invalid.code");
 			selected.setSync_uuid("");
 			selected.setSync_name("");
 		}
-		
-		if(results.hasErrors()) {
-			return "controls/dashboard";	
+
+		if (results.hasErrors()) {
+			return "controls/dashboard";
 		}
 
 		facility_table facility = object.get();
-		
+
 		selected.setSync_name(facility.getFacility_name());
 		selected.setSync_uuid(facility.getFacility_uuid());
 		syncRepo.save(selected);
-		
+
 		try {
 			List<icd_codes> icds = loadICD();
 			icdRepo.saveAll(icds);
 		} catch (IOException e) {
 			results.rejectValue("sync_code", "invalid.icds");
 			e.printStackTrace();
-			return "controls/dashboard";	
+			return "controls/dashboard";
 		}
-		
+
 		return "redirect:/controls?success=yes";
 	}
 
@@ -123,7 +125,7 @@ public class SetupController {
 
 		model.addAttribute("countryList", countryRepo.findAll());
 		model.addAttribute("loc", "active");
-		
+
 		return "controls/setup-countries";
 	}
 
@@ -198,7 +200,6 @@ public class SetupController {
 	public String district(Principal principal, Model model, @ModelAttribute("selected") region_table selected,
 			@PathVariable("id") String uuid) {
 
-		
 		regionRepo.save(selected);
 
 		model.addAttribute("success", "Saved Successfully");
@@ -245,12 +246,12 @@ public class SetupController {
 
 		return "redirect:/controls/facility/" + selected.getDistrict_uuid() + "?success=yes";
 	}
-	
+
 	private List<icd_codes> loadICD() throws IOException {
-		
+
 		byte[] bytes = new byte[0];
 
-			bytes = CONSTANTS.readICD10("icd_code.csv");
+		bytes = CONSTANTS.readICD10("icd_code.csv");
 
 		try (Reader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)))) {
 
@@ -265,7 +266,6 @@ public class SetupController {
 
 		return new ArrayList<>();
 	}
-
 
 }
 // end class

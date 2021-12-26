@@ -2,7 +2,10 @@ package org.pdsr.controller;
 
 import java.security.Principal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -17,6 +20,8 @@ import java.util.stream.Stream;
 import javax.transaction.Transactional;
 
 import org.pdsr.CONSTANTS;
+import org.pdsr.Utils;
+import org.pdsr.json.json_algorithm;
 import org.pdsr.json.json_data;
 import org.pdsr.json.json_list;
 import org.pdsr.model.audit_audit;
@@ -26,6 +31,7 @@ import org.pdsr.model.case_identifiers;
 import org.pdsr.model.datamap;
 import org.pdsr.model.datamapPK;
 import org.pdsr.model.icd_codes;
+import org.pdsr.model.sync_table;
 import org.pdsr.pojos.icdpm;
 import org.pdsr.repo.AuditAuditRepository;
 import org.pdsr.repo.AuditCaseRepository;
@@ -117,84 +123,290 @@ public class CaseAuditController {
 
 		model.addAttribute("back", "back");
 
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+		TypeReference<json_algorithm> mapType1 = new TypeReference<json_algorithm>() {
+		};
+		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		json_algorithm algorithm = new json_algorithm();
+
+		if (synctable.getSync_json() != null && !synctable.getSync_json().isBlank()) {
+			try {
+				algorithm = objectMapper.readValue(synctable.getSync_json(), mapType1);
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
+
+			// if audit has been done for the given week, then don't run the algorithm
+			if (algorithm.getAlg_week() <= Calendar.WEEK_OF_YEAR) {
+				model.addAttribute("done", "done");
+				return "auditing/audit-retrieve";
+			}
+		}
+
 		return "auditing/audit-retrieve";
 	}
 
 	@PostMapping("")
-	public String list(Principal principal) {
+	public String listPost(Principal principal, Model model) {
+		if (syncRepo.findById(CONSTANTS.FACILITY_ID).isEmpty()) {
+			return "home";
+		}
+
 		// prepare a mapping reference type for converting the JSON strings to objects
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 		TypeReference<List<json_data>> mapType = new TypeReference<List<json_data>>() {
 		};
+		TypeReference<json_algorithm> mapType1 = new TypeReference<json_algorithm>() {
+		};
 
 		List<case_identifiers> pendingAudit = caseRepo.findByPendingCase_status(1);// find all submitted cases but not
-																					// audited.
-		// the DB will apply the algorithm before selecting the pending cases. so the
-		// pending cases will always be audit size limit
-
+																					// audited
 		// create a bucket for the selected cases for auditing
 		List<audit_case> selectedForAuditing = new ArrayList<>();
 
 		try {
-			for (case_identifiers scase : pendingAudit) {
+			// Create the temporary deque
+			Deque<Integer> tempDeque = new ArrayDeque<>();
+			Deque<Integer> persDeque = new ArrayDeque<>();
+			persDeque.push(1);
+			persDeque.push(2);
+			persDeque.push(3);
+			persDeque.push(4);
 
-				// create a new audit for the case
-				audit_case acase = new audit_case();
-				acase.setAudit_date(new java.util.Date());
-				acase.setAudit_uuid(scase.getCase_uuid());
-				acase.setCase_death(scase.getCase_death());
+			// Fetch the persistent deque
+			sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+			json_algorithm algorithm = (synctable.getSync_json() != null && !synctable.getSync_json().isBlank())
+					? objectMapper.readValue(synctable.getSync_json(), mapType1)
+					: new json_algorithm();
 
-				// extract the json array from the case into a one big list object
-				json_list fulldata = new json_list();
+			if (algorithm.getAlg_deque() != null) {
 
-				List<json_data> biodata = objectMapper.readValue(scase.getBiodata().getBiodata_json(), mapType);
-				fulldata.setBiodata(biodata);
+				persDeque = algorithm.getAlg_deque();
+			}
 
-				List<json_data> pregdata = objectMapper.readValue(scase.getPregnancy().getPregnancy_json(), mapType);
-				fulldata.setPregnancy(pregdata);
+			// get the week of auditing
+			int auditweek = Calendar.WEEK_OF_YEAR % 4;
 
-				List<json_data> refdata = objectMapper.readValue(scase.getReferral().getReferral_json(), mapType);
-				fulldata.setReferral(refdata);
+			// get the number of neonatal audits to be done for that week
+			int neonatalCount = Utils.PRIORITY_MATRIX[auditweek][1];
+			int totalneonatal = 0;
 
-				List<json_data> deldata = objectMapper.readValue(scase.getDelivery().getDelivery_json(), mapType);
-				fulldata.setDelivery(deldata);
+			for (int i = 1; i <= neonatalCount;) {
 
-				List<json_data> antedata = objectMapper.readValue(scase.getAntenatal().getAntenatal_json(), mapType);
-				fulldata.setAntenatal(antedata);
+				Integer nextPriority = persDeque.pollLast();
 
-				List<json_data> labdata = objectMapper.readValue(scase.getLabour().getLabour_json(), mapType);
-				fulldata.setLabour(labdata);
+				a: for (case_identifiers scase : pendingAudit) {
 
-				List<json_data> birdata = objectMapper.readValue(scase.getBirth().getBirth_json(), mapType);
-				fulldata.setBirth(birdata);
+					if (scase.getCase_death() != 2) {
+						continue a;
+					}
 
-				if (scase.getCase_death() == 1) {
-					List<json_data> fetdata = objectMapper.readValue(scase.getFetalheart().getFetalheart_json(),
+					if (scase.getBabydeath() == null) {
+						continue a;
+					}
+
+					Integer medicalcode = scase.getBabydeath().getBaby_medicalcod();
+
+					if (nextPriority != medicalcode) {
+						continue a;
+					}
+
+					// create a new audit for the case
+					audit_case acase = new audit_case();
+					acase.setAudit_date(new java.util.Date());
+					acase.setAudit_uuid(scase.getCase_uuid());
+					acase.setCase_death(scase.getCase_death());
+
+					// extract the json array from the case into a one big list object
+					json_list fulldata = new json_list();
+
+					List<json_data> biodata = objectMapper.readValue(scase.getBiodata().getBiodata_json(), mapType);
+					fulldata.setBiodata(biodata);
+
+					List<json_data> pregdata = objectMapper.readValue(scase.getPregnancy().getPregnancy_json(),
 							mapType);
-					fulldata.setFetalheart(fetdata);
+					fulldata.setPregnancy(pregdata);
+
+					List<json_data> refdata = objectMapper.readValue(scase.getReferral().getReferral_json(), mapType);
+					fulldata.setReferral(refdata);
+
+					List<json_data> deldata = objectMapper.readValue(scase.getDelivery().getDelivery_json(), mapType);
+					fulldata.setDelivery(deldata);
+
+					List<json_data> antedata = objectMapper.readValue(scase.getAntenatal().getAntenatal_json(),
+							mapType);
+					fulldata.setAntenatal(antedata);
+
+					List<json_data> labdata = objectMapper.readValue(scase.getLabour().getLabour_json(), mapType);
+					fulldata.setLabour(labdata);
+
+					List<json_data> birdata = objectMapper.readValue(scase.getBirth().getBirth_json(), mapType);
+					fulldata.setBirth(birdata);
+
+					if (scase.getCase_death() == 1) {
+						List<json_data> fetdata = objectMapper.readValue(scase.getFetalheart().getFetalheart_json(),
+								mapType);
+						fulldata.setFetalheart(fetdata);
+					}
+
+					if (scase.getCase_death() == 2) {
+						List<json_data> bdtdata = objectMapper.readValue(scase.getBabydeath().getBaby_json(), mapType);
+						fulldata.setBabydeath(bdtdata);
+					}
+
+					List<json_data> notedata = objectMapper.readValue(scase.getNotes().getNotes_json(), mapType);
+					fulldata.setNotes(notedata);
+
+					// convert the big list back to JSON data String
+					final String arrayToJson = objectMapper.writeValueAsString(fulldata);
+
+					// add the combined JSON data to the new audit for the case
+					acase.setAudit_data(arrayToJson);
+
+					// add the new audit for case into the bucket of selected cases for auditing
+					selectedForAuditing.add(acase);
+
+					totalneonatal++;
 				}
 
-				if (scase.getCase_death() == 2) {
-					List<json_data> bdtdata = objectMapper.readValue(scase.getBabydeath().getBaby_json(), mapType);
-					fulldata.setBabydeath(bdtdata);
+				if (totalneonatal < i) {
+					tempDeque.push(nextPriority);
+				} else {
+					persDeque.push(nextPriority);
+					i++;
 				}
-
-				List<json_data> notedata = objectMapper.readValue(scase.getNotes().getNotes_json(), mapType);
-				fulldata.setNotes(notedata);
-
-				// convert the big list back to JSON data String
-				final String arrayToJson = objectMapper.writeValueAsString(fulldata);
-
-				// add the combined JSON data to the new audit for the case
-				acase.setAudit_data(arrayToJson);
-
-				// add the new audit for case into the bucket of selected cases for auditing
-				selectedForAuditing.add(acase);
 
 			}
 
+			if (!tempDeque.isEmpty()) {
+				persDeque.addAll(tempDeque);
+			}
+
+			/// still birth
+			// get the number of neonatal audits to be done for that week
+			int stillCount = Utils.PRIORITY_MATRIX[auditweek][0];
+			int totalStill = 0;
+
+			for (int i = 0; i < stillCount; i++) {
+
+				case_identifiers taken = null;
+				case_identifiers taken1 = null;
+
+				a: for (case_identifiers tcase : pendingAudit) {
+
+					if (tcase.getCase_death() != 1) {
+						continue a;
+					}
+
+					if (tcase.getFetalheart() == null) {
+						continue a;
+					}
+
+					Integer stillcase = tcase.getFetalheart().getFetalheart_lastheard();
+
+					if (stillcase > 2) {// if it is not intrapartum then skip it
+						continue a;
+					}
+
+					if (stillcase == 0) {// select the last antepartum case
+						taken1 = tcase;
+
+					} else {// once an intrapartum case is detected, break and register it
+						taken = tcase;
+						break;
+					}
+
+				}
+
+				case_identifiers scase = null;
+				// add the new audit for case into the bucket of selected cases for auditing
+				if (taken != null) {
+					scase = taken;
+				} else if (taken1 != null) {
+					scase = taken1;
+				}
+
+				if (scase != null) {
+					// create a new audit for the case
+					audit_case acase = new audit_case();
+					acase.setAudit_date(new java.util.Date());
+					acase.setAudit_uuid(scase.getCase_uuid());
+					acase.setCase_death(scase.getCase_death());
+
+					// extract the json array from the case into a one big list object
+					json_list fulldata = new json_list();
+
+					List<json_data> biodata = objectMapper.readValue(scase.getBiodata().getBiodata_json(), mapType);
+					fulldata.setBiodata(biodata);
+
+					List<json_data> pregdata = objectMapper.readValue(scase.getPregnancy().getPregnancy_json(),
+							mapType);
+					fulldata.setPregnancy(pregdata);
+
+					List<json_data> refdata = objectMapper.readValue(scase.getReferral().getReferral_json(), mapType);
+					fulldata.setReferral(refdata);
+
+					List<json_data> deldata = objectMapper.readValue(scase.getDelivery().getDelivery_json(), mapType);
+					fulldata.setDelivery(deldata);
+
+					List<json_data> antedata = objectMapper.readValue(scase.getAntenatal().getAntenatal_json(),
+							mapType);
+					fulldata.setAntenatal(antedata);
+
+					List<json_data> labdata = objectMapper.readValue(scase.getLabour().getLabour_json(), mapType);
+					fulldata.setLabour(labdata);
+
+					List<json_data> birdata = objectMapper.readValue(scase.getBirth().getBirth_json(), mapType);
+					fulldata.setBirth(birdata);
+
+					if (scase.getCase_death() == 1) {
+						List<json_data> fetdata = objectMapper.readValue(scase.getFetalheart().getFetalheart_json(),
+								mapType);
+						fulldata.setFetalheart(fetdata);
+					}
+
+					if (scase.getCase_death() == 2) {
+						List<json_data> bdtdata = objectMapper.readValue(scase.getBabydeath().getBaby_json(), mapType);
+						fulldata.setBabydeath(bdtdata);
+					}
+
+					List<json_data> notedata = objectMapper.readValue(scase.getNotes().getNotes_json(), mapType);
+					fulldata.setNotes(notedata);
+
+					// convert the big list back to JSON data String
+					final String arrayToJson = objectMapper.writeValueAsString(fulldata);
+
+					// add the combined JSON data to the new audit for the case
+					acase.setAudit_data(arrayToJson);
+					totalStill++;
+					selectedForAuditing.add(acase);
+
+					pendingAudit.remove(scase);// exclude the selected case from the next search
+				}
+
+			}
+
+			// save the new state of the persistent deque
+			if (selectedForAuditing.size() >= 0) {
+				algorithm.setAlg_date(new java.util.Date());
+				algorithm.setAlg_year(Calendar.YEAR);
+				algorithm.setAlg_month(Calendar.MONTH);
+				algorithm.setAlg_week(Calendar.WEEK_OF_YEAR);
+				algorithm.setAlg_modulo(auditweek);
+				algorithm.setAlg_neonatal(totalneonatal);
+				algorithm.setAlg_stillbirth(totalStill);
+				algorithm.setAlg_totalcases(selectedForAuditing.size());
+
+				algorithm.setAlg_deque(persDeque);
+				final String arrayToJson = objectMapper.writeValueAsString(algorithm);
+				synctable.setSync_json(arrayToJson);
+				syncRepo.save(synctable);
+			}
+
 			// save them to the audit_case
+
 			acaseRepo.saveAll(selectedForAuditing);
 
 		} catch (JsonProcessingException e) {
@@ -400,7 +612,7 @@ public class CaseAuditController {
 		return "redirect:/auditing/recommend/" + case_uuid + "?success=yes";
 	}
 
-	@GetMapping("/recommend/cstatus/{id}")
+	@GetMapping("/cstatus/{id}")
 	public String recommendStarted(Principal principal, Model model, @PathVariable("id") String recommendation_uuid,
 			@RequestParam(name = "success", required = false) String success) {
 
@@ -431,17 +643,17 @@ public class CaseAuditController {
 		return "auditing/audit-status";
 	}
 
-	@PostMapping("/recommend/cstatus/{id}")
+	@PostMapping("/cstatus/{id}")
 	public String recommendStarted(Principal principal, @ModelAttribute("selected") audit_recommendation selected,
 			@PathVariable("id") String recommendation_uuid) {
 
 		audit_recommendation recommend = rcaseRepo.findById(recommendation_uuid).get();
 		recommend.setRecommendation_status(selected.getRecommendation_status());
 		recommend.setRecommendation_comments(selected.getRecommendation_comments());
-		
+
 		rcaseRepo.save(recommend);
 
-		return "redirect:/auditing/recommend/cstatus/" + recommendation_uuid + "?success=yes";
+		return "redirect:/auditing/cstatus/" + recommendation_uuid + "?success=yes";
 	}
 
 	@GetMapping(value = "/icdcodes")
@@ -612,17 +824,22 @@ public class CaseAuditController {
 //				new json_data(getQuestion("label.audit_icd10"), getIcdDesc(o.getAudit_icd10())),
 //				new json_data(getQuestion("label.audit_icdpm"), getPMDesc(o.getAudit_death(), o.getAudit_icdpm())),
 //				new json_data(getQuestion("label.audit_csc"), o.getAudit_csc()),
-				new json_data(getQuestion("label.audit_delay1"), getAnswer("yesnodk_options", o.getAudit_delay1())),
-				new json_data(getQuestion("label.audit_delay2"), getAnswer("yesnodk_options", o.getAudit_delay2())),
-				new json_data(getQuestion("label.audit_delay3a"), getAnswer("yesnodk_options", o.getAudit_delay3a())),
-				new json_data(getQuestion("label.audit_delay3b"), getAnswer("yesnodk_options", o.getAudit_delay3b())),
-				new json_data(getQuestion("label.audit_delay3b"), getAnswer("yesnodk_options", o.getAudit_delay3c())),
-				new json_data(getQuestion("label.audit_ifcmfs"), o.getAudit_ifcmfs()),
-				new json_data(getQuestion("label.audit_sysmfs"), o.getAudit_sysmfs()),
-				new json_data(getQuestion("label.audit_facmfs"), o.getAudit_facmfs()),
-				new json_data(getQuestion("label.audit_hwkmfs"), o.getAudit_hwkmfs()),
+				new json_data(getQuestion("label.audit_delay1"), getAnswer("yesnodk_options", o.getAudit_delay1()),
+						true),
+				new json_data(getQuestion("label.audit_delay2"), getAnswer("yesnodk_options", o.getAudit_delay2()),
+						true),
+				new json_data(getQuestion("label.audit_delay3a"), getAnswer("yesnodk_options", o.getAudit_delay3a()),
+						true),
+				new json_data(getQuestion("label.audit_delay3b"), getAnswer("yesnodk_options", o.getAudit_delay3b()),
+						true),
+				new json_data(getQuestion("label.audit_delay3b"), getAnswer("yesnodk_options", o.getAudit_delay3c()),
+						true),
+				new json_data(getQuestion("label.audit_ifcmfs"), o.getAudit_ifcmfs(), true),
+				new json_data(getQuestion("label.audit_sysmfs"), o.getAudit_sysmfs(), true),
+				new json_data(getQuestion("label.audit_facmfs"), o.getAudit_facmfs(), true),
+				new json_data(getQuestion("label.audit_hwkmfs"), o.getAudit_hwkmfs(), true),
 				new json_data(getQuestion("label.audit_cdate"),
-						new SimpleDateFormat("dd-MMM-yyyy").format(o.getAudit_cdate())))
+						new SimpleDateFormat("dd-MMM-yyyy").format(o.getAudit_cdate()), true))
 				.collect(Collectors.toList());
 
 		return list;

@@ -35,7 +35,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //        .csrf().disable()//ssl
         
         .authorizeRequests()
-		.antMatchers( "/img/**", "/webjars/**").permitAll()        
+		//.antMatchers( "/img/**", "/webjars/**").permitAll()
+		.antMatchers("/controls/**").hasRole("SETUP")//can only setup controls
+		.antMatchers("/registry/**").hasRole("ENTRY")//can only enter data
+		.antMatchers("/auditing").hasAnyRole("AUDIT", "TASKS")//can view audits
+		.antMatchers("/auditing/cstatus/**").hasRole("TASKS")//changing of status
+		.antMatchers("/auditing/**").hasRole("AUDIT")//can audit and change status
         .anyRequest().authenticated()
         .and().formLogin()
         .loginPage("/login")
@@ -51,7 +56,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     //for h2 console
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/h2-console/**");
+        web.ignoring().antMatchers("/h2-console/**", "/img/**", "/webjars/**");
     }
 
     @Bean
