@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html th:replace="~{layout/auditing :: layout(_,~{},~{::scripts},~{::content},~{})}">
-
+<html th:replace="~{layout/auditing :: layout(_,~{::links},~{::scripts},~{::content},~{})}">
+<links>
+	<link rel="stylesheet" href="webjars/jquery-steps/1.1.0/demo/css/jquery.steps.css" />
+</links>
 <content>
 	<div class="float-end" th:text="${facility_code}"></div>
 	<div class="col-md-12 py-3 my-3 mx-auto p-1 rounded box-shadow" style="background-color: #92c7f2;">
@@ -9,6 +11,17 @@
 			<div class="row mb-3">
 				<div class="col-md-6 mb-3">
 					<div class="bg-light p-2 rounded">
+						<div class="row mb-3">
+							<div class="col-auto">
+								<label class="text-secondary" th:text=#{label.date.audit}></label>
+								<i th:text="${#dates.format(selected.audit_case.audit_date,'dd-MMM-yyyy')}"></i>
+							</div>
+							<div class="col-auto">
+								<label class="text-secondary" th:text=#{label.case.type}></label>
+								<i
+									th:text="${selected.audit_case.case_death == 1}?#{label.still.birth}:#{label.neonatal.death}"></i>
+							</div>
+						</div>
 						<div class="nav nav-pills mb-0 border-bottom small nav-justified" id="v-pills-tab"
 							role="tablist" aria-orientation="horizontal">
 
@@ -42,11 +55,13 @@
 
 							<button class="nav-link" id="v-pills-fetalheart-tab" data-bs-toggle="pill"
 								data-bs-target="#v-pills-fetalheart" type="button" role="tab"
-								aria-controls="v-pills-fetalheart" aria-selected="false" th:if="${casefetalheart}">Fetalheart</button>
+								aria-controls="v-pills-fetalheart" aria-selected="false"
+								th:if="${casefetalheart}">Fetalheart</button>
 
 							<button class="nav-link" id="v-pills-babydeath-tab" data-bs-toggle="pill"
 								data-bs-target="#v-pills-babydeath" type="button" role="tab"
-								aria-controls="v-pills-babydeath" aria-selected="false" th:if="${casebabydeath}">Baby's Death</button>
+								aria-controls="v-pills-babydeath" aria-selected="false" th:if="${casebabydeath}">Baby's
+								Death</button>
 
 							<button class="nav-link" id="v-pills-notes-tab" data-bs-toggle="pill"
 								data-bs-target="#v-pills-notes" type="button" role="tab" aria-controls="v-pills-notes"
@@ -238,17 +253,6 @@
 					</div>
 				</div>
 				<div class="col-md-6">
-					<div class="row mb-3">
-						<div class="col-auto">
-							<label class="text-secondary" th:text=#{label.date.audit}></label>
-							<i th:text="${#dates.format(selected.audit_case.audit_date,'dd-MMM-yyyy')}"></i>
-						</div>
-						<div class="col-auto">
-							<label class="text-secondary" th:text=#{label.case.type}></label>
-							<i
-								th:text="${selected.audit_case.case_death == 1}?#{label.still.birth}:#{label.neonatal.death}"></i>
-						</div>
-					</div>
 					<div th:insert="fragments/review-case :: case_review"></div>
 				</div>
 			</div>
@@ -257,6 +261,16 @@
 </content>
 
 <scripts>
+	<script src="webjars/jquery-steps/1.1.0/build/jquery.steps.js"></script>
+	<script>
+		$("#example-basic").steps({
+			headerTag: "h3",
+			bodyTag: "section",
+			transitionEffect: "slideLeft",
+			autoFocus: true
+		});
+	</script>
+
 	<script>
 		(function () {
 			'use strict';
@@ -364,10 +378,6 @@
 					}
 				});
 			});
-	</script>
-	<script>
-		$('#audit_icd10').editableSelect();
-		$('#audit_icdpm').editableSelect();
 	</script>
 </scripts>
 

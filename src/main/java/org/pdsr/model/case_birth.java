@@ -58,7 +58,7 @@ public class case_birth implements Serializable {
 	@NotNull
 	@Column
 	@Temporal(TemporalType.TIME)
-	@DateTimeFormat(pattern = "HH:mm a")
+	@DateTimeFormat(pattern = "HH:mm")
 	private java.util.Date birth_csproposetime;
 
 

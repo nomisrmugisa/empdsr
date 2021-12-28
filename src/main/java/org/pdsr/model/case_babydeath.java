@@ -92,7 +92,7 @@ public class case_babydeath implements Serializable {
 	@NotNull
 	@Column
 	@Temporal(TemporalType.TIME)
-	@DateTimeFormat(pattern = "HH:mm a")
+	@DateTimeFormat(pattern = "HH:mm")
 	private java.util.Date baby_dtime;
 
 	@Column

@@ -52,7 +52,7 @@ public class case_delivery implements Serializable {
 	@NotNull
 	@Column
 	@Temporal(TemporalType.TIME)
-	@DateTimeFormat(pattern = "HH:mm a")
+	@DateTimeFormat(pattern = "HH:mm")
 	private java.util.Date delivery_time;
 
 	@NotNull

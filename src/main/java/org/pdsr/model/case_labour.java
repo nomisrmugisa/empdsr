@@ -56,7 +56,7 @@ public class case_labour implements Serializable {
 	@NotNull
 	@Column
 	@Temporal(TemporalType.TIME)
-	@DateTimeFormat(pattern = "HH:mm a")
+	@DateTimeFormat(pattern = "HH:mm")
 	private java.util.Date labour_seetime;
 
 	@NotNull

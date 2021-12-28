@@ -354,7 +354,7 @@ public class CaseEntryController {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
-		
+
 		selected.setCase_status(0);
 
 		switch (page) {
@@ -410,6 +410,36 @@ public class CaseEntryController {
 				selected.getDelivery().setDelivery_hour(time.getHours());
 				selected.getDelivery().setDelivery_minute(time.getMinutes());
 
+				final Integer period = selected.getDelivery().getDelivery_period();
+				final Integer hour = selected.getDelivery().getDelivery_hour();
+
+				boolean dawn = (hour > 0 && hour < 6);
+				boolean morning = (hour > 5 && hour < 12);
+				boolean midday = (hour == 12);
+				boolean afternoon = (hour > 12 && hour < 18);
+				boolean evening = (hour > 17 && hour < 22);
+				boolean midnight = (hour > 21 && hour < 1);
+
+				if (period == 0 && !dawn) {
+					results.rejectValue("delivery.delivery_period", "error.dawn");
+				} else if (period == 1 && !morning) {
+					results.rejectValue("delivery.delivery_period", "error.morning");
+				} else if (period == 2 && !midday) {
+					results.rejectValue("delivery.delivery_period", "error.midday");
+				} else if (period == 3 && !afternoon) {
+					results.rejectValue("delivery.delivery_period", "error.afternoon");
+				} else if (period == 4 && !evening) {
+					results.rejectValue("delivery.delivery_period", "error.evening");
+				} else if (period == 4 && !midnight) {
+					results.rejectValue("delivery.delivery_period", "error.midnight");
+				}
+
+				if (results.hasErrors()) {
+					model.addAttribute("selected", selected);
+					model.addAttribute("page", page);
+					return "registry/case-update";
+				}
+
 				delRepo.save(selected.getDelivery());
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
@@ -437,6 +467,36 @@ public class CaseEntryController {
 
 				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getLabour()));
 				selected.getLabour().setLabour_json(arrayToJson);
+
+				final Integer period = selected.getLabour().getLabour_seeperiod();
+				final Integer hour = selected.getLabour().getLabour_seehour();
+
+				boolean dawn = (hour > 0 && hour < 6);
+				boolean morning = (hour > 5 && hour < 12);
+				boolean midday = (hour == 12);
+				boolean afternoon = (hour > 12 && hour < 18);
+				boolean evening = (hour > 17 && hour < 22);
+				boolean midnight = (hour > 21 && hour < 1);
+
+				if (period == 0 && !dawn) {
+					results.rejectValue("labour.labour_seeperiod", "error.dawn");
+				} else if (period == 1 && !morning) {
+					results.rejectValue("labour.labour_seeperiod", "error.morning");
+				} else if (period == 2 && !midday) {
+					results.rejectValue("labour.labour_seeperiod", "error.midday");
+				} else if (period == 3 && !afternoon) {
+					results.rejectValue("labour.labour_seeperiod", "error.afternoon");
+				} else if (period == 4 && !evening) {
+					results.rejectValue("labour.labour_seeperiod", "error.evening");
+				} else if (period == 4 && !midnight) {
+					results.rejectValue("labour.labour_seeperiod", "error.midnight");
+				}
+
+				if (results.hasErrors()) {
+					model.addAttribute("selected", selected);
+					model.addAttribute("page", page);
+					return "registry/case-update";
+				}
 
 				labRepo.save(selected.getLabour());
 			} catch (JsonProcessingException e) {
@@ -733,6 +793,7 @@ public class CaseEntryController {
 			map.put(i, i + " hour(s)");
 		}
 		map.put(88, "Not stated");
+		map.put(99, "Not Applicable");
 
 		return map;
 	}
@@ -746,6 +807,7 @@ public class CaseEntryController {
 			map.put(i, i + " minute(s)");
 		}
 		map.put(88, "Not stated");
+		map.put(99, "Not Applicable");
 
 		return map;
 	}
@@ -1061,7 +1123,7 @@ public class CaseEntryController {
 		List<json_data> list = Stream
 				.of(new json_data(getQuestion("label.birth_mode"), getAnswer("mode_options", o.getBirth_mode()), true),
 						new json_data(getQuestion("label.birth_insistnormal"),
-								getAnswer("yesnodk_options", o.getBirth_insistnormal()), true),
+								getAnswer("yesnodkna_options", o.getBirth_insistnormal()), true),
 						new json_data(getQuestion("label.birth_csproposetime"),
 								new SimpleDateFormat("HH:mm a").format(o.getBirth_csproposetime()), forcenormal),
 						new json_data(getQuestion("label.birth_provider"),

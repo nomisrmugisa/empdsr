@@ -194,17 +194,14 @@
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('period_options',5,'Midnight');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('period_options',88,'Not Stated');
   
-	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mode_options',0,'Spontaneous vaginal delivery');
-	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mode_options',1,'Breech delivery (vaginal)');
-	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mode_options',2,'Vacuum/forceps delivery');
-	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mode_options',3,'Elective C/S');
-	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mode_options',4,'Emergency C/S');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mode_options',0,'Spontaneous Vaginal Delivery');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mode_options',1,'Assisted Delivery (Vacuum/forceps)');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mode_options',2,'Caesarean Section');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mode_options',88,'Not Stated');
   
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('startmode_options',0,'No labour');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('startmode_options',1,'Spontaneous');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('startmode_options',2,'Induced');
-	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('startmode_options',77,'Unknown');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('startmode_options',88,'Not Stated');
   
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('provider_options',0,'Specialist');

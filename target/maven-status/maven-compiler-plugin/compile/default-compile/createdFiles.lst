@@ -2,6 +2,7 @@ org\pdsr\model\sync_table.class
 org\pdsr\repo\CaseBabyRepository.class
 org\pdsr\MvcConfig.class
 org\pdsr\model\case_delivery.class
+org\pdsr\controller\CaseAuditController$5.class
 org\pdsr\model\revision_audit_trail.class
 org\pdsr\Utils.class
 org\pdsr\model\risk_table.class
@@ -32,6 +33,7 @@ org\pdsr\model\datamapPK.class
 org\pdsr\model\case_referral.class
 org\pdsr\model\district_table.class
 org\pdsr\repo\IcdCodesRepository.class
+org\pdsr\controller\CaseAuditController$4.class
 org\pdsr\model\audit_audit.class
 org\pdsr\repo\CaseFetalheartRepository.class
 org\pdsr\repo\DistrictTableRepository.class
@@ -58,6 +60,7 @@ org\pdsr\controller\CaseAuditController$1.class
 org\pdsr\model\abnormality_table.class
 org\pdsr\repo\CaseDeliveryRepository.class
 org\pdsr\repo\ComplicationTableRepository.class
+org\pdsr\json\json_algorithm.class
 org\pdsr\controller\UsersController.class
 org\pdsr\LocaleSourceConfig.class
 org\pdsr\model\case_babydeath.class
@@ -68,6 +71,7 @@ org\pdsr\repo\RegionTableRepository.class
 org\pdsr\model\case_pregnancy.class
 org\pdsr\repo\CaseAntenatalRepository.class
 org\pdsr\model\placentacheck_table.class
+org\pdsr\model\sm_codes.class
 org\pdsr\model\case_labour.class
 org\pdsr\model\icd_codes.class
 org\pdsr\pojos\icdpm.class
