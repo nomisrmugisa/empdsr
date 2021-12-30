@@ -35,7 +35,7 @@
 					th:text="#{case.entry}"> </a>
 				<a sec:authorize="hasAnyRole('AUDIT', 'TASKS')" class="btn btn-sm btn-success" href="#" th:href="@{/auditing}"
 					th:text="#{case.audit}"></a>
-				<a sec:authorize="hasRole('VIEWS')" class="btn btn-sm btn-warning" href="#" th:href="@{/analysis}"
+				<a sec:authorize="hasRole('VIEWS')" class="btn btn-sm btn-warning" href="#" th:href="@{/reporting}"
 					th:text="#{case.analysis}"></a>
 				<a sec:authorize="hasRole('SETUP')" class="btn btn-sm btn-dark" href="#" th:href="@{/controls}"
 					th:utext="#{controls}"></a>

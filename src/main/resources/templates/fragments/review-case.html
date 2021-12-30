@@ -51,7 +51,7 @@
 		<h3>Delays</h3>
 		<section class="overflow-auto">
 
-			<div class="row mb-1">
+			<div class="row mb-1 alert alert-warning">
 				<label class="col-md-8 col-form-label fw-bold" th:text="#{label.audit_delay1}"></label>
 				<div class="col-auto">
 					<select class="form-control form-control-sm" th:field="*{audit_delay1}" required>
@@ -62,7 +62,7 @@
 				<small class="text-dark" th:utext="#{notes.audit_delay1}"></small>
 			</div>
 			<hr />
-			<div class="row mb-1">
+			<div class="row mb-1 alert alert-warning">
 				<label class="col-md-8 col-form-label fw-bold" th:text="#{label.audit_delay2}"></label>
 				<div class="col-auto">
 					<select class="form-control form-control-sm" th:field="*{audit_delay2}" required>
@@ -73,7 +73,7 @@
 				<small class="text-dark" th:utext="#{notes.audit_delay2}"></small>
 			</div>
 			<hr />
-			<div class="row mb-1">
+			<div class="row mb-1 alert alert-warning">
 				<h6 th:text="#{label.audit_delay3}"></h6>
 				<small class="text-dark" th:utext="#{notes.audit_delay3}"></small>
 				<div class="row mb-2">
@@ -105,7 +105,7 @@
 				</div>
 			</div>
 		</section>
-		<h3>Modifiables</h3>
+		<h3>Modifiables</h3 >
 		<section class="overflow-auto">
 			<div class="row mb-1 alert alert-success">
 				<h6 th:text="#{label.audit_ifcmfs}"></h6>

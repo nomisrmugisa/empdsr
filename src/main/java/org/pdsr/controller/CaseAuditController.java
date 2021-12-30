@@ -137,10 +137,14 @@ public class CaseAuditController {
 				e.printStackTrace();
 			}
 
-			// if audit has been done for the given week, then don't run the algorithm
-			if (algorithm.getAlg_week() <= Calendar.WEEK_OF_YEAR) {
+			// if audits have been done for the given week, then don't run the algorithm
+			final boolean isyear = Calendar.getInstance().get(Calendar.YEAR) == algorithm.getAlg_year();
+			final boolean ismnth = Calendar.getInstance().get(Calendar.MONTH) == algorithm.getAlg_month();
+			final boolean isweek = Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) == algorithm.getAlg_week();
+			final boolean isdone = algorithm.getAlg_totalcases() == Utils.EXPECTED_CASES_PER_WEEK;
+
+			if (isyear && ismnth && isweek && isdone) {
 				model.addAttribute("done", "done");
-				return "auditing/audit-retrieve";
 			}
 		}
 
@@ -187,23 +191,19 @@ public class CaseAuditController {
 			}
 
 			// get the week of auditing
-			int auditweek = Calendar.WEEK_OF_YEAR % 4;
+			int auditweek = Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) % 4;
 
 			// get the number of neonatal audits to be done for that week
 			int neonatalCount = Utils.PRIORITY_MATRIX[auditweek][1];
-			int totalneonatal = 0;
+			int totalneonatal = algorithm.getAlg_neonatal();
 
-			for (int i = 1; i <= neonatalCount;) {
+			for (int counter = totalneonatal; counter < neonatalCount;) {
 
 				Integer nextPriority = persDeque.pollLast();
 
 				a: for (case_identifiers scase : pendingAudit) {
 
-					if (scase.getCase_death() != 2) {
-						continue a;
-					}
-
-					if (scase.getBabydeath() == null) {
+					if (scase.getCase_death() != 2 || scase.getBabydeath() == null) {
 						continue a;
 					}
 
@@ -268,14 +268,22 @@ public class CaseAuditController {
 					// add the new audit for case into the bucket of selected cases for auditing
 					selectedForAuditing.add(acase);
 
-					totalneonatal++;
+					totalneonatal = selectedForAuditing.size();
+
+					pendingAudit.remove(scase);
+
+					persDeque.addFirst(nextPriority);
+					counter++;
+
+					break;
 				}
 
-				if (totalneonatal < i) {
-					tempDeque.push(nextPriority);
-				} else {
-					persDeque.push(nextPriority);
-					i++;
+				if (!persDeque.contains(nextPriority)) {
+					tempDeque.addFirst(nextPriority);
+				}
+
+				if (persDeque.isEmpty()) {
+					counter++;
 				}
 
 			}
@@ -287,9 +295,9 @@ public class CaseAuditController {
 			/// still birth
 			// get the number of neonatal audits to be done for that week
 			int stillCount = Utils.PRIORITY_MATRIX[auditweek][0];
-			int totalStill = 0;
+			int totalStill = algorithm.getAlg_stillbirth();
 
-			for (int i = 0; i < stillCount; i++) {
+			for (int counter = totalStill; counter < stillCount; counter++) {
 
 				case_identifiers taken = null;
 				case_identifiers taken1 = null;
@@ -389,25 +397,25 @@ public class CaseAuditController {
 			}
 
 			// save the new state of the persistent deque
-			if (selectedForAuditing.size() >= 0) {
-				algorithm.setAlg_date(new java.util.Date());
-				algorithm.setAlg_year(Calendar.YEAR);
-				algorithm.setAlg_month(Calendar.MONTH);
-				algorithm.setAlg_week(Calendar.WEEK_OF_YEAR);
-				algorithm.setAlg_modulo(auditweek);
-				algorithm.setAlg_neonatal(totalneonatal);
-				algorithm.setAlg_stillbirth(totalStill);
-				algorithm.setAlg_totalcases(selectedForAuditing.size());
+			algorithm.setAlg_date(new java.util.Date());
+			algorithm.setAlg_year(Calendar.getInstance().get(Calendar.YEAR));
+			algorithm.setAlg_month(Calendar.getInstance().get(Calendar.MONTH));
+			algorithm.setAlg_week(Calendar.getInstance().get(Calendar.WEEK_OF_MONTH));
+			algorithm.setAlg_modulo(auditweek);
+			algorithm.setAlg_neonatal(totalneonatal);
+			algorithm.setAlg_stillbirth(totalStill);
+			algorithm.setAlg_totalcases(totalStill + totalneonatal);
 
-				algorithm.setAlg_deque(persDeque);
-				final String arrayToJson = objectMapper.writeValueAsString(algorithm);
-				synctable.setSync_json(arrayToJson);
-				syncRepo.save(synctable);
+			algorithm.setAlg_deque(persDeque);
+			final String arrayToJson = objectMapper.writeValueAsString(algorithm);
+			synctable.setSync_json(arrayToJson);
+			syncRepo.save(synctable);
+
+			if (selectedForAuditing.size() > 0) {
+				acaseRepo.saveAll(selectedForAuditing);
 			}
 
 			// save them to the audit_case
-
-			acaseRepo.saveAll(selectedForAuditing);
 
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
@@ -603,6 +611,7 @@ public class CaseAuditController {
 		selected.setRecommendation_uuid(UUID.randomUUID().toString());
 		selected.setRecommendation_date(new java.util.Date());
 		selected.setRecommendation_status(0);
+		selected.setRecommendation_comments("comments");
 		selected.setAudit_uuid(audit);
 
 		audit.getRecommendations().add(selected);

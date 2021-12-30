@@ -78,7 +78,6 @@ public class audit_recommendation implements Serializable {
 
 	@Lob
 	@Column
-	@NotNull
 	private String recommendation_comments;
 	
 	@Transient

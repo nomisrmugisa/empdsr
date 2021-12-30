@@ -70,7 +70,7 @@ public class case_referral implements Serializable {
 	@NotNull
 	@Column
 	@Temporal(TemporalType.TIME)
-	@DateTimeFormat(pattern = "HH:mm a")
+	@DateTimeFormat(pattern = "HH:mm")
 	private java.util.Date referral_time;
 
 	@NotNull
@@ -90,7 +90,7 @@ public class case_referral implements Serializable {
 	@NotNull
 	@Column
 	@Temporal(TemporalType.TIME)
-	@DateTimeFormat(pattern = "HH:mm a")
+	@DateTimeFormat(pattern = "HH:mm")
 	private java.util.Date referral_atime;
 
 	@NotNull

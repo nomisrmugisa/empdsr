@@ -96,11 +96,11 @@
 			</div>
 
 		</div>
-		<h4 class="text-secondary text-center" th:if="${#lists.isEmpty(items2)}" th:text="#{no.recommend.cases}"></h4>
+		<h4 class="text-secondary text-center" th:if="${#lists.isEmpty(items1)}" th:text="#{no.recommend.cases}"></h4>
 	</div>
 	<hr class="bg-light text-light"/>
 	<div class="mt-5">
-		<div class="table-responsive" th:unless="${#lists.isEmpty(items1)}">
+		<div class="table-responsive" th:unless="${#lists.isEmpty(items2)}">
 			<table class="table table-sm table-bordered  table-responsive-sm small mb-0">
 				<thead class="table-info">
 					<tr class="table-light">
@@ -142,7 +142,7 @@
 				</tbody>
 			</table>
 		</div>
-		<h4 class="text-secondary text-center" th:if="${#lists.isEmpty(items1)}" th:text="#{no.action.cases}"></h4>
+		<h4 class="text-secondary text-center" th:if="${#lists.isEmpty(items2)}" th:text="#{no.action.cases}"></h4>
 	</div >
 </content>
 <scripts>
