@@ -1,8 +1,5 @@
 <!DOCTYPE html>
-<html th:replace="~{layout/reporting :: layout(_,~{::links},~{::scripts},~{::content},~{})}">
-<links>
-	<link rel="stylesheet" href="webjars/jquery-steps/1.1.0/demo/css/jquery.steps.css" />
-</links>
+<html th:replace="~{layout/reporting :: layout(_,~{},~{::scripts},~{::content},~{})}">
 <content>
 	<div class="float-end" th:text="${facility_code}"></div>
 	<div class="col-md-12 py-3 my-3 mx-auto p-1 rounded box-shadow">

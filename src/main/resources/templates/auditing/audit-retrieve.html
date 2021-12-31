@@ -1,8 +1,5 @@
 <!DOCTYPE html>
-<html th:replace="~{layout/auditing :: layout(_,~{::links},~{::scripts},~{::content},~{::subnav})}">
-<links>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-</links>
+<html th:replace="~{layout/auditing :: layout(_,~{},~{},~{::content},~{::subnav})}">
 <subnav>
 	<div class="m-1 small"></div>
 </subnav>
@@ -145,9 +142,5 @@
 		<h4 class="text-secondary text-center" th:if="${#lists.isEmpty(items2)}" th:text="#{no.action.cases}"></h4>
 	</div >
 </content>
-<scripts>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-</scripts>
 
 </html>

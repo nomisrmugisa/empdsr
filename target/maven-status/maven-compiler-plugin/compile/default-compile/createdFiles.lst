@@ -22,6 +22,7 @@ org\pdsr\repo\CasePregnancyRepository.class
 org\pdsr\MessageSourceConfig.class
 org\pdsr\model\resuscitation_table.class
 org\pdsr\repo\FacilityTableRepository.class
+org\pdsr\pojos\wmsearch.class
 org\pdsr\WebSecurityConfig.class
 org\pdsr\model\audit_case.class
 org\pdsr\model\facility_table.class

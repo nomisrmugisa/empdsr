@@ -3,8 +3,10 @@ package org.pdsr.controller;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 
@@ -14,6 +16,8 @@ import org.pdsr.model.weekly_monitoring;
 import org.pdsr.model.weekly_table;
 import org.pdsr.model.wmPK;
 import org.pdsr.pojos.weekgrid;
+import org.pdsr.pojos.wmindicators;
+import org.pdsr.pojos.wmsearch;
 import org.pdsr.repo.MonitoringTableRepository;
 import org.pdsr.repo.SyncTableRepository;
 import org.pdsr.repo.WeeklyMonitoringTableRepository;
@@ -56,10 +60,6 @@ public class ReportController {
 
 		}
 
-		List<Object[]> indicators = wmRepo.findiSBR();
-		model.addAttribute("indiicatoritems", indicators);
-
-		
 		List<Object[]> weeklist = weekRepo.findAllWeeklyYearAndMonth();
 
 		List<weekly_table> curweek = weekRepo.findByWeeklyYearAndMonth(Calendar.getInstance().get(Calendar.YEAR),
@@ -221,4 +221,87 @@ public class ReportController {
 
 		return "redirect:/reporting/edit/" + selected.getGrid_year() + "/" + selected.getGrid_month();
 	}
+
+	@GetMapping("/search")
+	public String search(Principal principal, Model model) {
+
+		if (syncRepo.findById(CONSTANTS.FACILITY_ID).isEmpty()) {
+			model.addAttribute("activated", "0");
+			return "home";
+
+		}
+
+		model.addAttribute("selected", new wmsearch());
+
+		return "reporting/report-search";
+	}
+
+	@PostMapping("/search")
+	public String search(Principal principal, Model model, @ModelAttribute("selected") wmsearch search) {
+
+		if (syncRepo.findById(CONSTANTS.FACILITY_ID).isEmpty()) {
+			model.addAttribute("activated", "0");
+			return "home";
+
+		}
+
+		Integer startYM = search.getWm_startyear() + search.getWm_startmonth();
+		Integer endYM = search.getWm_endyear() + search.getWm_endmonth();
+
+		List<wmindicators> indicators = new ArrayList<>();
+		for (String[] elem : wmRepo.findAllRates(startYM, endYM))// startYM, endYM
+		{
+			wmindicators i = new wmindicators();
+			i.setWyear((Integer.valueOf(elem[0])));
+			i.setWmonth(Integer.valueOf(elem[1]));
+			i.setWmdesc(elem[2]);
+
+			
+			i.setIsbr((Double.valueOf(elem[7]) == 0.0) ? 0 : (Double.valueOf(elem[8]) / Double.valueOf(elem[7])) * 1000.0);
+			i.setIisbr((Double.valueOf(elem[7]) == 0.0) ? 0 : (Double.valueOf(elem[9]) / Double.valueOf(elem[7])) * 1000.0);
+			i.setAisbr(i.getIsbr() - i.getIisbr());
+			i.setPiisbr(i.getIisbr() / i.getIsbr());
+			i.setEinmr((Double.valueOf(elem[11]) == 0.0) ? 0 : (Double.valueOf(elem[15]) / Double.valueOf(elem[11])) * 1000.0);
+			i.setIpmr((Double.valueOf(elem[11]) == 0.0) ? 0 : ((Double.valueOf(elem[15])+Double.valueOf(elem[8])) / Double.valueOf(elem[11])) * 1000.0);
+			i.setInmr((Double.valueOf(elem[11]) == 0.0) ? 0 : (Double.valueOf(elem[14]) / Double.valueOf(elem[11])) * 1000.0);
+			i.setImmr((Double.valueOf(elem[11]) == 0.0) ? 0 : (Double.valueOf(elem[17]) / Double.valueOf(elem[11])) * 100000.0);
+			i.setIcsr((Double.valueOf(elem[3]) == 0.0) ? 0 : (Double.valueOf(elem[6]) / Double.valueOf(elem[3])));
+			i.setIadr((Double.valueOf(elem[3]) == 0.0) ? 0 : (Double.valueOf(elem[5]) / Double.valueOf(elem[3])));
+			i.setIlbwr((Double.valueOf(elem[11]) == 0.0) ? 0 : (Double.valueOf(elem[13]) / Double.valueOf(elem[11])));
+			i.setIptbr((Double.valueOf(elem[11]) == 0.0) ? 0 : (Double.valueOf(elem[12]) / Double.valueOf(elem[11])));
+			i.setIndwk1((Double.valueOf(elem[14]) == 0.0) ? 0 : (Double.valueOf(elem[15]) / Double.valueOf(elem[14])));
+			i.setMdeath(Integer.valueOf(elem[17]));
+
+			indicators.add(i);
+
+		}
+		model.addAttribute("items", indicators);
+
+		return "reporting/report-search";
+	}
+
+	@ModelAttribute("wmyear_options")
+	public Map<Integer, String> wmyearOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Year");
+		for (Integer elem : weekRepo.findYears()) {
+			map.put(elem, "" + elem);
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("wmmonth_options")
+	public Map<Integer, String> wmmonthOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Month");
+		for (Object[] elem : weekRepo.findMonths()) {
+			map.put((Integer) elem[0], "" + elem[1]);
+		}
+
+		return map;
+	}
+
 }// end class

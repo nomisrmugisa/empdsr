@@ -1,8 +1,5 @@
 <!DOCTYPE html>
-<html th:replace="~{layout/reporting :: layout(_,~{::links},~{::scripts},~{::content},~{::subnav})}">
-<links>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-</links>
+<html th:replace="~{layout/reporting :: layout(_,~{},~{},~{::content},~{::subnav})}">
 <subnav>
 	<div class="m-1 small"></div>
 </subnav>
@@ -16,7 +13,8 @@
 		<div class="card-body">
 			<h5 class="card-title">Special title treatment</h5>
 			<p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-			<a href="#" class="btn btn-primary">[(#{view.visuals})]</a>
+			<a href="#" class="btn btn-primary"
+				th:href="@{/reporting/search}">[(#{view.visuals})]</a>
 		</div>
 	</div>
 	<hr />
@@ -34,56 +32,5 @@
 			</div>
 		</div>
 	</div>
-	<hr/>
-	<table class="table table-hover table-bordered table-sm table-responsive-sm small">
-		<thead>
-			<tr class="table-dark">
-				<th>Year-Month</th>
-				<th>Total Births</th>
-				<th>Total Stillbirths</th>
-				<th>iSBR</th>
-				<th>Intrapartum SBR</th>
-				<th>Antepartum SBR</th>
-				<th>% Intrapartum SBR</th>
-				<th>iENMR</th>
-				<th>iPMR</th>
-				<th>iNMR</th>
-				<th>iMMR</th>
-				<th>CSR</th>
-				<th>% of Assisted Deliveries</th>
-				<th>iLBWR</th>
-				<th>iPTBR</th>
-				<th>% Neonatal Deaths in 1st week</th>
-				<th>Maternal Deaths</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr th:each="item : ${indiicatoritems}" th:class="'table-danger'">
-				<td>[[${item[0]}]]-[[${item[2]}]]</td>
-				<td th:text="${item[3]}"></td>
-				<td th:text="${item[4]}"></td>
-				<td th:text="${item[5]}"></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-			</tr>
-		</tbody>
-	</table>
-
 </content>
-<scripts>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-</scripts>
-
 </html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/reporting :: layout(_,~{},~{::scripts},~{::content},~{::subnav})}">
+
+
+<subnav>
+	<div class="m-1 small"></div>
+</subnav>
+
+<content>
+	<hr />
+	<form action="#" th:action="@{/reporting/search}" th:object="${selected}" method="POST" class="needs-validation"
+		novalidate>
+		<div class="row py-2 mb-3 bg-warning">
+			<div class="col-md-4">
+				<div class="row">
+					<label class="col-auto col-form-label fw-bold" th:text="#{search.start}"></label>
+					<div class="col-md-8">
+						<div class="row">
+							<div class="col-md-6">
+								<select class="form-control fw-bold" th:field="*{wm_startyear}" required>
+									<option th:each="option : ${wmyear_options}" th:value="${option.key}"
+										th:text="${option.value}">
+									</option>
+								</select>
+							</div>
+							<div class="col-md-6">
+								<select class="form-control fw-bold" th:field="*{wm_startmonth}" required>
+									<option th:each="option : ${wmmonth_options}" th:value="${option.key}"
+										th:text="${option.value}">
+									</option>
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="row">
+					<label class="col-auto col-form-label fw-bold" th:text="#{search.end}"></label>
+					<div class="col-md-8">
+						<div class="row">
+							<div class="col-md-6">
+								<select class="form-control fw-bold" th:field="*{wm_endyear}" required>
+									<option th:each="option : ${wmyear_options}" th:value="${option.key}"
+										th:text="${option.value}">
+									</option>
+								</select>
+							</div>
+							<div class="col-md-6">
+								<select class="form-control fw-bold" th:field="*{wm_endmonth}" required>
+									<option th:each="option : ${wmmonth_options}" th:value="${option.key}"
+										th:text="${option.value}">
+									</option>
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4 d-grid gap-2">
+				<button class="btn btn-primary" type="submit" th:utext="#{search.button}"></button>
+			</div>
+		</div>
+
+	</form>
+	<div class="row" th:unless="${#lists.isEmpty(items)}">
+		<table class="table table-hover table-striped table-sm table-responsive-sm small">
+			<thead>
+				<tr class="table-success">
+					<th style="width: 20%;">Month-Year</th >
+					<th>SBR</th>
+					<th>I.SBR</th>
+					<th>A.SBR</th>
+					<th>% I.SBR</th>
+					<th>iENMR</th>
+					<th>iPMR</th>
+					<th>iNMR</th>
+					<th>iMMR</th>
+					<th>CSR</th>
+					<th>ADR</th>
+					<th>iLBWR</th>
+					<th>iPTBR</th>
+					<th>NDRwk1</th>
+					<th>TMD</th>
+				</tr >
+			</thead>
+			<tbody>
+				<tr th:each="item : ${items}">
+					<td>[[${item.wmdesc}]]-[[${item.wyear}]]</td>
+					<td>[[${item.isbr}]]</td>
+					<td>[[${item.iisbr}]]</td>
+					<td>[[${item.aisbr}]]</td>
+					<td>[[${item.piisbr}]]</td>
+					<td>[[${item.einmr}]]</td>
+					<td>[[${item.ipmr}]]</td>
+					<td>[[${item.inmr}]]</td>
+					<td>[[${item.immr}]]</td>
+					<td>[[${item.icsr}]]</td>
+					<td>[[${item.iadr}]]</td>
+					<td>[[${item.ilbwr}]]</td>
+					<td>[[${item.iptbr}]]</td>
+					<td>[[${item.indwk1}]]</td>
+					<td>[[${item.mdeath}]]</td>
+				</tr>
+			</tbody>
+		</table>
+
+
+	</div>
+</content>
+<scripts>
+	<script>
+		(function () {
+			'use strict';
+			window.addEventListener('load', function () {
+				// Fetch all the forms we want to apply custom Bootstrap validation styles to
+				var forms = document.getElementsByClassName('needs-validation');
+
+				// Loop over them and prevent submission
+				var validation = Array.prototype.filter.call(forms, function (form) {
+					form.addEventListener('submit', function (event) {
+						if (form.checkValidity() === false) {
+							event.preventDefault();
+							event.stopPropagation();
+						}
+						form.classList.add('was-validated');
+
+					}, false);
+				});
+			}, false);
+		})();
+	</script>
+</scripts>
+
+</html>
