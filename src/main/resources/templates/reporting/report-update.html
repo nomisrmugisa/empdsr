@@ -40,7 +40,7 @@
 										th:field="*{grid_weekly[__${aitemStat.index}__].statistics[__${subitemStat.index}__].id.mindex}" />
 
 
-									<input type="number" class="form-control form-control-sm text-center" required
+									<input class="form-control form-control-sm text-center" required
 										th:field="*{grid_weekly[__${aitemStat.index}__].statistics[__${subitemStat.index}__].wm_values}"
 										th:style="(${subitem.wm_indices.gitem}?'font-weight:bold;' :'') + 'background-color: rgba(0, 0, 0, 0); border:none;'"
 										th:classappend="${subitem.wm_indices.gitem}? 
@@ -56,7 +56,7 @@
 														'bg-white text-danger border ':
 												(
 													${selected.grid_weekly[__${aitemStat.index}__].statistics[__${subitemStat.index}__].wm_values==0}?
-														'text-light':
+														'text-black-50':
 														'text-success'
 												)
 											)

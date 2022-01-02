@@ -100,20 +100,20 @@ public class CaseAuditController {
 		for (audit_recommendation elem : rcaseRepo.findAll()) {
 
 			if (elem.getRecommendation_status() == 2) {
-				elem.setRec_color("table-success");
+				elem.setRec_color("bg-success text-white");
 
 			} else if (elem.getRecommendation_date().before(elem.getRecommendation_deadline())) {// date passed but not
 																									// completed
 
 				if (elem.getRecommendation_status() == 1) {
-					elem.setRec_color("table-warning");
+					elem.setRec_color("bg-warning text-dark");
 				} else {
 					elem.setRec_color("table-light");
 				}
 
 			} else {
-				elem.setRec_color("table-danger");
-				elem.setBg_color("fw-bold text-danger");
+				elem.setRec_color("bg-danger text-white");
+				elem.setBg_color("fw-bold");
 			}
 
 			recommendations.add(elem);

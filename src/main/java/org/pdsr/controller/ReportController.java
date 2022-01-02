@@ -257,19 +257,19 @@ public class ReportController {
 			i.setWmdesc(elem[2]);
 
 			
-			i.setIsbr((Double.valueOf(elem[7]) == 0.0) ? 0 : (Double.valueOf(elem[8]) / Double.valueOf(elem[7])) * 1000.0);
-			i.setIisbr((Double.valueOf(elem[7]) == 0.0) ? 0 : (Double.valueOf(elem[9]) / Double.valueOf(elem[7])) * 1000.0);
+			i.setIsbr((Double.valueOf(elem[7]) == 0.0) ? 0 : (Double.valueOf(elem[8]) / Double.valueOf(elem[7])) * 1000);
+			i.setIisbr((Double.valueOf(elem[7]) == 0.0) ? 0 : (Double.valueOf(elem[9]) / Double.valueOf(elem[7])) * 1000);
 			i.setAisbr(i.getIsbr() - i.getIisbr());
-			i.setPiisbr(i.getIisbr() / i.getIsbr());
-			i.setEinmr((Double.valueOf(elem[11]) == 0.0) ? 0 : (Double.valueOf(elem[15]) / Double.valueOf(elem[11])) * 1000.0);
-			i.setIpmr((Double.valueOf(elem[11]) == 0.0) ? 0 : ((Double.valueOf(elem[15])+Double.valueOf(elem[8])) / Double.valueOf(elem[11])) * 1000.0);
-			i.setInmr((Double.valueOf(elem[11]) == 0.0) ? 0 : (Double.valueOf(elem[14]) / Double.valueOf(elem[11])) * 1000.0);
-			i.setImmr((Double.valueOf(elem[11]) == 0.0) ? 0 : (Double.valueOf(elem[17]) / Double.valueOf(elem[11])) * 100000.0);
-			i.setIcsr((Double.valueOf(elem[3]) == 0.0) ? 0 : (Double.valueOf(elem[6]) / Double.valueOf(elem[3])));
-			i.setIadr((Double.valueOf(elem[3]) == 0.0) ? 0 : (Double.valueOf(elem[5]) / Double.valueOf(elem[3])));
-			i.setIlbwr((Double.valueOf(elem[11]) == 0.0) ? 0 : (Double.valueOf(elem[13]) / Double.valueOf(elem[11])));
-			i.setIptbr((Double.valueOf(elem[11]) == 0.0) ? 0 : (Double.valueOf(elem[12]) / Double.valueOf(elem[11])));
-			i.setIndwk1((Double.valueOf(elem[14]) == 0.0) ? 0 : (Double.valueOf(elem[15]) / Double.valueOf(elem[14])));
+			i.setPiisbr((i.getIisbr() / i.getIsbr())*100);
+			i.setEinmr((Double.valueOf(elem[11]) == 0.0) ? 0 : (Double.valueOf(elem[15]) / Double.valueOf(elem[11])) * 1000);
+			i.setIpmr((Double.valueOf(elem[11]) == 0.0) ? 0 : ((Double.valueOf(elem[15])+Double.valueOf(elem[8])) / Double.valueOf(elem[11])) * 1000);
+			i.setInmr((Double.valueOf(elem[11]) == 0.0) ? 0 : (Double.valueOf(elem[14]) / Double.valueOf(elem[11])) * 1000);
+			i.setImmr((Double.valueOf(elem[11]) == 0.0) ? 0 : (Double.valueOf(elem[17]) / Double.valueOf(elem[11])) * 100000);
+			i.setIcsr((Double.valueOf(elem[3]) == 0.0) ? 0 : (Double.valueOf(elem[6]) / Double.valueOf(elem[3]))*100);
+			i.setIadr((Double.valueOf(elem[3]) == 0.0) ? 0 : (Double.valueOf(elem[5]) / Double.valueOf(elem[3]))*100);
+			i.setIlbwr((Double.valueOf(elem[11]) == 0.0) ? 0 : (Double.valueOf(elem[13]) / Double.valueOf(elem[11]))*100);
+			i.setIptbr((Double.valueOf(elem[11]) == 0.0) ? 0 : (Double.valueOf(elem[12]) / Double.valueOf(elem[11]))*100);
+			i.setIndwk1((Double.valueOf(elem[14]) == 0.0) ? 0 : (Double.valueOf(elem[15]) / Double.valueOf(elem[14]))*100);
 			i.setMdeath(Integer.valueOf(elem[17]));
 
 			indicators.add(i);
