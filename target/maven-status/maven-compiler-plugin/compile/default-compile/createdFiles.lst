@@ -47,6 +47,7 @@ org\pdsr\repo\PlacentacheckTableRepository.class
 org\pdsr\repo\CaseNotesRepository.class
 org\pdsr\repo\GroupTableRepository.class
 org\pdsr\controller\CaseAuditController$3.class
+org\pdsr\pojos\wmoindicators.class
 org\pdsr\model\case_biodata.class
 org\pdsr\controller\CaseAuditController$2.class
 org\pdsr\repo\ResuscitationTableRepository.class

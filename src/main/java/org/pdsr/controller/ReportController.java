@@ -3,10 +3,13 @@ package org.pdsr.controller;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.transaction.Transactional;
 
@@ -17,6 +20,7 @@ import org.pdsr.model.weekly_table;
 import org.pdsr.model.wmPK;
 import org.pdsr.pojos.weekgrid;
 import org.pdsr.pojos.wmindicators;
+import org.pdsr.pojos.wmoindicators;
 import org.pdsr.pojos.wmsearch;
 import org.pdsr.repo.MonitoringTableRepository;
 import org.pdsr.repo.SyncTableRepository;
@@ -245,37 +249,162 @@ public class ReportController {
 
 		}
 
-		Integer startYM = search.getWm_startyear() + search.getWm_startmonth();
-		Integer endYM = search.getWm_endyear() + search.getWm_endmonth();
+		Integer startYM = ((search.getWm_startyear() % 2000) * 12) + search.getWm_startmonth();
+		Integer endYM = ((search.getWm_endyear() % 2000) * 12) + search.getWm_endmonth();
+
+		Double isbr = 0.0, iisbr = 0.0, aisbr = 0.0, piisbr = 0.0, einmr = 0.0, ipmr = 0.0, inmr = 0.0, immr = 0.0,
+				icsr = 0.0, iadr = 0.0, ilbwr = 0.0, iptbr = 0.0, indwk1 = 0.0;
+		Integer mdeath = 0;
+
+		List<String[]> data = wmRepo.findAllRates(startYM, endYM);
+
+		final String[] yearmonth = new String[data.size()];
+		final Double[] isbr_array = new Double[data.size()];
+		final Double[] iisbr_array = new Double[data.size()];
+		final Double[] aisbr_array = new Double[data.size()];
+		final Double[] piisbr_array = new Double[data.size()];
+		final Double[] einmr_array = new Double[data.size()];
+		final Double[] ipmr_array = new Double[data.size()];
+		final Double[] inmr_array = new Double[data.size()];
+		final Double[] immr_array = new Double[data.size()];
+		final Double[] icsr_array = new Double[data.size()];
+		final Double[] iadr_array = new Double[data.size()];
+		final Double[] ilbwr_array = new Double[data.size()];
+		final Double[] iptbr_array = new Double[data.size()];
+		final Double[] indwk1_array = new Double[data.size()];
+		final Integer[] mdeath_array = new Integer[data.size()];
 
 		List<wmindicators> indicators = new ArrayList<>();
-		for (String[] elem : wmRepo.findAllRates(startYM, endYM))// startYM, endYM
+		int arrayIndex = 0;
+		for (String[] elem : data)// startYM, endYM
 		{
 			wmindicators i = new wmindicators();
 			i.setWyear((Integer.valueOf(elem[0])));
 			i.setWmonth(Integer.valueOf(elem[1]));
 			i.setWmdesc(elem[2]);
+			yearmonth[arrayIndex] = i.getWmdesc() + "-" + i.getWyear();
 
-			
-			i.setIsbr((Double.valueOf(elem[7]) == 0.0) ? 0 : (Double.valueOf(elem[8]) / Double.valueOf(elem[7])) * 1000);
-			i.setIisbr((Double.valueOf(elem[7]) == 0.0) ? 0 : (Double.valueOf(elem[9]) / Double.valueOf(elem[7])) * 1000);
+			i.setIsbr(
+					(Double.valueOf(elem[7]) == 0.0) ? 0 : (Double.valueOf(elem[8]) / Double.valueOf(elem[7])) * 1000);
+			isbr += i.getIsbr();
+			isbr_array[arrayIndex] = i.getIsbr();
+
+			i.setIisbr(
+					(Double.valueOf(elem[7]) == 0.0) ? 0 : (Double.valueOf(elem[9]) / Double.valueOf(elem[7])) * 1000);
+			iisbr += i.getIisbr();
+			iisbr_array[arrayIndex] = i.getIisbr();
+
 			i.setAisbr(i.getIsbr() - i.getIisbr());
-			i.setPiisbr((i.getIisbr() / i.getIsbr())*100);
-			i.setEinmr((Double.valueOf(elem[11]) == 0.0) ? 0 : (Double.valueOf(elem[15]) / Double.valueOf(elem[11])) * 1000);
-			i.setIpmr((Double.valueOf(elem[11]) == 0.0) ? 0 : ((Double.valueOf(elem[15])+Double.valueOf(elem[8])) / Double.valueOf(elem[11])) * 1000);
-			i.setInmr((Double.valueOf(elem[11]) == 0.0) ? 0 : (Double.valueOf(elem[14]) / Double.valueOf(elem[11])) * 1000);
-			i.setImmr((Double.valueOf(elem[11]) == 0.0) ? 0 : (Double.valueOf(elem[17]) / Double.valueOf(elem[11])) * 100000);
-			i.setIcsr((Double.valueOf(elem[3]) == 0.0) ? 0 : (Double.valueOf(elem[6]) / Double.valueOf(elem[3]))*100);
-			i.setIadr((Double.valueOf(elem[3]) == 0.0) ? 0 : (Double.valueOf(elem[5]) / Double.valueOf(elem[3]))*100);
-			i.setIlbwr((Double.valueOf(elem[11]) == 0.0) ? 0 : (Double.valueOf(elem[13]) / Double.valueOf(elem[11]))*100);
-			i.setIptbr((Double.valueOf(elem[11]) == 0.0) ? 0 : (Double.valueOf(elem[12]) / Double.valueOf(elem[11]))*100);
-			i.setIndwk1((Double.valueOf(elem[14]) == 0.0) ? 0 : (Double.valueOf(elem[15]) / Double.valueOf(elem[14]))*100);
+			aisbr += i.getAisbr();
+			aisbr_array[arrayIndex] = i.getAisbr();
+
+			i.setPiisbr((i.getIsbr() == 0.0) ? 0 : (i.getIisbr() / i.getIsbr()) * 100);
+			piisbr += i.getPiisbr();
+			piisbr_array[arrayIndex] = i.getPiisbr();
+
+			i.setEinmr((Double.valueOf(elem[11]) == 0.0) ? 0
+					: (Double.valueOf(elem[15]) / Double.valueOf(elem[11])) * 1000);
+			einmr += i.getEinmr();
+			einmr_array[arrayIndex] = i.getEinmr();
+
+			i.setIpmr((Double.valueOf(elem[11]) == 0.0) ? 0
+					: ((Double.valueOf(elem[15]) + Double.valueOf(elem[8])) / Double.valueOf(elem[11])) * 1000);
+			ipmr += i.getIpmr();
+			ipmr_array[arrayIndex] = i.getIpmr();
+
+			i.setInmr((Double.valueOf(elem[11]) == 0.0) ? 0
+					: (Double.valueOf(elem[14]) / Double.valueOf(elem[11])) * 1000);
+			inmr += i.getInmr();
+			inmr_array[arrayIndex] = i.getInmr();
+
+			i.setImmr((Double.valueOf(elem[11]) == 0.0) ? 0
+					: (Double.valueOf(elem[17]) / Double.valueOf(elem[11])) * 100000);
+			immr += i.getImmr();
+			immr_array[arrayIndex] = i.getImmr();
+
+			i.setIcsr((Double.valueOf(elem[3]) == 0.0) ? 0 : (Double.valueOf(elem[6]) / Double.valueOf(elem[3])) * 100);
+			icsr += i.getIcsr();
+			icsr_array[arrayIndex] = i.getIcsr();
+
+			i.setIadr((Double.valueOf(elem[3]) == 0.0) ? 0 : (Double.valueOf(elem[5]) / Double.valueOf(elem[3])) * 100);
+			iadr += i.getIadr();
+			iadr_array[arrayIndex] = i.getIadr();
+
+			i.setIlbwr((Double.valueOf(elem[11]) == 0.0) ? 0
+					: (Double.valueOf(elem[13]) / Double.valueOf(elem[11])) * 100);
+			ilbwr += i.getIlbwr();
+			ilbwr_array[arrayIndex] = i.getIlbwr();
+
+			i.setIptbr((Double.valueOf(elem[11]) == 0.0) ? 0
+					: (Double.valueOf(elem[12]) / Double.valueOf(elem[11])) * 100);
+			iptbr += i.getIptbr();
+			iptbr_array[arrayIndex] = i.getIptbr();
+
+			i.setIndwk1((Double.valueOf(elem[14]) == 0.0) ? 0
+					: (Double.valueOf(elem[15]) / Double.valueOf(elem[14])) * 100);
+			indwk1 += i.getIndwk1();
+			indwk1_array[arrayIndex] = i.getIndwk1();
+
 			i.setMdeath(Integer.valueOf(elem[17]));
+			mdeath += i.getMdeath();
+			mdeath_array[arrayIndex] = i.getMdeath();
 
 			indicators.add(i);
 
+			arrayIndex++;
+
 		}
 		model.addAttribute("items", indicators);
+
+		// overall averages of data that is pulled
+		wmoindicators oindicators = new wmoindicators();
+		oindicators.setWmdesc("Overall Averages");
+
+		oindicators.setIsbr_oavg(isbr / indicators.size());
+
+		oindicators.setIisbr_oavg(iisbr / indicators.size());
+
+		oindicators.setAisbr_oavg(aisbr / indicators.size());
+
+		oindicators.setPiisbr_oavg(piisbr / indicators.size());
+
+		oindicators.setEinmr_oavg(einmr / indicators.size());
+
+		oindicators.setIpmr_oavg(ipmr / indicators.size());
+
+		oindicators.setInmr_oavg(inmr / indicators.size());
+
+		oindicators.setImmr_oavg(immr / indicators.size());
+
+		oindicators.setIcsr_oavg(icsr / indicators.size());
+
+		oindicators.setIadr_oavg(iadr / indicators.size());
+
+		oindicators.setIlbwr_oavg(ilbwr / indicators.size());
+
+		oindicators.setIptbr_oavg(iptbr / indicators.size());
+
+		oindicators.setIndwk1_oavg(indwk1 / indicators.size());
+
+		oindicators.setMdeath_osum(mdeath);
+
+		model.addAttribute("oavg", oindicators);
+
+		model.addAttribute("yearmonth_array", yearmonth);
+		model.addAttribute("isbr_array", isbr_array);
+		model.addAttribute("iisbr_array", iisbr_array);
+		model.addAttribute("aisbr_array", aisbr_array);
+		model.addAttribute("piisbr_array", piisbr_array);
+		model.addAttribute("einmr_array", einmr_array);
+		model.addAttribute("ipmr_array", ipmr_array);
+		model.addAttribute("inmr_array", inmr_array);
+		model.addAttribute("immr_array", immr_array);
+		model.addAttribute("icsr_array", icsr_array);
+		model.addAttribute("iadr_array", iadr_array);
+		model.addAttribute("ilbwr_array", ilbwr_array);
+		model.addAttribute("iptbr_array", iptbr_array);
+		model.addAttribute("indwk1_array", indwk1_array);
+		model.addAttribute("mdeath_array", mdeath_array);
 
 		return "reporting/report-search";
 	}

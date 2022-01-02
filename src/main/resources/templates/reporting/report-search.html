@@ -1,6 +1,16 @@
 <!DOCTYPE html>
-<html th:replace="~{layout/reporting :: layout(_,~{},~{::scripts},~{::content},~{::subnav})}">
+<html th:replace="~{layout/reporting :: layout(_,~{::links},~{::scripts},~{::content},~{::subnav})}">
 
+<links>
+	<style>
+		.chart-container {
+			position: relative;
+			margin: auto;
+			height: 80vh;
+			width: 80vw;
+		}
+	</style>
+</links>
 
 <subnav>
 	<div class="m-1 small"></div>
@@ -63,13 +73,14 @@
 						<button class="btn btn-primary" type="submit" th:utext="#{search.button}"></button>
 					</div>
 					<div class="btn-group">
-						<a class="btn btn-secondary" href="#" th:href="@{/reporting/search}" th:utext="#{clear.button}"></a>
+						<a class="btn btn-secondary" href="#" th:href="@{/reporting/search}"
+							th:utext="#{clear.button}"></a>
 					</div>
 				</div>
 			</div>
 		</div>
 	</form>
-	<div class="row overflow-auto" th:unless="${#lists.isEmpty(items)}">
+	<div class="row" th:unless="${#lists.isEmpty(items)}">
 		<div class="row bg-light rounded mb-3 py-1 mx-auto border">
 			<small class="col-md-3">
 				<span class="badge bg-info text-dark">[[#{th.isbr}]]</span>
@@ -128,47 +139,258 @@
 				[[#{label.tmd}]]&nbsp;&nbsp;
 			</small>
 		</div>
-		
-		<table class="table table-hover table-striped table-lg table-responsive">
-			<thead>
-				<tr class="bg-primary text-white">
-					<th style="width: 20%;" th:text="#{th.monthyear}"></th>
-					<th th:text="#{th.isbr}">SBR</th>
-					<th th:text="#{th.iisbr}">I.SBR</th>
-					<th th:text="#{th.aisbr}">A.SBR</th>
-					<th th:text="#{th.piisbr}">I.SBR(%)</th>
-					<th th:text="#{th.einmr}">iENMR</th>
-					<th th:text="#{th.ipmr}">iPMR</th>
-					<th th:text="#{th.inmr}">iNMR</th>
-					<th th:text="#{th.immr}">iMMR</th>
-					<th th:text="#{th.icsr}">CSR</th>
-					<th th:text="#{th.iadr}">ADR</th>
-					<th th:text="#{th.ilbwr}">iLBWR</th>
-					<th th:text="#{th.iptbr}">iPTBR</th>
-					<th th:text="#{th.ndrwk1}">NDRwk1</th>
-					<th th:text="#{th.tmd}">TMD</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:each="item : ${items}" style="font-size: 20px;">
-					<td>[[${item.wmdesc}]]-[[${item.wyear}]]</td>
-					<td>[[${#numbers.formatDecimal(item.isbr, 1, 'COMMA', 1, 'POINT')}]]</td>
-					<td>[[${#numbers.formatDecimal(item.iisbr, 1, 'COMMA', 1, 'POINT')}]]</td>
-					<td>[[${#numbers.formatDecimal(item.aisbr, 1, 'COMMA', 1, 'POINT')}]]</td>
-					<td>[[${#numbers.formatDecimal(item.piisbr, 1, 'COMMA', 1, 'POINT')}]]%</td>
-					<td>[[${#numbers.formatDecimal(item.einmr, 1, 'COMMA', 1, 'POINT')}]]</td>
-					<td>[[${#numbers.formatDecimal(item.ipmr, 1, 'COMMA', 1, 'POINT')}]]</td>
-					<td>[[${#numbers.formatDecimal(item.inmr, 1, 'COMMA', 1, 'POINT')}]]</td>
-					<td>[[${#numbers.formatDecimal(item.immr, 1, 'COMMA', 1, 'POINT')}]]</td>
-					<td>[[${#numbers.formatDecimal(item.icsr, 1, 'COMMA', 1, 'POINT')}]]%</td>
-					<td>[[${#numbers.formatDecimal(item.iadr, 1, 'COMMA', 1, 'POINT')}]]%</td>
-					<td>[[${#numbers.formatDecimal(item.ilbwr, 1, 'COMMA', 1, 'POINT')}]]%</td>
-					<td>[[${#numbers.formatDecimal(item.iptbr, 1, 'COMMA', 1, 'POINT')}]]%</td>
-					<td>[[${#numbers.formatDecimal(item.indwk1, 1, 'COMMA', 1, 'POINT')}]]%</td>
-					<td>[[${#numbers.formatDecimal(item.mdeath, 1, 'COMMA', 0, 'POINT')}]]</td>
-				</tr>
-			</tbody>
-		</table>
+		<div class="nav nav-pills mb-0 border-bottom" id="v-pills-tab" role="tablist" aria-orientation="horizontal">
+
+			<button class="nav-link active fw-bold" id="v-pills-tableview-tab" data-bs-toggle="pill"
+				data-bs-target="#v-pills-tableview" type="button" role="tab" aria-controls="v-pills-tableview"
+				aria-selected="true">Table View</button>
+
+			<button class="nav-link fw-bold" id="v-pills-isbr-tab" data-bs-toggle="pill" data-bs-target="#v-pills-isbr"
+				type="button" role="tab" aria-controls="v-pills-isbr" aria-selected="false">[[#{th.isbr}]]</button>
+
+			<button class="nav-link fw-bold" id="v-pills-iisbr-tab" data-bs-toggle="pill"
+				data-bs-target="#v-pills-iisbr" type="button" role="tab" aria-controls="v-pills-iisbr"
+				aria-selected="false">[[#{th.iisbr}]]</button>
+
+			<button class="nav-link fw-bold" id="v-pills-aisbr-tab" data-bs-toggle="pill"
+				data-bs-target="#v-pills-aisbr" type="button" role="tab" aria-controls="v-pills-aisbr"
+				aria-selected="false">[[#{th.aisbr}]]</button>
+
+			<button class="nav-link fw-bold" id="v-pills-piisbr-tab" data-bs-toggle="pill"
+				data-bs-target="#v-pills-piisbr" type="button" role="tab" aria-controls="v-pills-piisbr"
+				aria-selected="false">[[#{th.piisbr}]]</button>
+
+			<button class="nav-link fw-bold" id="v-pills-einmr-tab" data-bs-toggle="pill"
+				data-bs-target="#v-pills-einmr" type="button" role="tab" aria-controls="v-pills-einmr"
+				aria-selected="false">[[#{th.einmr}]]</button>
+
+			<button class="nav-link fw-bold" id="v-pills-ipmr-tab" data-bs-toggle="pill" data-bs-target="#v-pills-ipmr"
+				type="button" role="tab" aria-controls="v-pills-ipmr" aria-selected="false">[[#{th.ipmr}]]</button>
+
+			<button class="nav-link fw-bold" id="v-pills-inmr-tab" data-bs-toggle="pill" data-bs-target="#v-pills-inmr"
+				type="button" role="tab" aria-controls="v-pills-inmr" aria-selected="false">[[#{th.inmr}]]</button>
+
+			<button class="nav-link fw-bold" id="v-pills-immr-tab" data-bs-toggle="pill" data-bs-target="#v-pills-immr"
+				type="button" role="tab" aria-controls="v-pills-immr" aria-selected="false">[[#{th.immr}]]</button>
+
+			<button class="nav-link fw-bold" id="v-pills-icsr-tab" data-bs-toggle="pill" data-bs-target="#v-pills-icsr"
+				type="button" role="tab" aria-controls="v-pills-icsr" aria-selected="false">[[#{th.icsr}]]</button>
+
+			<button class="nav-link fw-bold" id="v-pills-iadr-tab" data-bs-toggle="pill" data-bs-target="#v-pills-iadr"
+				type="button" role="tab" aria-controls="v-pills-iadr" aria-selected="false">[[#{th.iadr}]]</button>
+
+			<button class="nav-link fw-bold" id="v-pills-ilbwr-tab" data-bs-toggle="pill"
+				data-bs-target="#v-pills-ilbwr" type="button" role="tab" aria-controls="v-pills-ilbwr"
+				aria-selected="false">[[#{th.ilbwr}]]</button>
+
+			<button class="nav-link fw-bold" id="v-pills-iptbr-tab" data-bs-toggle="pill"
+				data-bs-target="#v-pills-iptbr" type="button" role="tab" aria-controls="v-pills-iptbr"
+				aria-selected="false">[[#{th.iptbr}]]</button>
+
+			<button class="nav-link fw-bold" id="v-pills-indwk1-tab" data-bs-toggle="pill"
+				data-bs-target="#v-pills-indwk1" type="button" role="tab" aria-controls="v-pills-indwk1"
+				aria-selected="false">[[#{th.ndrwk1}]]</button>
+
+			<button class="nav-link fw-bold" id="v-pills-mdeath-tab" data-bs-toggle="pill"
+				data-bs-target="#v-pills-mdeath" type="button" role="tab" aria-controls="v-pills-mdeath"
+				aria-selected="false">[[#{th.tmd}]]</button>
+
+		</div>
+		<div class="tab-content" id="v-pills-tabContent">
+			<div class="tab-pane fade show active" id="v-pills-tableview" role="tabpanel"
+				aria-labelledby="v-pills-tableview-tab">
+				<table class="table table-hover table-striped table-lg table-responsive  mt-2">
+					<thead>
+						<tr class="bg-info">
+							<th style="width: 20%;" th:text="#{th.isbr}"></th>
+							<th class="text-end" style="width: 20%;">[[${oavg.wmdesc}]]</th>
+							<th class="text-end" th:each="item, itemStat : ${yearmonth_array}" th:text="${item}">
+								yearmonth</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td th:text="#{label.isbr}"></td>
+							<th class="text-end lead fw-bold table-info"
+								th:text="${#numbers.formatDecimal(oavg.isbr_oavg, 1, 'COMMA', 1, 'POINT')}"></th>
+							<td class="text-end" th:each="item, itemStat : ${isbr_array}"
+								th:text="${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}">isbr</td>
+						</tr>
+						<tr>
+							<td th:text="#{label.iisbr}"></td>
+							<th class="text-end lead fw-bold table-info"
+								th:text="${#numbers.formatDecimal(oavg.iisbr_oavg, 1, 'COMMA', 1, 'POINT')}"></th>
+							<td class="text-end" th:each="item, itemStat : ${iisbr_array}"
+								th:text="${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}">isbr</td>
+						</tr>
+						<tr>
+							<td th:text="#{label.aisbr}"></td>
+							<th class="text-end lead fw-bold table-info"
+								th:text="${#numbers.formatDecimal(oavg.aisbr_oavg, 1, 'COMMA', 1, 'POINT')}"></th>
+							<td class="text-end" th:each="item, itemStat : ${aisbr_array}"
+								th:text="${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}">isbr</td>
+						</tr>
+						<tr>
+							<td th:text="#{label.piisbr}"></td>
+							<th class="text-end lead fw-bold table-info"
+								th:text="|${#numbers.formatDecimal(oavg.piisbr_oavg, 1, 'COMMA', 1, 'POINT')}%|"></th>
+							<td class="text-end" th:each="item, itemStat : ${piisbr_array}"
+								th:text="|${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}%|">isbr</td>
+						</tr>
+						<tr>
+							<td th:text="#{label.einmr}"></td>
+							<th class="text-end lead fw-bold table-info"
+								th:text="${#numbers.formatDecimal(oavg.einmr_oavg, 1, 'COMMA', 1, 'POINT')}"></th>
+							<td class="text-end" th:each="item, itemStat : ${einmr_array}"
+								th:text="${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}">isbr</td>
+						</tr>
+						<tr>
+							<td th:text="#{label.ipmr}"></td>
+							<th class="text-end lead fw-bold table-info"
+								th:text="${#numbers.formatDecimal(oavg.ipmr_oavg, 1, 'COMMA', 1, 'POINT')}"></th>
+							<td class="text-end" th:each="item, itemStat : ${ipmr_array}"
+								th:text="${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}">isbr</td>
+						</tr>
+						<tr>
+							<td th:text="#{label.inmr}"></td>
+							<th class="text-end lead fw-bold table-info"
+								th:text="${#numbers.formatDecimal(oavg.inmr_oavg, 1, 'COMMA', 1, 'POINT')}"></th>
+							<td class="text-end" th:each="item, itemStat : ${inmr_array}"
+								th:text="${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}">isbr</td>
+						</tr>
+						<tr>
+							<td th:text="#{label.immr}"></td>
+							<th class="text-end lead fw-bold table-info"
+								th:text="${#numbers.formatDecimal(oavg.immr_oavg, 1, 'COMMA', 1, 'POINT')}"></th>
+							<td class="text-end" th:each="item, itemStat : ${immr_array}"
+								th:text="${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}">isbr</td>
+						</tr>
+						<tr>
+							<td th:text="#{label.icsr}"></td>
+							<th class="text-end lead fw-bold table-info"
+								th:text="|${#numbers.formatDecimal(oavg.icsr_oavg, 1, 'COMMA', 1, 'POINT')}%|"></th>
+							<td class="text-end" th:each="item, itemStat : ${icsr_array}"
+								th:text="|${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}%|">isbr</td>
+						</tr>
+						<tr>
+							<td th:text="#{label.iadr}"></td>
+							<th class="text-end lead fw-bold table-info"
+								th:text="|${#numbers.formatDecimal(oavg.iadr_oavg, 1, 'COMMA', 1, 'POINT')}%|"></th>
+							<td class="text-end" th:each="item, itemStat : ${iadr_array}"
+								th:text="|${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}%|">isbr</td>
+						</tr>
+						<tr>
+							<td th:text="#{label.ilbwr}"></td>
+							<th class="text-end lead fw-bold table-info"
+								th:text="|${#numbers.formatDecimal(oavg.ilbwr_oavg, 1, 'COMMA', 1, 'POINT')}%|"></th>
+							<td class="text-end" th:each="item, itemStat : ${ilbwr_array}"
+								th:text="|${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}%|">isbr</td>
+						</tr>
+						<tr>
+							<td th:text="#{label.iptbr}"></td>
+							<th class="text-end lead fw-bold table-info"
+								th:text="|${#numbers.formatDecimal(oavg.iptbr_oavg, 1, 'COMMA', 1, 'POINT')}%|"></th>
+							<td class="text-end" th:each="item, itemStat : ${iptbr_array}"
+								th:text="|${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}%|">isbr</td>
+						</tr>
+						<tr>
+							<td th:text="#{label.ndrwk1}"></td>
+							<th class="text-end lead fw-bold table-info"
+								th:text="|${#numbers.formatDecimal(oavg.indwk1_oavg, 1, 'COMMA', 1, 'POINT')}%|"></th>
+							<td class="text-end" th:each="item, itemStat : ${indwk1_array}"
+								th:text="|${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}%|">isbr</td>
+						</tr>
+						<tr class="bg-info">
+							<td th:colspan="${yearmonth_array.length+2}"></td>
+						</tr>
+
+						<tr class="table-primary">
+							<th th:text="#{label.tmd}"></th>
+							<th class="text-end lead fw-bold table-info" th:text="${oavg.mdeath_osum}+'*'"></th>
+							<td class="text-end" th:each="item, itemStat : ${mdeath_array}" th:text="${item}+'*'">isbr
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<small>*Total Sum for maternal deaths</small>
+			</div>
+			<div class="tab-pane fade" id="v-pills-isbr" role="tabpanel" aria-labelledby="v-pills-isbr-tab">
+				<div class="row">
+					<canvas id="isbrChart" height="200"></canvas>
+				</div>
+			</div>
+			<div class="tab-pane fade" id="v-pills-iisbr" role="tabpanel" aria-labelledby="v-pills-iisbr-tab">
+				<div class="row">
+					<canvas id="iisbrChart" height="200"></canvas>
+				</div>
+			</div>
+			<div class="tab-pane fade" id="v-pills-aisbr" role="tabpanel" aria-labelledby="v-pills-aisbr-tab">
+				<div class="row">
+					<canvas id="aisbrChart" height="200"></canvas>
+				</div>
+			</div>
+			<div class="tab-pane fade" id="v-pills-piisbr" role="tabpanel" aria-labelledby="v-pills-piisbr-tab">
+				<div class="row">
+					<canvas id="piisbrChart" height="200"></canvas>
+				</div>
+			</div>
+			<div class="tab-pane fade" id="v-pills-einmr" role="tabpanel" aria-labelledby="v-pills-einmr-tab">
+				<div class="row">
+					<canvas id="einmrChart" height="200"></canvas>
+				</div>
+			</div>
+			<div class="tab-pane fade" id="v-pills-ipmr" role="tabpanel" aria-labelledby="v-pills-ipmr-tab">
+				<div class="row">
+					<canvas id="ipmrChart" height="200"></canvas>
+				</div>
+			</div>
+			<div class="tab-pane fade" id="v-pills-inmr" role="tabpanel" aria-labelledby="v-pills-inmr-tab">
+				<div class="row">
+					<div class="col-md-6">
+						<canvas id="inmrChart" width="400" height="200"></canvas>
+					</div>
+					<div class="col-md-6">
+						<canvas id="indwk1Chart" width="400" height="200"></canvas>
+					</div>
+				</div>
+			</div>
+			<div class="tab-pane fade" id="v-pills-immr" role="tabpanel" aria-labelledby="v-pills-immr-tab">
+				<div class="row">
+					<canvas id="immrChart" height="200"></canvas>
+				</div>
+			</div>
+			<div class="tab-pane fade" id="v-pills-icsr" role="tabpanel" aria-labelledby="v-pills-icsr-tab">
+				<div class="row">
+					<canvas id="icsrChart" height="200"></canvas>
+				</div>
+			</div>
+			<div class="tab-pane fade" id="v-pills-iadr" role="tabpanel" aria-labelledby="v-pills-iadr-tab">
+				<div class="row">
+					<canvas id="iadrChart" height="200"></canvas>
+				</div>
+			</div>
+			<div class="tab-pane fade" id="v-pills-ilbwr" role="tabpanel" aria-labelledby="v-pills-ilbwr-tab">
+				<div class="row">
+					<canvas id="ilbwrChart" height="200"></canvas>
+				</div>
+			</div>
+			<div class="tab-pane fade" id="v-pills-iptbr" role="tabpanel" aria-labelledby="v-pills-iptbr-tab">
+				<div class="row">
+					<canvas id="iptbrChart" height="200"></canvas>
+				</div>
+			</div>
+			<div class="tab-pane fade" id="v-pills-indwk1" role="tabpanel" aria-labelledby="v-pills-indwk1-tab">
+				<div class="row">
+					<canvas id="indwk1Chart" height="200"></canvas>
+				</div>
+			</div>
+			<div class="tab-pane fade" id="v-pills-mdeath" role="tabpanel" aria-labelledby="v-pills-mdeath-tab">
+				<div class="row">
+					<canvas id="mdeathChart" height="200"></canvas>
+				</div>
+			</div>
+
+		</div>
 	</div>
 </content>
 <scripts>
@@ -193,6 +415,473 @@
 			}, false);
 		})();
 	</script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.js"></script>
+
+
+	<script type="text/javascript" th:inline="javascript">
+
+
+		var xValues = /*[[${yearmonth_array}]]*/ "";
+		var yValues = /*[[${isbr_array}]]*/ "";
+		var barColors = ["red", "green", "blue", "orange", "brown"];
+
+		new Chart("isbrChart", {
+			type: "bar",
+			data: {
+				labels: xValues,
+				datasets: [
+					{
+						backgroundColor: barColors,
+						data: yValues
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				plugins: {
+					legend: {
+						display: false,
+						position: 'top',
+					},
+					title: {
+						display: false,
+						text: 'Chart.js Bar Chart'
+					}
+				}
+			}
+		});
+	</script>
+	<script type="text/javascript" th:inline="javascript">
+
+
+		var xValues = /*[[${yearmonth_array}]]*/ "";
+		var yValues = /*[[${iisbr_array}]]*/ "";
+		var barColors = ["red", "green", "blue", "orange", "brown"];
+
+		new Chart("iisbrChart", {
+			type: "bar",
+			data: {
+				labels: xValues,
+				datasets: [
+					{
+						backgroundColor: barColors,
+						data: yValues
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				plugins: {
+					legend: {
+						display: false,
+						position: 'top',
+					},
+					title: {
+						display: false,
+						text: ''
+					}
+				}
+			}
+		});
+	</script>
+	<script type="text/javascript" th:inline="javascript">
+
+
+		var xValues = /*[[${yearmonth_array}]]*/ "";
+		var yValues = /*[[${aisbr_array}]]*/ "";
+		var barColors = ["red", "green", "blue", "orange", "brown"];
+
+		new Chart("aisbrChart", {
+			type: "bar",
+			data: {
+				labels: xValues,
+				datasets: [
+					{
+						backgroundColor: barColors,
+						data: yValues
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				plugins: {
+					legend: {
+						display: false,
+						position: 'top',
+					},
+					title: {
+						display: false,
+						text: ''
+					}
+				}
+			}
+		});
+	</script>
+	<script type="text/javascript" th:inline="javascript">
+
+
+		var xValues = /*[[${yearmonth_array}]]*/ "";
+		var yValues = /*[[${piisbr_array}]]*/ "";
+		var barColors = ["red", "green", "blue", "orange", "brown"];
+
+		new Chart("piisbrChart", {
+			type: "bar",
+			data: {
+				labels: xValues,
+				datasets: [
+					{
+						backgroundColor: barColors,
+						data: yValues
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				plugins: {
+					legend: {
+						display: false,
+						position: 'top',
+					},
+					title: {
+						display: false,
+						text: ''
+					}
+				}
+			}
+		});
+	</script>
+	<script type="text/javascript" th:inline="javascript">
+
+
+		var xValues = /*[[${yearmonth_array}]]*/ "";
+		var yValues = /*[[${einmr_array}]]*/ "";
+		var barColors = ["red", "green", "blue", "orange", "brown"];
+
+		new Chart("einmrChart", {
+			type: "bar",
+			data: {
+				labels: xValues,
+				datasets: [
+					{
+						backgroundColor: barColors,
+						data: yValues
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				plugins: {
+					legend: {
+						display: false,
+						position: 'top',
+					},
+					title: {
+						display: false,
+						text: ''
+					}
+				}
+			}
+		});
+	</script>
+	<script type="text/javascript" th:inline="javascript">
+
+
+		var xValues = /*[[${yearmonth_array}]]*/ "";
+		var yValues = /*[[${ipmr_array}]]*/ "";
+		var barColors = ["red", "green", "blue", "orange", "brown"];
+
+		new Chart("ipmrChart", {
+			type: "bar",
+			data: {
+				labels: xValues,
+				datasets: [
+					{
+						backgroundColor: barColors,
+						data: yValues
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				plugins: {
+					legend: {
+						display: false,
+						position: 'top',
+					},
+					title: {
+						display: false,
+						text: ''
+					}
+				}
+			}
+		});
+	</script>
+	<script type="text/javascript" th:inline="javascript">
+
+
+		var xValues = /*[[${yearmonth_array}]]*/ "";
+		var yValues = /*[[${inmr_array}]]*/ "";
+		var barColors = ["red", "green", "blue", "orange", "brown"];
+
+		new Chart("inmrChart", {
+			type: "bar",
+			data: {
+				labels: xValues,
+				datasets: [
+					{
+						backgroundColor: barColors,
+						data: yValues
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				plugins: {
+					legend: {
+						display: false,
+						position: 'top',
+					},
+					title: {
+						display: true,
+						text: 'Institutional Neonatal Mortality Rates'
+					}
+				}
+			}
+		});
+	</script>
+	<script type="text/javascript" th:inline="javascript">
+
+
+		var xValues = /*[[${yearmonth_array}]]*/ "";
+		var yValues = /*[[${immr_array}]]*/ "";
+		var barColors = ["red", "green", "blue", "orange", "brown"];
+
+		new Chart("immrChart", {
+			type: "bar",
+			data: {
+				labels: xValues,
+				datasets: [
+					{
+						backgroundColor: barColors,
+						data: yValues
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				plugins: {
+					legend: {
+						display: false,
+						position: 'top',
+					},
+					title: {
+						display: false,
+						text: ''
+					}
+				}
+			}
+		});
+	</script>
+	<script type="text/javascript" th:inline="javascript">
+
+
+		var xValues = /*[[${yearmonth_array}]]*/ "";
+		var yValues = /*[[${icsr_array}]]*/ "";
+		var barColors = ["red", "green", "blue", "orange", "brown"];
+
+		new Chart("icsrChart", {
+			type: "bar",
+			data: {
+				labels: xValues,
+				datasets: [
+					{
+						backgroundColor: barColors,
+						data: yValues
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				plugins: {
+					legend: {
+						display: false,
+						position: 'top',
+					},
+					title: {
+						display: false,
+						text: ''
+					}
+				}
+			}
+		});
+	</script>
+	<script type="text/javascript" th:inline="javascript">
+
+
+		var xValues = /*[[${yearmonth_array}]]*/ "";
+		var yValues = /*[[${iadr_array}]]*/ "";
+		var barColors = ["red", "green", "blue", "orange", "brown"];
+
+		new Chart("iadrChart", {
+			type: "bar",
+			data: {
+				labels: xValues,
+				datasets: [
+					{
+						backgroundColor: barColors,
+						data: yValues
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				plugins: {
+					legend: {
+						display: false,
+						position: 'top',
+					},
+					title: {
+						display: false,
+						text: ''
+					}
+				}
+			}
+		});
+	</script>
+	<script type="text/javascript" th:inline="javascript">
+
+
+		var xValues = /*[[${yearmonth_array}]]*/ "";
+		var yValues = /*[[${ilbwr_array}]]*/ "";
+		var barColors = ["red", "green", "blue", "orange", "brown"];
+
+		new Chart("ilbwrChart", {
+			type: "bar",
+			data: {
+				labels: xValues,
+				datasets: [
+					{
+						backgroundColor: barColors,
+						data: yValues
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				plugins: {
+					legend: {
+						display: false,
+						position: 'top',
+					},
+					title: {
+						display: false,
+						text: ''
+					}
+				}
+			}
+		});
+	</script>
+	<script type="text/javascript" th:inline="javascript">
+
+
+		var xValues = /*[[${yearmonth_array}]]*/ "";
+		var yValues = /*[[${iptbr_array}]]*/ "";
+		var barColors = ["red", "green", "blue", "orange", "brown"];
+
+		new Chart("iptbrChart", {
+			type: "bar",
+			data: {
+				labels: xValues,
+				datasets: [
+					{
+						backgroundColor: barColors,
+						data: yValues
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				plugins: {
+					legend: {
+						display: false,
+						position: 'top',
+					},
+					title: {
+						display: false,
+						text: ''
+					}
+				}
+			}
+		});
+	</script>
+	<script type="text/javascript" th:inline="javascript">
+
+
+		var xValues = /*[[${yearmonth_array}]]*/ "";
+		var yValues = /*[[${indwk1_array}]]*/ "";
+		var barColors = ["red", "green", "blue", "orange", "brown"];
+
+		new Chart("indwk1Chart", {
+			type: "bar",
+			data: {
+				labels: xValues,
+				datasets: [
+					{
+						backgroundColor: barColors,
+						data: yValues
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				plugins: {
+					legend: {
+						display: false,
+						position: 'top',
+					},
+					title: {
+						display: true,
+						text: 'Institutional Neonatal Deaths in 1st week'
+					}
+				}
+			}
+		});
+	</script>
+	<script type="text/javascript" th:inline="javascript">
+
+
+		var xValues = /*[[${yearmonth_array}]]*/ "";
+		var yValues = /*[[${mdeath_array}]]*/ "";
+		var barColors = ["red", "green", "blue", "orange", "brown"];
+
+		new Chart("mdeathChart", {
+			type: "bar",
+			data: {
+				labels: xValues,
+				datasets: [
+					{
+						backgroundColor: barColors,
+						data: yValues
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				plugins: {
+					legend: {
+						display: false,
+						position: 'top',
+					},
+					title: {
+						display: false,
+						text: ''
+					}
+				}
+			}
+		});
+	</script>
+
 </scripts>
 
 </html>

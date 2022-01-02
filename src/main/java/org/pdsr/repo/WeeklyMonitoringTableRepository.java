@@ -35,7 +35,7 @@ public interface WeeklyMonitoringTableRepository extends JpaRepository<weekly_mo
 					+ "SUM(CASE WHEN (w.wm_indices.mindex = 161) THEN w.wm_values ELSE 0 END) AS totalmaternaldeaths "//17
 
 					+ "FROM weekly_monitoring w "
-					//+ "WHERE (w.wm_grids.weekly_year + w.wm_grids.weekly_month) BETWEEN ?1 AND ?2 "
+					+ "WHERE ((MOD(w.wm_grids.weekly_year, 2000)*12) + w.wm_grids.weekly_month) BETWEEN ?1 AND ?2 "
 					+ "GROUP BY w.wm_grids.weekly_year, w.wm_grids.weekly_month, w.wm_grids.weekly_mdesc "
 					+ "ORDER BY w.wm_grids.weekly_year, w.wm_grids.weekly_month")
 					List<String[]> findAllRates(Integer startyearmonth, Integer endyearmonth);
