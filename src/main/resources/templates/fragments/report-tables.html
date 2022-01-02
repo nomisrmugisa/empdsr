@@ -113,28 +113,12 @@
 		</tbody>
 	</table>
 	<small>*Total Sum for maternal deaths</small>
-
 </div>
+
+
 <div th:fragment="table_view2">
 	<table class="table table-hover table-striped table-lg table-responsive">
 		<thead>
-			<tr class="table-success">
-				<th style="width: 20%;">Month-Year</th>
-				<th>SBR</th>
-				<th>I.SBR</th>
-				<th>A.SBR</th>
-				<th>% I.SBR</th>
-				<th>iENMR</th>
-				<th>iPMR</th>
-				<th>iNMR</th>
-				<th>iMMR</th>
-				<th>CSR</th>
-				<th>ADR</th>
-				<th>iLBWR</th>
-				<th>iPTBR</th>
-				<th>NDRwk1</th>
-				<th>TMD</th>
-			</tr>
 			<tr class="bg-primary text-white">
 				<th style="width: 20%;" th:text="#{th.monthyear}"></th>
 				<th th:text="#{th.isbr}">SBR</th>
@@ -154,23 +138,8 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr th:each="item : ${items}">
 			<tr th:each="item : ${items}" style="font-size: 20px;">
 				<td>[[${item.wmdesc}]]-[[${item.wyear}]]</td>
-				<td>[[${item.isbr}]]</td>
-				<td>[[${item.iisbr}]]</td>
-				<td>[[${item.aisbr}]]</td>
-				<td>[[${item.piisbr}]]</td>
-				<td>[[${item.einmr}]]</td>
-				<td>[[${item.ipmr}]]</td>
-				<td>[[${item.inmr}]]</td>
-				<td>[[${item.immr}]]</td>
-				<td>[[${item.icsr}]]</td>
-				<td>[[${item.iadr}]]</td>
-				<td>[[${item.ilbwr}]]</td>
-				<td>[[${item.iptbr}]]</td>
-				<td>[[${item.indwk1}]]</td>
-				<td>[[${item.mdeath}]]</td>
 				<td>[[${#numbers.formatDecimal(item.isbr, 1, 'COMMA', 1, 'POINT')}]]</td>
 				<td>[[${#numbers.formatDecimal(item.iisbr, 1, 'COMMA', 1, 'POINT')}]]</td>
 				<td>[[${#numbers.formatDecimal(item.aisbr, 1, 'COMMA', 1, 'POINT')}]]</td>
@@ -188,5 +157,4 @@
 			</tr>
 		</tbody>
 	</table>
-
 </div>
