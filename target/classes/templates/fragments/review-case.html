@@ -1,0 +1,267 @@
+<div th:fragment="case_review">
+	<div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+		[[${success}]]
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+	<div id="example-basic">
+		<h3>ICD Codes</h3>
+		<section>
+			<div class="row mb-3">
+				<label class="col-form-label" th:text="#{label.audit_death}"></label>
+				<div class="col-md-11">
+					<select id="audit_death" class="form-control form-control-sm" th:field="*{audit_death}" required>
+						<option th:each="option : ${death_options}" th:value="${option.key}" th:text="${option.value}">
+						</option>
+					</select>
+				</div>
+			</div>
+			<div class="row mb-3">
+				<label class="col-form-label" th:text="#{label.audit_icdpm}"></label>
+				<div class="col-md-11">
+					<select id="audit_icdpm" class="form-control form-control-sm" th:field="*{audit_icdpm}" required>
+						<option disabled="disabled" selected="selected" value="" th:unless="${pmsel}">
+							--select--</option>
+						<option th:if="${pmsel}" th:value="${pmsel.pm_code}"
+							th:text="|${pmsel.pm_code} : ${pmsel.pm_desc}|">--selected
+							pm--</option>
+					</select>
+					<div id="div_pmwarn" class="text-muted small"></div>
+				</div>
+			</div>
+			<div class="row mb-3">
+				<label class="col-form-label" th:text="#{label.audit_icd10}"></label>
+				<div class="col-md-11">
+					<select id="audit_icd10" class="form-control form-control-sm" th:field="*{audit_icd10}">
+						<option disabled="disabled" selected="selected" value="" th:unless="${icdsel}">
+							--select--</option>
+						<option th:if="${icdsel}" th:value="${icdsel.icd_code}"
+							th:text="|${icdsel.icd_code} : ${icdsel.icd_desc}|">--selected
+							icd--</option>
+					</select>
+					<div id="div_pmcode" class="text-dark"></div>
+				</div>
+			</div>
+			<div class="row mb-3">
+				<label class="col-form-label" th:text="#{label.audit_csc}"></label>
+				<div class="col-md-11">
+					<input type="text" class="form-control form-control-sm" th:field="*{audit_csc}" />
+				</div>
+			</div>
+		</section>
+		<h3>Delays</h3>
+		<section class="overflow-auto">
+
+			<div class="row mb-1 alert alert-warning">
+				<label class="col-md-8 col-form-label fw-bold" th:text="#{label.audit_delay1}"></label>
+				<div class="col-auto">
+					<select class="form-control form-control-sm" th:field="*{audit_delay1}" required>
+						<option th:each="option : ${yesnodk_options}" th:value="${option.key}"
+							th:text="${option.value}"></option>
+					</select>
+				</div>
+				<small class="text-dark" th:utext="#{notes.audit_delay1}"></small>
+			</div>
+			<hr />
+			<div class="row mb-1 alert alert-warning">
+				<label class="col-md-8 col-form-label fw-bold" th:text="#{label.audit_delay2}"></label>
+				<div class="col-auto">
+					<select class="form-control form-control-sm" th:field="*{audit_delay2}" required>
+						<option th:each="option : ${yesnodk_options}" th:value="${option.key}"
+							th:text="${option.value}"></option>
+					</select>
+				</div>
+				<small class="text-dark" th:utext="#{notes.audit_delay2}"></small>
+			</div>
+			<hr />
+			<div class="row mb-1 alert alert-warning">
+				<h6 th:text="#{label.audit_delay3}"></h6>
+				<small class="text-dark" th:utext="#{notes.audit_delay3}"></small>
+				<div class="row mb-2">
+					<label class="col-md-8 col-form-label fw-bold" th:text="#{label.audit_delay3a}"></label>
+					<div class="col-auto">
+						<select class="form-control form-control-sm" th:field="*{audit_delay3a}" required>
+							<option th:each="option : ${yesnodk_options}" th:value="${option.key}"
+								th:text="${option.value}"></option>
+						</select>
+					</div>
+				</div>
+				<div class="row mb-2">
+					<label class="col-md-8 col-form-label fw-bold" th:text="#{label.audit_delay3b}"></label>
+					<div class="col-auto">
+						<select class="form-control form-control-sm" th:field="*{audit_delay3b}" required>
+							<option th:each="option : ${yesnodk_options}" th:value="${option.key}"
+								th:text="${option.value}"></option>
+						</select>
+					</div>
+				</div>
+				<div class="row">
+					<label class="col-md-8 col-form-label fw-bold" th:text="#{label.audit_delay3c}"></label>
+					<div class="col-auto">
+						<select class="form-control form-control-sm" th:field="*{audit_delay3c}" required>
+							<option th:each="option : ${yesnodk_options}" th:value="${option.key}"
+								th:text="${option.value}"></option>
+						</select>
+					</div>
+				</div>
+			</div>
+		</section>
+		<h3>Modifiables</h3 >
+		<section class="overflow-auto">
+			<div class="row mb-1 alert alert-success">
+				<h6 th:text="#{label.audit_ifcmfs}"></h6>
+				<small class="text-dark" th:utext="#{notes.audit_ifcmfs}"></small>
+				<div class="col-md-12">
+					<textarea rows="5" class="form-control form-control-sm" th:field="*{audit_ifcmfs}"></textarea>
+				</div>
+			</div>
+			<div class="row mb-1 alert alert-success">
+				<h6 th:text="#{label.audit_sysmfs}"></h6>
+				<small class="text-dark" th:utext="#{notes.audit_sysmfs}"></small>
+				<div class="col-md-12">
+					<textarea rows="5" class="form-control form-control-sm" th:field="*{audit_sysmfs}"></textarea>
+				</div>
+			</div>
+			<div class="row mb-1 alert alert-success">
+				<h6 th:text="#{label.audit_facmfs}"></h6>
+				<small class="text-dark" th:utext="#{notes.audit_facmfs}"></small>
+				<div class="col-md-12">
+					<textarea rows="5" class="form-control form-control-sm" th:field="*{audit_facmfs}"></textarea>
+				</div>
+			</div>
+			<div class="row mb-1 alert alert-success">
+				<h6 th:text="#{label.audit_hwkmfs}"></h6>
+				<small class="text-dark mb-2" th:utext="#{notes.audit_hwkmfs}"></small>
+				<div class="col-md-12">
+					<textarea rows="5" class="form-control form-control-sm" th:field="*{audit_hwkmfs}"></textarea>
+				</div>
+			</div>
+
+			<fieldset hidden=true>
+				<input th:field="*{audit_uuid}" />
+			</fieldset>
+		</section>
+	</div>
+	<div class="d-grid gap-2 mt-3">
+		<button class="btn btn-primary btn-lg" type="submit" th:utext="#{submit.button}"></button>
+	</div>
+</div>
+
+
+
+
+
+
+
+<div th:fragment="case_recommend">
+	<div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+		[[${success}]]
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+	<div class=" alert alert-warning">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="row mb-2">
+					<h6 th:utext="#{label.recommend.head}"></h6>
+					<div class="col-md-12">
+						<input class="form-control form-control-sm" th:field="*{recommendation_title}"
+							th:placeholder="#{notes.recommend.head}" required />
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="row mb-2">
+					<h6 th:utext="#{label.recommend.task}"></h6>
+					<div class="col-md-12">
+						<textarea rows="5" class="form-control form-control-sm" th:field="*{recommendation_task}"
+							th:placeholder="#{notes.recommend.task}" required></textarea>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="row mb-2">
+					<h6 th:utext="#{label.recommend.lead}"></h6>
+					<div class="col-md-12">
+						<input class="form-control form-control-sm" th:field="*{recommendation_leader}"
+							th:placeholder="#{notes.recommend.lead}" required />
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="row mb-2">
+					<h6 th:utext="#{label.recommend.dead}" class="text-primary"></h6>
+					<div class="col-md-12">
+						<input class="form-control form-control-sm datepicker" th:field="*{recommendation_deadline}"
+							required />
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="row mb-2">
+					<h6 th:utext="#{label.recommend.memb}"></h6>
+					<div class="col-md-12">
+						<input class="form-control form-control-sm" th:field="*{recommendation_reporter}"
+							th:placeholder="#{notes.recommend.memb}" required />
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="row mb-2">
+					<h6 th:utext="#{label.recommend.need}"></h6>
+					<div class="col-md-12">
+						<textarea rows="5" class="form-control form-control-sm" th:field="*{recommendation_resources}"
+							th:placeholder="#{notes.recommend.need}" required></textarea>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<fieldset hidden=true>
+		<input th:field="*{recommendation_uuid}" />
+	</fieldset>
+	<div class="d-grid gap-2 mt-3">
+		<button class="btn btn-primary btn-lg" type="submit" th:utext="#{button.save.recommend}"></button>
+	</div>
+</div>
+
+<div th:fragment="case_status">
+	<div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+		[[${success}]]
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+	<div class="row mb-4">
+		<label class="col-form-label" th:text="#{label.recommend.status}"></label>
+		<div class="d-grid gap-2">
+			<select class="form-control form-control-sm" th:field="*{recommendation_status}" required>
+				<option th:each="option : ${cstatus_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="row">
+				<h6 th:utext="#{label.recommend.note}"></h6>
+				<div class="col-md-12">
+					<textarea rows="5" class="form-control form-control-sm" th:field="*{recommendation_comments}"
+						required></textarea>
+				</div>
+			</div>
+		</div>
+	</div>
+	<fieldset hidden=true>
+		<input th:field="*{recommendation_uuid}" />
+	</fieldset>
+	<div class="d-grid gap-2 mt-3">
+		<button class="btn btn-primary btn-lg" type="submit" th:utext="#{button.save.status}"></button>
+	</div>
+</div>
