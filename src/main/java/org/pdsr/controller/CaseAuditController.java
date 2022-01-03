@@ -107,7 +107,7 @@ public class CaseAuditController {
 																									// completed
 
 				if (elem.getRecommendation_status() == 1) {
-					elem.setRec_color("bg-warning text-dark");
+					elem.setRec_color("table-warning text-dark");
 				} else {
 					elem.setRec_color("table-light");
 				}

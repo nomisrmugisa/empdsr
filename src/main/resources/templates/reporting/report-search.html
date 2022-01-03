@@ -277,23 +277,26 @@
 		var barColors = ["red", "green", "blue", "orange", "brown"];
 
 		new Chart("isbrChart", {
-			type: "bar",
+			type: "line",
 			data: {
 				labels: xValues,
 				datasets: [
 					{
 						label: 'Institutional Stillbirth Rates',
 						backgroundColor: 'blue',
+						borderColor:'blue',
 						data: yValues1
 					},
 					{
 						label: 'Institutional Intrapartum Stillbirth Rates',
 						backgroundColor: 'red',
+						borderColor:'red',
 						data: yValues2
 					},
 					{
 						label: 'Institutional Antepartum Stillbirth Rates',
 						backgroundColor: 'green',
+						borderColor:'green',
 						data: yValues3
 					}
 				]
@@ -505,7 +508,7 @@
 					},
 					title: {
 						display: true,
-						text: 'Delivery Statistics'
+						text: 'Caesarean Section Rates'
 					}
 				}
 			}
@@ -535,7 +538,7 @@
 					},
 					title: {
 						display: true,
-						text: 'Delivery Statistics'
+						text: 'Overall Delivery Statistics'
 					}
 				}
 			}
@@ -562,7 +565,7 @@
 						data: yValues1
 					},
 					{
-						label: 'Perterm Births(less than 37 weeks)',
+						label: 'Perterm Births (less than 37 weeks)',
 						backgroundColor: 'green',
 						data: yValues2
 					}
