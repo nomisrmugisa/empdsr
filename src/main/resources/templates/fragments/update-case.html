@@ -349,19 +349,23 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_gravida}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{antenatal.antenatal_gravida}" required>
+			<select id="antenatal_gravida" class="form-control form-control-sm"
+				th:field="*{antenatal.antenatal_gravida}" onchange="onChangeValue();" required>
 				<option th:each="option : ${gravipara_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
+			<div class="invalid-feedback" th:text="#{gravipara.mismatch}"></div>
 		</div>
 	</div>
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_para}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{antenatal.antenatal_para}" required>
+			<select id="antenatal_para" class="form-control form-control-sm" th:field="*{antenatal.antenatal_para}"
+				onchange="onChangeValue();" required>
 				<option th:each="option : ${gravipara_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
+			<div class="invalid-feedback" th:text="#{gravipara.mismatch}"></div>
 		</div>
 	</div>
 	<div class="row mb-3">

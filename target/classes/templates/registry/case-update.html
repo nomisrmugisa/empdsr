@@ -90,6 +90,20 @@
 		}
 	</script>
 	<script>
+		function onChangeValue() {
+			const gravida = document.getElementById("antenatal_gravida");
+			const para = document.getElementById("antenatal_para");
+			
+			if (Number(gravida.value) < Number(para.value)) {
+				gravida.setCustomValidity('Gravidity should not be less that Parity');
+				para.setCustomValidity('Gravidity should not be less that Parity');
+			} else {
+				gravida.setCustomValidity('');
+				para.setCustomValidity('');
+			}
+		}
+	</script>
+	<script>
 		function changeAntenatalView() {
 			var objCombo = document.getElementById("antenatal_attend");
 
@@ -462,7 +476,7 @@
 			}
 		}
 	</script>
-	
+
 	<script>
 		function babyoutcomeView() {
 			var deathtype = document.getElementById("case_death");

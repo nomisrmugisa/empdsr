@@ -180,7 +180,7 @@
 				<div th:insert="fragments/report-tables :: table_view1"></div>
 			</div>
 			<div class="tab-pane fade" id="v-pills-tableview2" role="tabpanel" aria-labelledby="v-pills-tableview2-tab">
-				<div th:insert="fragments/report-tables :: table_view2"></div>
+				<div class="overflow-auto" th:insert="fragments/report-tables :: table_view2"></div >
 			</div>
 			<div class="tab-pane fade" id="v-pills-perideaths" role="tabpanel" aria-labelledby="v-pills-perideaths-tab">
 				<div class="row">
@@ -204,17 +204,11 @@
 						<canvas id="isbrChart" height="200"></canvas>
 					</div>
 					<div class="col-md-6">
-						<canvas id="iisbrChart" height="200"></canvas>
-					</div>
-					<div class="col-md-6">
-						<canvas id="aisbrChart" height="200"></canvas>
-					</div>
-					<div class="col-md-6">
 						<canvas id="piisbrChart" height="200"></canvas>
 					</div>
 				</div>
 			</div>
-			<div class="tab-pane fade" id="v-pills-ilbwr" role="tabpanel" aria-labelledby="v-pills-ilbwr-tab">
+			<div class="tab-pane fade" id="v-pills-prelow" role="tabpanel" aria-labelledby="v-pills-prelow-tab">
 				<div class="row">
 					<canvas id="ilbptChart" height="200"></canvas>
 				</div>

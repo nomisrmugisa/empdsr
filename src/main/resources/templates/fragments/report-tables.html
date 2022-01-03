@@ -138,7 +138,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr th:each="item : ${items}" style="font-size: 20px;">
+			<tr th:each="item : ${items}">
 				<td>[[${item.wmdesc}]]-[[${item.wyear}]]</td>
 				<td>[[${#numbers.formatDecimal(item.isbr, 1, 'COMMA', 1, 'POINT')}]]</td>
 				<td>[[${#numbers.formatDecimal(item.iisbr, 1, 'COMMA', 1, 'POINT')}]]</td>
@@ -153,8 +153,26 @@
 				<td>[[${#numbers.formatDecimal(item.ilbwr, 1, 'COMMA', 1, 'POINT')}]]%</td>
 				<td>[[${#numbers.formatDecimal(item.iptbr, 1, 'COMMA', 1, 'POINT')}]]%</td>
 				<td>[[${#numbers.formatDecimal(item.indwk1, 1, 'COMMA', 1, 'POINT')}]]%</td>
-				<td>[[${#numbers.formatDecimal(item.mdeath, 1, 'COMMA', 0, 'POINT')}]]</td>
+				<td>[[${#numbers.formatDecimal(item.mdeath, 1, 'COMMA', 0, 'POINT')}]]*</td>
+			</tr>
+			<tr style="font-size: 20px;">
+				<th>[[${oavg.wmdesc}]]</th>
+				<th>[[${#numbers.formatDecimal(oavg.isbr_oavg, 1, 'COMMA', 1, 'POINT')}]]</th>
+				<th>[[${#numbers.formatDecimal(oavg.iisbr_oavg, 1, 'COMMA', 1, 'POINT')}]]</th>
+				<th>[[${#numbers.formatDecimal(oavg.aisbr_oavg, 1, 'COMMA', 1, 'POINT')}]]</th>
+				<th>[[${#numbers.formatDecimal(oavg.piisbr_oavg, 1, 'COMMA', 1, 'POINT')}]]%</th>
+				<th>[[${#numbers.formatDecimal(oavg.einmr_oavg, 1, 'COMMA', 1, 'POINT')}]]</th>
+				<th>[[${#numbers.formatDecimal(oavg.ipmr_oavg, 1, 'COMMA', 1, 'POINT')}]]</th>
+				<th>[[${#numbers.formatDecimal(oavg.inmr_oavg, 1, 'COMMA', 1, 'POINT')}]]</th>
+				<th>[[${#numbers.formatDecimal(oavg.immr_oavg, 1, 'COMMA', 1, 'POINT')}]]</th>
+				<th>[[${#numbers.formatDecimal(oavg.icsr_oavg, 1, 'COMMA', 1, 'POINT')}]]%</th>
+				<th>[[${#numbers.formatDecimal(oavg.iadr_oavg, 1, 'COMMA', 1, 'POINT')}]]%</th>
+				<th>[[${#numbers.formatDecimal(oavg.ilbwr_oavg, 1, 'COMMA', 1, 'POINT')}]]%</th>
+				<th>[[${#numbers.formatDecimal(oavg.iptbr_oavg, 1, 'COMMA', 1, 'POINT')}]]%</th>
+				<th>[[${#numbers.formatDecimal(oavg.indwk1_oavg, 1, 'COMMA', 1, 'POINT')}]]%</th>
+				<th>[[${#numbers.formatDecimal(oavg.mdeath_osum, 1, 'COMMA', 0, 'POINT')}]]*</th>
 			</tr>
 		</tbody>
 	</table>
+	<small>*Total Sum for maternal deaths</small>
 </div>

@@ -94,6 +94,7 @@ public class CaseAuditController {
 		}
 
 		model.addAttribute("items", acaseRepo.findByPendingAudit());
+
 		model.addAttribute("items1", tcaseRepo.findByPendingRecommendation());
 
 		List<audit_recommendation> recommendations = new ArrayList<>();
@@ -202,6 +203,21 @@ public class CaseAuditController {
 				Integer nextPriority = persDeque.pollLast();
 
 				a: for (case_identifiers scase : pendingAudit) {
+					
+					java.util.Date date = scase.getBabydeath().getBaby_ddate();
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(date);
+
+					//check whether the death is a recent one that falls within the review week
+					final boolean isyear = Calendar.getInstance().get(Calendar.YEAR) == cal.get(Calendar.YEAR);
+					final boolean ismonth = Calendar.getInstance().get(Calendar.MONTH) == cal.get(Calendar.MONTH);
+					final boolean isweek = Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) == cal
+							.get(Calendar.MONTH);
+					final boolean isvalid = isyear && ismonth && isweek;
+
+					if (!isvalid) {
+						continue a;
+					}
 
 					if (scase.getCase_death() != 2 || scase.getBabydeath() == null) {
 						continue a;
