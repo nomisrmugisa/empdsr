@@ -250,7 +250,7 @@ public class ReportController {
 		Integer endYM = ((search.getWm_endyear() % 2000) * 12) + search.getWm_endmonth();
 
 		Double isbr = 0.0, iisbr = 0.0, aisbr = 0.0, piisbr = 0.0, einmr = 0.0, ipmr = 0.0, inmr = 0.0, immr = 0.0,
-				icsr = 0.0, iadr = 0.0, ilbwr = 0.0, iptbr = 0.0, indwk1 = 0.0;
+				icsr = 0.0, iadr = 0.0, ivdr = 0.0, ilbwr = 0.0, iptbr = 0.0, indwk1 = 0.0;
 		Integer mdeath = 0;
 
 		List<String[]> data = wmRepo.findAllRates(startYM, endYM);
@@ -266,6 +266,7 @@ public class ReportController {
 		final Double[] immr_array = new Double[data.size()];
 		final Double[] icsr_array = new Double[data.size()];
 		final Double[] iadr_array = new Double[data.size()];
+		final Double[] ivdr_array = new Double[data.size()];
 		final Double[] ilbwr_array = new Double[data.size()];
 		final Double[] iptbr_array = new Double[data.size()];
 		final Double[] indwk1_array = new Double[data.size()];
@@ -327,6 +328,10 @@ public class ReportController {
 			iadr += i.getIadr();
 			iadr_array[arrayIndex] = i.getIadr();
 
+			i.setIvdr((Double.valueOf(elem[3]) == 0.0) ? 0 : (Double.valueOf(elem[4]) / Double.valueOf(elem[3])) * 100);
+			ivdr += i.getIvdr();
+			ivdr_array[arrayIndex] = i.getIvdr();
+
 			i.setIlbwr((Double.valueOf(elem[11]) == 0.0) ? 0
 					: (Double.valueOf(elem[13]) / Double.valueOf(elem[11])) * 100);
 			ilbwr += i.getIlbwr();
@@ -377,6 +382,8 @@ public class ReportController {
 
 		oindicators.setIadr_oavg(iadr / indicators.size());
 
+		oindicators.setIvdr_oavg(ivdr / indicators.size());
+
 		oindicators.setIlbwr_oavg(ilbwr / indicators.size());
 
 		oindicators.setIptbr_oavg(iptbr / indicators.size());
@@ -387,6 +394,7 @@ public class ReportController {
 
 		model.addAttribute("oavg", oindicators);
 
+		
 		model.addAttribute("yearmonth_array", yearmonth);
 		model.addAttribute("isbr_array", isbr_array);
 		model.addAttribute("iisbr_array", iisbr_array);
@@ -398,11 +406,13 @@ public class ReportController {
 		model.addAttribute("immr_array", immr_array);
 		model.addAttribute("icsr_array", icsr_array);
 		model.addAttribute("iadr_array", iadr_array);
+		model.addAttribute("ivdr_array", ivdr_array);
 		model.addAttribute("ilbwr_array", ilbwr_array);
 		model.addAttribute("iptbr_array", iptbr_array);
 		model.addAttribute("indwk1_array", indwk1_array);
 		model.addAttribute("mdeath_array", mdeath_array);
 
+		
 		return "reporting/report-search";
 	}
 

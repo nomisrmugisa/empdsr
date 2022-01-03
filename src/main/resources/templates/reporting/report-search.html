@@ -180,11 +180,13 @@
 				<div th:insert="fragments/report-tables :: table_view1"></div>
 			</div>
 			<div class="tab-pane fade" id="v-pills-tableview2" role="tabpanel" aria-labelledby="v-pills-tableview2-tab">
-				<div class="overflow-auto" th:insert="fragments/report-tables :: table_view2"></div >
+				<div class="overflow-auto" th:insert="fragments/report-tables :: table_view2"></div>
 			</div>
 			<div class="tab-pane fade" id="v-pills-perideaths" role="tabpanel" aria-labelledby="v-pills-perideaths-tab">
 				<div class="row">
-					<canvas id="ipmrChart" height="200"></canvas>
+					<div class="col-md-6">
+						<canvas id="ipmrChart" height="200"></canvas>
+					</div>
 				</div>
 			</div>
 			<div class="tab-pane fade" id="v-pills-neodeaths" role="tabpanel" aria-labelledby="v-pills-neodeaths-tab">
@@ -210,12 +212,19 @@
 			</div>
 			<div class="tab-pane fade" id="v-pills-prelow" role="tabpanel" aria-labelledby="v-pills-prelow-tab">
 				<div class="row">
-					<canvas id="ilbptChart" height="200"></canvas>
+					<div class="col-md-6">
+						<canvas id="ilbptChart" height="200"></canvas>
+					</div>
 				</div>
 			</div>
 			<div class="tab-pane fade" id="v-pills-delivstat" role="tabpanel" aria-labelledby="v-pills-delivstat-tab">
 				<div class="row">
-					<canvas id="icdrChart" height="200"></canvas>
+					<div class="col-md-6">
+						<canvas id="icdrChart" height="200"></canvas>
+					</div>
+					<div class="col-md-4">
+						<canvas id="icdrPie" width="300" height="200"></canvas>
+					</div>
 				</div>
 			</div>
 			<div class="tab-pane fade" id="v-pills-mdeath" role="tabpanel" aria-labelledby="v-pills-mdeath-tab">
@@ -455,6 +464,7 @@
 		var xValues = /*[[${yearmonth_array}]]*/ "";
 		var yValues1 = /*[[${icsr_array}]]*/ "";
 		var yValues2 = /*[[${iadr_array}]]*/ "";
+		var yValues3 = /*[[${ivdr_array}]]*/ "";
 		var barColors = ["red", "green", "blue", "orange", "brown"];
 
 		new Chart("icdrChart", {
@@ -463,14 +473,57 @@
 				labels: xValues,
 				datasets: [
 					{
+						label: 'Percentage of Viginal Deliveries',
+						backgroundColor: 'Green',
+						data: yValues3
+					},
+					{
 						label: 'Percentage of Caesarean Sections',
-						backgroundColor: 'Blue',
+						backgroundColor: 'Red',
 						data: yValues1
 					},
 					{
 						label: 'Percentage of Assisted Deliveries',
-						backgroundColor: 'green',
+						backgroundColor: 'Blue',
 						data: yValues2
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				scales: {
+					x: {
+						stacked: true,
+					},
+					y: {
+						stacked: true
+					}
+				},
+				plugins: {
+					legend: {
+						display: true,
+						position: 'top',
+					},
+					title: {
+						display: true,
+						text: 'Delivery Statistics'
+					}
+				}
+			}
+		});
+
+		var ytotal1 = /*[[${oavg.icsr_oavg}]]*/ "";
+		var ytotal2 = /*[[${oavg.iadr_oavg}]]*/ "";
+		var ytotal3 = /*[[${oavg.ivdr_oavg}]]*/ "";
+		new Chart("icdrPie", {
+			type: "pie",
+			data: {
+				labels: ['Caesarean Sections', 'Assisted Deliveries', 'Vaginal Deliveries'],
+				datasets: [
+					{
+						label: 'Percentage of Deliveries',
+						backgroundColor: ['Red', 'Blue', 'Green'],
+						data: [ytotal1, ytotal2, ytotal3]
 					}
 				]
 			},
@@ -488,6 +541,7 @@
 				}
 			}
 		});
+
 	</script>
 
 

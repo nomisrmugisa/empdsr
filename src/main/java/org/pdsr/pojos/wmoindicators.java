@@ -21,6 +21,7 @@ public class wmoindicators implements Serializable {
 	private Double immr_oavg;
 	private Double icsr_oavg;
 	private Double iadr_oavg;
+	private Double ivdr_oavg;
 	private Double ilbwr_oavg;
 	private Double iptbr_oavg;
 	private Double indwk1_oavg;
@@ -145,5 +146,15 @@ public class wmoindicators implements Serializable {
 	public void setMdeath_osum(Integer mdeath_osum) {
 		this.mdeath_osum = mdeath_osum;
 	}
+
+	public Double getIvdr_oavg() {
+		return ivdr_oavg;
+	}
+
+	public void setIvdr_oavg(Double ivdr_oavg) {
+		this.ivdr_oavg = ivdr_oavg;
+	}
+
+	
 
 }

@@ -23,6 +23,7 @@ public class wmindicators implements Serializable {
 	private Double immr;
 	private Double icsr;
 	private Double iadr;
+	private Double ivdr;
 	private Double ilbwr;
 	private Double iptbr;
 	private Double indwk1;
@@ -162,6 +163,14 @@ public class wmindicators implements Serializable {
 
 	public void setWmdesc(String wmdesc) {
 		this.wmdesc = wmdesc;
+	}
+
+	public Double getIvdr() {
+		return ivdr;
+	}
+
+	public void setIvdr(Double ivdr) {
+		this.ivdr = ivdr;
 	}
 
 
