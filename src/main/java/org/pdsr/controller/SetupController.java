@@ -96,6 +96,7 @@ public class SetupController {
 			results.rejectValue("sync_code", "invalid.code");
 			selected.setSync_uuid("");
 			selected.setSync_name("");
+			selected.setSync_email("");
 		}
 
 		if (results.hasErrors()) {

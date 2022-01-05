@@ -3,6 +3,7 @@ package org.pdsr;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+import org.pdsr.repo.SyncTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
@@ -15,11 +16,14 @@ public class EmailService {
 
 	@Autowired
 	private JavaMailSender emailSender;
+	
+	@Autowired
+	private SyncTableRepository syncRepo;
 
 	public void sendSimpleMessage(String to, String subject, String text) {
 
 		SimpleMailMessage message = new SimpleMailMessage();
-		message.setFrom("no-reply@olincgroup.com");
+		message.setFrom(syncRepo.findById(CONSTANTS.FACILITY_ID).get().getSync_email());
 		message.setTo(to);
 		message.setSubject(subject);
 		message.setText(text);
@@ -34,7 +38,7 @@ public class EmailService {
 
 		MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
-		message.setFrom("no-reply@olincgroup.com");
+		message.setFrom(syncRepo.findById(CONSTANTS.FACILITY_ID).get().getSync_email());
 		helper.setTo(to);
 		helper.setSubject(subject);
 		helper.setText(text);
