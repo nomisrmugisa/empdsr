@@ -38,6 +38,10 @@ public class sync_table implements Serializable {
 	@Size(min = 1, max = 80)	
 	private String sync_name;
 	
+	@Column
+	@Size(min = 1, max = 80)	
+	private String sync_email;
+	
 	
 	@Lob
 	@Column
@@ -73,6 +77,14 @@ public class sync_table implements Serializable {
 
 	public void setSync_name(String sync_name) {
 		this.sync_name = sync_name;
+	}
+
+	public String getSync_email() {
+		return sync_email;
+	}
+
+	public void setSync_email(String sync_email) {
+		this.sync_email = sync_email;
 	}
 
 	public String getSync_json() {

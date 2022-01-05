@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html th:replace="~{layout/reporting :: layout(_,~{},~{::scripts},~{::content},~{})}">
 <content>
+	<a href="#" class="col-auto btn btn-outline-success"
+		th:href="@{/reporting/export/excel/{yearid}/{monthid}(yearid=${selected.grid_year},monthid=${selected.grid_month})}">
+		<i class="fa fa-download"></i> [[#{export.excel}]]</a>
 	<div class="float-end" th:text="${facility_code}"></div>
 	<div class="col-md-12 py-3 my-3 mx-auto p-1 rounded box-shadow">
 		<form action="#"
@@ -12,12 +15,11 @@
 			<input type="hidden" th:field="*{grid_yearmonth}" />
 
 			<div class="row">
-				<h4>[[${selected.grid_yearmonth}]]</h4>
 				<div class="col-md-12" th:with="item = ${selected.grid_weekly[0]}">
 					<table class="table table-hover table-bordered table-sm table-responsive-sm small">
 						<thead class="table-dark">
 							<tr>
-								<th th:text="#{th.mon.ind}" style="width: 30%;">Indicator</th>
+								<th style="width: 30%;">[[${selected.grid_yearmonth}]]</th>
 								<th th:text="|#{th.mon.wek}-${witem.weekly_week}|"
 									th:each="witem : ${selected.grid_weekly}">Value</th>
 							</tr>
@@ -26,7 +28,8 @@
 							<tr th:each="subitem, subitemStat : ${item.statistics}"
 								th:class="${subitem.wm_indices.gitem}?'table-primary':''">
 								<td th:class="${!subitem.wm_indices.gitem}?'text-end':'fw-bold small'">
-									[(${subitem.wm_indices.mlabel})] <span th:if="${subitem.wm_indices.gitem}">([[${subitem.wm_indices.mdesc}]])</span >
+									[(${subitem.wm_indices.mlabel})] <span
+										th:if="${subitem.wm_indices.gitem}">([[${subitem.wm_indices.mdesc}]])</span>
 								</td>
 								<td th:each="aitem, aitemStat : *{grid_weekly}">
 									<input type="hidden" th:field="*{grid_weekly[__${aitemStat.index}__]}" />

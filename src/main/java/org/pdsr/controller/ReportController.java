@@ -1,6 +1,9 @@
 package org.pdsr.controller;
 
+import java.io.IOException;
 import java.security.Principal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
@@ -8,10 +11,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
 import org.pdsr.CONSTANTS;
+import org.pdsr.EmailService;
+import org.pdsr.InternetAvailabilityChecker;
+import org.pdsr.ReportExcelExporter;
 import org.pdsr.model.monitoring_table;
+import org.pdsr.model.upload;
 import org.pdsr.model.weekly_monitoring;
 import org.pdsr.model.weekly_table;
 import org.pdsr.model.wmPK;
@@ -32,6 +40,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/reporting")
@@ -51,6 +61,9 @@ public class ReportController {
 
 	@Autowired
 	private MessageSource msg;
+
+	@Autowired
+	private EmailService emailService;
 
 	@GetMapping("")
 	public String list(Principal principal, Model model) {
@@ -219,6 +232,15 @@ public class ReportController {
 		}
 
 		weekRepo.saveAll(selected.getGrid_weekly());
+
+		try {
+			if (InternetAvailabilityChecker.isInternetAvailable()) {
+				emailService.sendSimpleMessage("makmanu128@gmail.com", "Test Email",
+						"Test Success from the PDSR Application");
+				emailService.sendSimpleMessage("elelart@gmail.com", "Test Email",
+						"Test Success from the PDSR Application");
+			}
+		} catch (IOException e) {}
 
 		return "redirect:/reporting/edit/" + selected.getGrid_year() + "/" + selected.getGrid_month();
 	}
@@ -394,7 +416,6 @@ public class ReportController {
 
 		model.addAttribute("oavg", oindicators);
 
-		
 		model.addAttribute("yearmonth_array", yearmonth);
 		model.addAttribute("isbr_array", isbr_array);
 		model.addAttribute("iisbr_array", iisbr_array);
@@ -412,8 +433,46 @@ public class ReportController {
 		model.addAttribute("indwk1_array", indwk1_array);
 		model.addAttribute("mdeath_array", mdeath_array);
 
-		
 		return "reporting/report-search";
+	}
+
+	@GetMapping("/export/excel/{wyear}/{wmonth}")
+	@ResponseBody
+	public void exportToExcel(HttpServletResponse response, @PathVariable("wyear") Integer year,
+			@PathVariable("wmonth") Integer month) throws IOException {
+
+		List<weekly_table> weeks = weekRepo.findByWeeklyYearAndMonth(year, month);
+		if (weeks != null && !weeks.isEmpty()) {
+			response.setContentType("application/octet-stream");
+			DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+			String currentDateTime = dateFormatter.format(new java.util.Date());
+
+			String headerKey = "Content-Disposition";
+			String headerValue = "attachment; filename=report_" + currentDateTime + ".xlsx";
+			response.setHeader(headerKey, headerValue);
+
+			weekly_table week = weeks.get(0);
+
+			ReportExcelExporter excelExporter = new ReportExcelExporter(weeks,
+					week.getWeekly_mdesc() + "-" + week.getWeekly_year());
+
+			excelExporter.export(response);
+		}
+	}
+
+	@GetMapping("/import/excel/{wyear}/{wmonth}")
+	public String importFromExcel(Principal principal, Model model,
+			@RequestParam(name = "success", required = false) String success) {
+
+		upload selected = new upload();
+		model.addAttribute("selected", selected);
+
+		if (success != null) {
+			model.addAttribute("success", "Successfully uploaded");
+		}
+
+		return "safety-upload";
+
 	}
 
 	@ModelAttribute("wmyear_options")

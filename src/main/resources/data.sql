@@ -83,12 +83,12 @@
     MERGE INTO monitoring_table(gindex,glabel,mindex,mlabel,mdesc,gitem) KEY(mindex) values(13,'Livebirths','130','Total livebirths','Total babies alive at birth',1);
     MERGE INTO monitoring_table(gindex,glabel,mindex,mlabel,mdesc,gitem) KEY(mindex) values(13,'Livebirths','131','Term births (37 completed weeks or more)','none',0);
     MERGE INTO monitoring_table(gindex,glabel,mindex,mlabel,mdesc,gitem) KEY(mindex) values(13,'Livebirths','132','Preterms (less than 37 completed weeks)','none',0);
-    MERGE INTO monitoring_table(gindex,glabel,mindex,mlabel,mdesc,gitem) KEY(mindex) values(14,'Livebirths','133','<i class="text-primary">Very Preterms (less than 34 completed weeks)</i>','none',0);
+    MERGE INTO monitoring_table(gindex,glabel,mindex,mlabel,mdesc,gitem) KEY(mindex) values(14,'Livebirths','133','<i class="text-primary">Very Preterms (less than 34 completed weeks)</i>','Very Preterms (less than 34 completed weeks)',0);
     
     MERGE INTO monitoring_table(gindex,glabel,mindex,mlabel,mdesc,gitem) KEY(mindex) values(13,'Birthweight','136','Normal birthweight babies (2.5kg or more)','none',0);
     MERGE INTO monitoring_table(gindex,glabel,mindex,mlabel,mdesc,gitem) KEY(mindex) values(13,'Birthweight','137','Low birthweight babies (less than 2.5kg)','none',0);
-    MERGE INTO monitoring_table(gindex,glabel,mindex,mlabel,mdesc,gitem) KEY(mindex) values(14,'Birthweight','138','<i class="text-primary">Very low birthweight babies (less than 1.5kg)</i>','none',0);
-    MERGE INTO monitoring_table(gindex,glabel,mindex,mlabel,mdesc,gitem) KEY(mindex) values(14,'Birthweight','139','<i class="text-primary">Extremely low birthweight babies (less than 1.0kg)</i>','none',0);
+    MERGE INTO monitoring_table(gindex,glabel,mindex,mlabel,mdesc,gitem) KEY(mindex) values(14,'Birthweight','138','<i class="text-primary">Very low birthweight babies (less than 1.5kg)</i>','Very low birthweight babies (less than 1.5kg)',0);
+    MERGE INTO monitoring_table(gindex,glabel,mindex,mlabel,mdesc,gitem) KEY(mindex) values(14,'Birthweight','139','<i class="text-primary">Extremely low birthweight babies (less than 1.0kg)</i>','Extremely low birthweight babies (less than 1.0kg)',0);
     
     MERGE INTO monitoring_table(gindex,glabel,mindex,mlabel,mdesc,gitem) KEY(mindex) values(15,'Neonatal deaths','150','Neonatal deaths','live born babies who died within 28 days',1);
     MERGE INTO monitoring_table(gindex,glabel,mindex,mlabel,mdesc,gitem) KEY(mindex) values(15,'Neonatal deaths','151','Early Neonatal Deaths (1-7 days)','none',0);
