@@ -240,7 +240,8 @@ public class ReportController {
 				emailService.sendSimpleMessage("elelart@gmail.com", "Test Email",
 						"Test Success from the PDSR Application");
 			}
-		} catch (IOException e) {}
+		} catch (IOException e) {
+		}
 
 		return "redirect:/reporting/edit/" + selected.getGrid_year() + "/" + selected.getGrid_month();
 	}
@@ -271,9 +272,15 @@ public class ReportController {
 		Integer startYM = ((search.getWm_startyear() % 2000) * 12) + search.getWm_startmonth();
 		Integer endYM = ((search.getWm_endyear() % 2000) * 12) + search.getWm_endmonth();
 
-		Double isbr = 0.0, iisbr = 0.0, aisbr = 0.0, piisbr = 0.0, einmr = 0.0, ipmr = 0.0, inmr = 0.0, immr = 0.0,
-				icsr = 0.0, iadr = 0.0, ivdr = 0.0, ilbwr = 0.0, iptbr = 0.0, indwk1 = 0.0;
-		Integer mdeath = 0;
+		Double totaldeliveries = 0.0, totaldelvaginal = 0.0, totaldelassisted = 0.0, totaldelcaesarean = 0.0,
+
+				totalbirths = 0.0, totalstillbirth = 0.0, totalintrapartum = 0.0, totalantepartum = 0.0,
+
+				totallivebirths = 0.0, totalpretermbirths = 0.0, totallowbirthwgt = 0.0,
+
+				totalneondeaths = 0.0, totalneondeaths_e = 0.0, totalneondeaths_l = 0.0;
+
+		Integer totalmaternaldeaths = 0;
 
 		List<String[]> data = wmRepo.findAllRates(startYM, endYM);
 
@@ -306,72 +313,77 @@ public class ReportController {
 
 			i.setIsbr(
 					(Double.valueOf(elem[7]) == 0.0) ? 0 : (Double.valueOf(elem[8]) / Double.valueOf(elem[7])) * 1000);
-			isbr += i.getIsbr();
-			isbr_array[arrayIndex] = i.getIsbr();
+			isbr_array[arrayIndex] = Math.round(i.getIsbr() * 10.0) / 10.0;
 
 			i.setIisbr(
 					(Double.valueOf(elem[7]) == 0.0) ? 0 : (Double.valueOf(elem[9]) / Double.valueOf(elem[7])) * 1000);
-			iisbr += i.getIisbr();
-			iisbr_array[arrayIndex] = i.getIisbr();
+			iisbr_array[arrayIndex] = Math.round(i.getIisbr() * 10.0) / 10.0;
 
 			i.setAisbr(i.getIsbr() - i.getIisbr());
-			aisbr += i.getAisbr();
-			aisbr_array[arrayIndex] = i.getAisbr();
+			aisbr_array[arrayIndex] = Math.round(i.getAisbr() * 10.0) / 10.0;
 
 			i.setPiisbr((i.getIsbr() == 0.0) ? 0 : (i.getIisbr() / i.getIsbr()) * 100);
-			piisbr += i.getPiisbr();
 			piisbr_array[arrayIndex] = i.getPiisbr();
 
 			i.setEinmr((Double.valueOf(elem[11]) == 0.0) ? 0
 					: (Double.valueOf(elem[15]) / Double.valueOf(elem[11])) * 1000);
-			einmr += i.getEinmr();
 			einmr_array[arrayIndex] = i.getEinmr();
 
 			i.setIpmr((Double.valueOf(elem[11]) == 0.0) ? 0
 					: ((Double.valueOf(elem[15]) + Double.valueOf(elem[8])) / Double.valueOf(elem[11])) * 1000);
-			ipmr += i.getIpmr();
 			ipmr_array[arrayIndex] = i.getIpmr();
 
 			i.setInmr((Double.valueOf(elem[11]) == 0.0) ? 0
 					: (Double.valueOf(elem[14]) / Double.valueOf(elem[11])) * 1000);
-			inmr += i.getInmr();
 			inmr_array[arrayIndex] = i.getInmr();
 
 			i.setImmr((Double.valueOf(elem[11]) == 0.0) ? 0
 					: (Double.valueOf(elem[17]) / Double.valueOf(elem[11])) * 100000);
-			immr += i.getImmr();
 			immr_array[arrayIndex] = i.getImmr();
 
 			i.setIcsr((Double.valueOf(elem[3]) == 0.0) ? 0 : (Double.valueOf(elem[6]) / Double.valueOf(elem[3])) * 100);
-			icsr += i.getIcsr();
 			icsr_array[arrayIndex] = i.getIcsr();
 
 			i.setIadr((Double.valueOf(elem[3]) == 0.0) ? 0 : (Double.valueOf(elem[5]) / Double.valueOf(elem[3])) * 100);
-			iadr += i.getIadr();
 			iadr_array[arrayIndex] = i.getIadr();
 
 			i.setIvdr((Double.valueOf(elem[3]) == 0.0) ? 0 : (Double.valueOf(elem[4]) / Double.valueOf(elem[3])) * 100);
-			ivdr += i.getIvdr();
 			ivdr_array[arrayIndex] = i.getIvdr();
 
 			i.setIlbwr((Double.valueOf(elem[11]) == 0.0) ? 0
 					: (Double.valueOf(elem[13]) / Double.valueOf(elem[11])) * 100);
-			ilbwr += i.getIlbwr();
 			ilbwr_array[arrayIndex] = i.getIlbwr();
 
 			i.setIptbr((Double.valueOf(elem[11]) == 0.0) ? 0
 					: (Double.valueOf(elem[12]) / Double.valueOf(elem[11])) * 100);
-			iptbr += i.getIptbr();
 			iptbr_array[arrayIndex] = i.getIptbr();
 
 			i.setIndwk1((Double.valueOf(elem[14]) == 0.0) ? 0
 					: (Double.valueOf(elem[15]) / Double.valueOf(elem[14])) * 100);
-			indwk1 += i.getIndwk1();
 			indwk1_array[arrayIndex] = i.getIndwk1();
 
 			i.setMdeath(Integer.valueOf(elem[17]));
-			mdeath += i.getMdeath();
 			mdeath_array[arrayIndex] = i.getMdeath();
+
+			totaldeliveries += Double.valueOf(elem[3]);
+			totaldelvaginal += Double.valueOf(elem[4]);
+			totaldelassisted += Double.valueOf(elem[5]);
+			totaldelcaesarean += Double.valueOf(elem[6]);
+
+			totalbirths += Double.valueOf(elem[7]);
+			totalstillbirth += Double.valueOf(elem[8]);
+			totalintrapartum += Double.valueOf(elem[9]);
+			totalantepartum += Double.valueOf(elem[10]);
+
+			totallivebirths += Double.valueOf(elem[11]);
+			totalpretermbirths += Double.valueOf(elem[12]);
+			totallowbirthwgt += Double.valueOf(elem[13]);
+
+			totalneondeaths += Double.valueOf(elem[14]);
+			totalneondeaths_e += Double.valueOf(elem[15]);
+			totalneondeaths_l += Double.valueOf(elem[16]);
+
+			totalmaternaldeaths += Integer.valueOf(elem[17]);
 
 			indicators.add(i);
 
@@ -384,35 +396,35 @@ public class ReportController {
 		wmoindicators oindicators = new wmoindicators();
 		oindicators.setWmdesc("Overall Averages");
 
-		oindicators.setIsbr_oavg(isbr / indicators.size());
+		oindicators.setIsbr_oavg(totalbirths == 0 ? 0 : (totalstillbirth / totalbirths) * 1000);
 
-		oindicators.setIisbr_oavg(iisbr / indicators.size());
+		oindicators.setIisbr_oavg(totalbirths == 0 ? 0 : (totalintrapartum / totalbirths) * 1000);
 
-		oindicators.setAisbr_oavg(aisbr / indicators.size());
+		oindicators.setAisbr_oavg(oindicators.getIsbr_oavg() - oindicators.getIisbr_oavg());
 
-		oindicators.setPiisbr_oavg(piisbr / indicators.size());
+		oindicators.setPiisbr_oavg((oindicators.getIisbr_oavg() / oindicators.getIsbr_oavg()) * 100);
 
-		oindicators.setEinmr_oavg(einmr / indicators.size());
+		oindicators.setEinmr_oavg(totallivebirths == 0 ? 0 : (totalneondeaths_e / totallivebirths) * 1000);
 
-		oindicators.setIpmr_oavg(ipmr / indicators.size());
+		oindicators.setIpmr_oavg(totalbirths == 0 ? 0 : ((totalneondeaths_e + totalstillbirth) / totalbirths) * 1000);
 
-		oindicators.setInmr_oavg(inmr / indicators.size());
+		oindicators.setInmr_oavg(totallivebirths == 0 ? 0 : (totalneondeaths / totallivebirths) * 1000);
 
-		oindicators.setImmr_oavg(immr / indicators.size());
+		oindicators.setImmr_oavg(totallivebirths == 0 ? 0 : (totalmaternaldeaths / totallivebirths) * 100000);
 
-		oindicators.setIcsr_oavg(icsr / indicators.size());
+		oindicators.setIcsr_oavg(totaldeliveries == 0 ? 0 : (totaldelcaesarean / totaldeliveries) * 100);
 
-		oindicators.setIadr_oavg(iadr / indicators.size());
+		oindicators.setIadr_oavg(totaldeliveries == 0 ? 0 : (totaldelassisted / totaldeliveries) * 100);
 
-		oindicators.setIvdr_oavg(ivdr / indicators.size());
+		oindicators.setIvdr_oavg(totaldeliveries == 0 ? 0 : (totaldelvaginal / totaldeliveries) * 100);
 
-		oindicators.setIlbwr_oavg(ilbwr / indicators.size());
+		oindicators.setIlbwr_oavg(totallivebirths == 0 ? 0 : (totallowbirthwgt / totallivebirths) * 100);
 
-		oindicators.setIptbr_oavg(iptbr / indicators.size());
+		oindicators.setIptbr_oavg(totallivebirths == 0 ? 0 : (totalpretermbirths / totallivebirths) * 100);
 
-		oindicators.setIndwk1_oavg(indwk1 / indicators.size());
+		oindicators.setIndwk1_oavg(totalneondeaths == 0 ? 0 : (totalneondeaths_e / totalneondeaths) * 100);
 
-		oindicators.setMdeath_osum(mdeath);
+		oindicators.setMdeath_osum(totalmaternaldeaths);
 
 		model.addAttribute("oavg", oindicators);
 
