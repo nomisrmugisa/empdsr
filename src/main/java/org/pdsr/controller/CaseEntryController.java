@@ -218,10 +218,24 @@ public class CaseEntryController {
 
 		case_identifiers selected = caseRepo.findById(case_uuid).get();
 
-		final boolean completed = selected.getBiodata() != null && selected.getPregnancy() != null
+		boolean completed = selected.getBiodata() != null && selected.getPregnancy() != null
 				&& selected.getReferral() != null && selected.getDelivery() != null && selected.getAntenatal() != null
 				&& selected.getLabour() != null && selected.getBirth() != null
 				&& (selected.getFetalheart() != null || selected.getBabydeath() != null) && selected.getNotes() != null;
+
+		if (completed) {
+			final boolean bio = selected.getBiodata().getData_complete() == 1;
+			final boolean pre = selected.getPregnancy().getData_complete() == 1;
+			final boolean ref = selected.getReferral().getData_complete() == 1;
+			final boolean del = selected.getDelivery().getData_complete() == 1;
+			final boolean ant = selected.getAntenatal().getData_complete() == 1;
+			final boolean lab = selected.getLabour().getData_complete() == 1;
+			final boolean bir = selected.getBirth().getData_complete() == 1;
+			final boolean fet = selected.getFetalheart() != null && selected.getFetalheart().getData_complete() == 1;
+			final boolean bab = selected.getBabydeath() != null && selected.getBabydeath().getData_complete() == 1;
+
+			completed = bio && pre && ref && del && ant && lab && bir && (fet || bab);
+		}
 
 		if (completed) {
 			model.addAttribute("completed", completed);
@@ -351,7 +365,8 @@ public class CaseEntryController {
 	@Transactional
 	@PostMapping("/edit/{id}")
 	public String edit(Principal principal, Model model, @ModelAttribute("selected") case_identifiers selected,
-			@RequestParam(name = "page", required = true) Integer page, BindingResult results) {
+			@RequestParam(name = "page", required = true) Integer page,
+			@RequestParam(name = "go", required = false) Integer go, BindingResult results) {
 
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -365,14 +380,14 @@ public class CaseEntryController {
 		case 1: {
 
 			try {
-				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getBiodata()));
-				selected.getBiodata().setBiodata_json(arrayToJson);
-
 				case_biodata o = selected.getBiodata();
 				if (o.getBiodata_mage() == null || o.getBiodata_medu() == null || o.getBiodata_sex() == null) {
 					o.setData_complete(0);
 				} else {
 					o.setData_complete(1);
+					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getBiodata()));
+					selected.getBiodata().setBiodata_json(arrayToJson);
+
 				}
 				bioRepo.save(o);
 			} catch (JsonProcessingException e) {
@@ -383,14 +398,14 @@ public class CaseEntryController {
 		}
 		case 2: {
 			try {
-				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getPregnancy()));
-				selected.getPregnancy().setPregnancy_json(arrayToJson);
 
 				case_pregnancy o = selected.getPregnancy();
 				if (o.getPregnancy_days() == null || o.getPregnancy_type() == null || o.getPregnancy_weeks() == null) {
 					o.setData_complete(0);
 				} else {
 					o.setData_complete(1);
+					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getPregnancy()));
+					selected.getPregnancy().setPregnancy_json(arrayToJson);
 				}
 				preRepo.save(o);
 			} catch (JsonProcessingException e) {
@@ -400,8 +415,6 @@ public class CaseEntryController {
 		}
 		case 3: {
 			try {
-				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getReferral()));
-				selected.getReferral().setReferral_json(arrayToJson);
 
 				java.util.Date time = selected.getReferral().getReferral_time();
 				if (time != null) {
@@ -425,6 +438,8 @@ public class CaseEntryController {
 					o.setData_complete(0);
 				} else {
 					o.setData_complete(1);
+					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getReferral()));
+					selected.getReferral().setReferral_json(arrayToJson);
 				}
 
 				refRepo.save(selected.getReferral());
@@ -435,8 +450,6 @@ public class CaseEntryController {
 		}
 		case 4: {
 			try {
-				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getDelivery()));
-				selected.getDelivery().setDelivery_json(arrayToJson);
 
 				java.util.Date time = selected.getDelivery().getDelivery_time();
 				if (time != null) {
@@ -481,6 +494,8 @@ public class CaseEntryController {
 					o.setData_complete(0);
 				} else {
 					o.setData_complete(1);
+					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getDelivery()));
+					selected.getDelivery().setDelivery_json(arrayToJson);
 				}
 
 				delRepo.save(selected.getDelivery());
@@ -491,8 +506,6 @@ public class CaseEntryController {
 		}
 		case 5: {
 			try {
-				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getAntenatal()));
-				selected.getAntenatal().setAntenatal_json(arrayToJson);
 
 				case_antenatal o = selected.getAntenatal();
 				if (o.getAntenatal_alcohol() == null || o.getAntenatal_attend() == null
@@ -507,6 +520,8 @@ public class CaseEntryController {
 					o.setData_complete(0);
 				} else {
 					o.setData_complete(1);
+					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getAntenatal()));
+					selected.getAntenatal().setAntenatal_json(arrayToJson);
 				}
 
 				antRepo.save(selected.getAntenatal());
@@ -524,8 +539,6 @@ public class CaseEntryController {
 					selected.getLabour().setLabour_seehour(seetime.getHours());
 					selected.getLabour().setLabour_seeminute(seetime.getMinutes());
 				}
-				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getLabour()));
-				selected.getLabour().setLabour_json(arrayToJson);
 
 				final Integer period = selected.getLabour().getLabour_seeperiod();
 				final Integer hour = selected.getLabour().getLabour_seehour();
@@ -568,6 +581,8 @@ public class CaseEntryController {
 						|| o.getLabour_startmode() == null) {
 					o.setData_complete(0);
 				} else {
+					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getLabour()));
+					selected.getLabour().setLabour_json(arrayToJson);
 					o.setData_complete(1);
 				}
 
@@ -587,9 +602,6 @@ public class CaseEntryController {
 					selected.getBirth().setBirth_csproposeminute(cstime.getMinutes());
 				}
 
-				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getBirth()));
-				selected.getBirth().setBirth_json(arrayToJson);
-
 				case_birth o = selected.getBirth();
 				if (o.getBirth_abnormalities() == null || o.getBirth_babyoutcome() == null
 						|| o.getBirth_cordfaults() == null || o.getBirth_csproposehour() == null
@@ -602,6 +614,8 @@ public class CaseEntryController {
 					o.setData_complete(0);
 				} else {
 					o.setData_complete(1);
+					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getBirth()));
+					selected.getBirth().setBirth_json(arrayToJson);
 				}
 
 				birRepo.save(selected.getBirth());
@@ -613,8 +627,6 @@ public class CaseEntryController {
 		case 8: {
 			if (selected.getCase_death() == 1) {
 				try {
-					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getFetalheart()));
-					selected.getFetalheart().setFetalheart_json(arrayToJson);
 
 					case_fetalheart o = selected.getFetalheart();
 					if (o.getFetalheart_arrival() == null || o.getFetalheart_lastheard() == null
@@ -622,6 +634,9 @@ public class CaseEntryController {
 						o.setData_complete(0);
 					} else {
 						o.setData_complete(1);
+						final String arrayToJson = objectMapper
+								.writeValueAsString(processListOf(selected.getFetalheart()));
+						selected.getFetalheart().setFetalheart_json(arrayToJson);
 					}
 
 					fetRepo.save(selected.getFetalheart());
@@ -675,8 +690,8 @@ public class CaseEntryController {
 		}
 		}
 
-		return "redirect:/registry/edit/" + selected.getCase_uuid() + "?page=" + (page < 9 ? ++page : page)
-				+ "&success=yes";
+		return "redirect:/registry/edit/" + selected.getCase_uuid() + "?page="
+				+ ((go != null && page < 9) ? ++page : page) + "&success=yes";
 	}
 
 	@GetMapping("/submit/{id}")
@@ -709,9 +724,9 @@ public class CaseEntryController {
 
 				sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
 				emailService.sendSimpleMessage(recipients, "TEST MESSAGE- PDSR DEATH NOTIFICATION!",
-						"Hello, \nThis is is to notify you of a " + getAnswer("case_death", selected.getCase_death())
+						"Hello, \nThis is is to notify you of a " + getAnswer("death_options", selected.getCase_death())
 								+ "\nMother's age: " + selected.getBiodata().getBiodata_mage() + "\nChild's sex: "
-								+ getAnswer("biodata_sex", selected.getBiodata().getBiodata_sex())
+								+ getAnswer("sex_options", selected.getBiodata().getBiodata_sex())
 								+ "\nHealth Facility: " + sync.getSync_name() + " - " + sync.getSync_code()
 								+ "\n\nThis is a TEST ALERT from the PDSR being developed by Alex and Eliezer. It is based on dummy data");
 			}
@@ -1121,7 +1136,7 @@ public class CaseEntryController {
 	}
 
 	private List<json_data> processListOf(case_referral o) {
-		boolean isreferral = (o.getReferral_case() == 1);
+		boolean isreferral = (o.getReferral_case() != null && o.getReferral_case() == 1);
 		List<json_data> list = Stream.of(
 				new json_data(getQuestion("label.referral_case"), getAnswer("yesnodk_options", o.getReferral_case()),
 						true),

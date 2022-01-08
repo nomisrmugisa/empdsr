@@ -35,75 +35,59 @@ public class case_antenatal implements Serializable {
 	@JoinColumn(name = "case_uuid", referencedColumnName = "case_uuid", insertable = true, updatable = true)
 	private case_identifiers case_uuid;
 
-	@NotNull
 	@Column
 	private Integer antenatal_gravida;
-	
-	@NotNull
+
 	@Column
 	private Integer antenatal_para;
-	
-	@NotNull
+
 	@Column
 	private Integer antenatal_attend;
-	
-	@NotNull
+
 	@Column
 	private Integer antenatal_attendno;
-	
+
 	@Column
 	@Size(max = 80)
 	private String antenatal_facility;
 
-	@NotNull
 	@Column
-	private Integer antenatal_weeks;//first visit
+	private Integer antenatal_weeks;// first visit
 
-	@NotNull
 	@Column
-	private Integer antenatal_days;//first visit
+	private Integer antenatal_days;// first visit
 
-	@NotNull
 	@Column
-	private Integer antenatal_hiv;//first visit
+	private Integer antenatal_hiv;// first visit
 
-	@NotNull
 	@Column
-	private Integer antenatal_alcohol;//first visit
+	private Integer antenatal_alcohol;// first visit
 
-	@NotNull
 	@Column
-	private Integer antenatal_smoker;//first visit
+	private Integer antenatal_smoker;// first visit
 
-	@NotNull
 	@Column
-	private Integer antenatal_herbal;//first visit
-	
-	@NotNull
-	@Column
-	private Integer antenatal_folicacid;//first visit
-	
-	@NotNull
-	@Column
-	private Integer antenatal_folicacid3m;//first visit
-	
-	@NotNull
-	@Column
-	private Integer antenatal_tetanus;//first visit
+	private Integer antenatal_herbal;// first visit
 
-	@NotNull
 	@Column
-	private Integer antenatal_malprophy;//firisit
-	
-	@NotNull
+	private Integer antenatal_folicacid;// first visit
+
 	@Column
-	private Integer antenatal_risks;//firisit
-	
-    @ManyToMany(cascade = CascadeType.PERSIST)
+	private Integer antenatal_folicacid3m;// first visit
+
+	@Column
+	private Integer antenatal_tetanus;// first visit
+
+	@Column
+	private Integer antenatal_malprophy;// firisit
+
+	@Column
+	private Integer antenatal_risks;// firisit
+
+	@ManyToMany(cascade = CascadeType.PERSIST)
 	@JoinTable(name = "antenatal_risks", joinColumns = @JoinColumn(name = "antenatal_uuid"), inverseJoinColumns = @JoinColumn(name = "risk_name"))
 	private List<risk_table> risks = new ArrayList<>();
 
-	
 	@Lob
 	@Column
 	private String new_risks;
@@ -316,5 +300,4 @@ public class case_antenatal implements Serializable {
 		return true;
 	}
 
-	
 }

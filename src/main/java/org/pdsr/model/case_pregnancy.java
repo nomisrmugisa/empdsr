@@ -31,15 +31,15 @@ public class case_pregnancy implements Serializable {
 	@JoinColumn(name = "case_uuid", referencedColumnName = "case_uuid", insertable = true, updatable = true)
 	private case_identifiers case_uuid;
 
-	@NotNull
+	
 	@Column
 	private Integer pregnancy_weeks;
 
-	@NotNull
+	
 	@Column
 	private Integer pregnancy_days;
 
-	@NotNull
+	
 	@Column
 	private Integer pregnancy_type;
 	

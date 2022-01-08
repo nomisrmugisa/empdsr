@@ -37,15 +37,15 @@ public class case_referral implements Serializable {
 	@JoinColumn(name = "case_uuid", referencedColumnName = "case_uuid", insertable = true, updatable = true)
 	private case_identifiers case_uuid;
 
-	@NotNull
+	
 	@Column
 	private Integer referral_case;
 
-	@NotNull
+	
 	@Column
 	private Integer referral_patient;
 
-	@NotNull
+	
 	@Column
 	private Integer referral_source;
 
@@ -53,47 +53,47 @@ public class case_referral implements Serializable {
 	@Size(max = 80)
 	private String referral_facility;
 
-	@NotNull
+	
 	@Column
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private java.util.Date referral_date;
 
-	@NotNull
+	
 	@Column
 	private Integer referral_hour;
 
-	@NotNull
+	
 	@Column
 	private Integer referral_minute;
 
-	@NotNull
+	
 	@Column
 	@Temporal(TemporalType.TIME)
 	@DateTimeFormat(pattern = "HH:mm")
 	private java.util.Date referral_time;
 
-	@NotNull
+	
 	@Column
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private java.util.Date referral_adate;
 
-	@NotNull
+	
 	@Column
 	private Integer referral_ahour;
 
-	@NotNull
+	
 	@Column
 	private Integer referral_aminute;
 
-	@NotNull
+	
 	@Column
 	@Temporal(TemporalType.TIME)
 	@DateTimeFormat(pattern = "HH:mm")
 	private java.util.Date referral_atime;
 
-	@NotNull
+	
 	@Column
 	private Integer referral_transport;
 

@@ -39,59 +39,59 @@ public class case_labour implements Serializable {
 	@JoinColumn(name = "case_uuid", referencedColumnName = "case_uuid", insertable = true, updatable = true)
 	private case_identifiers case_uuid;
 
-	@NotNull
+	
 	@Column
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private java.util.Date labour_seedate;
 
-	@NotNull
+	
 	@Column
 	private Integer labour_seehour;
 	
-	@NotNull
+	
 	@Column
 	private Integer labour_seeminute;
 	
-	@NotNull
+	
 	@Column
 	@Temporal(TemporalType.TIME)
 	@DateTimeFormat(pattern = "HH:mm")
 	private java.util.Date labour_seetime;
 
-	@NotNull
+	
 	@Column
 	private Integer labour_seeperiod;
 	
-	@NotNull
+	
 	@Column
 	private Integer labour_startmode;
 	
-	@NotNull
+	
 	@Column
 	private Integer labour_herbalaug;
 	
-	@NotNull
+	
 	@Column
 	private Integer labour_partograph;
 	
-	@NotNull
+	
 	@Column
 	private Integer labour_lasthour1;
 	
-	@NotNull
+	
 	@Column
 	private Integer labour_lastminute1;
 	
-	@NotNull
+	
 	@Column
 	private Integer labour_lasthour2;
 	
-	@NotNull
+	
 	@Column
 	private Integer labour_lastminute2;
 	
-	@NotNull
+	
 	@Column
 	private Integer labour_complications;
 	

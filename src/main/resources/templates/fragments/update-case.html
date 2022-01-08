@@ -75,12 +75,12 @@
 <!--  core data end -->
 
 <div th:fragment="case_biodata">
+	<h4 th:text="#{title.biodata}" class="bg-dark text-light p-1 rounded"></h4>
 	<div th:insert="fragments/update-case :: core_data"></div>
-	<h4 th:text="#{title.biodata}" class="text-end"></h4>
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.biodata_sex}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{biodata.biodata_sex}" required>
+			<select class="form-control form-control-sm" th:field="*{biodata.biodata_sex}">
 				<option th:each="option : ${sex_options}" th:value="${option.key}" th:text="${option.value}"></option>
 			</select>
 		</div>
@@ -88,7 +88,7 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.biodata_mage}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{biodata.biodata_mage}" required>
+			<select class="form-control form-control-sm" th:field="*{biodata.biodata_mage}">
 				<option th:each="option : ${mage_options}" th:value="${option.key}" th:text="${option.value}"></option>
 			</select>
 		</div>
@@ -96,7 +96,7 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.biodata_medu}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{biodata.biodata_medu}" required>
+			<select class="form-control form-control-sm" th:field="*{biodata.biodata_medu}">
 				<option th:each="option : ${edu_options}" th:value="${option.key}" th:text="${option.value}"></option>
 			</select>
 		</div>
@@ -108,28 +108,30 @@
 	<div class="">
 		<a class="btn btn-light" th:utext="#{prev.button}"
 			th:href="@{/registry/edit/{id}?page=0(id=${selected.case_uuid})}"></a>
-		<button class="btn btn-primary" type="submit" th:utext="#{save.next.button}"></button>
+		<button class="btn btn-primary" type="submit" th:utext="#{save.stay.button}"></button>
+		<button class="btn btn-primary" type="submit"
+			th:formaction="@{/registry/edit/{id}?page={pg}&go=1(id=${selected.case_uuid}, pg=${page})}"
+			th:utext="#{save.next.button}"></button>
 	</div>
 </div>
 <!--  biodata end -->
 
 <div th:fragment="case_pregnancy">
+	<h4 th:text="#{title.pregnancy}" class="bg-dark text-light p-1 rounded"></h4>
 	<div th:insert="fragments/update-case :: core_data"></div>
-	<h4 th:text="#{title.pregnancy}" class="text-end"></h4>
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.pregnancy_gest}"></label>
 		<div class="col-auto">
 			<div class="row">
 				<div class="col-auto">
-					<select class="form-control form-control-sm" th:field="*{pregnancy.pregnancy_weeks}" required>
+					<select class="form-control form-control-sm" th:field="*{pregnancy.pregnancy_weeks}">
 						<option value="" th:text="#{in.weeks}"></option>
 						<option th:each="option : ${pweeks_options}" th:value="${option.key}" th:text="${option.value}">
 						</option>
 					</select>
 				</div>
 				<div class="col-auto">
-					<select class="form-control form-control-sm col-md-4" th:field="*{pregnancy.pregnancy_days}"
-						required>
+					<select class="form-control form-control-sm col-md-4" th:field="*{pregnancy.pregnancy_days}">
 						<option value="" th:text="#{in.days}"></option>
 						<option th:each="option : ${pdays_options}" th:value="${option.key}" th:text="${option.value}">
 						</option>
@@ -141,7 +143,7 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.pregnancy_type}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{pregnancy.pregnancy_type}" required>
+			<select class="form-control form-control-sm" th:field="*{pregnancy.pregnancy_type}">
 				<option th:each="option : ${ptype_options}" th:value="${option.key}" th:text="${option.value}"></option>
 			</select>
 		</div>
@@ -153,19 +155,22 @@
 	<div class="">
 		<a class="btn btn-light" th:utext="#{prev.button}"
 			th:href="@{/registry/edit/{id}?page=1(id=${selected.case_uuid})}"></a>
-		<button class="btn btn-primary" type="submit" th:utext="#{save.next.button}"></button>
+		<button class="btn btn-primary" type="submit" th:utext="#{save.stay.button}"></button>
+		<button class="btn btn-primary" type="submit"
+			th:formaction="@{/registry/edit/{id}?page={pg}&go=1(id=${selected.case_uuid}, pg=${page})}"
+			th:utext="#{save.next.button}"></button>
 	</div>
 </div>
 <!--  pregnancy end -->
 
 <div th:fragment="case_referral">
+	<h4 th:text="#{title.referral}" class="bg-dark text-light p-1 rounded"></h4>
 	<div th:insert="fragments/update-case :: core_data"></div>
-	<h4 th:text="#{title.referral}" class="text-end"></h4>
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.referral_case}"></label>
 		<div class="col-auto">
 			<select id="referral_case" class="form-control form-control-sm" th:field="*{referral.referral_case}"
-				onchange="changeReferralOtherToNA(this)" required>
+				onchange="changeReferralOtherToNA(this)">
 				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -176,7 +181,7 @@
 			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.referral_patient}"></label>
 			<div class="col-auto">
 				<select id="referral_patient" class="form-control form-control-sm"
-					th:field="*{referral.referral_patient}" required>
+					th:field="*{referral.referral_patient}">
 					<option th:each="option : ${patient_options}" th:value="${option.key}" th:text="${option.value}">
 					</option>
 				</select>
@@ -185,8 +190,8 @@
 		<div class="row mb-3">
 			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.referral_source}"></label>
 			<div class="col-auto">
-				<select id="referral_source" class="form-control form-control-sm" th:field="*{referral.referral_source}"
-					required>
+				<select id="referral_source" class="form-control form-control-sm"
+					th:field="*{referral.referral_source}">
 					<option th:each="option : ${source_options}" th:value="${option.key}" th:text="${option.value}">
 					</option>
 				</select>
@@ -241,7 +246,7 @@
 			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.referral_transport}"></label>
 			<div class="col-auto">
 				<select id="referral_transport" class="form-control form-control-sm"
-					th:field="*{referral.referral_transport}" required>
+					th:field="*{referral.referral_transport}">
 					<option th:each="option : ${trans_options}" th:value="${option.key}" th:text="${option.value}">
 					</option>
 				</select>
@@ -270,7 +275,10 @@
 	<div class="">
 		<a class="btn btn-light" th:utext="#{prev.button}"
 			th:href="@{/registry/edit/{id}?page=2(id=${selected.case_uuid})}"></a>
-		<button class="btn btn-primary" type="submit" th:utext="#{save.next.button}"></button>
+		<button class="btn btn-primary" type="submit" th:utext="#{save.stay.button}"></button>
+		<button class="btn btn-primary" type="submit"
+			th:formaction="@{/registry/edit/{id}?page={pg}&go=1(id=${selected.case_uuid}, pg=${page})}"
+			th:utext="#{save.next.button}"></button>
 	</div>
 </div>
 <!-- referral end -->
@@ -280,8 +288,8 @@
 
 
 <div th:fragment="case_delivery">
+	<h4 th:text="#{title.delivery}" class="bg-dark text-light p-1 rounded"></h4>
 	<div th:insert="fragments/update-case :: core_data"></div>
-	<h4 th:text="#{title.delivery}" class="text-end"></h4>
 
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.delivery_datetime}"></label>
@@ -304,7 +312,7 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.delivery_period}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{delivery.delivery_period}" required>
+			<select class="form-control form-control-sm" th:field="*{delivery.delivery_period}">
 				<option th:each="option : ${period_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -315,7 +323,7 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.delivery_mode}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{delivery.delivery_mode}" required>
+			<select class="form-control form-control-sm" th:field="*{delivery.delivery_mode}">
 				<option th:each="option : ${mode_options}" th:value="${option.key}" th:text="${option.value}"></option>
 			</select>
 		</div>
@@ -328,7 +336,10 @@
 	<div class="">
 		<a class="btn btn-light" th:utext="#{prev.button}"
 			th:href="@{/registry/edit/{id}?page=3(id=${selected.case_uuid})}"></a>
-		<button class="btn btn-primary" type="submit" th:utext="#{save.next.button}"></button>
+		<button class="btn btn-primary" type="submit" th:utext="#{save.stay.button}"></button>
+		<button class="btn btn-primary" type="submit"
+			th:formaction="@{/registry/edit/{id}?page={pg}&go=1(id=${selected.case_uuid}, pg=${page})}"
+			th:utext="#{save.next.button}"></button>
 	</div>
 </div>
 <!--  delivery end -->
@@ -338,14 +349,14 @@
 
 
 <div th:fragment="case_antenatal">
+	<h4 th:text="#{title.antenatal}" class="bg-dark text-light p-1 rounded"></h4>
 	<div th:insert="fragments/update-case :: core_data"></div>
-	<h4 th:text="#{title.antenatal}" class="text-end"></h4>
 
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_gravida}"></label>
 		<div class="col-auto">
 			<select id="antenatal_gravida" class="form-control form-control-sm"
-				th:field="*{antenatal.antenatal_gravida}" onchange="onChangeValue();" required>
+				th:field="*{antenatal.antenatal_gravida}" onchange="onChangeValue();">
 				<option th:each="option : ${gravipara_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -356,7 +367,7 @@
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_para}"></label>
 		<div class="col-auto">
 			<select id="antenatal_para" class="form-control form-control-sm" th:field="*{antenatal.antenatal_para}"
-				onchange="onChangeValue();" required>
+				onchange="onChangeValue();">
 				<option th:each="option : ${gravipara_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -367,7 +378,7 @@
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_attend}"></label>
 		<div class="col-auto">
 			<select id="antenatal_attend" class="form-control form-control-sm" th:field="*{antenatal.antenatal_attend}"
-				onchange="changeAntenatalOtherToNA(this)" required>
+				onchange="changeAntenatalOtherToNA(this)">
 				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -379,7 +390,7 @@
 			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_attendno}"></label>
 			<div class="col-auto">
 				<select id="antenatal_attendno" class="form-control form-control-sm"
-					th:field="*{antenatal.antenatal_attendno}" required>
+					th:field="*{antenatal.antenatal_attendno}">
 					<option th:each="option : ${attendno_options}" th:value="${option.key}" th:text="${option.value}">
 					</option>
 				</select>
@@ -398,7 +409,7 @@
 				<div class="row">
 					<div class="col-auto">
 						<select id="antenatal_weeks" class="form-control form-control-sm"
-							th:field="*{antenatal.antenatal_weeks}" required>
+							th:field="*{antenatal.antenatal_weeks}">
 							<option value="" th:text="#{in.weeks}"></option>
 							<option th:each="option : ${pweeks_options}" th:value="${option.key}"
 								th:text="${option.value}">
@@ -409,7 +420,7 @@
 						<div class="row">
 							<div class="col-auto">
 								<select id="antenatal_days" class="form-control form-control-sm"
-									th:field="*{antenatal.antenatal_days}" required>
+									th:field="*{antenatal.antenatal_days}">
 									<option value="" th:text="#{in.days}"></option>
 									<option th:each="option : ${pdays_options}" th:value="${option.key}"
 										th:text="${option.value}"></option>
@@ -425,7 +436,7 @@
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_risks}"></label>
 		<div class="col-auto">
 			<select id="antenatal_risks" class="form-control form-control-sm" th:field="*{antenatal.antenatal_risks}"
-				required onchange="changeAntenatalRiskOtherToNA(this)">
+				onchange="changeAntenatalRiskOtherToNA(this)">
 				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -456,7 +467,7 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_hiv}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{antenatal.antenatal_hiv}" required>
+			<select class="form-control form-control-sm" th:field="*{antenatal.antenatal_hiv}">
 				<option th:each="option : ${hiv_options}" th:value="${option.key}" th:text="${option.value}"></option>
 			</select>
 		</div>
@@ -464,7 +475,7 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_alcohol}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{antenatal.antenatal_alcohol}" required>
+			<select class="form-control form-control-sm" th:field="*{antenatal.antenatal_alcohol}">
 				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -473,7 +484,7 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_smoker}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{antenatal.antenatal_smoker}" required>
+			<select class="form-control form-control-sm" th:field="*{antenatal.antenatal_smoker}">
 				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -482,7 +493,7 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_herbal}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{antenatal.antenatal_herbal}" required>
+			<select class="form-control form-control-sm" th:field="*{antenatal.antenatal_herbal}">
 				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -492,7 +503,7 @@
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_folicacid}"></label>
 		<div class="col-auto">
 			<select id="antenatal_folicacid" class="form-control form-control-sm"
-				th:field="*{antenatal.antenatal_folicacid}" required onchange="changeAntenatalFolicOtherToNA(this)">
+				th:field="*{antenatal.antenatal_folicacid}" onchange="changeAntenatalFolicOtherToNA(this)">
 				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -503,7 +514,7 @@
 			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_folicacid3m}"></label>
 			<div class="col-auto">
 				<select id="antenatal_folicacid3m" class="form-control form-control-sm"
-					th:field="*{antenatal.antenatal_folicacid3m}" required>
+					th:field="*{antenatal.antenatal_folicacid3m}">
 					<option th:each="option : ${yesnodkna_options}" th:value="${option.key}" th:text="${option.value}">
 					</option>
 				</select>
@@ -513,7 +524,7 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_tetanus}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{antenatal.antenatal_tetanus}" required>
+			<select class="form-control form-control-sm" th:field="*{antenatal.antenatal_tetanus}">
 				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -522,7 +533,7 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_malprophy}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{antenatal.antenatal_malprophy}" required>
+			<select class="form-control form-control-sm" th:field="*{antenatal.antenatal_malprophy}">
 				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -536,7 +547,10 @@
 	<div class="">
 		<a class="btn btn-light" th:utext="#{prev.button}"
 			th:href="@{/registry/edit/{id}?page=4(id=${selected.case_uuid})}"></a>
-		<button class="btn btn-primary" type="submit" th:utext="#{save.next.button}"></button>
+		<button class="btn btn-primary" type="submit" th:utext="#{save.stay.button}"></button>
+		<button class="btn btn-primary" type="submit"
+			th:formaction="@{/registry/edit/{id}?page={pg}&go=1(id=${selected.case_uuid}, pg=${page})}"
+			th:utext="#{save.next.button}"></button>
 	</div>
 </div>
 <!--  antenatal end -->
@@ -546,8 +560,8 @@
 
 
 <div th:fragment="case_labour">
+	<h4 th:text="#{title.labour}" class="bg-dark text-light p-1 rounded"></h4>
 	<div th:insert="fragments/update-case :: core_data"></div>
-	<h4 th:text="#{title.labour}" class="text-end"></h4>
 
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.labour_datetime}"></label>
@@ -570,7 +584,7 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.labour_seeperiod}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{labour.labour_seeperiod}" required>
+			<select class="form-control form-control-sm" th:field="*{labour.labour_seeperiod}">
 				<option th:each="option : ${period_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -581,7 +595,7 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.labour_herbalaug}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{labour.labour_herbalaug}" required>
+			<select class="form-control form-control-sm" th:field="*{labour.labour_herbalaug}">
 				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -591,7 +605,7 @@
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.labour_startmode}"></label>
 		<div class="col-auto">
 			<select id="labour_startmode" class="form-control form-control-sm" th:field="*{labour.labour_startmode}"
-				onchange="changeLabourStartmodeOtherToNA(this)" required>
+				onchange="changeLabourStartmodeOtherToNA(this)">
 				<option th:each="option : ${startmode_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -602,7 +616,7 @@
 			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.labour_partograph}"></label>
 			<div class="col-auto">
 				<select id="labour_partograph" class="form-control form-control-sm"
-					th:field="*{labour.labour_partograph}" required>
+					th:field="*{labour.labour_partograph}">
 					<option th:each="option : ${yesnodkna_options}" th:value="${option.key}" th:text="${option.value}">
 					</option>
 				</select>
@@ -616,7 +630,7 @@
 						<div class="row">
 							<div class="col-md-6">
 								<select id="labour_lasthour1" class="form-control form-control-sm"
-									th:field="*{labour.labour_lasthour1}" required>
+									th:field="*{labour.labour_lasthour1}">
 									<option th:each="option : ${hour_options}" th:value="${option.key}"
 										th:text="${option.value}">
 									</option>
@@ -624,7 +638,7 @@
 							</div>
 							<div class="col-md-6">
 								<select id="labour_lastminute1" class="form-control form-control-sm"
-									th:field="*{labour.labour_lastminute1}" required>
+									th:field="*{labour.labour_lastminute1}">
 									<option th:each="option : ${minute_options}" th:value="${option.key}"
 										th:text="${option.value}">
 									</option>
@@ -643,7 +657,7 @@
 						<div class="row">
 							<div class="col-md-6">
 								<select id="labour_lasthour2" class="form-control form-control-sm"
-									th:field="*{labour.labour_lasthour2}" required>
+									th:field="*{labour.labour_lasthour2}">
 									<option th:each="option : ${hour_options}" th:value="${option.key}"
 										th:text="${option.value}">
 									</option>
@@ -651,7 +665,7 @@
 							</div>
 							<div class="col-md-6">
 								<select id="labour_lastminute2" class="form-control form-control-sm"
-									th:field="*{labour.labour_lastminute2}" required>
+									th:field="*{labour.labour_lastminute2}">
 									<option th:each="option : ${minute_options}" th:value="${option.key}"
 										th:text="${option.value}">
 									</option>
@@ -667,7 +681,7 @@
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.labour_complications}"></label>
 		<div class="col-auto">
 			<select id="labour_complications" class="form-control form-control-sm"
-				th:field="*{labour.labour_complications}" onchange="changeLabourComplicationOtherToNA(this)" required>
+				th:field="*{labour.labour_complications}" onchange="changeLabourComplicationOtherToNA(this)">
 				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -703,7 +717,10 @@
 	<div class="">
 		<a class="btn btn-light" th:utext="#{prev.button}"
 			th:href="@{/registry/edit/{id}?page=5(id=${selected.case_uuid})}"></a>
-		<button class="btn btn-primary" type="submit" th:utext="#{save.next.button}"></button>
+		<button class="btn btn-primary" type="submit" th:utext="#{save.stay.button}"></button>
+		<button class="btn btn-primary" type="submit"
+			th:formaction="@{/registry/edit/{id}?page={pg}&go=1(id=${selected.case_uuid}, pg=${page})}"
+			th:utext="#{save.next.button}"></button>
 	</div>
 </div>
 <!--  labour end -->
@@ -711,13 +728,13 @@
 
 
 <div th:fragment="case_birth">
+	<h4 th:text="#{title.birth}" class="bg-dark text-light p-1 rounded"></h4>
 	<div th:insert="fragments/update-case :: core_data"></div>
-	<h4 th:text="#{title.birth}" class="text-end"></h4>
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.birth_mode}"></label>
 		<div class="col-auto">
 			<select id="birth_mode" class="form-control form-control-sm" th:field="*{birth.birth_mode}"
-				onchange="changeBirthBirthModeOtherToNA(this)" required>
+				onchange="changeBirthBirthModeOtherToNA(this)">
 				<option th:each="option : ${mode_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -729,7 +746,7 @@
 			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.birth_insistnormal}"></label>
 			<div class="col-auto">
 				<select id="birth_insistnormal" class="form-control form-control-sm"
-					th:field="*{birth.birth_insistnormal}" onchange="changeBirthInsistnormalOtherToNA(this)" required>
+					th:field="*{birth.birth_insistnormal}" onchange="changeBirthInsistnormalOtherToNA(this)">
 					<option th:each="option : ${yesnodkna_options}" th:value="${option.key}" th:text="${option.value}">
 					</option>
 				</select>
@@ -749,7 +766,7 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.birth_provider}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{birth.birth_provider}" required>
+			<select class="form-control form-control-sm" th:field="*{birth.birth_provider}">
 				<option th:each="option : ${provider_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -758,7 +775,7 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.birth_facility}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{birth.birth_facility}" required>
+			<select class="form-control form-control-sm" th:field="*{birth.birth_facility}">
 				<option th:each="option : ${birthloc_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -768,7 +785,7 @@
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.birth_abnormalities}"></label>
 		<div class="col-auto">
 			<select id="birth_abnormalities" class="form-control form-control-sm"
-				th:field="*{birth.birth_abnormalities}" onchange="changeBirthAbnormalityOtherToNA(this)" required>
+				th:field="*{birth.birth_abnormalities}" onchange="changeBirthAbnormalityOtherToNA(this)">
 				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -800,7 +817,7 @@
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.birth_cordfaults}"></label>
 		<div class="col-auto">
 			<select id="birth_cordfaults" class="form-control form-control-sm" th:field="*{birth.birth_cordfaults}"
-				onchange="changeBirthCordfaultOtherToNA(this)" required>
+				onchange="changeBirthCordfaultOtherToNA(this)">
 				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -832,7 +849,7 @@
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.birth_placentachecks}"></label>
 		<div class="col-auto">
 			<select id="birth_placentachecks" class="form-control form-control-sm"
-				th:field="*{birth.birth_placentachecks}" onchange="changeBirthPlacentacheckOtherToNA(this)" required>
+				th:field="*{birth.birth_placentachecks}" onchange="changeBirthPlacentacheckOtherToNA(this)">
 				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -863,7 +880,7 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.birth_liqourvolume}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{birth.birth_liqourvolume}" required>
+			<select class="form-control form-control-sm" th:field="*{birth.birth_liqourvolume}">
 				<option th:each="option : ${liqourvolume_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -872,7 +889,7 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.birth_liqourcolor}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{birth.birth_liqourcolor}" required>
+			<select class="form-control form-control-sm" th:field="*{birth.birth_liqourcolor}">
 				<option th:each="option : ${liqourcolor_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -881,7 +898,7 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.birth_liqourodour}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{birth.birth_liqourodour}" required>
+			<select class="form-control form-control-sm" th:field="*{birth.birth_liqourodour}">
 				<option th:each="option : ${liqourodour_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -890,8 +907,7 @@
 	<div class="row mb-3" id="birth_babyoutcome_div">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.birth_babyoutcome}"></label>
 		<div class="col-auto">
-			<select id="birth_babyoutcome" class="form-control form-control-sm" th:field="*{birth.birth_babyoutcome}"
-				required>
+			<select id="birth_babyoutcome" class="form-control form-control-sm" th:field="*{birth.birth_babyoutcome}">
 				<option th:each="option : ${babyoutcome_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -900,7 +916,7 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.birth_motheroutcome}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{birth.birth_motheroutcome}" required>
+			<select class="form-control form-control-sm" th:field="*{birth.birth_motheroutcome}">
 				<option th:each="option : ${motheroutcome_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -914,7 +930,10 @@
 	<div class="">
 		<a class="btn btn-light" th:utext="#{prev.button}"
 			th:href="@{/registry/edit/{id}?page=6(id=${selected.case_uuid})}"></a>
-		<button class="btn btn-primary" type="submit" th:utext="#{save.next.button}"></button>
+		<button class="btn btn-primary" type="submit" th:utext="#{save.stay.button}"></button>
+		<button class="btn btn-primary" type="submit"
+			th:formaction="@{/registry/edit/{id}?page={pg}&go=1(id=${selected.case_uuid}, pg=${page})}"
+			th:utext="#{save.next.button}"></button>
 	</div>
 </div>
 <!--  birth end -->
@@ -924,12 +943,12 @@
 
 
 <div th:fragment="case_fetalheart">
+	<h4 th:text="#{title.fetalheart}" class="bg-dark text-light p-1 rounded"></h4>
 	<div th:insert="fragments/update-case :: core_data"></div>
-	<h4 th:text="#{title.fetalheart}" class="text-end"></h4>
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.fetalheart_refered}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{fetalheart.fetalheart_refered}" required>
+			<select class="form-control form-control-sm" th:field="*{fetalheart.fetalheart_refered}">
 				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -938,7 +957,7 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.fetalheart_arrival}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{fetalheart.fetalheart_arrival}" required>
+			<select class="form-control form-control-sm" th:field="*{fetalheart.fetalheart_arrival}">
 				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -947,7 +966,7 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.fetalheart_lastheard}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{fetalheart.fetalheart_lastheard}" required>
+			<select class="form-control form-control-sm" th:field="*{fetalheart.fetalheart_lastheard}">
 				<option th:each="option : ${lastheard_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -961,18 +980,21 @@
 	<div class="">
 		<a class="btn btn-light" th:utext="#{prev.button}"
 			th:href="@{/registry/edit/{id}?page=7(id=${selected.case_uuid})}"></a>
-		<button class="btn btn-primary" type="submit" th:utext="#{save.next.button}"></button>
+		<button class="btn btn-primary" type="submit" th:utext="#{save.stay.button}"></button>
+		<button class="btn btn-primary" type="submit"
+			th:formaction="@{/registry/edit/{id}?page={pg}&go=1(id=${selected.case_uuid}, pg=${page})}"
+			th:utext="#{save.next.button}"></button>
 	</div>
 </div>
 <!-- fetal heart end -->
 
 <div th:fragment="case_babydeath">
+	<h4 th:text="#{title.baby}" class="bg-dark text-light p-1 rounded"></h4>
 	<div th:insert="fragments/update-case :: core_data"></div>
-	<h4 th:text="#{title.baby}" class="text-end"></h4>
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.baby_cry}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{babydeath.baby_cry}" required>
+			<select class="form-control form-control-sm" th:field="*{babydeath.baby_cry}">
 				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -982,7 +1004,7 @@
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.baby_resuscitation}"></label>
 		<div class="col-auto">
 			<select id="baby_resuscitation" class="form-control form-control-sm"
-				th:field="*{babydeath.baby_resuscitation}" onchange="changeBabyResuscitationOtherToNA(this)" required>
+				th:field="*{babydeath.baby_resuscitation}" onchange="changeBabyResuscitationOtherToNA(this)">
 				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -1014,7 +1036,7 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.baby_apgar1}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{babydeath.baby_apgar1}" required>
+			<select class="form-control form-control-sm" th:field="*{babydeath.baby_apgar1}">
 				<option th:each="option : ${apgar_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -1023,7 +1045,7 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.baby_apgar5}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{babydeath.baby_apgar5}" required>
+			<select class="form-control form-control-sm" th:field="*{babydeath.baby_apgar5}">
 				<option th:each="option : ${apgar_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -1034,7 +1056,7 @@
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.baby_admitted}"></label>
 		<div class="col-auto">
 			<select id="baby_admitted" class="form-control form-control-sm" th:field="*{babydeath.baby_admitted}"
-				onchange="changeBabyAdmittedOtherToNA(this)" required>
+				onchange="changeBabyAdmittedOtherToNA(this)">
 				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -1082,7 +1104,7 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.baby_medicalcod}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{babydeath.baby_medicalcod}" required>
+			<select class="form-control form-control-sm" th:field="*{babydeath.baby_medicalcod}">
 				<option th:each="option : ${neocod_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -1097,7 +1119,10 @@
 	<div class="">
 		<a class="btn btn-light" th:utext="#{prev.button}"
 			th:href="@{/registry/edit/{id}?page=7(id=${selected.case_uuid})}"></a>
-		<button class="btn btn-primary" type="submit" th:utext="#{save.next.button}"></button>
+		<button class="btn btn-primary" type="submit" th:utext="#{save.stay.button}"></button>
+		<button class="btn btn-primary" type="submit"
+			th:formaction="@{/registry/edit/{id}?page={pg}&go=1(id=${selected.case_uuid}, pg=${page})}"
+			th:utext="#{save.next.button}"></button>
 	</div>
 </div>
 <!-- baby death end -->
@@ -1105,8 +1130,8 @@
 
 
 <div th:fragment="case_notes">
+	<h4 th:text="#{title.notes}" class="bg-dark text-light p-1 rounded"></h4>
 	<div th:insert="fragments/update-case :: core_data"></div>
-	<h4 th:text="#{title.notes}" class="text-end"></h4>
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.notes_file}"></label>
 		<div class="col-auto">

@@ -8,37 +8,48 @@
 		<div class="row">
 			<div class="col-auto mb-3">
 				<a th:href="@{/registry/edit/{id}?page=1(id=${selected.case_uuid})}">
-					<span class="btn smalll" th:classappend="${selected.biodata}?(${selected.biodata.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Profile</span>
+					<span class="btn smalll"
+						th:classappend="${selected.biodata}?(${selected.biodata.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Profile</span>
 				</a>
 				<a th:href="@{/registry/edit/{id}?page=2(id=${selected.case_uuid})}">
-					<span class="btn small" th:classappend="${selected.pregnancy}?(${selected.pregnancy.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Pregnancy</span>
+					<span class="btn small"
+						th:classappend="${selected.pregnancy}?(${selected.pregnancy.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Pregnancy</span>
 				</a>
 				<a th:href="@{/registry/edit/{id}?page=3(id=${selected.case_uuid})}">
-					<span class="btn small" th:classappend="${selected.referral}?(${selected.referral.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Referral</span>
+					<span class="btn small"
+						th:classappend="${selected.referral}?(${selected.referral.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Referral</span>
 				</a>
 				<a th:href="@{/registry/edit/{id}?page=4(id=${selected.case_uuid})}">
-					<span class="btn small" th:classappend="${selected.delivery}?(${selected.delivery.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Delivery</span>
+					<span class="btn small"
+						th:classappend="${selected.delivery}?(${selected.delivery.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Delivery</span>
 				</a>
 				<a th:href="@{/registry/edit/{id}?page=5(id=${selected.case_uuid})}">
-					<span class="btn small" th:classappend="${selected.antenatal}?(${selected.antenatal.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Antenatal</span>
+					<span class="btn small"
+						th:classappend="${selected.antenatal}?(${selected.antenatal.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Antenatal</span>
 				</a>
 				<a th:href="@{/registry/edit/{id}?page=6(id=${selected.case_uuid})}">
-					<span class="btn small" th:classappend="${selected.labour}?(${selected.labour.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Labour</span>
+					<span class="btn small"
+						th:classappend="${selected.labour}?(${selected.labour.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Labour</span>
 				</a>
 				<a th:href="@{/registry/edit/{id}?page=7(id=${selected.case_uuid})}">
-					<span class="btn small" th:classappend="${selected.birth}?(${selected.birth.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Birth</span>
+					<span class="btn small"
+						th:classappend="${selected.birth}?(${selected.birth.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Birth</span>
 				</a>
 				<a th:href="@{/registry/edit/{id}?page=8(id=${selected.case_uuid})}" th:if="${selected.case_death==1}">
-					<span class="btn small" th:classappend="${selected.fetalheart}?(${selected.fetalheart.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Fetal
+					<span class="btn small"
+						th:classappend="${selected.fetalheart}?(${selected.fetalheart.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Fetal
 						Heart</span>
 				</a>
 				<a th:href="@{/registry/edit/{id}?page=8(id=${selected.case_uuid})}" th:if="${selected.case_death==2}">
-					<span class="btn small" th:classappend="${selected.babydeath}?'(${selected.babydeath.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Baby's
+					<span class="btn small"
+						th:classappend="${selected.babydeath}?'(${selected.babydeath.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Baby's
 						Death</span>
 				</a>
 				<a th:href="@{/registry/edit/{id}?page=9(id=${selected.case_uuid})}">
 					<span class="btn small" th:classappend="${selected.notes}?'btn-success':'btn-danger'">Notes</span>
 				</a>
+				<a th:href="@{/registry/submit/{id}(id=${selected.case_uuid}, pg=${page})}" class="btn btn-danger"
+					th:utext="#{submit.audit.button}" th:if="${completed}"></a>
 			</div>
 		</div>
 
@@ -59,12 +70,7 @@
 			<div th:if="${page==8 and selected.case_death==2}" th:insert="fragments/update-case :: case_babydeath">
 			</div>
 			<div th:if="${page==9}" th:insert="fragments/update-case :: case_notes"></div>
-
 		</form>
-	</div>
-	<div th:if="${completed}">
-		<a th:href="@{/registry/submit/{id}(id=${selected.case_uuid}, pg=${page})}"
-			class="btn btn-outline-success btn-lg" th:utext="#{submit.audit.button}"></a>
 	</div>
 </content>
 

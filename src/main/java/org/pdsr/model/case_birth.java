@@ -39,38 +39,38 @@ public class case_birth implements Serializable {
 	@JoinColumn(name = "case_uuid", referencedColumnName = "case_uuid", insertable = true, updatable = true)
 	private case_identifiers case_uuid;
 
-	@NotNull
+	
 	@Column
 	private Integer birth_mode;
 
-	@NotNull
+	
 	@Column
 	private Integer birth_insistnormal;
 
-	@NotNull
+	
 	@Column
 	private Integer birth_csproposehour;
 	
-	@NotNull
+	
 	@Column
 	private Integer birth_csproposeminute;
 	
-	@NotNull
+	
 	@Column
 	@Temporal(TemporalType.TIME)
 	@DateTimeFormat(pattern = "HH:mm")
 	private java.util.Date birth_csproposetime;
 
 
-	@NotNull
+	
 	@Column
 	private Integer birth_provider;
 	
-	@NotNull
+	
 	@Column
 	private Integer birth_facility;
 	
-	@NotNull
+	
 	@Column
 	private Integer birth_abnormalities;
 	
@@ -82,7 +82,7 @@ public class case_birth implements Serializable {
 	@Column
 	private String new_abnormalities;
 
-	@NotNull
+	
 	@Column
 	private Integer birth_cordfaults;
 	
@@ -94,7 +94,7 @@ public class case_birth implements Serializable {
 	@Column
 	private String new_cordfaults;
 	
-	@NotNull
+	
 	@Column
 	private Integer birth_placentachecks;
 	
@@ -106,23 +106,23 @@ public class case_birth implements Serializable {
 	@Column
 	private String new_placentachecks;
 	
-	@NotNull
+	
 	@Column
 	private Integer birth_liqourvolume;
 	
-	@NotNull
+	
 	@Column
 	private Integer birth_liqourcolor;
 	
-	@NotNull
+	
 	@Column
 	private Integer birth_liqourodour;
 	
-	@NotNull
+	
 	@Column
 	private Integer birth_motheroutcome;
 
-	@NotNull
+	
 	@Column
 	private Integer birth_babyoutcome;
 

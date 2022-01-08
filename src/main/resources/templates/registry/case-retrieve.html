@@ -26,31 +26,31 @@
 					<td th:text="${item.case_death == 1}?#{label.still.birth}:#{label.neonatal.death}"></td>
 					<td>
 						<a th:href="@{/registry/edit/{id}?page=1(id=${item.case_uuid})}">
-							<span class="badge" th:classappend="${item.biodata}?(${item.biodata.data_complete==1}?'bg-success':'bg-warning'):'bg-danger'">Profile</span>
+							<span class="badge" th:classappend="${item.biodata}?(${item.biodata.data_complete==1}?'bg-success':'bg-warning text-dark'):'bg-danger'">Profile</span>
 						</a>
 						<a th:href="@{/registry/edit/{id}?page=2(id=${item.case_uuid})}">
-							<span class="badge" th:classappend="${item.pregnancy}?(${item.pregnancy.data_complete==1}?'bg-success':'bg-warning'):'bg-danger'">Pregnancy</span>
+							<span class="badge" th:classappend="${item.pregnancy}?(${item.pregnancy.data_complete==1}?'bg-success':'bg-warning text-dark'):'bg-danger'">Pregnancy</span>
 						</a>
 						<a th:href="@{/registry/edit/{id}?page=3(id=${item.case_uuid})}">
-							<span class="badge" th:classappend="${item.referral}?(${item.referral.data_complete==1}?'bg-success':'bg-warning'):'bg-danger'">Referral</span>
+							<span class="badge" th:classappend="${item.referral}?(${item.referral.data_complete==1}?'bg-success':'bg-warning text-dark'):'bg-danger'">Referral</span>
 						</a>
 						<a th:href="@{/registry/edit/{id}?page=4(id=${item.case_uuid})}">
-							<span class="badge" th:classappend="${item.delivery}?(${item.delivery.data_complete==1}?'bg-success':'bg-warning'):'bg-danger'">Delivery</span>
+							<span class="badge" th:classappend="${item.delivery}?(${item.delivery.data_complete==1}?'bg-success':'bg-warning text-dark'):'bg-danger'">Delivery</span>
 						</a>
 						<a th:href="@{/registry/edit/{id}?page=5(id=${item.case_uuid})}">
-							<span class="badge" th:classappend="${item.antenatal}?(${item.antenatal.data_complete==1}?'bg-success':'bg-warning'):'bg-danger'">Antenatal</span>
+							<span class="badge" th:classappend="${item.antenatal}?(${item.antenatal.data_complete==1}?'bg-success':'bg-warning text-dark'):'bg-danger'">Antenatal</span>
 						</a>
 						<a th:href="@{/registry/edit/{id}?page=6(id=${item.case_uuid})}">
-							<span class="badge" th:classappend="${item.labour}?(${item.labour.data_complete==1}?'bg-success':'bg-warning'):'bg-danger'">Labour</span>
+							<span class="badge" th:classappend="${item.labour}?(${item.labour.data_complete==1}?'bg-success':'bg-warning text-dark'):'bg-danger'">Labour</span>
 						</a>
 						<a th:href="@{/registry/edit/{id}?page=7(id=${item.case_uuid})}">
-							<span class="badge" th:classappend="${item.birth}?(${item.birth.data_complete==1}?'bg-success':'bg-warning'):'bg-danger'">Birth</span>
+							<span class="badge" th:classappend="${item.birth}?(${item.birth.data_complete==1}?'bg-success':'bg-warning text-dark'):'bg-danger'">Birth</span>
 						</a>
 						<a th:href="@{/registry/edit/{id}?page=8(id=${item.case_uuid})}" th:if="${item.case_death==1}">
-							<span class="badge" th:classappend="${item.fetalheart}?(${item.fetalheart.data_complete==1}?'bg-success':'bg-warning'):'bg-danger'">Fetal Heart</span>
+							<span class="badge" th:classappend="${item.fetalheart}?(${item.fetalheart.data_complete==1}?'bg-success':'bg-warning text-dark'):'bg-danger'">Fetal Heart</span>
 						</a>
 						<a th:href="@{/registry/edit/{id}?page=8(id=${item.case_uuid})}" th:if="${item.case_death==2}">
-							<span class="badge" th:classappend="${item.babydeath}?(${item.babydeath.data_complete==1}?'bg-success':'bg-warning'):'bg-danger'">Baby's Death</span>
+							<span class="badge" th:classappend="${item.babydeath}?(${item.babydeath.data_complete==1}?'bg-success':'bg-warning text-dark'):'bg-danger'">Baby's Death</span>
 						</a>
 						<a th:href="@{/registry/edit/{id}?page=9(id=${item.case_uuid})}">
 							<span class="badge" th:classappend="${item.notes}?'bg-success':'bg-danger'">Notes</span>

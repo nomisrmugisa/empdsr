@@ -39,11 +39,11 @@ public class case_babydeath implements Serializable {
 	@JoinColumn(name = "case_uuid", referencedColumnName = "case_uuid", insertable = true, updatable = true)
 	private case_identifiers case_uuid;
 
-	@NotNull
+	
 	@Column
 	private Integer baby_cry;
 
-	@NotNull
+	
 	@Column
 	private Integer baby_resuscitation;
 
@@ -55,15 +55,15 @@ public class case_babydeath implements Serializable {
 	@Column
 	private String new_resuscitation;
 
-	@NotNull
+	
 	@Column
 	private Integer baby_apgar1;
 
-	@NotNull
+	
 	@Column
 	private Integer baby_apgar5;
 
-	@NotNull
+	
 	@Column
 	private Integer baby_admitted;
 
@@ -75,21 +75,21 @@ public class case_babydeath implements Serializable {
 	@Column
 	private String new_diagnoses;
 
-	@NotNull
+	
 	@Column
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private java.util.Date baby_ddate;
 
-	@NotNull
+	
 	@Column
 	private Integer baby_dhour;
 
-	@NotNull
+	
 	@Column
 	private Integer baby_dminute;
 
-	@NotNull
+	
 	@Column
 	@Temporal(TemporalType.TIME)
 	@DateTimeFormat(pattern = "HH:mm")

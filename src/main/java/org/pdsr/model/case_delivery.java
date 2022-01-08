@@ -35,31 +35,31 @@ public class case_delivery implements Serializable {
 	@JoinColumn(name = "case_uuid", referencedColumnName = "case_uuid", insertable = true, updatable = true)
 	private case_identifiers case_uuid;
 
-	@NotNull
+	
 	@Column
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private java.util.Date delivery_date;
 
-	@NotNull
+	
 	@Column
 	private Integer delivery_hour;
 	
-	@NotNull
+	
 	@Column
 	private Integer delivery_minute;
 	
-	@NotNull
+	
 	@Column
 	@Temporal(TemporalType.TIME)
 	@DateTimeFormat(pattern = "HH:mm")
 	private java.util.Date delivery_time;
 
-	@NotNull
+	
 	@Column
 	private Integer delivery_period;//dawn,morning,afternoon,evening,night
 	
-	@NotNull
+	
 	@Column
 	private Integer delivery_mode;
 		
