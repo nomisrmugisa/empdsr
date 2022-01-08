@@ -361,8 +361,6 @@ public class CaseEntryController {
 			return "home";
 		}
 
-		selected.setCase_status(0);
-
 		switch (page) {
 		case 1: {
 
@@ -370,7 +368,13 @@ public class CaseEntryController {
 				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getBiodata()));
 				selected.getBiodata().setBiodata_json(arrayToJson);
 
-				bioRepo.save(selected.getBiodata());
+				case_biodata o = selected.getBiodata();
+				if (o.getBiodata_mage() == null || o.getBiodata_medu() == null || o.getBiodata_sex() == null) {
+					o.setData_complete(0);
+				} else {
+					o.setData_complete(1);
+				}
+				bioRepo.save(o);
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
 			}
@@ -382,7 +386,13 @@ public class CaseEntryController {
 				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getPregnancy()));
 				selected.getPregnancy().setPregnancy_json(arrayToJson);
 
-				preRepo.save(selected.getPregnancy());
+				case_pregnancy o = selected.getPregnancy();
+				if (o.getPregnancy_days() == null || o.getPregnancy_type() == null || o.getPregnancy_weeks() == null) {
+					o.setData_complete(0);
+				} else {
+					o.setData_complete(1);
+				}
+				preRepo.save(o);
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
 			}
@@ -394,12 +404,28 @@ public class CaseEntryController {
 				selected.getReferral().setReferral_json(arrayToJson);
 
 				java.util.Date time = selected.getReferral().getReferral_time();
-				selected.getReferral().setReferral_hour(time.getHours());
-				selected.getReferral().setReferral_minute(time.getMinutes());
+				if (time != null) {
+					selected.getReferral().setReferral_hour(time.getHours());
+					selected.getReferral().setReferral_minute(time.getMinutes());
+				}
 
 				java.util.Date atime = selected.getReferral().getReferral_atime();
-				selected.getReferral().setReferral_ahour(atime.getHours());
-				selected.getReferral().setReferral_aminute(atime.getMinutes());
+				if (atime != null) {
+					selected.getReferral().setReferral_ahour(atime.getHours());
+					selected.getReferral().setReferral_aminute(atime.getMinutes());
+				}
+				case_referral o = selected.getReferral();
+				if (o.getReferral_ahour() == null || o.getReferral_adate() == null || o.getReferral_aminute() == null
+						|| o.getReferral_atime() == null || o.getReferral_case() == null || o.getReferral_date() == null
+						|| o.getReferral_hour() == null || o.getReferral_minute() == null
+						|| o.getReferral_time() == null || o.getReferral_facility() == null
+						|| o.getReferral_facility().isBlank() || o.getReferral_patient() == null
+						|| o.getReferral_source() == null || o.getReferral_transport() == null) {
+
+					o.setData_complete(0);
+				} else {
+					o.setData_complete(1);
+				}
 
 				refRepo.save(selected.getReferral());
 			} catch (JsonProcessingException e) {
@@ -413,37 +439,48 @@ public class CaseEntryController {
 				selected.getDelivery().setDelivery_json(arrayToJson);
 
 				java.util.Date time = selected.getDelivery().getDelivery_time();
-				selected.getDelivery().setDelivery_hour(time.getHours());
-				selected.getDelivery().setDelivery_minute(time.getMinutes());
-
+				if (time != null) {
+					selected.getDelivery().setDelivery_hour(time.getHours());
+					selected.getDelivery().setDelivery_minute(time.getMinutes());
+				}
 				final Integer period = selected.getDelivery().getDelivery_period();
 				final Integer hour = selected.getDelivery().getDelivery_hour();
 
-				boolean dawn = (hour > 0 && hour < 6);
-				boolean morning = (hour > 5 && hour < 12);
-				boolean midday = (hour == 12);
-				boolean afternoon = (hour > 12 && hour < 18);
-				boolean evening = (hour > 17 && hour < 22);
-				boolean midnight = (hour > 21 && hour < 1);
+				if (period != null && hour != null) {
+					boolean dawn = (hour > 0 && hour < 6);
+					boolean morning = (hour > 5 && hour < 12);
+					boolean midday = (hour == 12);
+					boolean afternoon = (hour > 12 && hour < 18);
+					boolean evening = (hour > 17 && hour < 22);
+					boolean midnight = (hour > 21 && hour < 1);
 
-				if (period == 0 && !dawn) {
-					results.rejectValue("delivery.delivery_period", "error.dawn");
-				} else if (period == 1 && !morning) {
-					results.rejectValue("delivery.delivery_period", "error.morning");
-				} else if (period == 2 && !midday) {
-					results.rejectValue("delivery.delivery_period", "error.midday");
-				} else if (period == 3 && !afternoon) {
-					results.rejectValue("delivery.delivery_period", "error.afternoon");
-				} else if (period == 4 && !evening) {
-					results.rejectValue("delivery.delivery_period", "error.evening");
-				} else if (period == 4 && !midnight) {
-					results.rejectValue("delivery.delivery_period", "error.midnight");
+					if (period == 0 && !dawn) {
+						results.rejectValue("delivery.delivery_period", "error.dawn");
+					} else if (period == 1 && !morning) {
+						results.rejectValue("delivery.delivery_period", "error.morning");
+					} else if (period == 2 && !midday) {
+						results.rejectValue("delivery.delivery_period", "error.midday");
+					} else if (period == 3 && !afternoon) {
+						results.rejectValue("delivery.delivery_period", "error.afternoon");
+					} else if (period == 4 && !evening) {
+						results.rejectValue("delivery.delivery_period", "error.evening");
+					} else if (period == 5 && !midnight) {
+						results.rejectValue("delivery.delivery_period", "error.midnight");
+					}
+
+					if (results.hasErrors()) {
+						model.addAttribute("selected", selected);
+						model.addAttribute("page", page);
+						return "registry/case-update";
+					}
 				}
-
-				if (results.hasErrors()) {
-					model.addAttribute("selected", selected);
-					model.addAttribute("page", page);
-					return "registry/case-update";
+				case_delivery o = selected.getDelivery();
+				if (o.getDelivery_hour() == null || o.getDelivery_date() == null || o.getDelivery_minute() == null
+						|| o.getDelivery_mode() == null || o.getDelivery_period() == null
+						|| o.getDelivery_time() == null) {
+					o.setData_complete(0);
+				} else {
+					o.setData_complete(1);
 				}
 
 				delRepo.save(selected.getDelivery());
@@ -457,6 +494,21 @@ public class CaseEntryController {
 				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getAntenatal()));
 				selected.getAntenatal().setAntenatal_json(arrayToJson);
 
+				case_antenatal o = selected.getAntenatal();
+				if (o.getAntenatal_alcohol() == null || o.getAntenatal_attend() == null
+						|| o.getAntenatal_attendno() == null || o.getAntenatal_days() == null
+						|| o.getAntenatal_facility() == null || o.getAntenatal_facility().isBlank()
+						|| o.getAntenatal_folicacid() == null || o.getAntenatal_folicacid3m() == null
+						|| o.getAntenatal_gravida() == null || o.getAntenatal_herbal() == null
+						|| o.getAntenatal_hiv() == null || o.getAntenatal_malprophy() == null
+						|| o.getAntenatal_para() == null || o.getAntenatal_risks() == null
+						|| o.getAntenatal_smoker() == null || o.getAntenatal_tetanus() == null
+						|| o.getAntenatal_weeks() == null) {
+					o.setData_complete(0);
+				} else {
+					o.setData_complete(1);
+				}
+
 				antRepo.save(selected.getAntenatal());
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
@@ -468,40 +520,55 @@ public class CaseEntryController {
 			try {
 
 				java.util.Date seetime = selected.getLabour().getLabour_seetime();
-				selected.getLabour().setLabour_seehour(seetime.getHours());
-				selected.getLabour().setLabour_seeminute(seetime.getMinutes());
-
+				if (seetime != null) {
+					selected.getLabour().setLabour_seehour(seetime.getHours());
+					selected.getLabour().setLabour_seeminute(seetime.getMinutes());
+				}
 				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getLabour()));
 				selected.getLabour().setLabour_json(arrayToJson);
 
 				final Integer period = selected.getLabour().getLabour_seeperiod();
 				final Integer hour = selected.getLabour().getLabour_seehour();
 
-				boolean dawn = (hour > 0 && hour < 6);
-				boolean morning = (hour > 5 && hour < 12);
-				boolean midday = (hour == 12);
-				boolean afternoon = (hour > 12 && hour < 18);
-				boolean evening = (hour > 17 && hour < 22);
-				boolean midnight = (hour > 21 && hour < 1);
+				if (period != null && hour != null) {
+					boolean dawn = (hour > 0 && hour < 6);
+					boolean morning = (hour > 5 && hour < 12);
+					boolean midday = (hour == 12);
+					boolean afternoon = (hour > 12 && hour < 18);
+					boolean evening = (hour > 17 && hour < 22);
+					boolean midnight = (hour > 21 && hour < 1);
 
-				if (period == 0 && !dawn) {
-					results.rejectValue("labour.labour_seeperiod", "error.dawn");
-				} else if (period == 1 && !morning) {
-					results.rejectValue("labour.labour_seeperiod", "error.morning");
-				} else if (period == 2 && !midday) {
-					results.rejectValue("labour.labour_seeperiod", "error.midday");
-				} else if (period == 3 && !afternoon) {
-					results.rejectValue("labour.labour_seeperiod", "error.afternoon");
-				} else if (period == 4 && !evening) {
-					results.rejectValue("labour.labour_seeperiod", "error.evening");
-				} else if (period == 4 && !midnight) {
-					results.rejectValue("labour.labour_seeperiod", "error.midnight");
+					if (period == 0 && !dawn) {
+						results.rejectValue("labour.labour_seeperiod", "error.dawn");
+					} else if (period == 1 && !morning) {
+						results.rejectValue("labour.labour_seeperiod", "error.morning");
+					} else if (period == 2 && !midday) {
+						results.rejectValue("labour.labour_seeperiod", "error.midday");
+					} else if (period == 3 && !afternoon) {
+						results.rejectValue("labour.labour_seeperiod", "error.afternoon");
+					} else if (period == 4 && !evening) {
+						results.rejectValue("labour.labour_seeperiod", "error.evening");
+					} else if (period == 5 && !midnight) {
+						results.rejectValue("labour.labour_seeperiod", "error.midnight");
+					}
+
+					if (results.hasErrors()) {
+						model.addAttribute("selected", selected);
+						model.addAttribute("page", page);
+						return "registry/case-update";
+					}
 				}
-
-				if (results.hasErrors()) {
-					model.addAttribute("selected", selected);
-					model.addAttribute("page", page);
-					return "registry/case-update";
+				case_labour o = selected.getLabour();
+				if (o.getLabour_complications() == null || o.getLabour_herbalaug() == null
+						|| o.getLabour_lasthour1() == null || o.getLabour_lasthour2() == null
+						|| o.getLabour_lastminute1() == null || o.getLabour_lastminute2() == null
+						|| o.getLabour_partograph() == null || o.getLabour_seedate() == null
+						|| o.getLabour_seehour() == null || o.getLabour_seeminute() == null
+						|| o.getLabour_seeperiod() == null || o.getLabour_seetime() == null
+						|| o.getLabour_startmode() == null) {
+					o.setData_complete(0);
+				} else {
+					o.setData_complete(1);
 				}
 
 				labRepo.save(selected.getLabour());
@@ -513,11 +580,29 @@ public class CaseEntryController {
 		case 7: {
 			try {
 				java.util.Date cstime = selected.getBirth().getBirth_csproposetime();
-				selected.getBirth().setBirth_csproposehour(cstime.getHours());
-				selected.getBirth().setBirth_csproposeminute(cstime.getMinutes());
+
+				if (cstime != null) {
+
+					selected.getBirth().setBirth_csproposehour(cstime.getHours());
+					selected.getBirth().setBirth_csproposeminute(cstime.getMinutes());
+				}
 
 				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getBirth()));
 				selected.getBirth().setBirth_json(arrayToJson);
+
+				case_birth o = selected.getBirth();
+				if (o.getBirth_abnormalities() == null || o.getBirth_babyoutcome() == null
+						|| o.getBirth_cordfaults() == null || o.getBirth_csproposehour() == null
+						|| o.getBirth_csproposeminute() == null || o.getBirth_csproposetime() == null
+						|| o.getBirth_facility() == null || o.getBirth_insistnormal() == null
+						|| o.getBirth_liqourcolor() == null || o.getBirth_liqourodour() == null
+						|| o.getBirth_liqourvolume() == null || o.getBirth_mode() == null
+						|| o.getBirth_motheroutcome() == null || o.getBirth_placentachecks() == null
+						|| o.getBirth_provider() == null) {
+					o.setData_complete(0);
+				} else {
+					o.setData_complete(1);
+				}
 
 				birRepo.save(selected.getBirth());
 			} catch (JsonProcessingException e) {
@@ -531,6 +616,14 @@ public class CaseEntryController {
 					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getFetalheart()));
 					selected.getFetalheart().setFetalheart_json(arrayToJson);
 
+					case_fetalheart o = selected.getFetalheart();
+					if (o.getFetalheart_arrival() == null || o.getFetalheart_lastheard() == null
+							|| o.getFetalheart_refered() == null) {
+						o.setData_complete(0);
+					} else {
+						o.setData_complete(1);
+					}
+
 					fetRepo.save(selected.getFetalheart());
 				} catch (JsonProcessingException e) {
 					e.printStackTrace();
@@ -539,11 +632,22 @@ public class CaseEntryController {
 			} else if (selected.getCase_death() == 2) {
 				try {
 					java.util.Date time = selected.getBabydeath().getBaby_dtime();
-					selected.getBabydeath().setBaby_dhour(time.getHours());
-					selected.getBabydeath().setBaby_dminute(time.getMinutes());
-
+					if (time != null) {
+						selected.getBabydeath().setBaby_dhour(time.getHours());
+						selected.getBabydeath().setBaby_dminute(time.getMinutes());
+					}
 					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getBabydeath()));
 					selected.getBabydeath().setBaby_json(arrayToJson);
+
+					case_babydeath o = selected.getBabydeath();
+					if (o.getBaby_admitted() == null || o.getBaby_apgar1() == null || o.getBaby_apgar5() == null
+							|| o.getBaby_cry() == null || o.getBaby_ddate() == null || o.getBaby_dhour() == null
+							|| o.getBaby_dminute() == null || o.getBaby_dtime() == null
+							|| o.getBaby_medicalcod() == null || o.getBaby_resuscitation() == null) {
+						o.setData_complete(0);
+					} else {
+						o.setData_complete(1);
+					}
 
 					babyRepo.save(selected.getBabydeath());
 				} catch (JsonProcessingException e) {
@@ -565,6 +669,7 @@ public class CaseEntryController {
 			break;
 		}
 		default: {
+			selected.setCase_status(0);
 			caseRepo.save(selected);
 			break;
 		}
@@ -621,8 +726,9 @@ public class CaseEntryController {
 		final Map<Integer, String> map = new LinkedHashMap<>();
 
 		map.put(null, "Select one");
-		map.put(1, getQuestion("label.still.birth"));
-		map.put(2, getQuestion("label.neonatal.death"));
+		for (datamap elem : mapRepo.findByMap_feature("death_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
 
 		return map;
 	}
@@ -634,6 +740,18 @@ public class CaseEntryController {
 		map.put(null, "Select one");
 		for (datamap elem : mapRepo.findByMap_feature("sex_options")) {
 			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("mage_options")
+	public Map<Integer, String> mageOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("mage_options")) {
+			map.put(elem.getMap_value(), elem.getMap_value() + " " + elem.getMap_label());
 		}
 
 		return map;
@@ -973,6 +1091,9 @@ public class CaseEntryController {
 	}
 
 	private String getAnswer(String feature, Integer value) {
+		if (value == null) {
+			return "";
+		}
 		return mapRepo.findById(new datamapPK(feature, value)).get().getMap_label();
 	}
 

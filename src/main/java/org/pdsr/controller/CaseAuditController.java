@@ -1,5 +1,6 @@
 package org.pdsr.controller;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
@@ -22,6 +23,8 @@ import java.util.stream.Stream;
 import javax.transaction.Transactional;
 
 import org.pdsr.CONSTANTS;
+import org.pdsr.EmailService;
+import org.pdsr.InternetAvailabilityChecker;
 import org.pdsr.Utils;
 import org.pdsr.json.json_algorithm;
 import org.pdsr.json.json_data;
@@ -88,6 +91,9 @@ public class CaseAuditController {
 	@Autowired
 	private MessageSource msg;
 
+	@Autowired
+	private EmailService emailService;
+
 	@GetMapping("")
 	public String list(Principal principal, Model model) {
 
@@ -96,7 +102,9 @@ public class CaseAuditController {
 			return "home";
 		}
 
-		model.addAttribute("items", acaseRepo.findByPendingAudit());
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DAY_OF_MONTH, -7); 
+		model.addAttribute("items", acaseRepo.findActivePendingAudit(cal.getTime()));////pick data selected at least seven days ago
 
 		model.addAttribute("items1", tcaseRepo.findByPendingRecommendation());
 
@@ -154,13 +162,18 @@ public class CaseAuditController {
 
 		return "auditing/audit-retrieve";
 	}
-
-	@Scheduled(cron = "0 0 0 * * 0") // once a week on mondays
+	
 	@PostMapping("")
-	public String listPost() {
+	public String selectSpecialCases(Principal principal, Model model) {
 		if (syncRepo.findById(CONSTANTS.FACILITY_ID).isEmpty()) {
 			return "home";
 		}
+		
+		return "auditing/audit-retrieve";
+	}
+
+	@Scheduled(cron = "0 0 * * * 0") // once a week on mondays but top of every hour
+	public void autoSelectCases() {
 
 		// prepare a mapping reference type for converting the JSON strings to objects
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -457,6 +470,21 @@ public class CaseAuditController {
 			syncRepo.save(synctable);
 
 			if (selectedForAuditing.size() > 0) {
+				try {
+					if (InternetAvailabilityChecker.isInternetAvailable()) {
+						final String[] recipients = new String[] { "makmanu128@gmail.com", "elelart@gmail.com" };
+						// , "thailegebriel@unicef.org",
+						// "pwobil@unicef.org", "mkim@unicef.org" };
+
+						sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+						emailService.sendSimpleMessage(recipients, "TEST MESSAGE- PDSR DEATH NOTIFICATION!", "Hello,\n"
+								+ "\nThere are " + selectedForAuditing.size() + " deaths ready to be reviewed this week"
+								+ "\nHealth Facility: " + sync.getSync_name() + " - " + sync.getSync_code()
+								+ "This is a TEST ALERT from the PDSR being developed by Alex and Eliezer. It is based on dummy data");
+					}
+				} catch (IOException e) {
+				}
+
 				acaseRepo.saveAll(selectedForAuditing);
 			}
 
@@ -466,7 +494,6 @@ public class CaseAuditController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return "redirect:/auditing";
 	}
 
 	@GetMapping("/edit/{id}")

@@ -47,6 +47,17 @@ public class case_fetalheart implements Serializable {
 	@Column
 	private String fetalheart_json;
 
+	@Column
+	private Integer data_complete;
+
+	public Integer getData_complete() {
+		return data_complete;
+	}
+
+	public void setData_complete(Integer data_complete) {
+		this.data_complete = data_complete;
+	}
+
 	public String getFetalheart_json() {
 		return fetalheart_json;
 	}

@@ -15,8 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
 import org.pdsr.CONSTANTS;
-import org.pdsr.EmailService;
-import org.pdsr.InternetAvailabilityChecker;
 import org.pdsr.ReportExcelExporter;
 import org.pdsr.model.monitoring_table;
 import org.pdsr.model.upload;

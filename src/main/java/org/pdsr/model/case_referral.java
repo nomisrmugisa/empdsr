@@ -106,12 +106,25 @@ public class case_referral implements Serializable {
 	@Column
 	private byte[] referral_file;
 
+
 	@Lob
 	@Column
 	private String referral_json;
 
 	@Transient
 	private MultipartFile file;
+
+	@Column
+	private Integer data_complete;
+
+	public Integer getData_complete() {
+		return data_complete;
+	}
+
+	public void setData_complete(Integer data_complete) {
+		this.data_complete = data_complete;
+	}
+	
 
 	public String getReferral_uuid() {
 		return referral_uuid;

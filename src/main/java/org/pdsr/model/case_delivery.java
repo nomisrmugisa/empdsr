@@ -63,6 +63,9 @@ public class case_delivery implements Serializable {
 	@Column
 	private Integer delivery_mode;
 		
+	@Column
+	private Integer data_complete;
+
 	@Lob
 	@Column
 	private String delivery_json;
@@ -137,6 +140,14 @@ public class case_delivery implements Serializable {
 
 	public void setDelivery_time(java.util.Date delivery_time) {
 		this.delivery_time = delivery_time;
+	}
+
+	public Integer getData_complete() {
+		return data_complete;
+	}
+
+	public void setData_complete(Integer data_complete) {
+		this.data_complete = data_complete;
 	}
 
 	@Override

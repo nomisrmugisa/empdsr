@@ -41,6 +41,9 @@ public class audit_case implements Serializable {
 	@Lob
 	@Column
 	private String audit_data;
+	
+	@Column
+	private Integer audit_expired;//if null then audit is still active else audit expired
 
 	
 	public String getAudit_uuid() {
@@ -67,6 +70,14 @@ public class audit_case implements Serializable {
 	}
 	public void setAudit_data(String audit_data) {
 		this.audit_data = audit_data;
+	}
+	
+	
+	public Integer getAudit_expired() {
+		return audit_expired;
+	}
+	public void setAudit_expired(Integer audit_expired) {
+		this.audit_expired = audit_expired;
 	}
 	@Override
 	public int hashCode() {

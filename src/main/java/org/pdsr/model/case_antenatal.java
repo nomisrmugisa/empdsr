@@ -112,6 +112,17 @@ public class case_antenatal implements Serializable {
 	@Column
 	private String antenatal_json;
 
+	@Column
+	private Integer data_complete;
+
+	public Integer getData_complete() {
+		return data_complete;
+	}
+
+	public void setData_complete(Integer data_complete) {
+		this.data_complete = data_complete;
+	}
+
 	public String getAntenatal_json() {
 		return antenatal_json;
 	}

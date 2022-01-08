@@ -43,6 +43,9 @@ public class case_pregnancy implements Serializable {
 	@Column
 	private Integer pregnancy_type;
 	
+	@Column
+	private Integer data_complete;
+
 	@Lob
 	@Column
 	private String pregnancy_json;
@@ -87,6 +90,14 @@ public class case_pregnancy implements Serializable {
 
 	public void setPregnancy_type(Integer pregnancy_type) {
 		this.pregnancy_type = pregnancy_type;
+	}
+
+	public Integer getData_complete() {
+		return data_complete;
+	}
+
+	public void setData_complete(Integer data_complete) {
+		this.data_complete = data_complete;
 	}
 
 	public String getPregnancy_json() {

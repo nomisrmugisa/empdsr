@@ -3,7 +3,45 @@
 
 <content>
 	<div class="float-end" th:text="${selected.facility.facility_code}"></div>
+
 	<div class="col-md-12 py-3 my-3 mx-auto p-5 rounded box-shadow" style="background-color: #92c7f2;">
+		<div class="row">
+			<div class="col-auto mb-3">
+				<a th:href="@{/registry/edit/{id}?page=1(id=${selected.case_uuid})}">
+					<span class="btn smalll" th:classappend="${selected.biodata}?(${selected.biodata.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Profile</span>
+				</a>
+				<a th:href="@{/registry/edit/{id}?page=2(id=${selected.case_uuid})}">
+					<span class="btn small" th:classappend="${selected.pregnancy}?(${selected.pregnancy.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Pregnancy</span>
+				</a>
+				<a th:href="@{/registry/edit/{id}?page=3(id=${selected.case_uuid})}">
+					<span class="btn small" th:classappend="${selected.referral}?(${selected.referral.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Referral</span>
+				</a>
+				<a th:href="@{/registry/edit/{id}?page=4(id=${selected.case_uuid})}">
+					<span class="btn small" th:classappend="${selected.delivery}?(${selected.delivery.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Delivery</span>
+				</a>
+				<a th:href="@{/registry/edit/{id}?page=5(id=${selected.case_uuid})}">
+					<span class="btn small" th:classappend="${selected.antenatal}?(${selected.antenatal.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Antenatal</span>
+				</a>
+				<a th:href="@{/registry/edit/{id}?page=6(id=${selected.case_uuid})}">
+					<span class="btn small" th:classappend="${selected.labour}?(${selected.labour.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Labour</span>
+				</a>
+				<a th:href="@{/registry/edit/{id}?page=7(id=${selected.case_uuid})}">
+					<span class="btn small" th:classappend="${selected.birth}?(${selected.birth.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Birth</span>
+				</a>
+				<a th:href="@{/registry/edit/{id}?page=8(id=${selected.case_uuid})}" th:if="${selected.case_death==1}">
+					<span class="btn small" th:classappend="${selected.fetalheart}?(${selected.fetalheart.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Fetal
+						Heart</span>
+				</a>
+				<a th:href="@{/registry/edit/{id}?page=8(id=${selected.case_uuid})}" th:if="${selected.case_death==2}">
+					<span class="btn small" th:classappend="${selected.babydeath}?'(${selected.babydeath.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Baby's
+						Death</span>
+				</a>
+				<a th:href="@{/registry/edit/{id}?page=9(id=${selected.case_uuid})}">
+					<span class="btn small" th:classappend="${selected.notes}?'btn-success':'btn-danger'">Notes</span>
+				</a>
+			</div>
+		</div>
+
 		<form action="#" th:action="@{/registry/edit/{id}?page={pg}(id=${selected.case_uuid}, pg=${page})}"
 			th:object="${selected}" method="POST" class="needs-validation" novalidate>
 			<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
@@ -93,7 +131,7 @@
 		function onChangeValue() {
 			const gravida = document.getElementById("antenatal_gravida");
 			const para = document.getElementById("antenatal_para");
-			
+
 			if (Number(gravida.value) < Number(para.value)) {
 				gravida.setCustomValidity('Gravidity should not be less that Parity');
 				para.setCustomValidity('Gravidity should not be less that Parity');

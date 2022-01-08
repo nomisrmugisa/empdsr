@@ -31,22 +31,23 @@ public class case_biodata implements Serializable {
 	@JoinColumn(name = "case_uuid", referencedColumnName = "case_uuid", insertable = true, updatable = true)
 	private case_identifiers case_uuid;
 
-	@NotNull
 	@Column
 	private Integer biodata_sex;
 
-	@NotNull
 	@Column
 	private Integer biodata_mage;
 
-	@NotNull
 	@Column
 	private Integer biodata_medu;
 	
+	@Column
+	private Integer data_complete;
+
 	@Lob
 	@Column
 	private String biodata_json;
 
+	
 	public String getBiodata_uuid() {
 		return biodata_uuid;
 	}
@@ -87,6 +88,13 @@ public class case_biodata implements Serializable {
 		this.biodata_medu = biodata_medu;
 	}
 	
+	public Integer getData_complete() {
+		return data_complete;
+	}
+
+	public void setData_complete(Integer data_complete) {
+		this.data_complete = data_complete;
+	}
 
 	public String getBiodata_json() {
 		return biodata_json;

@@ -102,6 +102,18 @@ public class case_babydeath implements Serializable {
 	@Column
 	private String baby_json;
 
+	
+	@Column
+	private Integer data_complete;
+
+	public Integer getData_complete() {
+		return data_complete;
+	}
+
+	public void setData_complete(Integer data_complete) {
+		this.data_complete = data_complete;
+	}
+
 	public String getBaby_uuid() {
 		return baby_uuid;
 	}
