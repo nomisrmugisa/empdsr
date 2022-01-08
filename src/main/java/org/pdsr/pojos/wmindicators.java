@@ -18,6 +18,7 @@ public class wmindicators implements Serializable {
 	private Double aisbr;
 	private Double piisbr;
 	private Double einmr;
+	private Double linmr;
 	private Double ipmr;
 	private Double inmr;
 	private Double immr;
@@ -67,6 +68,14 @@ public class wmindicators implements Serializable {
 
 	public void setEinmr(Double einmr) {
 		this.einmr = einmr;
+	}
+
+	public Double getLinmr() {
+		return linmr;
+	}
+
+	public void setLinmr(Double linmr) {
+		this.linmr = linmr;
 	}
 
 	public Double getIpmr() {

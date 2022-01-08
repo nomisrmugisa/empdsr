@@ -11,21 +11,22 @@ public class wmoindicators implements Serializable {
 
 	private String wmdesc;
 
-	private Double isbr_oavg;
-	private Double iisbr_oavg;
-	private Double aisbr_oavg;
-	private Double piisbr_oavg;
-	private Double einmr_oavg;
-	private Double ipmr_oavg;
-	private Double inmr_oavg;
-	private Double immr_oavg;
-	private Double icsr_oavg;
-	private Double iadr_oavg;
-	private Double ivdr_oavg;
-	private Double ilbwr_oavg;
-	private Double iptbr_oavg;
-	private Double indwk1_oavg;
-	private Integer mdeath_osum;
+	private Double isbr_oavg = 0.0;
+	private Double iisbr_oavg = 0.0;
+	private Double aisbr_oavg = 0.0;
+	private Double piisbr_oavg = 0.0;
+	private Double einmr_oavg = 0.0;
+	private Double linmr_oavg = 0.0;
+	private Double ipmr_oavg = 0.0;
+	private Double inmr_oavg = 0.0;
+	private Double immr_oavg = 0.0;
+	private Double icsr_oavg = 0.0;
+	private Double iadr_oavg = 0.0;
+	private Double ivdr_oavg = 0.0;
+	private Double ilbwr_oavg = 0.0;
+	private Double iptbr_oavg = 0.0;
+	private Double indwk1_oavg = 0.0;
+	private Integer mdeath_osum = 0;
 
 	public String getWmdesc() {
 		return wmdesc;
@@ -73,6 +74,14 @@ public class wmoindicators implements Serializable {
 
 	public void setEinmr_oavg(Double einmr_oavg) {
 		this.einmr_oavg = einmr_oavg;
+	}
+
+	public Double getLinmr_oavg() {
+		return linmr_oavg;
+	}
+
+	public void setLinmr_oavg(Double linmr_oavg) {
+		this.linmr_oavg = linmr_oavg;
 	}
 
 	public Double getIpmr_oavg() {
@@ -154,7 +163,5 @@ public class wmoindicators implements Serializable {
 	public void setIvdr_oavg(Double ivdr_oavg) {
 		this.ivdr_oavg = ivdr_oavg;
 	}
-
-	
 
 }

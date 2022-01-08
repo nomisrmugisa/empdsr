@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -167,7 +169,9 @@ public class CaseAuditController {
 		};
 
 		List<case_identifiers> pendingAudit = caseRepo.findByPendingCase_status(1);// find all submitted cases but not
-																					// audited
+		//Randomly shuffle the list to be selected from to ensure that each pending case has a fair chance of being selected
+        Collections.shuffle(pendingAudit, new Random());
+														// audited
 		// create a bucket for the selected cases for auditing
 		List<audit_case> selectedForAuditing = new ArrayList<>();
 
@@ -192,28 +196,32 @@ public class CaseAuditController {
 			}
 
 			// get the week of auditing
-			int auditweek = Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) % 4;
+			int auditweek = (Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) % 4);
 
 			// get the number of neonatal audits to be done for that week
 			int neonatalCount = Utils.PRIORITY_MATRIX[auditweek][1];
-			int totalneonatal = algorithm.getAlg_neonatal();
-
+//			int totalneonatal = algorithm.getAlg_neonatal();
+/*
 			for (int counter = totalneonatal; counter < neonatalCount;) {
 
 				Integer nextPriority = persDeque.pollLast();
 
 				a: for (case_identifiers scase : pendingAudit) {
-					
+
 					java.util.Date date = scase.getBabydeath().getBaby_ddate();
 					Calendar cal = Calendar.getInstance();
 					cal.setTime(date);
 
-					//check whether the death is a recent one that falls within the review week
-					final boolean isyear = Calendar.getInstance().get(Calendar.YEAR) == cal.get(Calendar.YEAR);
-					final boolean ismonth = Calendar.getInstance().get(Calendar.MONTH) == cal.get(Calendar.MONTH);
-					final boolean isweek = Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) == cal
-							.get(Calendar.MONTH);
-					final boolean isvalid = isyear && ismonth && isweek;
+					// check whether the death is a recent one that falls within the previous week before the review
+					final boolean isyear1 = Calendar.getInstance().get(Calendar.YEAR) == cal.get(Calendar.YEAR);
+					final boolean isweek1 = (Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)
+							- cal.get(Calendar.WEEK_OF_YEAR)) == 1;
+
+					final boolean isyear2 = Calendar.getInstance().get(Calendar.YEAR) - cal.get(Calendar.YEAR) == 1;
+					final boolean isweek2 = cal.get(Calendar.WEEK_OF_YEAR)
+							- (Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)) == 51;
+
+					final boolean isvalid = (isyear1 && isweek1) || (isyear2 && isweek2);
 
 					if (!isvalid) {
 						continue a;
@@ -307,13 +315,13 @@ public class CaseAuditController {
 			if (!tempDeque.isEmpty()) {
 				persDeque.addAll(tempDeque);
 			}
-
+*/
 			/// still birth
 			// get the number of neonatal audits to be done for that week
 			int stillCount = Utils.PRIORITY_MATRIX[auditweek][0];
-			int totalStill = algorithm.getAlg_stillbirth();
+//			int totalStill = algorithm.getAlg_stillbirth();
 
-			for (int counter = totalStill; counter < stillCount; counter++) {
+			for (int counter = 0; counter < stillCount; counter++) {
 
 				case_identifiers taken = null;
 				case_identifiers taken1 = null;
@@ -404,7 +412,7 @@ public class CaseAuditController {
 
 					// add the combined JSON data to the new audit for the case
 					acase.setAudit_data(arrayToJson);
-					totalStill++;
+					//totalStill++;
 					selectedForAuditing.add(acase);
 
 					pendingAudit.remove(scase);// exclude the selected case from the next search
@@ -418,9 +426,9 @@ public class CaseAuditController {
 			algorithm.setAlg_month(Calendar.getInstance().get(Calendar.MONTH));
 			algorithm.setAlg_week(Calendar.getInstance().get(Calendar.WEEK_OF_MONTH));
 			algorithm.setAlg_modulo(auditweek);
-			algorithm.setAlg_neonatal(totalneonatal);
-			algorithm.setAlg_stillbirth(totalStill);
-			algorithm.setAlg_totalcases(totalStill + totalneonatal);
+			algorithm.setAlg_neonatal(0);
+			algorithm.setAlg_stillbirth(0);
+			algorithm.setAlg_totalcases(0);
 
 			algorithm.setAlg_deque(persDeque);
 			final String arrayToJson = objectMapper.writeValueAsString(algorithm);

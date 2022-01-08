@@ -271,11 +271,10 @@
 	<script type="text/javascript" th:inline="javascript">
 		Chart.register(ChartDataLabels);
 		Chart.defaults.set('plugins.datalabels', {
-			color: 'white'
+			color: 'lightgrey'
 		});
 
 		var xValues = /*[[${yearmonth_array}]]*/ "";
-		var yValues1 = /*[[${isbr_array}]]*/ "";
 		var yValues2 = /*[[${iisbr_array}]]*/ "";
 		var yValues3 = /*[[${aisbr_array}]]*/ "";
 		var barColors = ["red", "green", "blue", "orange", "brown"];
@@ -285,12 +284,6 @@
 			data: {
 				labels: xValues,
 				datasets: [
-					{
-						label: 'Institutional Stillbirth Rates',
-						backgroundColor: 'blue',
-						borderColor: 'blue',
-						data: yValues1,
-					},
 					{
 						label: 'Institutional Intrapartum Stillbirth Rates',
 						backgroundColor: 'red',
@@ -307,6 +300,14 @@
 			},
 			options: {
 				responsive: true,
+				scales: {
+					x: {
+						stacked: true,
+					},
+					y: {
+						stacked: true
+					}
+				},
 				plugins: {
 					datalabels: {
 						color: 'white',
@@ -364,15 +365,14 @@
 
 		var xValues = /*[[${yearmonth_array}]]*/ "";
 		var yValues = /*[[${ipmr_array}]]*/ "";
-		var barColors = ["red", "green", "blue", "orange", "brown"];
 
 		new Chart("ipmrChart", {
-			type: "bar",
+			type: "line",
 			data: {
 				labels: xValues,
 				datasets: [
 					{
-						backgroundColor: barColors,
+						borderColor: 'red',
 						data: yValues
 					}
 				]
@@ -380,6 +380,10 @@
 			options: {
 				responsive: true,
 				plugins: {
+					datalabels: {
+						backgroundColor: 'maroon',
+						borderRadius: 4,
+					},
 					legend: {
 						display: false,
 						position: 'top',
@@ -394,11 +398,10 @@
 	</script>
 	<script type="text/javascript" th:inline="javascript">
 
-
 		var xValues = /*[[${yearmonth_array}]]*/ "";
 		var yValues1 = /*[[${einmr_array}]]*/ "";
-		var yValues2 = /*[[${inmr_array}]]*/ "";
-		var barColors = ["red", "green", "blue", "orange", "brown"];
+		var yValues2 = /*[[${linmr_array}]]*/ "";
+		var barColors = ["red", "green"];
 
 		new Chart("inmrChart", {
 			type: "bar",
@@ -411,7 +414,7 @@
 						data: yValues1
 					},
 					{
-						label: 'Institutional Neonatal Mortality Rates',
+						label: 'Institutional Late Neonatal Mortality Rates',
 						backgroundColor: 'green',
 						data: yValues2
 					}
@@ -419,6 +422,14 @@
 			},
 			options: {
 				responsive: true,
+				scales: {
+					x: {
+						stacked: true,
+					},
+					y: {
+						stacked: true
+					}
+				},
 				plugins: {
 					legend: {
 						display: true,
@@ -426,7 +437,7 @@
 					},
 					title: {
 						display: true,
-						text: 'Trends in institutional early neonatal and overall neonatal deaths'
+						text: 'Trends in institutional neonatal deaths'
 					}
 				}
 			}
@@ -478,24 +489,37 @@
 		var barColors = ["red", "green", "blue", "orange", "brown"];
 
 		new Chart("icdrChart", {
-			type: "bar",
+			type: "line",
 			data: {
 				labels: xValues,
 				datasets: [
 					{
 						label: 'Percentage of Viginal Deliveries',
 						backgroundColor: 'Green',
-						data: yValues3
+						borderColor: 'Green',
+						data: yValues3,
+						datalabels: {
+							backgroundColor: 'Green'
+						},
 					},
 					{
 						label: 'Percentage of Caesarean Sections',
 						backgroundColor: 'Red',
-						data: yValues1
+						borderColor: 'Red',
+						data: yValues1,
+						datalabels: {
+							backgroundColor: 'Red'
+						},
 					},
 					{
 						label: 'Percentage of Assisted Deliveries',
 						backgroundColor: 'Blue',
-						data: yValues2
+						borderColor: 'Blue',
+						data: yValues2,
+						datalabels: {
+							backgroundColor: 'Blue'
+						},
+
 					}
 				]
 			},
@@ -510,6 +534,10 @@
 					}
 				},
 				plugins: {
+					datalabels: {
+						color: 'White',
+						borderRadius: 4,
+					},
 					legend: {
 						display: true,
 						position: 'top',

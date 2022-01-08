@@ -45,6 +45,13 @@
 					th:text="${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}">isbr</td>
 			</tr>
 			<tr>
+				<td th:text="#{label.linmr}"></td>
+				<th class="text-end lead fw-bold table-info"
+					th:text="${#numbers.formatDecimal(oavg.linmr_oavg, 1, 'COMMA', 1, 'POINT')}"></th>
+				<td class="text-end" th:each="item, itemStat : ${linmr_array}"
+					th:text="${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}">isbr</td>
+			</tr>
+			<tr>
 				<td th:text="#{label.ipmr}"></td>
 				<th class="text-end lead fw-bold table-info"
 					th:text="${#numbers.formatDecimal(oavg.ipmr_oavg, 1, 'COMMA', 1, 'POINT')}"></th>
