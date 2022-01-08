@@ -94,6 +94,64 @@ public class CaseAuditController {
 	@Autowired
 	private EmailService emailService;
 
+	@Scheduled(cron = "0 0 6-10,15-17 * * *") // (8-10 am and 3-5pm) of every day
+	public void autoCheckPendingReviews() {
+		try {
+			if (InternetAvailabilityChecker.isInternetAvailable()) {
+				Calendar cal = Calendar.getInstance();
+				cal.add(Calendar.DAY_OF_MONTH, -7);
+				sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+				final String[] recipients = new String[] { "makmanu128@gmail.com", "elelart@gmail.com" };
+				// , "thailegebriel@unicef.org",
+				// "pwobil@unicef.org", "mkim@unicef.org" };
+
+				// alert for pending reviews
+				List<audit_case> auditsPending = acaseRepo.findActivePendingAudit(cal.getTime());
+				if (auditsPending.size() > 0) {
+					emailService.sendSimpleMessage(recipients, "TEST MESSAGE - PDSR PENDING REVIEW NOTIFICATION!",
+							"Hello Reviewers,\n" + "\nThere are " + auditsPending.size()
+									+ " deaths yet to be reviewed for this week" + "\nHealth Facility: "
+									+ sync.getSync_name() + " - " + sync.getSync_code()
+									+ "\nThis is a TEST ALERT from the PDSR being developed by Alex and Eliezer. It is based on dummy data");
+				}
+
+				// alert for pending recommendations
+				List<audit_audit> recsPending = tcaseRepo.findByPendingRecommendation();
+				if (recsPending.size() > 0) {
+					emailService.sendSimpleMessage(recipients,
+							"TEST MESSAGE - PDSR PENDING RECOMMENDATIONS NOTIFICATION!",
+							"Hello Reviewers,\n" + "\nThere are " + recsPending.size() + " recommendations to work on"
+									+ "\nHealth Facility: " + sync.getSync_name() + " - " + sync.getSync_code()
+									+ "\nThis is a TEST ALERT from the PDSR being developed by Alex and Eliezer. It is based on dummy data");
+				}
+
+				// alerts for overdue actions
+				List<audit_recommendation> overdue = new ArrayList<>();
+				for (audit_recommendation elem : rcaseRepo.findAll()) {
+
+					if (new java.util.Date().after(elem.getRecommendation_deadline())
+							&& elem.getRecommendation_status() != 2) {
+					}
+
+					overdue.add(elem);
+				}
+				if (overdue.size() > 0) {
+					emailService.sendSimpleMessage(recipients,
+							"TEST MESSAGE - PDSR OVERDUE ACTIONS NOTIFICATION!",
+							"Hello Reviewers,\n" + "\nThere are " + overdue.size() + " incomplete actions that have passed the deadline"
+									+ "\nHealth Facility: " + sync.getSync_name() + " - " + sync.getSync_code()
+									+ "\nThis is a TEST ALERT from the PDSR being developed by Alex and Eliezer. It is based on dummy data");
+				}
+				
+				
+				
+			}
+
+		} catch (IOException e) {
+		}
+
+	}
+
 	@GetMapping("")
 	public String list(Principal principal, Model model) {
 
@@ -173,7 +231,7 @@ public class CaseAuditController {
 		return "auditing/audit-retrieve";
 	}
 
-	@Scheduled(cron = "0 0 * * * 0") // once a week on mondays but top of every hour
+	@Scheduled(cron = "0 0 6-10,15-17 * * 0") // once a week on mondays but 6 to 10 am and 3-5pm
 	public void autoSelectCases() {
 
 		// prepare a mapping reference type for converting the JSON strings to objects
@@ -478,10 +536,11 @@ public class CaseAuditController {
 						// "pwobil@unicef.org", "mkim@unicef.org" };
 
 						sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
-						emailService.sendSimpleMessage(recipients, "TEST MESSAGE - PDSR PENDING REVIEW NOTIFICATION!", "Hello Reviewers,\n"
-								+ "\nThere are " + selectedForAuditing.size() + " deaths ready to be reviewed this week"
-								+ "\nHealth Facility: " + sync.getSync_name() + " - " + sync.getSync_code()
-								+ "\nThis is a TEST ALERT from the PDSR being developed by Alex and Eliezer. It is based on dummy data");
+						emailService.sendSimpleMessage(recipients, "TEST MESSAGE - PDSR NEW REVIEWS NOTIFICATION!",
+								"Hello Reviewers,\n" + "\nThere are " + selectedForAuditing.size()
+										+ " deaths ready to be reviewed this week" + "\nHealth Facility: "
+										+ sync.getSync_name() + " - " + sync.getSync_code()
+										+ "\nThis is a TEST ALERT from the PDSR being developed by Alex and Eliezer. It is based on dummy data");
 					}
 				} catch (IOException e) {
 				}
