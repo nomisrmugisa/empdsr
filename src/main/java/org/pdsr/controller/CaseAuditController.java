@@ -44,6 +44,7 @@ import org.pdsr.repo.IcdCodesRepository;
 import org.pdsr.repo.SyncTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -105,8 +106,8 @@ public class CaseAuditController {
 			if (elem.getRecommendation_status() == 2) {
 				elem.setRec_color("bg-success text-white");
 
-			} else if (elem.getRecommendation_date().before(elem.getRecommendation_deadline())) {// date passed but not
-																									// completed
+			} else if (new java.util.Date().before(elem.getRecommendation_deadline())) {// date passed but not
+																						// completed
 
 				if (elem.getRecommendation_status() == 1) {
 					elem.setRec_color("table-warning text-dark");
@@ -154,8 +155,9 @@ public class CaseAuditController {
 		return "auditing/audit-retrieve";
 	}
 
+	@Scheduled(cron = "0 0 0 * * 0") // once a week on mondays
 	@PostMapping("")
-	public String listPost(Principal principal, Model model) {
+	public String listPost() {
 		if (syncRepo.findById(CONSTANTS.FACILITY_ID).isEmpty()) {
 			return "home";
 		}
@@ -169,9 +171,10 @@ public class CaseAuditController {
 		};
 
 		List<case_identifiers> pendingAudit = caseRepo.findByPendingCase_status(1);// find all submitted cases but not
-		//Randomly shuffle the list to be selected from to ensure that each pending case has a fair chance of being selected
-        Collections.shuffle(pendingAudit, new Random());
-														// audited
+		// Randomly shuffle the list to be selected from to ensure that each pending
+		// case has a fair chance of being selected
+		Collections.shuffle(pendingAudit, new Random());
+		// audited
 		// create a bucket for the selected cases for auditing
 		List<audit_case> selectedForAuditing = new ArrayList<>();
 
@@ -200,19 +203,24 @@ public class CaseAuditController {
 
 			// get the number of neonatal audits to be done for that week
 			int neonatalCount = Utils.PRIORITY_MATRIX[auditweek][1];
-//			int totalneonatal = algorithm.getAlg_neonatal();
-/*
+			int totalneonatal = algorithm.getAlg_neonatal();
+
 			for (int counter = totalneonatal; counter < neonatalCount;) {
 
 				Integer nextPriority = persDeque.pollLast();
 
 				a: for (case_identifiers scase : pendingAudit) {
 
+					if (scase.getCase_death() != 2 || scase.getBabydeath() == null) {
+						continue a;
+					}
+
 					java.util.Date date = scase.getBabydeath().getBaby_ddate();
 					Calendar cal = Calendar.getInstance();
 					cal.setTime(date);
 
-					// check whether the death is a recent one that falls within the previous week before the review
+					// check whether the death is a recent one that falls within the previous week
+					// before the review
 					final boolean isyear1 = Calendar.getInstance().get(Calendar.YEAR) == cal.get(Calendar.YEAR);
 					final boolean isweek1 = (Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)
 							- cal.get(Calendar.WEEK_OF_YEAR)) == 1;
@@ -224,10 +232,6 @@ public class CaseAuditController {
 					final boolean isvalid = (isyear1 && isweek1) || (isyear2 && isweek2);
 
 					if (!isvalid) {
-						continue a;
-					}
-
-					if (scase.getCase_death() != 2 || scase.getBabydeath() == null) {
 						continue a;
 					}
 
@@ -315,28 +319,44 @@ public class CaseAuditController {
 			if (!tempDeque.isEmpty()) {
 				persDeque.addAll(tempDeque);
 			}
-*/
+
 			/// still birth
 			// get the number of neonatal audits to be done for that week
 			int stillCount = Utils.PRIORITY_MATRIX[auditweek][0];
-//			int totalStill = algorithm.getAlg_stillbirth();
+			int totalStill = algorithm.getAlg_stillbirth();
 
-			for (int counter = 0; counter < stillCount; counter++) {
+			for (int counter = totalStill; counter < stillCount; counter++) {
 
 				case_identifiers taken = null;
 				case_identifiers taken1 = null;
 
 				a: for (case_identifiers tcase : pendingAudit) {
 
-					if (tcase.getCase_death() != 1) {
+					if (tcase.getCase_death() != 1 || tcase.getFetalheart() == null) {
 						continue a;
 					}
 
-					if (tcase.getFetalheart() == null) {
+					java.util.Date date = tcase.getDelivery().getDelivery_date();
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(date);
+
+					// check whether the death is a recent one that falls within the previous week
+					// before the review
+					final boolean isyear1 = Calendar.getInstance().get(Calendar.YEAR) == cal.get(Calendar.YEAR);
+					final boolean isweek1 = (Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)
+							- cal.get(Calendar.WEEK_OF_YEAR)) == 1;
+
+					final boolean isyear2 = Calendar.getInstance().get(Calendar.YEAR) - cal.get(Calendar.YEAR) == 1;
+					final boolean isweek2 = cal.get(Calendar.WEEK_OF_YEAR)
+							- (Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)) == 51;
+
+					final boolean isvalid = (isyear1 && isweek1) || (isyear2 && isweek2);
+
+					if (!isvalid) {
 						continue a;
 					}
 
-					Integer stillcase = tcase.getFetalheart().getFetalheart_lastheard();
+					final Integer stillcase = tcase.getFetalheart().getFetalheart_lastheard();
 
 					if (stillcase > 2) {// if it is not intrapartum then skip it
 						continue a;
@@ -412,7 +432,8 @@ public class CaseAuditController {
 
 					// add the combined JSON data to the new audit for the case
 					acase.setAudit_data(arrayToJson);
-					//totalStill++;
+					totalStill++;
+
 					selectedForAuditing.add(acase);
 
 					pendingAudit.remove(scase);// exclude the selected case from the next search
@@ -426,9 +447,9 @@ public class CaseAuditController {
 			algorithm.setAlg_month(Calendar.getInstance().get(Calendar.MONTH));
 			algorithm.setAlg_week(Calendar.getInstance().get(Calendar.WEEK_OF_MONTH));
 			algorithm.setAlg_modulo(auditweek);
-			algorithm.setAlg_neonatal(0);
-			algorithm.setAlg_stillbirth(0);
-			algorithm.setAlg_totalcases(0);
+			algorithm.setAlg_neonatal(totalneonatal);
+			algorithm.setAlg_stillbirth(totalStill);
+			algorithm.setAlg_totalcases(totalneonatal + totalStill);
 
 			algorithm.setAlg_deque(persDeque);
 			final String arrayToJson = objectMapper.writeValueAsString(algorithm);
@@ -653,8 +674,8 @@ public class CaseAuditController {
 		if (selected.getRecommendation_status() == 2) {
 			selected.setRec_color("alert alert-success");
 
-		} else if (selected.getRecommendation_date().before(selected.getRecommendation_deadline())) {// date passed but
-																										// not
+		} else if (new java.util.Date().before(selected.getRecommendation_deadline())) {// date passed but
+																						// not
 			// completed
 
 			if (selected.getRecommendation_status() == 1) {

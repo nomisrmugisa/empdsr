@@ -20,7 +20,7 @@ public class EmailService {
 	@Autowired
 	private SyncTableRepository syncRepo;
 
-	public void sendSimpleMessage(String to, String subject, String text) {
+	public void sendSimpleMessage(String[] to, String subject, String text) {
 
 		SimpleMailMessage message = new SimpleMailMessage();
 		message.setFrom(syncRepo.findById(CONSTANTS.FACILITY_ID).get().getSync_email());

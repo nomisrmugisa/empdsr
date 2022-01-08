@@ -62,8 +62,6 @@ public class ReportController {
 	@Autowired
 	private MessageSource msg;
 
-	@Autowired
-	private EmailService emailService;
 
 	@GetMapping("")
 	public String list(Principal principal, Model model) {
@@ -233,16 +231,6 @@ public class ReportController {
 		}
 
 		weekRepo.saveAll(selected.getGrid_weekly());
-
-		try {
-			if (InternetAvailabilityChecker.isInternetAvailable()) {
-				emailService.sendSimpleMessage("makmanu128@gmail.com", "Test Email",
-						"Test Success from the PDSR Application");
-				emailService.sendSimpleMessage("elelart@gmail.com", "Test Email",
-						"Test Success from the PDSR Application");
-			}
-		} catch (IOException e) {
-		}
 
 		return "redirect:/reporting/edit/" + selected.getGrid_year() + "/" + selected.getGrid_month();
 	}

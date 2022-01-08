@@ -1,5 +1,6 @@
 package org.pdsr.controller;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -16,6 +17,8 @@ import java.util.stream.Stream;
 import javax.transaction.Transactional;
 
 import org.pdsr.CONSTANTS;
+import org.pdsr.EmailService;
+import org.pdsr.InternetAvailabilityChecker;
 import org.pdsr.json.json_data;
 import org.pdsr.model.abnormality_table;
 import org.pdsr.model.case_antenatal;
@@ -145,6 +148,9 @@ public class CaseEntryController {
 
 	@Autowired
 	private MessageSource msg;
+
+	@Autowired
+	private EmailService emailService;
 
 	@GetMapping("")
 	public String list(Principal principal, Model model) {
@@ -564,7 +570,8 @@ public class CaseEntryController {
 		}
 		}
 
-		return "redirect:/registry/edit/" + selected.getCase_uuid() + "?page=" + page + "&success=yes";
+		return "redirect:/registry/edit/" + selected.getCase_uuid() + "?page=" + (page < 9 ? ++page : page)
+				+ "&success=yes";
 	}
 
 	@GetMapping("/submit/{id}")
@@ -588,6 +595,23 @@ public class CaseEntryController {
 		selected.setCase_status(1);
 
 		caseRepo.save(selected);
+
+		try {
+			if (InternetAvailabilityChecker.isInternetAvailable()) {
+				final String[] recipients = new String[] { "makmanu128@gmail.com", "elelart@gmail.com" };
+				// , "thailegebriel@unicef.org",
+				// "pwobil@unicef.org", "mkim@unicef.org" };
+
+				sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+				emailService.sendSimpleMessage(recipients, "TEST MESSAGE- PDSR DEATH NOTIFICATION!",
+						"Hello, \nThis is is to notify you of a " + getAnswer("case_death", selected.getCase_death())
+								+ "\nMother's age: " + selected.getBiodata().getBiodata_mage() + "\nChild's sex: "
+								+ getAnswer("biodata_sex", selected.getBiodata().getBiodata_sex())
+								+ "\nHealth Facility: " + sync.getSync_name() + " - " + sync.getSync_code()
+								+ "\n\nThis is a TEST ALERT from the PDSR being developed by Alex and Eliezer. It is based on dummy data");
+			}
+		} catch (IOException e) {
+		}
 
 		return "redirect:/registry?page=1&success=yes";
 	}
@@ -1081,7 +1105,7 @@ public class CaseEntryController {
 						new json_data(getQuestion("label.labour_herbalaug"),
 								getAnswer("yesnodk_options", o.getLabour_herbalaug()), true),
 						new json_data(getQuestion("label.labour_partograph"),
-								getAnswer("yesnodk_options", o.getLabour_partograph()), true),
+								getAnswer("yesnodkna_options", o.getLabour_partograph()), true),
 						new json_data(getQuestion("label.labour_lasttime1"),
 								o.getLabour_lasthour1() + getQuestion("txt.hours") + " and " + o.getLabour_lastminute1()
 										+ getQuestion("txt.minutes"),

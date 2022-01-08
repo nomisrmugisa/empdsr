@@ -1,6 +1,7 @@
 <div th:fragment="case_identifiers">
 	<div class="row">
 		<input th:field="*{case_uuid}" hidden=true />
+		<input th:field="*{case_sync}" hidden=true />
 		<div class="col-md-4 mb-3">
 			<label class="control-label" th:text=#{label.case_date}></label> <input type="date"
 				class="form-control form-control-sm" th:field="*{case_date}" readonly />
@@ -36,7 +37,7 @@
 	</div>
 	<hr class="mb-2 bg-secondary">
 	<div class="">
-		<button class="btn btn-primary" type="submit" th:utext="#{save.button}"></button>
+		<button class="btn btn-primary" type="submit" th:utext="#{save.next.button}"></button>
 		<a class="btn btn-light" th:utext="#{next.button}"
 			th:href="@{/registry/edit/{id}?page=1(id=${selected.case_uuid})}"></a>
 	</div>
@@ -105,9 +106,7 @@
 	<div class="">
 		<a class="btn btn-light" th:utext="#{prev.button}"
 			th:href="@{/registry/edit/{id}?page=0(id=${selected.case_uuid})}"></a>
-		<button class="btn btn-primary" type="submit" th:utext="#{save.button}"></button>
-		<a class="btn btn-light" th:utext="#{next.button}"
-			th:href="@{/registry/edit/{id}?page=2(id=${selected.case_uuid})}"></a>
+		<button class="btn btn-primary" type="submit" th:utext="#{save.next.button}"></button>
 	</div>
 </div>
 <!--  biodata end -->
@@ -152,9 +151,7 @@
 	<div class="">
 		<a class="btn btn-light" th:utext="#{prev.button}"
 			th:href="@{/registry/edit/{id}?page=1(id=${selected.case_uuid})}"></a>
-		<button class="btn btn-primary" type="submit" th:utext="#{save.button}"></button>
-		<a class="btn btn-light" th:utext="#{next.button}"
-			th:href="@{/registry/edit/{id}?page=3(id=${selected.case_uuid})}"></a>
+		<button class="btn btn-primary" type="submit" th:utext="#{save.next.button}"></button>
 	</div>
 </div>
 <!--  pregnancy end -->
@@ -271,9 +268,7 @@
 	<div class="">
 		<a class="btn btn-light" th:utext="#{prev.button}"
 			th:href="@{/registry/edit/{id}?page=2(id=${selected.case_uuid})}"></a>
-		<button class="btn btn-primary" type="submit" th:utext="#{save.button}"></button>
-		<a class="btn btn-light" th:utext="#{next.button}"
-			th:href="@{/registry/edit/{id}?page=4(id=${selected.case_uuid})}"></a>
+		<button class="btn btn-primary" type="submit" th:utext="#{save.next.button}"></button>
 	</div>
 </div>
 <!-- referral end -->
@@ -331,9 +326,7 @@
 	<div class="">
 		<a class="btn btn-light" th:utext="#{prev.button}"
 			th:href="@{/registry/edit/{id}?page=3(id=${selected.case_uuid})}"></a>
-		<button class="btn btn-primary" type="submit" th:utext="#{save.button}"></button>
-		<a class="btn btn-light" th:utext="#{next.button}"
-			th:href="@{/registry/edit/{id}?page=5(id=${selected.case_uuid})}"></a>
+		<button class="btn btn-primary" type="submit" th:utext="#{save.next.button}"></button>
 	</div>
 </div>
 <!--  delivery end -->
@@ -541,9 +534,7 @@
 	<div class="">
 		<a class="btn btn-light" th:utext="#{prev.button}"
 			th:href="@{/registry/edit/{id}?page=4(id=${selected.case_uuid})}"></a>
-		<button class="btn btn-primary" type="submit" th:utext="#{save.button}"></button>
-		<a class="btn btn-light" th:utext="#{next.button}"
-			th:href="@{/registry/edit/{id}?page=6(id=${selected.case_uuid})}"></a>
+		<button class="btn btn-primary" type="submit" th:utext="#{save.next.button}"></button>
 	</div>
 </div>
 <!--  antenatal end -->
@@ -710,9 +701,7 @@
 	<div class="">
 		<a class="btn btn-light" th:utext="#{prev.button}"
 			th:href="@{/registry/edit/{id}?page=5(id=${selected.case_uuid})}"></a>
-		<button class="btn btn-primary" type="submit" th:utext="#{save.button}"></button>
-		<a class="btn btn-light" th:utext="#{next.button}"
-			th:href="@{/registry/edit/{id}?page=7(id=${selected.case_uuid})}"></a>
+		<button class="btn btn-primary" type="submit" th:utext="#{save.next.button}"></button>
 	</div>
 </div>
 <!--  labour end -->
@@ -923,9 +912,7 @@
 	<div class="">
 		<a class="btn btn-light" th:utext="#{prev.button}"
 			th:href="@{/registry/edit/{id}?page=6(id=${selected.case_uuid})}"></a>
-		<button class="btn btn-primary" type="submit" th:utext="#{save.button}"></button>
-		<a class="btn btn-light" th:utext="#{next.button}"
-			th:href="@{/registry/edit/{id}?page=8(id=${selected.case_uuid})}"></a>
+		<button class="btn btn-primary" type="submit" th:utext="#{save.next.button}"></button>
 	</div>
 </div>
 <!--  birth end -->
@@ -972,9 +959,7 @@
 	<div class="">
 		<a class="btn btn-light" th:utext="#{prev.button}"
 			th:href="@{/registry/edit/{id}?page=7(id=${selected.case_uuid})}"></a>
-		<button class="btn btn-primary" type="submit" th:utext="#{save.button}"></button>
-		<a class="btn btn-light" th:utext="#{next.button}"
-			th:href="@{/registry/edit/{id}?page=9(id=${selected.case_uuid})}"></a>
+		<button class="btn btn-primary" type="submit" th:utext="#{save.next.button}"></button>
 	</div>
 </div>
 <!-- fetal heart end -->
@@ -1110,9 +1095,7 @@
 	<div class="">
 		<a class="btn btn-light" th:utext="#{prev.button}"
 			th:href="@{/registry/edit/{id}?page=7(id=${selected.case_uuid})}"></a>
-		<button class="btn btn-primary" type="submit" th:utext="#{save.button}"></button>
-		<a class="btn btn-light" th:utext="#{next.button}"
-			th:href="@{/registry/edit/{id}?page=9(id=${selected.case_uuid})}"></a>
+		<button class="btn btn-primary" type="submit" th:utext="#{save.next.button}"></button>
 	</div>
 </div>
 <!-- baby death end -->
