@@ -728,6 +728,7 @@ public class CaseEntryController {
 								+ "\nMother's age: " + selected.getBiodata().getBiodata_mage() + "\nChild's sex: "
 								+ getAnswer("sex_options", selected.getBiodata().getBiodata_sex())
 								+ "\nHealth Facility: " + sync.getSync_name() + " - " + sync.getSync_code()
+								+ "\nPlease check if eligible"
 								+ "\n\nThis is a TEST ALERT from the PDSR being developed by Alex and Eliezer. It is based on dummy data");
 			}
 		} catch (IOException e) {

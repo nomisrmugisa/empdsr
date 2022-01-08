@@ -103,8 +103,9 @@ public class CaseAuditController {
 		}
 
 		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DAY_OF_MONTH, -7); 
-		model.addAttribute("items", acaseRepo.findActivePendingAudit(cal.getTime()));////pick data selected at least seven days ago
+		cal.add(Calendar.DAY_OF_MONTH, -7);
+		model.addAttribute("items", acaseRepo.findActivePendingAudit(cal.getTime()));//// pick data selected at least
+																						//// seven days ago
 
 		model.addAttribute("items1", tcaseRepo.findByPendingRecommendation());
 
@@ -162,13 +163,13 @@ public class CaseAuditController {
 
 		return "auditing/audit-retrieve";
 	}
-	
+
 	@PostMapping("")
 	public String selectSpecialCases(Principal principal, Model model) {
 		if (syncRepo.findById(CONSTANTS.FACILITY_ID).isEmpty()) {
 			return "home";
 		}
-		
+
 		return "auditing/audit-retrieve";
 	}
 
@@ -216,7 +217,7 @@ public class CaseAuditController {
 
 			// get the number of neonatal audits to be done for that week
 			int neonatalCount = Utils.PRIORITY_MATRIX[auditweek][1];
-			int totalneonatal = algorithm.getAlg_neonatal();
+			int totalneonatal = algorithm.getAlg_neonatal() == null ? 0 : algorithm.getAlg_neonatal();
 
 			for (int counter = totalneonatal; counter < neonatalCount;) {
 
@@ -336,7 +337,7 @@ public class CaseAuditController {
 			/// still birth
 			// get the number of neonatal audits to be done for that week
 			int stillCount = Utils.PRIORITY_MATRIX[auditweek][0];
-			int totalStill = algorithm.getAlg_stillbirth();
+			int totalStill = algorithm.getAlg_stillbirth() == null ? 0 : algorithm.getAlg_stillbirth();
 
 			for (int counter = totalStill; counter < stillCount; counter++) {
 
@@ -477,10 +478,10 @@ public class CaseAuditController {
 						// "pwobil@unicef.org", "mkim@unicef.org" };
 
 						sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
-						emailService.sendSimpleMessage(recipients, "TEST MESSAGE- PDSR DEATH NOTIFICATION!", "Hello,\n"
+						emailService.sendSimpleMessage(recipients, "TEST MESSAGE - PDSR PENDING REVIEW NOTIFICATION!", "Hello Reviewers,\n"
 								+ "\nThere are " + selectedForAuditing.size() + " deaths ready to be reviewed this week"
 								+ "\nHealth Facility: " + sync.getSync_name() + " - " + sync.getSync_code()
-								+ "This is a TEST ALERT from the PDSR being developed by Alex and Eliezer. It is based on dummy data");
+								+ "\nThis is a TEST ALERT from the PDSR being developed by Alex and Eliezer. It is based on dummy data");
 					}
 				} catch (IOException e) {
 				}
