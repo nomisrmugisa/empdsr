@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -45,6 +46,9 @@ public class audit_case implements Serializable {
 	@Column
 	private Integer audit_expired;//if null then audit is still active else audit expired
 
+	@OneToOne(mappedBy = "audit_case")
+	private audit_audit audit_audit;
+
 	
 	public String getAudit_uuid() {
 		return audit_uuid;
@@ -78,6 +82,14 @@ public class audit_case implements Serializable {
 	}
 	public void setAudit_expired(Integer audit_expired) {
 		this.audit_expired = audit_expired;
+	}
+	
+	
+	public audit_audit getAudit_audit() {
+		return audit_audit;
+	}
+	public void setAudit_audit(audit_audit audit_audit) {
+		this.audit_audit = audit_audit;
 	}
 	@Override
 	public int hashCode() {

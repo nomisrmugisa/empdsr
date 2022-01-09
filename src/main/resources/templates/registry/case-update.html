@@ -42,7 +42,7 @@
 				</a>
 				<a th:href="@{/registry/edit/{id}?page=8(id=${selected.case_uuid})}" th:if="${selected.case_death==2}">
 					<span class="btn small"
-						th:classappend="${selected.babydeath}?'(${selected.babydeath.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Baby's
+						th:classappend="${selected.babydeath}?(${selected.babydeath.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Baby's
 						Death</span>
 				</a>
 				<a th:href="@{/registry/edit/{id}?page=9(id=${selected.case_uuid})}">

@@ -94,7 +94,7 @@ public class CaseAuditController {
 	@Autowired
 	private EmailService emailService;
 
-	@Scheduled(cron = "0 0 6-10,15-17 * * *") // (8-10 am and 3-5pm) of every day
+	@Scheduled(cron = "0 0 9 * * 1,3") // (9pm) of every tuesday, thursday within each week
 	public void autoCheckPendingReviews() {
 		try {
 			if (InternetAvailabilityChecker.isInternetAvailable()) {
@@ -127,7 +127,7 @@ public class CaseAuditController {
 
 				// alerts for overdue actions
 				List<audit_recommendation> overdue = new ArrayList<>();
-				for (audit_recommendation elem : rcaseRepo.findAll()) {
+				for (audit_recommendation elem : rcaseRepo.findByPendingAction()) {
 
 					if (new java.util.Date().after(elem.getRecommendation_deadline())
 							&& elem.getRecommendation_status() != 2) {
@@ -168,7 +168,7 @@ public class CaseAuditController {
 		model.addAttribute("items1", tcaseRepo.findByPendingRecommendation());
 
 		List<audit_recommendation> recommendations = new ArrayList<>();
-		for (audit_recommendation elem : rcaseRepo.findAll()) {
+		for (audit_recommendation elem : rcaseRepo.findByPendingAction()) {
 
 			if (elem.getRecommendation_status() == 2) {
 				elem.setRec_color("bg-success text-white");
@@ -231,7 +231,7 @@ public class CaseAuditController {
 		return "auditing/audit-retrieve";
 	}
 
-	@Scheduled(cron = "0 0 6-10,15-17 * * 0") // once a week on mondays but 6 to 10 am and 3-5pm
+	@Scheduled(cron = "0 0 9 * * 0") // once a week on mondays at 9am
 	public void autoSelectCases() {
 
 		// prepare a mapping reference type for converting the JSON strings to objects
@@ -551,7 +551,6 @@ public class CaseAuditController {
 			// save them to the audit_case
 
 		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

@@ -14,44 +14,189 @@
 		body {
 			background-color: #4682B4;
 		}
-
-		#logo {
-			border-radius: 5px;
-			background-image: url('img/logo.JPG');
-			background-size: 100%;
-			background-repeat: no-repeat;
-			height: 500px;
-		}
 	</style>
 
 </head>
 
 <body class="ms-5 me-5 mb-5 mt-2">
 	<div th:insert="fragments/current-user"></div>
-	<div id="logo" class="position-relative overflow-hidden p-3 p-md-5">
-		<div class="float-end">
-			<div class="">
-				<a sec:authorize="hasRole('ENTRY')" class="btn btn-sm btn-danger" href="#" th:href="@{/registry}"
-					th:text="#{case.entry}"> </a>
-				<a sec:authorize="hasAnyRole('AUDIT', 'TASKS')" class="btn btn-sm btn-success" href="#" th:href="@{/auditing}"
-					th:text="#{case.audit}"></a>
-				<a sec:authorize="hasRole('VIEWS')" class="btn btn-sm btn-warning" href="#" th:href="@{/reporting}"
-					th:text="#{case.analysis}"></a>
-				<a sec:authorize="hasRole('SETUP')" class="btn btn-sm btn-dark" href="#" th:href="@{/controls}"
-					th:utext="#{controls}"></a>
-			</div>
-			<div class="text-muted text-right" th:utext="#{app.version}"></div>
-			<div th:if="${activated}" class="alert alert-danger">
-				<h4>Not Activated</h4>
-				<p>
-					[[#{activate.alert}]] <a href="#" th:href="@{/controls}" th:utext="#{controls}"></a>
+	<div class="text-end p-2 bg-white rounded mb-3">
+		<a sec:authorize="hasRole('ENTRY')" class="btn btn-sm btn-danger" href="#" th:href="@{/registry}"
+			th:text="#{case.entry}"> </a>
+		<a sec:authorize="hasAnyRole('AUDIT', 'TASKS')" class="btn btn-sm btn-success" href="#" th:href="@{/auditing}"
+			th:text="#{case.audit}"></a>
+		<a sec:authorize="hasRole('VIEWS')" class="btn btn-sm btn-warning" href="#" th:href="@{/reporting}"
+			th:text="#{case.analysis}"></a>
+		<a sec:authorize="hasRole('SETUP')" class="btn btn-sm btn-dark" href="#" th:href="@{/controls}"
+			th:utext="#{controls}"></a>
+
+		<div th:if="${activated}" class="mt-2 alert alert-danger">
+			<h4>Not Activated</h4>
+			<p>
+				[[#{activate.alert}]] <a href="#" th:href="@{/controls}" th:utext="#{controls}"></a>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-5 mb-3">
+			<img class="mb-3 border border-info" id="logo" src="img/logo.JPG" alt="Italian Trulli" height="200"
+				width="100%" style="border-radius: 5px;">
+			<table class="table table-sm table-bordered table-striped table-hover table-responsive table-light mb-3">
+				<thead class="table-primary small">
+					<tr class="small">
+						<th style="width: 50%;" th:text="#{fp.totals}">&nbsp;</th>
+						<th class="" th:text="#{fp.stillbirths}"></th>
+						<th class="" th:text="#{fp.neodeaths}"></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th th:text="#{fp.cases.entered}"></th>
+						<td class="fw-bold">[[${entered_sb}]]</td>
+						<td class="fw-bold">[[${entered_nd}]]</td>
+					</tr>
+					<tr>
+						<th th:text="#{fp.cases.submitted}"></th>
+						<td class="fw-bold">[[${submitted_sbn}]]&nbsp;<span
+								class="text-muted small fw-normal">([[${#numbers.formatDecimal(submitted_sbp, 1,
+								'COMMA', 1,
+								'POINT')}]]%)</span></td>
+						<td class="fw-bold">[[${submitted_ndn}]]&nbsp;<span
+								class="text-muted small fw-normal">([[${#numbers.formatDecimal(submitted_ndp, 1,
+								'COMMA', 1,
+								'POINT')}]]%)</span></td>
+					</tr>
+
+					<tr>
+						<th th:text="#{fp.cases.selected}"></th>
+						<td class="fw-bold">[[${selected_sb}]]</td>
+						<td class="fw-bold">[[${selected_nd}]]</td>
+					</tr>
+					<tr>
+						<th th:text="#{fp.cases.reviewed}"></th>
+						<td class="fw-bold">[[${reviewed_sbn}]]&nbsp;<span
+								class="text-muted small fw-normal">([[${#numbers.formatDecimal(reviewed_sbp, 1, 'COMMA',
+								1,
+								'POINT')}]]%)</span></td>
+						<td class="fw-bold">[[${reviewed_ndn}]]&nbsp;<span
+								class="text-muted small fw-normal">([[${#numbers.formatDecimal(reviewed_ndp, 1, 'COMMA',
+								1,
+								'POINT')}]]%)</span></td>
+
+					</tr>
+				</tbody>
+			</table>
+			<table class="table table-sm table-bordered table-striped table-hover table-responsive table-light">
+				<thead class="table-warning small">
+					<tr>
+						<th style="width: 50%;" th:text="#{fp.current}">&nbsp;</th>
+						<th class="" th:text="#{fp.stillbirths}"></th>
+						<th class="" th:text="#{fp.neodeaths}"></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th th:text="#{fp.cases.entered}"></th>
+						<td class="fw-bold">[[${entered_sb}]]</td>
+						<td class="fw-bold">[[${entered_nd}]]</td>
+					</tr>
+					<tr>
+						<th th:text="#{fp.cases.submitted}"></th>
+						<td class="fw-bold">[[${submitted_sbn}]]&nbsp;<span
+								class="text-primary small fw-normal">([[${#numbers.formatDecimal(submitted_sbp, 1,
+								'COMMA', 1,
+								'POINT')}]]%)</span></td>
+						<td class="fw-bold">[[${submitted_ndn}]]&nbsp;<span
+								class="text-primary small fw-normal">([[${#numbers.formatDecimal(submitted_ndp, 1,
+								'COMMA', 1,
+								'POINT')}]]%)</span></td>
+					</tr>
+
+					<tr>
+						<th th:text="#{fp.cases.selected}"></th>
+						<td class="fw-bold">[[${selected_sb}]]</td>
+						<td class="fw-bold">[[${selected_nd}]]</td>
+					</tr>
+					<tr>
+						<th th:text="#{fp.cases.reviewed}"></th>
+						<td class="fw-bold">[[${reviewed_sbn}]]&nbsp;<span
+								class="text-primary small fw-normal">([[${#numbers.formatDecimal(reviewed_sbp, 1,
+								'COMMA', 1,
+								'POINT')}]]%)</span></td>
+						<td class="fw-bold">[[${reviewed_ndn}]]&nbsp;<span
+								class="text-primary small fw-normal">([[${#numbers.formatDecimal(reviewed_ndp, 1,
+								'COMMA', 1,
+								'POINT')}]]%)</span></td>
+
+					</tr>
+				</tbody>
+			</table>
+
+		</div>
+		<div class="col-md-7 mb-1">
+			<div class="row">
+				<div class="rounded p-1">
+					<div class="row">
+						<div class="col-md-3 mb-3">
+							<div class="card text-white bg-info">
+								<div class="card-header small">Number of recommendatons made</div>
+								<div class="card-body">
+									<h5 class="card-title">0 (0.0%)</h5>
+									<p class="card-text">Year 2022</p>
+								</div>
+							</div>
+							<div class="card-footer bg-white">
+								<small class="text-info fw-bold">Overall</small>
+								&nbsp;<b style="font-size: 25px;">0</b>
+							</div>
+						</div>
+						<div class="col-md-3 mb-3">
+							<div class="card text-white bg-success">
+								<div class="card-header small">Recommendations with actions completed</div>
+								<div class="card-body">
+									<h5 class="card-title">0 (0.0%)</h5>
+									<p class="card-text">Year 2022</p>
+								</div>
+							</div>
+							<div class="card-footer bg-white">
+								<small class="text-success fw-bold">Overall completed</small>
+								&nbsp;<b style="font-size: 25px;">0</b>
+							</div>
+						</div>
+						<div class="col-md-3 mb-3">
+							<div class="card text-dark bg-warning">
+								<div class="card-header small">Recommendations with actions pending</div>
+								<div class="card-body">
+									<h5 class="card-title">0 (0.0%)</h5>
+									<p class="card-text">Year 2022</p>
+								</div>
+							</div>
+							<div class="card-footer bg-white">
+								<small class="text-secondary fw-bold">Overall pending</small>
+								&nbsp;<b style="font-size: 25px;">0</b>
+							</div>
+						</div>
+						<div class="col-md-3 mb-3">
+							<div class="card text-white bg-danger">
+								<div class="card-header small">Recommendations with actions overdue</div>
+								<div class="card-body">
+									<h5 class="card-title">0 (0.0%)</h5>
+									<p class="card-text">Year 2022</p>
+								</div>
+							</div>
+							<div class="card-footer bg-white">
+								<small class="text-danger fw-bold">Overall overdue</small>
+								&nbsp;<b style="font-size: 25px;">0</b>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
-
-
 	</div>
 
+
 	<footer class="text-light text-center">
+		<div th:utext="#{app.version}"></div>
 		<script src="webjars/jquery/3.6.0/jquery.min.js"></script>
 		<script src="webjars/bootstrap/5.1.3/js/bootstrap.min.js"></script>
 	</footer>
