@@ -11,6 +11,12 @@ public class wmoindicators implements Serializable {
 
 	private String wmdesc;
 
+	private Integer totalbirths = 0;
+	private Integer totallivebirths = 0;
+	private Integer totalperinatals = 0;
+	private Integer totalneonatals = 0;
+	private Integer totalstillbirths = 0;
+
 	private Double isbr_oavg = 0.0;
 	private Double iisbr_oavg = 0.0;
 	private Double aisbr_oavg = 0.0;
@@ -162,6 +168,46 @@ public class wmoindicators implements Serializable {
 
 	public void setIvdr_oavg(Double ivdr_oavg) {
 		this.ivdr_oavg = ivdr_oavg;
+	}
+
+	public Integer getTotalbirths() {
+		return totalbirths;
+	}
+
+	public void setTotalbirths(Integer totalbirths) {
+		this.totalbirths = totalbirths;
+	}
+
+	public Integer getTotallivebirths() {
+		return totallivebirths;
+	}
+
+	public void setTotallivebirths(Integer totallivebirths) {
+		this.totallivebirths = totallivebirths;
+	}
+
+	public Integer getTotalperinatals() {
+		return totalperinatals;
+	}
+
+	public void setTotalperinatals(Integer totalperinatals) {
+		this.totalperinatals = totalperinatals;
+	}
+
+	public Integer getTotalneonatals() {
+		return totalneonatals;
+	}
+
+	public void setTotalneonatals(Integer totalneonatals) {
+		this.totalneonatals = totalneonatals;
+	}
+
+	public Integer getTotalstillbirths() {
+		return totalstillbirths;
+	}
+
+	public void setTotalstillbirths(Integer totalstillbirths) {
+		this.totalstillbirths = totalstillbirths;
 	}
 
 }

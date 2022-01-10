@@ -10,7 +10,12 @@
 	<link rel="stylesheet" href="css/fontawesome-free/css/all.min.css" />
 	<link rel="stylesheet" href="webjars/bootstrap/5.1.3/css/bootstrap.min.css" />
 
-	<style>
+<!--	<style>
+		body {
+			background-color: #4682B4;
+		}
+	</style>
+-->	<style>
 		body {
 			background-color: #4682B4;
 		}
@@ -38,10 +43,10 @@
 	</div>
 	<div class="row">
 		<div class="col-md-5 mb-3">
-			<img class="mb-3 border border-info" id="logo" src="img/logo.JPG" alt="Italian Trulli" height="200"
-				width="100%" style="border-radius: 5px;">
-			<table class="table table-sm table-bordered table-striped table-hover table-responsive table-light mb-3">
-				<thead class="table-primary small">
+			<img class="mb-3 border border-info" id="logo" src="img/logo.JPG" height="200" width="100%"
+				style="border-radius: 5px;">
+			<table class="table table-sm table-hover table-responsive text-white mb-3">
+				<thead class="table-info small">
 					<tr class="small">
 						<th style="width: 50%;" th:text="#{fp.totals}">&nbsp;</th>
 						<th class="" th:text="#{fp.stillbirths}"></th>
@@ -50,83 +55,82 @@
 				</thead>
 				<tbody>
 					<tr>
-						<th th:text="#{fp.cases.entered}"></th>
+						<td th:text="#{fp.cases.entered}"></td>
 						<td class="fw-bold">[[${entered_sb}]]</td>
 						<td class="fw-bold">[[${entered_nd}]]</td>
 					</tr>
 					<tr>
-						<th th:text="#{fp.cases.submitted}"></th>
+						<td th:text="#{fp.cases.submitted}"></td>
 						<td class="fw-bold">[[${submitted_sbn}]]&nbsp;<span
-								class="text-muted small fw-normal">([[${#numbers.formatDecimal(submitted_sbp, 1,
+								class="small fw-normal">([[${#numbers.formatDecimal(submitted_sbp, 1,
 								'COMMA', 1,
 								'POINT')}]]%)</span></td>
 						<td class="fw-bold">[[${submitted_ndn}]]&nbsp;<span
-								class="text-muted small fw-normal">([[${#numbers.formatDecimal(submitted_ndp, 1,
+								class="small fw-normal">([[${#numbers.formatDecimal(submitted_ndp, 1,
 								'COMMA', 1,
 								'POINT')}]]%)</span></td>
 					</tr>
 
 					<tr>
-						<th th:text="#{fp.cases.selected}"></th>
+						<td th:text="#{fp.cases.selected}"></td>
 						<td class="fw-bold">[[${selected_sb}]]</td>
 						<td class="fw-bold">[[${selected_nd}]]</td>
 					</tr>
 					<tr>
-						<th th:text="#{fp.cases.reviewed}"></th>
+						<td th:text="#{fp.cases.reviewed}"></td>
 						<td class="fw-bold">[[${reviewed_sbn}]]&nbsp;<span
-								class="text-muted small fw-normal">([[${#numbers.formatDecimal(reviewed_sbp, 1, 'COMMA',
+								class="small fw-normal">([[${#numbers.formatDecimal(reviewed_sbp, 1, 'COMMA',
 								1,
 								'POINT')}]]%)</span></td>
 						<td class="fw-bold">[[${reviewed_ndn}]]&nbsp;<span
-								class="text-muted small fw-normal">([[${#numbers.formatDecimal(reviewed_ndp, 1, 'COMMA',
+								class="small fw-normal">([[${#numbers.formatDecimal(reviewed_ndp, 1, 'COMMA',
 								1,
 								'POINT')}]]%)</span></td>
 
 					</tr>
 				</tbody>
 			</table>
-			<table class="table table-sm table-bordered table-striped table-hover table-responsive table-light">
-				<thead class="table-warning small">
-					<tr>
-						<th style="width: 50%;" th:text="#{fp.current}">&nbsp;</th>
+			<table class="table table-sm table-hover table-responsive text-white">
+				<thead class="table-primary small">
+					<tr class="small">
+						<th style="width: 50%;" th:text="#{fp.current}+' - '+${cyear}">&nbsp;</th>
 						<th class="" th:text="#{fp.stillbirths}"></th>
 						<th class="" th:text="#{fp.neodeaths}"></th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
-						<th th:text="#{fp.cases.entered}"></th>
-						<td class="fw-bold">[[${entered_sb}]]</td>
-						<td class="fw-bold">[[${entered_nd}]]</td>
+						<td th:text="#{fp.cases.entered}"></td>
+						<td class="fw-bold">[[${c_entered_sb}]]</td>
+						<td class="fw-bold">[[${c_entered_nd}]]</td>
 					</tr>
 					<tr>
-						<th th:text="#{fp.cases.submitted}"></th>
-						<td class="fw-bold">[[${submitted_sbn}]]&nbsp;<span
-								class="text-primary small fw-normal">([[${#numbers.formatDecimal(submitted_sbp, 1,
+						<td th:text="#{fp.cases.submitted}"></td>
+						<td class="fw-bold">[[${c_submitted_sbn}]]&nbsp;<span
+								class="text-warning small fw-normal">([[${#numbers.formatDecimal(c_submitted_sbp, 1,
 								'COMMA', 1,
 								'POINT')}]]%)</span></td>
-						<td class="fw-bold">[[${submitted_ndn}]]&nbsp;<span
-								class="text-primary small fw-normal">([[${#numbers.formatDecimal(submitted_ndp, 1,
+						<td class="fw-bold">[[${c_submitted_ndn}]]&nbsp;<span
+								class="text-warning small fw-normal">([[${#numbers.formatDecimal(c_submitted_ndp, 1,
 								'COMMA', 1,
 								'POINT')}]]%)</span></td>
 					</tr>
 
 					<tr>
-						<th th:text="#{fp.cases.selected}"></th>
+						<td th:text="#{fp.cases.selected}"></td>
 						<td class="fw-bold">[[${selected_sb}]]</td>
 						<td class="fw-bold">[[${selected_nd}]]</td>
 					</tr>
 					<tr>
-						<th th:text="#{fp.cases.reviewed}"></th>
+						<td th:text="#{fp.cases.reviewed}"></td>
 						<td class="fw-bold">[[${reviewed_sbn}]]&nbsp;<span
-								class="text-primary small fw-normal">([[${#numbers.formatDecimal(reviewed_sbp, 1,
+								class="text-warning small fw-normal">([[${#numbers.formatDecimal(reviewed_sbp, 1,
 								'COMMA', 1,
 								'POINT')}]]%)</span></td>
 						<td class="fw-bold">[[${reviewed_ndn}]]&nbsp;<span
-								class="text-primary small fw-normal">([[${#numbers.formatDecimal(reviewed_ndp, 1,
+								class="text-warning small fw-normal">([[${#numbers.formatDecimal(reviewed_ndp, 1,
 								'COMMA', 1,
 								'POINT')}]]%)</span></td>
-
 					</tr>
 				</tbody>
 			</table>
@@ -138,57 +142,164 @@
 					<div class="row">
 						<div class="col-md-3 mb-3">
 							<div class="card text-white bg-info">
-								<div class="card-header small">Number of recommendatons made</div>
+								<div class="card-header small">[[#{fp.recommendations}]]</div>
 								<div class="card-body">
 									<h5 class="card-title">0 (0.0%)</h5>
 									<p class="card-text">Year 2022</p>
 								</div>
 							</div>
 							<div class="card-footer bg-white">
-								<small class="text-info fw-bold">Overall</small>
+								<small class="text-muted fw-bold">[[#{fp.overall}]]</small>
 								&nbsp;<b style="font-size: 25px;">0</b>
 							</div>
 						</div>
 						<div class="col-md-3 mb-3">
 							<div class="card text-white bg-success">
-								<div class="card-header small">Recommendations with actions completed</div>
+								<div class="card-header small">[[#{fp.actions.completed}]]</div>
 								<div class="card-body">
 									<h5 class="card-title">0 (0.0%)</h5>
 									<p class="card-text">Year 2022</p>
 								</div>
 							</div>
 							<div class="card-footer bg-white">
-								<small class="text-success fw-bold">Overall completed</small>
+								<small class="text-muted fw-bold">[[#{fp.overall.completed}]]</small>
 								&nbsp;<b style="font-size: 25px;">0</b>
 							</div>
 						</div>
 						<div class="col-md-3 mb-3">
 							<div class="card text-dark bg-warning">
-								<div class="card-header small">Recommendations with actions pending</div>
+								<div class="card-header small">[[#{fp.actions.pending}]]</div>
 								<div class="card-body">
 									<h5 class="card-title">0 (0.0%)</h5>
 									<p class="card-text">Year 2022</p>
 								</div>
 							</div>
 							<div class="card-footer bg-white">
-								<small class="text-secondary fw-bold">Overall pending</small>
+								<small class="text-muted fw-bold">[[#{fp.overall.pending}]]</small>
 								&nbsp;<b style="font-size: 25px;">0</b>
 							</div>
 						</div>
 						<div class="col-md-3 mb-3">
 							<div class="card text-white bg-danger">
-								<div class="card-header small">Recommendations with actions overdue</div>
+								<div class="card-header small">[[#{fp.actions.overdue}]]</div>
 								<div class="card-body">
 									<h5 class="card-title">0 (0.0%)</h5>
 									<p class="card-text">Year 2022</p>
 								</div>
 							</div>
 							<div class="card-footer bg-white">
-								<small class="text-danger fw-bold">Overall overdue</small>
+								<small class="text-muted fw-bold">[[#{fp.overall.overdue}]]</small>
 								&nbsp;<b style="font-size: 25px;">0</b>
 							</div>
 						</div>
 					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="card text-white bg-primary">
+						<div class="card-body">
+							<table class="table table-sm table-hover table-responsive text-end text-white"
+								style="font-size: 20px;">
+								<thead class="small">
+									<tr class="small">
+										<th style="width: 50%;" th:text="#{fp.totals}">&nbsp;</th>
+										<th class="" th:text="#{fp.numbers}"></th>
+										<th class="" th:text="#{fp.rates}"></th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td th:text="#{label.totalbirths}"></td>
+										<td>[[${oavg.totalbirths}]]</td>
+										<td>&nbsp;</td>
+									</tr>
+									<tr>
+										<td th:text="#{label.totallivebirths}"></td>
+										<td>[[${oavg.totallivebirths}]]</td>
+										<td>&nbsp;</td>
+									</tr>
+									<tr>
+										<td th:text="#{th.ipmr}"></td>
+										<td>[[${oavg.totalperinatals}]]</td>
+										<td class="text-white">[[${#numbers.formatDecimal(oavg.ipmr_oavg,
+											1, 'COMMA', 1, 'POINT')}]]</td>
+									</tr>
+									<tr>
+										<td th:text="#{th.inmr}"></td>
+										<td>[[${oavg.totalneonatals}]]</td>
+										<td class=" text-white">[[${#numbers.formatDecimal(oavg.inmr_oavg,
+											1, 'COMMA', 1, 'POINT')}]]</td>
+									</tr>
+									<tr>
+										<td th:text="#{th.isbr}"></td>
+										<td>[[${oavg.totalstillbirths}]]</td>
+										<td class="text-white">[[${#numbers.formatDecimal(oavg.isbr_oavg,
+											1, 'COMMA', 1, 'POINT')}]]</td>
+									</tr>
+									<tr>
+										<td th:text="#{th.immr}"></td>
+										<td>[[${oavg.mdeath_osum}]]</td>
+										<td class="text-white">[[${#numbers.formatDecimal(oavg.immr_oavg,
+											1, 'COMMA', 1, 'POINT')}]]</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="card text-white bg-primary">
+						<div class="card-body">
+							<table class="table table-sm table-hover table-responsive text-end text-white"
+								style="font-size: 20px;">
+								<thead class="small">
+									<tr class="small">
+										<th style="width: 50%;" th:text="#{fp.current}+' - '+${cyear}">&nbsp;</th>
+										<th class="" th:text="#{fp.numbers}"></th>
+										<th class="" th:text="#{fp.rates}"></th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td th:text="#{label.totalbirths}"></td>
+										<td>[[${oavg.totalbirths}]]</td>
+										<td>&nbsp;</td>
+									</tr>
+									<tr>
+										<td th:text="#{label.totallivebirths}"></td>
+										<td>[[${oavg.totallivebirths}]]</td>
+										<td>&nbsp;</td>
+									</tr>
+									<tr>
+										<td th:text="#{th.ipmr}"></td>
+										<td>[[${oavg.totalperinatals}]]</td>
+										<td class="text-white">[[${#numbers.formatDecimal(oavg.ipmr_oavg,
+											1, 'COMMA', 1, 'POINT')}]]</td>
+									</tr>
+									<tr>
+										<td th:text="#{th.inmr}"></td>
+										<td>[[${oavg.totalneonatals}]]</td>
+										<td class=" text-white">[[${#numbers.formatDecimal(oavg.inmr_oavg,
+											1, 'COMMA', 1, 'POINT')}]]</td>
+									</tr>
+									<tr>
+										<td th:text="#{th.isbr}"></td>
+										<td>[[${oavg.totalstillbirths}]]</td>
+										<td class="text-white">[[${#numbers.formatDecimal(oavg.isbr_oavg,
+											1, 'COMMA', 1, 'POINT')}]]</td>
+									</tr>
+									<tr>
+										<td th:text="#{th.immr}"></td>
+										<td>[[${oavg.mdeath_osum}]]</td>
+										<td class="text-white">[[${#numbers.formatDecimal(oavg.immr_oavg,
+											1, 'COMMA', 1, 'POINT')}]]</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
 				</div>
 			</div>
 		</div>
