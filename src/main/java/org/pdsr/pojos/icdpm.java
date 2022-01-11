@@ -12,12 +12,33 @@ public class icdpm implements Serializable {
 
 	private String pm_code;
 	private String pm_desc;
+	private String pm_tsum;
+
+	
+	
+	public icdpm() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+
 
 	public icdpm(String pm_code, String pm_desc) {
 		super();
 		this.pm_code = pm_code;
 		this.pm_desc = pm_desc;
 	}
+	
+	
+
+	public icdpm(String pm_code, String pm_desc, String pm_tsum) {
+		super();
+		this.pm_code = pm_code;
+		this.pm_desc = pm_desc;
+		this.pm_tsum = pm_tsum;
+	}
+
+
 
 	public String getPm_code() {
 		return pm_code;
@@ -33,6 +54,14 @@ public class icdpm implements Serializable {
 
 	public void setPm_desc(String pm_desc) {
 		this.pm_desc = pm_desc;
+	}
+
+	public String getPm_tsum() {
+		return pm_tsum;
+	}
+
+	public void setPm_tsum(String pm_tsum) {
+		this.pm_tsum = pm_tsum;
 	}
 
 	@Override

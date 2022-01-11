@@ -118,36 +118,36 @@
 								<tbody>
 									<tr>
 										<td th:text="#{label.totalbirths}"></td>
-										<td>[[${oavg.totalbirths}]]</td>
+										<td>[[${cavg.totalbirths}]]</td>
 										<td>&nbsp;</td>
 									</tr>
 									<tr>
 										<td th:text="#{label.totallivebirths}"></td>
-										<td>[[${oavg.totallivebirths}]]</td>
+										<td>[[${cavg.totallivebirths}]]</td>
 										<td>&nbsp;</td>
 									</tr>
 									<tr>
 										<td th:text="#{label.totalperinatals}"></td>
-										<td>[[${oavg.totalperinatals}]]</td>
-										<td class="text-white">[[${#numbers.formatDecimal(oavg.ipmr_oavg,
+										<td>[[${cavg.totalperinatals}]]</td>
+										<td class="text-white">[[${#numbers.formatDecimal(cavg.ipmr_oavg,
 											1, 'COMMA', 1, 'POINT')}]]</td>
 									</tr>
 									<tr>
 										<td th:text="#{label.totalneonataldeaths}"></td>
-										<td>[[${oavg.totalneonatals}]]</td>
-										<td class=" text-white">[[${#numbers.formatDecimal(oavg.inmr_oavg,
+										<td>[[${cavg.totalneonatals}]]</td>
+										<td class=" text-white">[[${#numbers.formatDecimal(cavg.inmr_oavg,
 											1, 'COMMA', 1, 'POINT')}]]</td>
 									</tr>
 									<tr>
 										<td th:text="#{label.totalstillbirths}"></td>
-										<td>[[${oavg.totalstillbirths}]]</td>
-										<td class="text-white">[[${#numbers.formatDecimal(oavg.isbr_oavg,
+										<td>[[${cavg.totalstillbirths}]]</td>
+										<td class="text-white">[[${#numbers.formatDecimal(cavg.isbr_oavg,
 											1, 'COMMA', 1, 'POINT')}]]</td>
 									</tr>
 									<tr>
 										<td th:text="#{label.totalmaternaldeaths}"></td>
-										<td>[[${oavg.mdeath_osum}]]</td>
-										<td class="text-white">[[${#numbers.formatDecimal(oavg.immr_oavg,
+										<td>[[${cavg.mdeath_osum}]]</td>
+										<td class="text-white">[[${#numbers.formatDecimal(cavg.immr_oavg,
 											1, 'COMMA', 1, 'POINT')}]]</td>
 									</tr>
 								</tbody>
@@ -161,46 +161,53 @@
 		<div class="col-md-2 mb-3">
 			<div class="row mb-3 pe-2">
 				<div class="card text-dark bg-info">
-					<div class="card-header small text-black bg-info fw-bold" style="font-size: 15px;">[[${cyear}]] Recommendations
+					<div class="card-header small text-black bg-info fw-bold" style="font-size: 15px;">[[${cyear}]]
+						Recommendations
 					</div>
 				</div>
-				<div class="card-footer bg-white" style="font-size: 20px;">
+				<div class="card-footer bg-white" style="font-size: 16px;">
 					<div class="row">
-						<div class="col-6">
+						<div class="col-8">
 							<small class="text-black">[[#{fp.overall}]]</small>
 						</div>
-						<div class="col-6 text-end fw-bold">
-							234
+						<div class="col-4 fw-bold text-end">
+							[[${atotal_actions}]]
 						</div>
 					</div>
 				</div>
-				<div class="card-footer bg-success" style="font-size: 20px;">
+				<div class="card-footer bg-success" style="font-size: 16px;">
 					<div class="row">
-						<div class="col-6">
-							<small class="text-white">[[#{fp.overall.completed}]]</small>
+						<div class="col-8">
+							<small
+								class="text-white">[[#{fp.overall.completed}]]&nbsp;[[${#numbers.formatDecimal(acompleted_actions_r,
+								1, 'COMMA', 1, 'POINT')}]]%</small>
 						</div>
-						<div class="col-6 text-end fw-bold">
-							234
+						<div class="col-4 fw-bold text-end">
+							[[${acompleted_actions}]]
 						</div>
 					</div>
 				</div>
-				<div class="card-footer bg-warning" style="font-size: 20px;">
+				<div class="card-footer bg-warning" style="font-size: 16px;">
 					<div class="row">
-						<div class="col-6">
-							<small class="text-white">[[#{fp.overall.pending}]]</small>
+						<div class="col-8">
+							<small
+								class="text-white">[[#{fp.overall.pending}]]&nbsp;[[${#numbers.formatDecimal(apending_actions_r,
+								1, 'COMMA', 1, 'POINT')}]]%</small>
 						</div>
-						<div class="col-6 text-end fw-bold">
-							234
+						<div class="col-4 fw-bold text-end">
+							[[${apending_actions}]]
 						</div>
 					</div>
 				</div>
-				<div class="card-footer bg-danger" style="font-size: 20px;">
+				<div class="card-footer bg-danger" style="font-size: 16px;">
 					<div class="row">
-						<div class="col-6">
-							<small class="text-white">[[#{fp.overall.overdue}]]</small>
+						<div class="col-8">
+							<small
+								class="text-white">[[#{fp.overall.overdue}]]&nbsp;[[${#numbers.formatDecimal(aoverdue_actions_r,
+								1, 'COMMA', 1, 'POINT')}]]%</small>
 						</div>
-						<div class="col-6 text-end fw-bold">
-							234
+						<div class="col-4 fw-bold text-end">
+							[[${aoverdue_actions}]]
 						</div>
 					</div>
 				</div>
@@ -209,7 +216,7 @@
 				<table class="table table-responsive table-light" style="font-size: 16px;">
 					<thead class="">
 						<tr class="table-info">
-							<th colspan="3" class="text-center">
+							<th colspan="2" class="text-center">
 								[[#{fp.recommendations}]]
 							</th>
 						</tr>
@@ -217,23 +224,22 @@
 					<tbody>
 						<tr>
 							<td th:text="#{fp.overall}"></td>
-							<td class="text-end fw-bold">234</td >
-							<td class="text-end fw-bold">0.0</td >
+							<td class="text-end fw-bold">[[${ctotal_actions}]]</td>
 						</tr>
 						<tr class="table-success">
-							<td th:text="#{fp.overall.completed}"></td>
-							<td class="text-end fw-bold">234</td >
-							<td class="text-end fw-bold">0.0</td >
-						</tr >
+							<td>[[#{fp.overall.completed}]]&nbsp;[[${#numbers.formatDecimal(ccompleted_actions_r,
+								1, 'COMMA', 1, 'POINT')}]]%</td>
+							<td class="text-end fw-bold">[[${ccompleted_actions}]]</td>
+						</tr>
 						<tr class="table-warning">
-							<td th:text="#{fp.overall.pending}"></td>
-							<td class="text-end fw-bold">234</td >
-							<td class="text-end fw-bold">0.0</td >
+							<td>[[#{fp.overall.pending}]]&nbsp;[[${#numbers.formatDecimal(cpending_actions_r,
+								1, 'COMMA', 1, 'POINT')}]]%</td>
+							<td class="text-end fw-bold">[[${cpending_actions}]]</td>
 						</tr>
 						<tr class="table-danger">
-							<td th:text="#{fp.overall.overdue}"></td>
-							<td class="text-end fw-bold">234</td >
-							<td class="text-end fw-bold">0.0</td >
+							<td>[[#{fp.overall.overdue}]]&nbsp;[[${#numbers.formatDecimal(coverdue_actions_r,
+								1, 'COMMA', 1, 'POINT')}]]%</td>
+							<td class="text-end fw-bold">[[${coverdue_actions}]]</td>
 						</tr>
 					</tbody>
 				</table>
@@ -331,6 +337,77 @@
 					</tbody>
 				</table>
 			</div>
+			<div class="row">
+				<button class="btn btn-info small mb-3" type="button" data-bs-toggle="offcanvas"
+					data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">[[#{fp.topneonatalpm}]]</button>
+				<button class="btn btn-info small" type="button" data-bs-toggle="offcanvas"
+					data-bs-target="#offcanvasRight1" aria-controls="offcanvasRight">[[#{fp.topstillbirthpm}]]</button>
+				<div>
+					<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight"
+						aria-labelledby="offcanvasRightLabel">
+						<div class="offcanvas-header">
+							<h5 id="offcanvasRightLabel"><span class="text-danger">Top 5 causes of Neonatal
+									Deaths</span></h5>
+							<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+								aria-label="Close"></button>
+						</div>
+						<div class="offcanvas-body">
+							<div class="mb-5" th:if="${top_cneonatal}">
+								<h6 class="text-danger">Year [[${cyear}]]</h6>
+								<ul class="list-group">
+									<li class="list-group-item d-flex justify-content-between align-items-center"
+										th:each="item : ${top_cneonatal}">
+										<span><b class="text-danger">[[${item.pm_code}]]</b >: [[${item.pm_desc}]]</span>
+										<span class="badge bg-danger rounded-pill">[[${item.pm_tsum}]]</span>
+									</li>
+								</ul>
+							</div>
+							<div th:if="${top_oneonatal}">
+								<h6 class="text-muted">Overall</h6>
+								<ul class="list-group">
+									<li class="list-group-item d-flex justify-content-between align-items-center"
+										th:each="item : ${top_oneonatal}">
+										<span><b class="text-muted">[[${item.pm_code}]]</b >: [[${item.pm_desc}]]</span>
+										<span class="badge bg-dark rounded-pill">[[${item.pm_tsum}]]</span>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+
+					<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight1"
+						aria-labelledby="offcanvasRightLabel">
+						<div class="offcanvas-header">
+							<h5 id="offcanvasRightLabel"><span class="text-dark">Top 5 causes of Stillbirths</span></h5>
+							<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+								aria-label="Close"></button>
+						</div>
+						<div class="offcanvas-body">
+							<div class="mb-5" th:if="${top_cstillbirth}">
+								<h6 class="text-danger">Year [[${cyear}]]</h6>
+								<ul class="list-group">
+									<li class="list-group-item d-flex justify-content-between align-items-center"
+										th:each="item : ${top_cstillbirth}">
+										<span><b class="text-danger">[[${item.pm_code}]]</b >: [[${item.pm_desc}]]</span>
+										<span class="badge bg-danger rounded-pill">[[${item.pm_tsum}]]</span>
+									</li>
+								</ul>
+							</div>
+							<div th:if="${top_ostillbirth}">
+								<h6 class="text-secondary">Overall</h6>
+								<ul class="list-group">
+									<li class="list-group-item d-flex justify-content-between align-items-center"
+										th:each="item : ${top_ostillbirth}">
+										<span><b class="text-muted">[[${item.pm_code}]]</b >: [[${item.pm_desc}]]</span>
+										<span class="badge bg-dark rounded-pill">[[${item.pm_tsum}]]</span>
+									</li>
+								</ul>
+							</div >
+						</div>
+					</div>
+				</div>
+			</div>
+
 		</div>
 	</div>
 

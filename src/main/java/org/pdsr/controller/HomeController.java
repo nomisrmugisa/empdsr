@@ -1,12 +1,20 @@
 package org.pdsr.controller;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
+import org.pdsr.pojos.icdpm;
 import org.pdsr.pojos.wmoindicators;
+import org.pdsr.repo.AuditAuditRepository;
+import org.pdsr.repo.AuditRecommendRepository;
 import org.pdsr.repo.CaseRepository;
+import org.pdsr.repo.IcdCodesRepository;
 import org.pdsr.repo.WeeklyMonitoringTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,9 +30,19 @@ public class HomeController {
 	@Autowired
 	private WeeklyMonitoringTableRepository wmRepo;
 
+	@Autowired
+	private AuditRecommendRepository recRepo;
+
+	@Autowired
+	private AuditAuditRepository audRepo;
+
+	@Autowired
+	private IcdCodesRepository icdRepo;
+
 	@GetMapping("")
 	public String homee(Principal principal, Model model) {
 		final int year = Calendar.getInstance().get(Calendar.YEAR);
+		final java.util.Date date = new Date();
 
 		model.addAttribute("cyear", year);
 
@@ -153,6 +171,172 @@ public class HomeController {
 		oindicators.setMdeath_osum(totalmaternaldeaths);
 
 		model.addAttribute("oavg", oindicators);
+
+		// SUMMARY STATISTICS - CURRENT YEAR
+		final String[] cdata = wmRepo.findFrontPageRates(year).get(0);
+
+		Integer ctotaldeliveries = Integer.valueOf(cdata[0]), ctotaldelvaginal = Integer.valueOf(cdata[1]),
+				ctotaldelassisted = Integer.valueOf(cdata[2]), ctotaldelcaesarean = Integer.valueOf(cdata[3]),
+
+				ctotalbirths = Integer.valueOf(cdata[4]),
+
+				ctotalstillbirth = Integer.valueOf(cdata[5]), ctotalintrapartum = Integer.valueOf(cdata[6]),
+				// ctotalantepartum = Integer.valueOf(cdata[7]),
+
+				ctotallivebirths = Integer.valueOf(cdata[8]),
+
+				ctotalpretermbirths = Integer.valueOf(cdata[9]), ctotallowbirthwgt = Integer.valueOf(cdata[10]),
+
+				ctotalneondeaths = Integer.valueOf(cdata[11]),
+
+				ctotalneondeaths_e = Integer.valueOf(cdata[12]), ctotalneondeaths_l = Integer.valueOf(cdata[13]),
+
+				ctotalmaternaldeaths = Integer.valueOf(cdata[14]);
+
+		wmoindicators cindicators = new wmoindicators();
+		cindicators.setWmdesc("Averages for " + year);
+
+		cindicators.setTotalbirths(ctotalbirths);
+		cindicators.setTotallivebirths(ctotallivebirths);
+		cindicators.setTotalperinatals(ctotalneondeaths_e + ctotalstillbirth);
+		cindicators.setTotalneonatals(ctotalneondeaths);
+		cindicators.setTotalstillbirths(ctotalstillbirth);
+
+		cindicators.setIsbr_oavg(
+				ctotalbirths == 0 ? 0 : Math.round(((ctotalstillbirth / ctotalbirths) * 1000) * 10.0) / 10.0);
+
+		cindicators.setIisbr_oavg(
+				ctotalbirths == 0 ? 0 : Math.round(((ctotalintrapartum / ctotalbirths) * 1000) * 10.0) / 10.0);
+
+		cindicators.setAisbr_oavg(cindicators.getIsbr_oavg() - cindicators.getIisbr_oavg());
+
+		cindicators.setPiisbr_oavg(
+				Math.round(((cindicators.getIisbr_oavg() / cindicators.getIsbr_oavg()) * 100) * 10.0) / 10.0);
+
+		cindicators.setInmr_oavg(
+				ctotallivebirths == 0 ? 0 : Math.round(((ctotalneondeaths / ctotallivebirths) * 1000) * 10.0) / 10.0);
+
+		cindicators.setIndwk1_oavg(
+				ctotalneondeaths == 0 ? 0 : Math.round(((ctotalneondeaths_e / ctotalneondeaths) * 100) * 10.0) / 10.0);
+
+		cindicators.setEinmr_oavg(
+				ctotallivebirths == 0 ? 0 : Math.round(((ctotalneondeaths_e / ctotallivebirths) * 1000) * 10.0) / 10.0);
+
+		cindicators.setLinmr_oavg(
+				ctotallivebirths == 0 ? 0 : Math.round(((ctotalneondeaths_l / ctotallivebirths) * 1000) * 10.0) / 10.0);
+
+		cindicators.setIpmr_oavg(ctotalbirths == 0 ? 0
+				: Math.round((((ctotalneondeaths_e + ctotalstillbirth) / ctotalbirths) * 1000) * 10.0) / 10.0);
+
+		cindicators.setImmr_oavg(ctotallivebirths == 0 ? 0
+				: Math.round(((ctotalmaternaldeaths / ctotallivebirths) * 100000) * 10.0) / 10.0);
+
+		cindicators.setIcsr_oavg(
+				ctotaldeliveries == 0 ? 0 : Math.round(((ctotaldelcaesarean / ctotaldeliveries) * 100) * 10.0) / 10.0);
+
+		cindicators.setIadr_oavg(
+				ctotaldeliveries == 0 ? 0 : Math.round(((ctotaldelassisted / ctotaldeliveries) * 100) * 10.0) / 10.0);
+
+		cindicators.setIvdr_oavg(
+				ctotaldeliveries == 0 ? 0 : Math.round(((ctotaldelvaginal / ctotaldeliveries) * 100) * 10.0) / 10.0);
+
+		cindicators.setIlbwr_oavg(
+				ctotallivebirths == 0 ? 0 : Math.round(((ctotallowbirthwgt / ctotallivebirths) * 100) * 10.0) / 10.0);
+
+		cindicators.setIptbr_oavg(
+				ctotallivebirths == 0 ? 0 : Math.round(((ctotalpretermbirths / ctotallivebirths) * 100) * 10.0) / 10.0);
+
+		cindicators.setMdeath_osum(ctotalmaternaldeaths);
+
+		model.addAttribute("cavg", cindicators);
+
+		// RECOMMENDATIONS WITH ACTIONS
+		// overall
+		model.addAttribute("atotal_actions", recRepo.count());
+		model.addAttribute("acompleted_actions", recRepo.countByCompleted());
+		model.addAttribute("acompleted_actions_r",
+				recRepo.count() == 0 ? 0 : 100 * recRepo.countByCompleted() / recRepo.count());
+		model.addAttribute("apending_actions", recRepo.countByPending(date));
+		model.addAttribute("apending_actions_r",
+				recRepo.count() == 0 ? 0 : 100 * recRepo.countByPending(date) / recRepo.count());
+		model.addAttribute("aoverdue_actions", recRepo.countByOverdue(date));
+		model.addAttribute("aoverdue_actions_r",
+				recRepo.count() == 0 ? 0 : 100 * recRepo.countByOverdue(date) / recRepo.count());
+
+		/// current year
+		model.addAttribute("ctotal_actions", recRepo.count(year));
+		model.addAttribute("ccompleted_actions", recRepo.countByCompleted(year));
+		model.addAttribute("ccompleted_actions_r",
+				recRepo.count(year) == 0 ? 0 : 100 * recRepo.countByCompleted(year) / recRepo.count(year));
+		model.addAttribute("cpending_actions", recRepo.countByPending(date, year));
+		model.addAttribute("cpending_actions_r",
+				recRepo.count(year) == 0 ? 0 : 100 * recRepo.countByPending(date, year) / recRepo.count(year));
+		model.addAttribute("coverdue_actions", recRepo.countByOverdue(date, year));
+		model.addAttribute("coverdue_actions_r",
+				recRepo.count(year) == 0 ? 0 : 100 * recRepo.countByOverdue(date, year) / recRepo.count(year));
+
+		// top causes of death overall for neonatal
+		List<icdpm> oneonatal = new ArrayList<icdpm>();
+		for (String[] elem : audRepo.findByTopPMCodes(2, PageRequest.of(0, 5))) {
+
+			icdpm neonatal = new icdpm();
+			neonatal.setPm_code(elem[0]);
+			neonatal.setPm_desc(icdRepo.findDescriptionOfICDPMNeonatal(elem[0]).get());
+			neonatal.setPm_tsum(elem[1]);
+
+			oneonatal.add(neonatal);
+		}
+		model.addAttribute("top_oneonatal", oneonatal);
+
+		// top causes of death for neonatal for current year
+		List<icdpm> cneonatal = new ArrayList<icdpm>();
+		for (String[] elem : audRepo.findByTopPMCodes(2, year, PageRequest.of(0, 5))) {
+
+			icdpm neonatal = new icdpm();
+			neonatal.setPm_code(elem[0]);
+			neonatal.setPm_desc(icdRepo.findDescriptionOfICDPMNeonatal(elem[0]).get());
+			neonatal.setPm_tsum(elem[1]);
+
+			cneonatal.add(neonatal);
+		}
+		model.addAttribute("top_cneonatal", cneonatal);
+
+		
+		
+		
+		// top causes of death overall for stillbirths
+		List<icdpm> ostillbirth = new ArrayList<icdpm>();
+		for (String[] elem : audRepo.findByTopPMCodes(1, PageRequest.of(0, 5))) {
+
+			icdpm stillbirth = new icdpm();
+			stillbirth.setPm_code(elem[0]);
+			final String pm_desc = icdRepo.findDescriptionOfICDPMIntrapartum(elem[0]).isPresent()
+					? icdRepo.findDescriptionOfICDPMIntrapartum(elem[0]).get()
+					: icdRepo.findDescriptionOfICDPMAntepartum(elem[0]).get();
+			stillbirth.setPm_desc(pm_desc);
+			stillbirth.setPm_tsum(elem[1]);
+
+			ostillbirth.add(stillbirth);
+		}
+		model.addAttribute("top_ostillbirth", ostillbirth);
+
+		
+		
+		// top causes of death for stillbirths for current year
+		List<icdpm> cstillbirth = new ArrayList<icdpm>();
+		for (String[] elem : audRepo.findByTopPMCodes(1, year, PageRequest.of(0, 5))) {
+
+			icdpm stillbirth = new icdpm();
+			stillbirth.setPm_code(elem[0]);
+			final String pm_desc = icdRepo.findDescriptionOfICDPMIntrapartum(elem[0]).isPresent()
+					? icdRepo.findDescriptionOfICDPMIntrapartum(elem[0]).get()
+					: icdRepo.findDescriptionOfICDPMAntepartum(elem[0]).get();
+			stillbirth.setPm_desc(pm_desc);
+			stillbirth.setPm_tsum(elem[1]);
+
+			cstillbirth.add(stillbirth);
+		}
+		model.addAttribute("top_cstillbirth", cstillbirth);
 
 		return "home";
 	}

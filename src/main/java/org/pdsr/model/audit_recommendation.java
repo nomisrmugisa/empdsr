@@ -40,7 +40,7 @@ public class audit_recommendation implements Serializable {
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private java.util.Date recommendation_date;
-	
+		
 	@Column
 	@NotNull
 	@Size(min = 1, max = 80)

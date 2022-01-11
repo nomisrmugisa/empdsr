@@ -32,4 +32,16 @@ public interface IcdCodesRepository extends JpaRepository<icd_codes, String> {
 
 	@Query("SELECT i FROM icd_codes i WHERE i.icd_pmn=?1")
 	List<icd_codes> findNeonatalPMByICD(String value);
+	
+	@Query("SELECT DISTINCT i.icd_pmn_desc FROM icd_codes i WHERE i.icd_pmn=?1")
+	Optional<String> findDescriptionOfICDPMNeonatal(String code);
+	
+	
+	@Query("SELECT DISTINCT i.icd_pmi_desc FROM icd_codes i WHERE i.icd_pmi=?1")
+	Optional<String> findDescriptionOfICDPMIntrapartum(String code);
+	
+	@Query("SELECT DISTINCT i.icd_pma_desc FROM icd_codes i WHERE i.icd_pma=?1")
+	Optional<String> findDescriptionOfICDPMAntepartum(String code);
+	
+	
 }
