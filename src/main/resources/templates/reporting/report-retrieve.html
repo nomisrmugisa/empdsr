@@ -1,37 +1,110 @@
 <!DOCTYPE html>
-<html th:replace="~{layout/reporting :: layout(_,~{},~{},~{::content},~{::subnav})}">
+<html th:replace="~{layout/reporting :: layout(_,~{},~{::scripts},~{::content},~{::subnav})}">
 <subnav>
 	<div class="m-1 small"></div>
 </subnav>
 
 <content>
 	<hr />
-	<div class="card">
-		<div class="card-header">
-			[[#{visual.title}]]
+	<div class="row">
+		<div class="col-md-6">
+			<div class="card">
+				<div class="card-header text-white" style="background-color: rgb(57, 106, 147);">
+					[[#{visual.caption}]]
+				</div>
+				<div class="card-body">
+					<h5 class="card-title">[[#{visual.title}]]</h5>
+					<p class="card-text">[[#{visual.notes}]]</p>
+					<a href="#" class="btn btn-primary" th:href="@{/reporting/search}">[(#{view.visuals})]</a>
+				</div>
+			</div>
 		</div>
-		<div class="card-body">
-			<h5 class="card-title">Special title treatment</h5>
-			<p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-			<a href="#" class="btn btn-primary" th:href="@{/reporting/search}">[(#{view.visuals})]</a>
+		<div class="col-md-6">
+			<div class="card">
+				<div class="card-header text-white" style="background-color: rgb(57, 106, 147);">
+					[[#{import.caption}]]
+				</div>
+				<div class="card-body">
+					<h5 class="card-title">[[#{import.title}]]</h5>
+					<p class="card-text">[[#{import.notes}]]</p>
+					<form class="form-horizontal" action="#" th:object="${selected}" th:action="@{/reporting}"
+						method="POST" enctype="multipart/form-data">
+						<div th:if="${success}" class="alert alert-warning" th:text="${success}"></div>
+
+						<div class="row mb-5">
+							<div class="col-md-4">
+								<select class="form-control fw-bold" th:field="*{datayear}" required>
+									<option th:each="option : ${iyear_options}" th:value="${option.key}"
+										th:text="${option.value}">
+									</option>
+								</select>
+							</div>
+							<div class="col-md-4">
+								<select class="form-control fw-bold" th:field="*{datamonth}" required>
+									<option th:each="option : ${imonth_options}" th:value="${option.key}"
+										th:text="${option.value}">
+									</option>
+								</select>
+							</div>
+						</div>
+						<div class="row mb-3">
+							<div class="col-auto mb-3">
+								<div class="custom-file">
+									<input type="file" class="custom-file-input" id="customFile" th:field="*{file}"
+										required>
+								</div>
+							</div>
+							<div class="col-auto mb-3">
+								<input class="form-control" type="number" th:field="*{sheetnumber}"
+									placeholder="Index of sheet to upload (start at 0)" required>
+							</div>
+						</div>
+
+						<hr />
+						<button type="submit" class="btn btn-primary" th:href="@{/reporting}"><i class="fa fa-upload"></i>
+							[(#{import.button})]</button>
+					</form>
+				</div>
+			</div>
 		</div>
 	</div>
 	<hr />
 	<div class="row">
-		<div class="card m-3" th:classappend="${item[3]}?'border-success':'border-secondary'" style="max-width: 18rem;"
+		<div class="card m-3 text-center" th:classappend="${item[3]}?'border-info':'border-secondary'" style="max-width: 10rem;"
 			th:each="item : ${yearmonthitems}">
-			<div class="card-header bg-transparent" th:classappend="${item[3]}?'border-success':'border-secondary'">
+			<div class="card-header bg-transparent" th:classappend="${item[3]}?'border-info':'border-secondary'">
 				[[${item[2]}]]-[[${item[0]}]]</div>
 			<div class="card-body">
-				<h5 class="card-title" th:if="${item[3]}">
-					[[#{date.created}]]&nbsp;[[${#dates.format(item[3],'dd-MMM-yyyy')}]]</h5>
-				<p class="card-text" th:unless="${item[3]}">[[#{no.entries}]]</p>
-				<a href="#" class="btn small d-grid gap-2 mt-5" th:classappend="${item[3]}?'btn-success':'btn-secondary'"
+				<a href="#" class="btn small d-grid gap-2"
+					th:classappend="${item[3]}?'btn-info':'btn-secondary'"
 					th:href="@{/reporting/edit/{yearid}/{monthid}(yearid=${item[0]},monthid=${item[1]})}">Edit/View
 					Data</a>
 			</div>
 		</div>
 	</div>
 </content>
+<scripts>
+	<script>
+		(function () {
+			'use strict';
+			window.addEventListener('load', function () {
+				// Fetch all the forms we want to apply custom Bootstrap validation styles to
+				var forms = document.getElementsByClassName('needs-validation');
+
+				// Loop over them and prevent submission
+				var validation = Array.prototype.filter.call(forms, function (form) {
+					form.addEventListener('submit', function (event) {
+						if (form.checkValidity() === false) {
+							event.preventDefault();
+							event.stopPropagation();
+						}
+						form.classList.add('was-validated');
+
+					}, false);
+				});
+			}, false);
+		})();
+	</script>
+</scripts>
 
 </html>

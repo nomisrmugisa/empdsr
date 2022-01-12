@@ -174,24 +174,21 @@ public class HomeController {
 
 		// SUMMARY STATISTICS - CURRENT YEAR
 		final String[] cdata = wmRepo.findFrontPageRates(year).get(0);
-
-		Integer ctotaldeliveries = Integer.valueOf(cdata[0]), ctotaldelvaginal = Integer.valueOf(cdata[1]),
-				ctotaldelassisted = Integer.valueOf(cdata[2]), ctotaldelcaesarean = Integer.valueOf(cdata[3]),
-
-				ctotalbirths = Integer.valueOf(cdata[4]),
-
-				ctotalstillbirth = Integer.valueOf(cdata[5]), ctotalintrapartum = Integer.valueOf(cdata[6]),
-				// ctotalantepartum = Integer.valueOf(cdata[7]),
-
-				ctotallivebirths = Integer.valueOf(cdata[8]),
-
-				ctotalpretermbirths = Integer.valueOf(cdata[9]), ctotallowbirthwgt = Integer.valueOf(cdata[10]),
-
-				ctotalneondeaths = Integer.valueOf(cdata[11]),
-
-				ctotalneondeaths_e = Integer.valueOf(cdata[12]), ctotalneondeaths_l = Integer.valueOf(cdata[13]),
-
-				ctotalmaternaldeaths = Integer.valueOf(cdata[14]);
+		Integer ctotaldeliveries = Integer.valueOf(cdata[0] == null ? "0" : cdata[0]);
+		Integer ctotaldelvaginal = Integer.valueOf(cdata[1] == null ? "0" : cdata[1]);
+		Integer ctotaldelassisted = Integer.valueOf(cdata[2] == null ? "0" : cdata[2]);
+		Integer ctotaldelcaesarean = Integer.valueOf(cdata[3] == null ? "0" : cdata[3]);
+		Integer ctotalbirths = Integer.valueOf(cdata[4] == null ? "0" : cdata[4]);
+		Integer ctotalstillbirth = Integer.valueOf(cdata[5] == null ? "0" : cdata[5]);
+		Integer ctotalintrapartum = Integer.valueOf(cdata[6] == null ? "0" : cdata[6]);
+		//Integer ctotalantepartum = Integer.valueOf(cdata[7] == null ? "0" : cdata[7]);
+		Integer ctotallivebirths = Integer.valueOf(cdata[8] == null ? "0" : cdata[8]);
+		Integer ctotalpretermbirths = Integer.valueOf(cdata[9] == null ? "0" : cdata[9]);
+		Integer ctotallowbirthwgt = Integer.valueOf(cdata[10] == null ? "0" : cdata[10]);
+		Integer ctotalneondeaths = Integer.valueOf(cdata[11] == null ? "0" : cdata[11]);
+		Integer ctotalneondeaths_e = Integer.valueOf(cdata[12] == null ? "0" : cdata[12]);
+		Integer ctotalneondeaths_l = Integer.valueOf(cdata[13] == null ? "0" : cdata[13]);
+		Integer ctotalmaternaldeaths = Integer.valueOf(cdata[14] == null ? "0" : cdata[14]);
 
 		wmoindicators cindicators = new wmoindicators();
 		cindicators.setWmdesc("Averages for " + year);
@@ -301,9 +298,6 @@ public class HomeController {
 		}
 		model.addAttribute("top_cneonatal", cneonatal);
 
-		
-		
-		
 		// top causes of death overall for stillbirths
 		List<icdpm> ostillbirth = new ArrayList<icdpm>();
 		for (String[] elem : audRepo.findByTopPMCodes(1, PageRequest.of(0, 5))) {
@@ -320,8 +314,6 @@ public class HomeController {
 		}
 		model.addAttribute("top_ostillbirth", ostillbirth);
 
-		
-		
 		// top causes of death for stillbirths for current year
 		List<icdpm> cstillbirth = new ArrayList<icdpm>();
 		for (String[] elem : audRepo.findByTopPMCodes(1, year, PageRequest.of(0, 5))) {

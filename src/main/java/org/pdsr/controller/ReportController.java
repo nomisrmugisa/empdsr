@@ -14,13 +14,19 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.pdsr.CONSTANTS;
 import org.pdsr.ReportExcelExporter;
 import org.pdsr.model.monitoring_table;
-import org.pdsr.model.upload;
+import org.pdsr.model.sync_table;
 import org.pdsr.model.weekly_monitoring;
 import org.pdsr.model.weekly_table;
 import org.pdsr.model.wmPK;
+import org.pdsr.pojos.upload;
 import org.pdsr.pojos.weekgrid;
 import org.pdsr.pojos.wmindicators;
 import org.pdsr.pojos.wmoindicators;
@@ -60,11 +66,10 @@ public class ReportController {
 	@Autowired
 	private MessageSource msg;
 
-
 	@GetMapping("")
-	public String list(Principal principal, Model model) {
+	public String list(Principal principal, Model model,
+			@RequestParam(name = "success", required = false) String success) {
 
-		
 		if (syncRepo.findById(CONSTANTS.FACILITY_ID).isEmpty()) {
 			model.addAttribute("activated", "0");
 			return "home";
@@ -87,8 +92,154 @@ public class ReportController {
 
 		model.addAttribute("back", "back");
 		model.addAttribute("yearmonthitems", weeklist);
+		model.addAttribute("selected", new upload());
+
+		if (success != null) {
+			model.addAttribute("success", "Successfully uploaded");
+		}
 
 		return "reporting/report-retrieve";
+	}
+
+	@PostMapping("")
+	public String list(Principal principal, @ModelAttribute("selected") upload selected, Model model) {
+
+		if (selected.getFile() == null || selected.getFile().isEmpty()) {
+			model.addAttribute("fileerror1", "No csv file selected");
+			return "reporting/report-retrieve";
+		}
+
+		final sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		Calendar cal = Calendar.getInstance();
+		cal.set(selected.getDatayear(), selected.getDatamonth(), 1);
+
+		final int maxNumberOfWeeks = cal.getActualMaximum(Calendar.WEEK_OF_MONTH);
+
+		List<weekly_monitoring> datagrid = new ArrayList<>();
+		try (Workbook workbook = new XSSFWorkbook(selected.getFile().getInputStream())) {
+
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 1, 100));// total deliveries
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 2, 101));// Vaginal deliveries
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 3, 102));// Assited deliveries
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 4, 103));// Caesarean deliveries
+
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 5, 110));// total births
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 6, 111));// singleton
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 7, 112));// multiple
+
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 8, 120));// stillbirths
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 9, 121));// antepartum
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 10, 122));// intrapartum
+
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 11, 130));// livebirths
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 12, 131));// term
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 13, 132));// preterm
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 14, 133));// very preterm
+
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 15, 136));// normal birthwght
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 16, 137));// low birthwght
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 17, 138));// very low birthwght
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 18, 139));// extremely low birthwght
+
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 19, 150));// neonatal deaths
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 20, 151));// early deaths
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 21, 152));// late deaths
+
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 22, 161));// maternal deaths
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		if (datagrid.size() > 0) {
+			wmRepo.saveAll(datagrid);
+		}
+
+		// write the original file to the disk somewhere for backup purposes
+		selected.setFilelocation(
+				"MONTHLYREPORT_" + (new java.util.Date().getTime()) + "_" + selected.getFile().getOriginalFilename());
+		try {
+			CONSTANTS.writeToDisk("FACILITY_" + sync.getSync_code(),
+					"PERIOD_" + selected.getDatamonth() + "_" + selected.getDatayear(), selected.getFilelocation(),
+					selected.getFile().getBytes());
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return "redirect:/reporting?success=yes";
+	}
+
+	private List<weekly_monitoring> importRow(upload selected, Workbook workbook, final int maxNumberOfWeeks,
+			int rowIndex, int statId) {
+		List<weekly_monitoring> subgrid = new ArrayList<>();
+
+		Sheet sheet = workbook.getSheetAt(selected.getSheetnumber());// maybe I can later allow for multiple sheet
+																		// import
+
+		// IMPORT DATA ON TOTAL DELVERES
+		Row row = sheet.getRow(rowIndex);
+		monitoring_table m = monRepo.findById(statId).get();
+		
+		for (int week = 1; week < maxNumberOfWeeks; week++) {
+
+			weekly_table w = new weekly_table();
+			w.setWeekly_date(new java.util.Date());
+			w.setWeekly_year(selected.getDatayear());
+			w.setWeekly_month(selected.getDatamonth());
+			w.setWeekly_mdesc(msg.getMessage("month" + selected.getDatamonth(), null, Locale.getDefault()));
+			w.setWeekly_week(week);
+			w.setWeekly_id(Integer.valueOf(selected.getDatayear() + "" + selected.getDatamonth() + "" + week));
+
+			weekRepo.save(w);
+			
+			weekly_monitoring wm = new weekly_monitoring();
+			wm.setId(new wmPK(w.getWeekly_id(), m.getMindex()));
+			wm.setWm_values(0);
+			wm.setWm_subval(0);// don't worry about this, when the data is being opened, the subval
+			// calculations will be triggered
+
+			wm.setWm_grids(w);// link it to the weeks
+			wm.setWm_indices(m);// link it to the statistic indicator being monitored
+
+			subgrid.add(wm);
+
+		}
+
+		int wsum = 0;
+		for (int cellIndex = 2; cellIndex <= 6; cellIndex++) {
+			// we will sum up all the weeks and place in the last week
+			wsum += (row.getCell(cellIndex).getCellType() == CellType.NUMERIC)
+					? (int) row.getCell(cellIndex).getNumericCellValue()
+					: 0;
+
+		}
+
+		// treat the last week in the month differently
+		weekly_table lw = new weekly_table();
+		lw.setWeekly_date(new java.util.Date());
+		lw.setWeekly_year(selected.getDatayear());
+		lw.setWeekly_month(selected.getDatamonth());
+		lw.setWeekly_mdesc(msg.getMessage("month" + selected.getDatamonth(), null, Locale.getDefault()));
+		lw.setWeekly_week(maxNumberOfWeeks);
+		lw.setWeekly_id(Integer.valueOf(selected.getDatayear() + "" + selected.getDatamonth() + "" + maxNumberOfWeeks));
+
+		weekRepo.save(lw);
+
+		weekly_monitoring wm = new weekly_monitoring();
+		wm.setId(new wmPK(lw.getWeekly_id(), m.getMindex()));
+		wm.setWm_values(wsum);
+		wm.setWm_subval(0);// don't worry about this, when the data is being opened, the subval
+		// calculations will be triggered
+
+		wm.setWm_grids(lw);// link it to the weeks
+		wm.setWm_indices(m);// link it to the statistic indicator being monitored
+
+		subgrid.add(wm);
+
+		return subgrid;
+
 	}
 
 	@GetMapping("/edit/{yearid}/{monthid}")
@@ -314,8 +465,6 @@ public class ReportController {
 			i.setPiisbr((i.getIsbr() == 0.0) ? 0 : (i.getIisbr() / i.getIsbr()) * 100);
 			piisbr_array[arrayIndex] = Math.round(i.getPiisbr() * 10.0) / 10.0;
 
-			
-			
 			i.setInmr((Double.valueOf(elem[11]) == 0.0) ? 0
 					: (Double.valueOf(elem[14]) / Double.valueOf(elem[11])) * 1000);
 			inmr_array[arrayIndex] = Math.round(i.getInmr() * 10.0) / 10.0;
@@ -328,11 +477,9 @@ public class ReportController {
 					: (Double.valueOf(elem[15]) / Double.valueOf(elem[11])) * 1000);
 			einmr_array[arrayIndex] = Math.round(i.getEinmr() * 10.0) / 10.0;
 
-			i.setLinmr(i.getInmr()-i.getEinmr());
+			i.setLinmr(i.getInmr() - i.getEinmr());
 			linmr_array[arrayIndex] = Math.round(i.getLinmr() * 10.0) / 10.0;
 
-			
-			
 			i.setIpmr((Double.valueOf(elem[11]) == 0.0) ? 0
 					: ((Double.valueOf(elem[15]) + Double.valueOf(elem[8])) / Double.valueOf(elem[11])) * 1000);
 			ipmr_array[arrayIndex] = Math.round(i.getIpmr() * 10.0) / 10.0;
@@ -436,7 +583,6 @@ public class ReportController {
 		oindicators.setIptbr_oavg(
 				totallivebirths == 0 ? 0 : Math.round(((totalpretermbirths / totallivebirths) * 100) * 10.0) / 10.0);
 
-
 		oindicators.setMdeath_osum(totalmaternaldeaths);
 
 		model.addAttribute("oavg", oindicators);
@@ -486,21 +632,6 @@ public class ReportController {
 		}
 	}
 
-	@GetMapping("/import/excel/{wyear}/{wmonth}")
-	public String importFromExcel(Principal principal, Model model,
-			@RequestParam(name = "success", required = false) String success) {
-
-		upload selected = new upload();
-		model.addAttribute("selected", selected);
-
-		if (success != null) {
-			model.addAttribute("success", "Successfully uploaded");
-		}
-
-		return "safety-upload";
-
-	}
-
 	@ModelAttribute("wmyear_options")
 	public Map<Integer, String> wmyearOptionsSelectOne() {
 		final Map<Integer, String> map = new LinkedHashMap<>();
@@ -521,6 +652,39 @@ public class ReportController {
 		for (Object[] elem : weekRepo.findMonths()) {
 			map.put((Integer) elem[0], "" + elem[1]);
 		}
+
+		return map;
+	}
+
+	@ModelAttribute("iyear_options")
+	public Map<Integer, String> importyearOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Year");
+		for (int year = 2019; year <= Calendar.getInstance().get(Calendar.YEAR); year++) {
+			map.put(year, "" + year);
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("imonth_options")
+	public Map<Integer, String> importmonthOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Month");
+		map.put(0, "Jan");
+		map.put(1, "Feb");
+		map.put(2, "Mar");
+		map.put(3, "Apr");
+		map.put(4, "May");
+		map.put(5, "Jun");
+		map.put(6, "Jul");
+		map.put(7, "Aug");
+		map.put(8, "Sep");
+		map.put(9, "Oct");
+		map.put(10, "Nov");
+		map.put(11, "Dec");
 
 		return map;
 	}

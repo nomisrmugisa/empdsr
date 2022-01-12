@@ -7,7 +7,6 @@
 			position: relative;
 			margin: auto;
 			height: 80vh;
-			width: 80vw;
 		}
 	</style>
 </links>
@@ -331,7 +330,7 @@
 
 		var xValues = /*[[${yearmonth_array}]]*/ "";
 		var yValues = /*[[${piisbr_array}]]*/ "";
-		var barColors = ["red", "green", "blue", "orange", "brown"];
+		var barColors = ["darkorange"];
 
 		new Chart("piisbrChart", {
 			type: "bar",
@@ -347,6 +346,9 @@
 			options: {
 				responsive: true,
 				plugins: {
+					datalabels: {
+						color: 'black',
+					},
 					legend: {
 						display: false,
 						position: 'top',
@@ -499,7 +501,8 @@
 						borderColor: 'Green',
 						data: yValues3,
 						datalabels: {
-							backgroundColor: 'Green'
+							backgroundColor: 'Green',
+							display: false
 						},
 					},
 					{
@@ -508,7 +511,8 @@
 						borderColor: 'Red',
 						data: yValues1,
 						datalabels: {
-							backgroundColor: 'Red'
+							backgroundColor: 'Red',
+							display: false
 						},
 					},
 					{
@@ -517,7 +521,8 @@
 						borderColor: 'Blue',
 						data: yValues2,
 						datalabels: {
-							backgroundColor: 'Blue'
+							backgroundColor: 'Blue',
+							display: false
 						},
 
 					}
@@ -525,14 +530,6 @@
 			},
 			options: {
 				responsive: true,
-				scales: {
-					x: {
-						stacked: true,
-					},
-					y: {
-						stacked: true
-					}
-				},
 				plugins: {
 					datalabels: {
 						color: 'White',

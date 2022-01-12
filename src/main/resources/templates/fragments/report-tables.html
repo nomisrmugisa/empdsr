@@ -1,131 +1,133 @@
 <div th:fragment="table_view1">
-	<table class="table table-hover table-striped table-lg table-responsive  mt-2">
-		<thead>
-			<tr class="bg-info">
-				<th style="width: 20%;" th:text="#{th.isbr}"></th>
-				<th class="text-end" style="width: 20%;">[[${oavg.wmdesc}]]</th>
-				<th class="text-end" th:each="item, itemStat : ${yearmonth_array}" th:text="${item}">
-					yearmonth</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td th:text="#{label.isbr}"></td>
-				<th class="text-end lead fw-bold table-info"
-					th:text="${#numbers.formatDecimal(oavg.isbr_oavg, 1, 'COMMA', 1, 'POINT')}"></th>
-				<td class="text-end" th:each="item, itemStat : ${isbr_array}"
-					th:text="${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}">isbr</td>
-			</tr>
-			<tr>
-				<td th:text="#{label.iisbr}"></td>
-				<th class="text-end lead fw-bold table-info"
-					th:text="${#numbers.formatDecimal(oavg.iisbr_oavg, 1, 'COMMA', 1, 'POINT')}"></th>
-				<td class="text-end" th:each="item, itemStat : ${iisbr_array}"
-					th:text="${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}">isbr</td>
-			</tr>
-			<tr>
-				<td th:text="#{label.aisbr}"></td>
-				<th class="text-end lead fw-bold table-info"
-					th:text="${#numbers.formatDecimal(oavg.aisbr_oavg, 1, 'COMMA', 1, 'POINT')}"></th>
-				<td class="text-end" th:each="item, itemStat : ${aisbr_array}"
-					th:text="${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}">isbr</td>
-			</tr>
-			<tr>
-				<td th:text="#{label.piisbr}"></td>
-				<th class="text-end lead fw-bold table-info"
-					th:text="|${#numbers.formatDecimal(oavg.piisbr_oavg, 1, 'COMMA', 1, 'POINT')}%|"></th>
-				<td class="text-end" th:each="item, itemStat : ${piisbr_array}"
-					th:text="|${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}%|">isbr</td>
-			</tr>
-			<tr>
-				<td th:text="#{label.einmr}"></td>
-				<th class="text-end lead fw-bold table-info"
-					th:text="${#numbers.formatDecimal(oavg.einmr_oavg, 1, 'COMMA', 1, 'POINT')}"></th>
-				<td class="text-end" th:each="item, itemStat : ${einmr_array}"
-					th:text="${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}">isbr</td>
-			</tr>
-			<tr>
-				<td th:text="#{label.linmr}"></td>
-				<th class="text-end lead fw-bold table-info"
-					th:text="${#numbers.formatDecimal(oavg.linmr_oavg, 1, 'COMMA', 1, 'POINT')}"></th>
-				<td class="text-end" th:each="item, itemStat : ${linmr_array}"
-					th:text="${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}">isbr</td>
-			</tr>
-			<tr>
-				<td th:text="#{label.ipmr}"></td>
-				<th class="text-end lead fw-bold table-info"
-					th:text="${#numbers.formatDecimal(oavg.ipmr_oavg, 1, 'COMMA', 1, 'POINT')}"></th>
-				<td class="text-end" th:each="item, itemStat : ${ipmr_array}"
-					th:text="${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}">isbr</td>
-			</tr>
-			<tr>
-				<td th:text="#{label.inmr}"></td>
-				<th class="text-end lead fw-bold table-info"
-					th:text="${#numbers.formatDecimal(oavg.inmr_oavg, 1, 'COMMA', 1, 'POINT')}"></th>
-				<td class="text-end" th:each="item, itemStat : ${inmr_array}"
-					th:text="${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}">isbr</td>
-			</tr>
-			<tr>
-				<td th:text="#{label.immr}"></td>
-				<th class="text-end lead fw-bold table-info"
-					th:text="${#numbers.formatDecimal(oavg.immr_oavg, 1, 'COMMA', 1, 'POINT')}"></th>
-				<td class="text-end" th:each="item, itemStat : ${immr_array}"
-					th:text="${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}">isbr</td>
-			</tr>
-			<tr>
-				<td th:text="#{label.icsr}"></td>
-				<th class="text-end lead fw-bold table-info"
-					th:text="|${#numbers.formatDecimal(oavg.icsr_oavg, 1, 'COMMA', 1, 'POINT')}%|"></th>
-				<td class="text-end" th:each="item, itemStat : ${icsr_array}"
-					th:text="|${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}%|">isbr</td>
-			</tr>
-			<tr>
-				<td th:text="#{label.iadr}"></td>
-				<th class="text-end lead fw-bold table-info"
-					th:text="|${#numbers.formatDecimal(oavg.iadr_oavg, 1, 'COMMA', 1, 'POINT')}%|"></th>
-				<td class="text-end" th:each="item, itemStat : ${iadr_array}"
-					th:text="|${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}%|">isbr</td>
-			</tr>
-			<tr>
-				<td th:text="#{label.ivdr}"></td>
-				<th class="text-end lead fw-bold table-info"
-					th:text="|${#numbers.formatDecimal(oavg.ivdr_oavg, 1, 'COMMA', 1, 'POINT')}%|"></th>
-				<td class="text-end" th:each="item, itemStat : ${ivdr_array}"
-					th:text="|${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}%|">isbr</td>
-			</tr>
-			<tr>
-				<td th:text="#{label.ilbwr}"></td>
-				<th class="text-end lead fw-bold table-info"
-					th:text="|${#numbers.formatDecimal(oavg.ilbwr_oavg, 1, 'COMMA', 1, 'POINT')}%|"></th>
-				<td class="text-end" th:each="item, itemStat : ${ilbwr_array}"
-					th:text="|${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}%|">isbr</td>
-			</tr>
-			<tr>
-				<td th:text="#{label.iptbr}"></td>
-				<th class="text-end lead fw-bold table-info"
-					th:text="|${#numbers.formatDecimal(oavg.iptbr_oavg, 1, 'COMMA', 1, 'POINT')}%|"></th>
-				<td class="text-end" th:each="item, itemStat : ${iptbr_array}"
-					th:text="|${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}%|">isbr</td>
-			</tr>
-			<tr>
-				<td th:text="#{label.ndrwk1}"></td>
-				<th class="text-end lead fw-bold table-info"
-					th:text="|${#numbers.formatDecimal(oavg.indwk1_oavg, 1, 'COMMA', 1, 'POINT')}%|"></th>
-				<td class="text-end" th:each="item, itemStat : ${indwk1_array}"
-					th:text="|${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}%|">isbr</td>
-			</tr>
-			<tr class="bg-info">
-				<td th:colspan="${yearmonth_array.length+2}"></td>
-			</tr>
+	<div class="overflow-auto table-responsive">
+		<table class="table table-hover table-striped table-lg table-responsive  mt-2">
+			<thead>
+				<tr class="bg-info">
+					<th style="width: 20%;" th:text="#{th.isbr}"></th>
+					<th class="text-end" style="width: 20%;">[[${oavg.wmdesc}]]</th>
+					<th class="text-end" th:each="item, itemStat : ${yearmonth_array}" th:text="${item}">
+						yearmonth</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td th:text="#{label.isbr}"></td>
+					<th class="text-end lead fw-bold table-info"
+						th:text="${#numbers.formatDecimal(oavg.isbr_oavg, 1, 'COMMA', 1, 'POINT')}"></th>
+					<td class="text-end" th:each="item, itemStat : ${isbr_array}"
+						th:text="${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}">isbr</td>
+				</tr>
+				<tr>
+					<td th:text="#{label.iisbr}"></td>
+					<th class="text-end lead fw-bold table-info"
+						th:text="${#numbers.formatDecimal(oavg.iisbr_oavg, 1, 'COMMA', 1, 'POINT')}"></th>
+					<td class="text-end" th:each="item, itemStat : ${iisbr_array}"
+						th:text="${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}">isbr</td>
+				</tr>
+				<tr>
+					<td th:text="#{label.aisbr}"></td>
+					<th class="text-end lead fw-bold table-info"
+						th:text="${#numbers.formatDecimal(oavg.aisbr_oavg, 1, 'COMMA', 1, 'POINT')}"></th>
+					<td class="text-end" th:each="item, itemStat : ${aisbr_array}"
+						th:text="${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}">isbr</td>
+				</tr>
+				<tr>
+					<td th:text="#{label.piisbr}"></td>
+					<th class="text-end lead fw-bold table-info"
+						th:text="|${#numbers.formatDecimal(oavg.piisbr_oavg, 1, 'COMMA', 1, 'POINT')}%|"></th>
+					<td class="text-end" th:each="item, itemStat : ${piisbr_array}"
+						th:text="|${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}%|">isbr</td>
+				</tr>
+				<tr>
+					<td th:text="#{label.einmr}"></td>
+					<th class="text-end lead fw-bold table-info"
+						th:text="${#numbers.formatDecimal(oavg.einmr_oavg, 1, 'COMMA', 1, 'POINT')}"></th>
+					<td class="text-end" th:each="item, itemStat : ${einmr_array}"
+						th:text="${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}">isbr</td>
+				</tr>
+				<tr>
+					<td th:text="#{label.inmr}"></td>
+					<th class="text-end lead fw-bold table-info"
+						th:text="${#numbers.formatDecimal(oavg.linmr_oavg, 1, 'COMMA', 1, 'POINT')}"></th>
+					<td class="text-end" th:each="item, itemStat : ${linmr_array}"
+						th:text="${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}">isbr</td>
+				</tr>
+				<tr>
+					<td th:text="#{label.ipmr}"></td>
+					<th class="text-end lead fw-bold table-info"
+						th:text="${#numbers.formatDecimal(oavg.ipmr_oavg, 1, 'COMMA', 1, 'POINT')}"></th>
+					<td class="text-end" th:each="item, itemStat : ${ipmr_array}"
+						th:text="${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}">isbr</td>
+				</tr>
+				<tr>
+					<td th:text="#{label.inmr}"></td>
+					<th class="text-end lead fw-bold table-info"
+						th:text="${#numbers.formatDecimal(oavg.inmr_oavg, 1, 'COMMA', 1, 'POINT')}"></th>
+					<td class="text-end" th:each="item, itemStat : ${inmr_array}"
+						th:text="${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}">isbr</td>
+				</tr>
+				<tr>
+					<td th:text="#{label.immr}"></td>
+					<th class="text-end lead fw-bold table-info"
+						th:text="${#numbers.formatDecimal(oavg.immr_oavg, 1, 'COMMA', 1, 'POINT')}"></th>
+					<td class="text-end" th:each="item, itemStat : ${immr_array}"
+						th:text="${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}">isbr</td>
+				</tr>
+				<tr>
+					<td th:text="#{label.icsr}"></td>
+					<th class="text-end lead fw-bold table-info"
+						th:text="|${#numbers.formatDecimal(oavg.icsr_oavg, 1, 'COMMA', 1, 'POINT')}%|"></th>
+					<td class="text-end" th:each="item, itemStat : ${icsr_array}"
+						th:text="|${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}%|">isbr</td>
+				</tr>
+				<tr>
+					<td th:text="#{label.iadr}"></td>
+					<th class="text-end lead fw-bold table-info"
+						th:text="|${#numbers.formatDecimal(oavg.iadr_oavg, 1, 'COMMA', 1, 'POINT')}%|"></th>
+					<td class="text-end" th:each="item, itemStat : ${iadr_array}"
+						th:text="|${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}%|">isbr</td>
+				</tr>
+				<tr>
+					<td th:text="#{label.ivdr}"></td>
+					<th class="text-end lead fw-bold table-info"
+						th:text="|${#numbers.formatDecimal(oavg.ivdr_oavg, 1, 'COMMA', 1, 'POINT')}%|"></th>
+					<td class="text-end" th:each="item, itemStat : ${ivdr_array}"
+						th:text="|${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}%|">isbr</td>
+				</tr>
+				<tr>
+					<td th:text="#{label.ilbwr}"></td>
+					<th class="text-end lead fw-bold table-info"
+						th:text="|${#numbers.formatDecimal(oavg.ilbwr_oavg, 1, 'COMMA', 1, 'POINT')}%|"></th>
+					<td class="text-end" th:each="item, itemStat : ${ilbwr_array}"
+						th:text="|${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}%|">isbr</td>
+				</tr>
+				<tr>
+					<td th:text="#{label.iptbr}"></td>
+					<th class="text-end lead fw-bold table-info"
+						th:text="|${#numbers.formatDecimal(oavg.iptbr_oavg, 1, 'COMMA', 1, 'POINT')}%|"></th>
+					<td class="text-end" th:each="item, itemStat : ${iptbr_array}"
+						th:text="|${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}%|">isbr</td>
+				</tr>
+				<tr>
+					<td th:text="#{label.ndrwk1}"></td>
+					<th class="text-end lead fw-bold table-info"
+						th:text="|${#numbers.formatDecimal(oavg.indwk1_oavg, 1, 'COMMA', 1, 'POINT')}%|"></th>
+					<td class="text-end" th:each="item, itemStat : ${indwk1_array}"
+						th:text="|${#numbers.formatDecimal(item, 1, 'COMMA', 1, 'POINT')}%|">isbr</td>
+				</tr>
+				<tr class="bg-info">
+					<td th:colspan="${yearmonth_array.length+2}"></td>
+				</tr>
 
-			<tr class="table-primary">
-				<th th:text="#{label.tmd}"></th>
-				<th class="text-end lead fw-bold table-info" th:text="${oavg.mdeath_osum}+'*'"></th>
-				<td class="text-end" th:each="item, itemStat : ${mdeath_array}" th:text="${item}+'*'">isbr
-				</td>
-			</tr>
-		</tbody>
-	</table>
+				<tr class="table-primary">
+					<th th:text="#{label.tmd}"></th>
+					<th class="text-end lead fw-bold table-info" th:text="${oavg.mdeath_osum}+'*'"></th>
+					<td class="text-end" th:each="item, itemStat : ${mdeath_array}" th:text="${item}+'*'">isbr
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div >
 	<small>*Total Sum for maternal deaths</small>
 </div>
 

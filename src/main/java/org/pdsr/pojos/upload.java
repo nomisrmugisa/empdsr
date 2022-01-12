@@ -10,21 +10,14 @@ public class upload implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private Integer filename;
+	private Integer sheetnumber;
+	private Integer datamonth;
+	private Integer datayear;
 	private String filelocation;
-	private boolean override;
-	private boolean checked;
+	
 	private MultipartFile file;
 
 	
-	public Integer getFilename() {
-		return filename;
-	}
-
-	public void setFilename(Integer filename) {
-		this.filename = filename;
-	}
-
 	public String getFilelocation() {
 		return filelocation;
 	}
@@ -33,20 +26,21 @@ public class upload implements Serializable {
 		this.filelocation = filelocation;
 	}
 
-	public boolean isOverride() {
-		return override;
+
+	public Integer getDatamonth() {
+		return datamonth;
 	}
 
-	public void setOverride(boolean override) {
-		this.override = override;
+	public void setDatamonth(Integer datamonth) {
+		this.datamonth = datamonth;
 	}
 
-	public boolean isChecked() {
-		return checked;
+	public Integer getDatayear() {
+		return datayear;
 	}
 
-	public void setChecked(boolean checked) {
-		this.checked = checked;
+	public void setDatayear(Integer datayear) {
+		this.datayear = datayear;
 	}
 
 	public MultipartFile getFile() {
@@ -55,6 +49,14 @@ public class upload implements Serializable {
 
 	public void setFile(MultipartFile file) {
 		this.file = file;
+	}
+
+	public Integer getSheetnumber() {
+		return sheetnumber;
+	}
+
+	public void setSheetnumber(Integer sheetnumber) {
+		this.sheetnumber = sheetnumber;
 	}	
 	
 
