@@ -183,17 +183,17 @@
 			</div>
 			<div class="tab-pane fade" id="v-pills-perideaths" role="tabpanel" aria-labelledby="v-pills-perideaths-tab">
 				<div class="row">
-					<div class="col-md-6">
+					<div class="col-md-12">
 						<canvas id="ipmrChart" height="200"></canvas>
 					</div>
 				</div>
 			</div>
 			<div class="tab-pane fade" id="v-pills-neodeaths" role="tabpanel" aria-labelledby="v-pills-neodeaths-tab">
 				<div class="row">
-					<div class="col-md-6">
+					<div class="col-md-12 mb-3">
 						<canvas id="inmrChart" width="400" height="200"></canvas>
 					</div>
-					<div class="col-md-6">
+					<div class="col-md-12">
 						<canvas id="indwk1Chart" width="400" height="200"></canvas>
 					</div>
 				</div>
@@ -201,10 +201,10 @@
 			<div class="tab-pane fade" id="v-pills-stillbirths" role="tabpanel"
 				aria-labelledby="v-pills-stillbirths-tab">
 				<div class="row">
-					<div class="col-md-6">
+					<div class="col-md-12">
 						<canvas id="isbrChart" height="200"></canvas>
 					</div>
-					<div class="col-md-6">
+					<div class="col-md-12">
 						<canvas id="piisbrChart" height="200"></canvas>
 					</div>
 				</div>
@@ -276,7 +276,7 @@
 		var xValues = /*[[${yearmonth_array}]]*/ "";
 		var yValues2 = /*[[${iisbr_array}]]*/ "";
 		var yValues3 = /*[[${aisbr_array}]]*/ "";
-		var barColors = ["red", "green", "blue", "orange", "brown"];
+		var barColors = ["green", "blue"];
 
 		new Chart("isbrChart", {
 			type: "bar",
@@ -285,8 +285,8 @@
 				datasets: [
 					{
 						label: 'Institutional Intrapartum Stillbirth Rates',
-						backgroundColor: 'red',
-						borderColor: 'red',
+						backgroundColor: 'blue',
+						borderColor: 'blue',
 						data: yValues2,
 					},
 					{
@@ -310,7 +310,11 @@
 				plugins: {
 					datalabels: {
 						color: 'white',
-						display: true
+						backgroundColor: 'black',
+						borderRadius: 4,
+						font:{
+							size: 14
+						}
 					},
 					legend: {
 						display: true,
@@ -330,7 +334,7 @@
 
 		var xValues = /*[[${yearmonth_array}]]*/ "";
 		var yValues = /*[[${piisbr_array}]]*/ "";
-		var barColors = ["darkorange"];
+		var barColors = ["teal"];
 
 		new Chart("piisbrChart", {
 			type: "bar",
@@ -347,7 +351,12 @@
 				responsive: true,
 				plugins: {
 					datalabels: {
-						color: 'black',
+						color: 'white',
+						backgroundColor: 'black',
+						borderRadius: 4,
+						font: {
+							size: 14
+						}
 					},
 					legend: {
 						display: false,
@@ -381,6 +390,11 @@
 			},
 			options: {
 				responsive: true,
+				scales: {
+					y: {
+						beginAtZero: true
+					}
+				},
 				plugins: {
 					datalabels: {
 						backgroundColor: 'maroon',
@@ -433,6 +447,14 @@
 					}
 				},
 				plugins: {
+					datalabels: {
+						backgroundColor: 'black',
+						color: 'White',
+						borderRadius: 4,
+						font:{
+							size: 14
+						}
+					},
 					legend: {
 						display: true,
 						position: 'top',
@@ -450,7 +472,7 @@
 
 		var xValues = /*[[${yearmonth_array}]]*/ "";
 		var yValues = /*[[${indwk1_array}]]*/ "";
-		var barColors = ["red", "green", "blue", "orange", "brown"];
+		var barColors = ["teal"];
 
 		new Chart("indwk1Chart", {
 			type: "bar",
@@ -466,13 +488,21 @@
 			options: {
 				responsive: true,
 				plugins: {
+					datalabels: {
+						backgroundColor: 'black',
+						color: 'White',
+						borderRadius: 4,
+						font:{
+							size: 14
+						}
+					},
 					legend: {
 						display: false,
 						position: 'top',
 					},
 					title: {
 						display: true,
-						text: 'Trends in Institutional Neonatal Deaths in 1st week'
+						text: 'Trends in Percentage Institutional Neonatal Deaths in 1st week'
 					}
 				}
 			}
@@ -488,7 +518,7 @@
 		var yValues1 = /*[[${icsr_array}]]*/ "";
 		var yValues2 = /*[[${iadr_array}]]*/ "";
 		var yValues3 = /*[[${ivdr_array}]]*/ "";
-		var barColors = ["red", "green", "blue", "orange", "brown"];
+		var barColors = ["green", "blue"];
 
 		new Chart("icdrChart", {
 			type: "line",

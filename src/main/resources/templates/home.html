@@ -77,26 +77,22 @@
 									<tr>
 										<td th:text="#{label.totalperinatals}"></td>
 										<td>[[${oavg.totalperinatals}]]</td>
-										<td>[[${#numbers.formatDecimal(oavg.ipmr_oavg,
-											1, 'COMMA', 1, 'POINT')}]]</td>
+										<td>[[${oavg.ipmr_oavg}]]</td>
 									</tr>
 									<tr>
 										<td th:text="#{label.totalneonataldeaths}"></td>
 										<td>[[${oavg.totalneonatals}]]</td>
-										<td>[[${#numbers.formatDecimal(oavg.inmr_oavg,
-											1, 'COMMA', 1, 'POINT')}]]</td>
+										<td>[[${oavg.inmr_oavg}]]</td>
 									</tr>
 									<tr>
 										<td th:text="#{label.totalstillbirths}"></td>
 										<td>[[${oavg.totalstillbirths}]]</td>
-										<td>[[${#numbers.formatDecimal(oavg.isbr_oavg,
-											1, 'COMMA', 1, 'POINT')}]]</td>
+										<td>[[${oavg.isbr_oavg}]]</td>
 									</tr>
 									<tr>
 										<td th:text="#{label.totalmaternaldeaths}"></td>
 										<td>[[${oavg.mdeath_osum}]]</td>
-										<td>[[${#numbers.formatDecimal(oavg.immr_oavg,
-											1, 'COMMA', 1, 'POINT')}]]</td>
+										<td>[[${oavg.immr_oavg}]]</td>
 									</tr>
 								</tbody>
 							</table>

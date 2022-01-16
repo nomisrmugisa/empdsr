@@ -125,48 +125,48 @@ public class HomeController {
 		oindicators.setTotalstillbirths(totalstillbirth);
 
 		oindicators.setIsbr_oavg(
-				totalbirths == 0 ? 0 : Math.round(((totalstillbirth / totalbirths) * 1000) * 10.0) / 10.0);
+				totalbirths == 0 ? 0 : Math.round(((1000.0 * totalstillbirth / totalbirths)) * 10.0) / 10.0);
 
 		oindicators.setIisbr_oavg(
-				totalbirths == 0 ? 0 : Math.round(((totalintrapartum / totalbirths) * 1000) * 10.0) / 10.0);
+				totalbirths == 0 ? 0 : Math.round(((1000.0 * totalintrapartum / totalbirths)) * 10.0) / 10.0);
 
 		oindicators.setAisbr_oavg(oindicators.getIsbr_oavg() - oindicators.getIisbr_oavg());
 
 		oindicators.setPiisbr_oavg(
-				Math.round(((oindicators.getIisbr_oavg() / oindicators.getIsbr_oavg()) * 100) * 10.0) / 10.0);
+				Math.round(((100.0 * oindicators.getIisbr_oavg() / oindicators.getIsbr_oavg())) * 10.0) / 10.0);
 
 		oindicators.setInmr_oavg(
-				totallivebirths == 0 ? 0 : Math.round(((totalneondeaths / totallivebirths) * 1000) * 10.0) / 10.0);
+				totallivebirths == 0 ? 0 : Math.round(((1000.0 * totalneondeaths / totallivebirths)) * 10.0) / 10.0);
 
 		oindicators.setIndwk1_oavg(
-				totalneondeaths == 0 ? 0 : Math.round(((totalneondeaths_e / totalneondeaths) * 100) * 10.0) / 10.0);
+				totalneondeaths == 0 ? 0 : Math.round(((100.0 * totalneondeaths_e / totalneondeaths)) * 10.0) / 10.0);
 
 		oindicators.setEinmr_oavg(
-				totallivebirths == 0 ? 0 : Math.round(((totalneondeaths_e / totallivebirths) * 1000) * 10.0) / 10.0);
+				totallivebirths == 0 ? 0 : Math.round(((1000.0 * totalneondeaths_e / totallivebirths)) * 10.0) / 10.0);
 
 		oindicators.setLinmr_oavg(
-				totallivebirths == 0 ? 0 : Math.round(((totalneondeaths_l / totallivebirths) * 1000) * 10.0) / 10.0);
+				totallivebirths == 0 ? 0 : Math.round(((1000.0 * totalneondeaths_l / totallivebirths)) * 10.0) / 10.0);
 
 		oindicators.setIpmr_oavg(totalbirths == 0 ? 0
-				: Math.round((((totalneondeaths_e + totalstillbirth) / totalbirths) * 1000) * 10.0) / 10.0);
+				: Math.round(((1000.0 * (totalneondeaths_e + totalstillbirth) / totalbirths)) * 10.0) / 10.0);
 
 		oindicators.setImmr_oavg(totallivebirths == 0 ? 0
-				: Math.round(((totalmaternaldeaths / totallivebirths) * 100000) * 10.0) / 10.0);
+				: Math.round(((100000.0 * totalmaternaldeaths / totallivebirths)) * 10.0) / 10.0);
 
 		oindicators.setIcsr_oavg(
-				totaldeliveries == 0 ? 0 : Math.round(((totaldelcaesarean / totaldeliveries) * 100) * 10.0) / 10.0);
+				totaldeliveries == 0 ? 0 : Math.round(((100.0 * totaldelcaesarean / totaldeliveries)) * 10.0) / 10.0);
 
 		oindicators.setIadr_oavg(
-				totaldeliveries == 0 ? 0 : Math.round(((totaldelassisted / totaldeliveries) * 100) * 10.0) / 10.0);
+				totaldeliveries == 0 ? 0 : Math.round(((100.0 * totaldelassisted / totaldeliveries)) * 10.0) / 10.0);
 
-		oindicators.setIvdr_oavg(
-				totaldeliveries == 0 ? 0 : Math.round(((totaldelvaginal / totaldeliveries) * 100) * 10.0) / 10.0);
+		oindicators.setIvdr_oavg(totaldeliveries == 0 ? 0
+				: Math.round(((100.0 * totaldelvaginal / totaldeliveries) * 100) * 10.0) / 10.0);
 
 		oindicators.setIlbwr_oavg(
-				totallivebirths == 0 ? 0 : Math.round(((totallowbirthwgt / totallivebirths) * 100) * 10.0) / 10.0);
+				totallivebirths == 0 ? 0 : Math.round(((100.0 * totallowbirthwgt / totallivebirths)) * 10.0) / 10.0);
 
 		oindicators.setIptbr_oavg(
-				totallivebirths == 0 ? 0 : Math.round(((totalpretermbirths / totallivebirths) * 100) * 10.0) / 10.0);
+				totallivebirths == 0 ? 0 : Math.round(((100.0 * totalpretermbirths / totallivebirths)) * 10.0) / 10.0);
 
 		oindicators.setMdeath_osum(totalmaternaldeaths);
 
@@ -181,7 +181,8 @@ public class HomeController {
 		Integer ctotalbirths = Integer.valueOf(cdata[4] == null ? "0" : cdata[4]);
 		Integer ctotalstillbirth = Integer.valueOf(cdata[5] == null ? "0" : cdata[5]);
 		Integer ctotalintrapartum = Integer.valueOf(cdata[6] == null ? "0" : cdata[6]);
-		//Integer ctotalantepartum = Integer.valueOf(cdata[7] == null ? "0" : cdata[7]);
+		// Integer ctotalantepartum = Integer.valueOf(cdata[7] == null ? "0" :
+		// cdata[7]);
 		Integer ctotallivebirths = Integer.valueOf(cdata[8] == null ? "0" : cdata[8]);
 		Integer ctotalpretermbirths = Integer.valueOf(cdata[9] == null ? "0" : cdata[9]);
 		Integer ctotallowbirthwgt = Integer.valueOf(cdata[10] == null ? "0" : cdata[10]);
@@ -200,48 +201,48 @@ public class HomeController {
 		cindicators.setTotalstillbirths(ctotalstillbirth);
 
 		cindicators.setIsbr_oavg(
-				ctotalbirths == 0 ? 0 : Math.round(((ctotalstillbirth / ctotalbirths) * 1000) * 10.0) / 10.0);
+				ctotalbirths == 0 ? 0 : Math.round(((1000.0 * ctotalstillbirth / ctotalbirths)) * 10.0) / 10.0);
 
 		cindicators.setIisbr_oavg(
-				ctotalbirths == 0 ? 0 : Math.round(((ctotalintrapartum / ctotalbirths) * 1000) * 10.0) / 10.0);
+				ctotalbirths == 0 ? 0 : Math.round(((1000.0 * ctotalintrapartum / ctotalbirths)) * 10.0) / 10.0);
 
 		cindicators.setAisbr_oavg(cindicators.getIsbr_oavg() - cindicators.getIisbr_oavg());
 
 		cindicators.setPiisbr_oavg(
-				Math.round(((cindicators.getIisbr_oavg() / cindicators.getIsbr_oavg()) * 100) * 10.0) / 10.0);
+				Math.round(((100.0 * cindicators.getIisbr_oavg() / cindicators.getIsbr_oavg())) * 10.0) / 10.0);
 
 		cindicators.setInmr_oavg(
-				ctotallivebirths == 0 ? 0 : Math.round(((ctotalneondeaths / ctotallivebirths) * 1000) * 10.0) / 10.0);
+				ctotallivebirths == 0 ? 0 : Math.round(((1000.0 * ctotalneondeaths / ctotallivebirths)) * 10.0) / 10.0);
 
-		cindicators.setIndwk1_oavg(
-				ctotalneondeaths == 0 ? 0 : Math.round(((ctotalneondeaths_e / ctotalneondeaths) * 100) * 10.0) / 10.0);
+		cindicators.setIndwk1_oavg(ctotalneondeaths == 0 ? 0
+				: Math.round(((100.0 * ctotalneondeaths_e / ctotalneondeaths)) * 10.0) / 10.0);
 
-		cindicators.setEinmr_oavg(
-				ctotallivebirths == 0 ? 0 : Math.round(((ctotalneondeaths_e / ctotallivebirths) * 1000) * 10.0) / 10.0);
+		cindicators.setEinmr_oavg(ctotallivebirths == 0 ? 0
+				: Math.round(((1000.0 * ctotalneondeaths_e / ctotallivebirths)) * 10.0) / 10.0);
 
-		cindicators.setLinmr_oavg(
-				ctotallivebirths == 0 ? 0 : Math.round(((ctotalneondeaths_l / ctotallivebirths) * 1000) * 10.0) / 10.0);
+		cindicators.setLinmr_oavg(ctotallivebirths == 0 ? 0
+				: Math.round(((1000.0 * ctotalneondeaths_l / ctotallivebirths)) * 10.0) / 10.0);
 
 		cindicators.setIpmr_oavg(ctotalbirths == 0 ? 0
-				: Math.round((((ctotalneondeaths_e + ctotalstillbirth) / ctotalbirths) * 1000) * 10.0) / 10.0);
+				: Math.round(((1000.0 * (ctotalneondeaths_e + ctotalstillbirth) / ctotalbirths)) * 10.0) / 10.0);
 
 		cindicators.setImmr_oavg(ctotallivebirths == 0 ? 0
-				: Math.round(((ctotalmaternaldeaths / ctotallivebirths) * 100000) * 10.0) / 10.0);
+				: Math.round(((100000.0 * ctotalmaternaldeaths / ctotallivebirths)) * 10.0) / 10.0);
 
-		cindicators.setIcsr_oavg(
-				ctotaldeliveries == 0 ? 0 : Math.round(((ctotaldelcaesarean / ctotaldeliveries) * 100) * 10.0) / 10.0);
+		cindicators.setIcsr_oavg(ctotaldeliveries == 0 ? 0
+				: Math.round(((100.0 * ctotaldelcaesarean / ctotaldeliveries)) * 10.0) / 10.0);
 
 		cindicators.setIadr_oavg(
-				ctotaldeliveries == 0 ? 0 : Math.round(((ctotaldelassisted / ctotaldeliveries) * 100) * 10.0) / 10.0);
+				ctotaldeliveries == 0 ? 0 : Math.round(((100.0 * ctotaldelassisted / ctotaldeliveries)) * 10.0) / 10.0);
 
 		cindicators.setIvdr_oavg(
-				ctotaldeliveries == 0 ? 0 : Math.round(((ctotaldelvaginal / ctotaldeliveries) * 100) * 10.0) / 10.0);
+				ctotaldeliveries == 0 ? 0 : Math.round(((100.0 * ctotaldelvaginal / ctotaldeliveries)) * 10.0) / 10.0);
 
 		cindicators.setIlbwr_oavg(
-				ctotallivebirths == 0 ? 0 : Math.round(((ctotallowbirthwgt / ctotallivebirths) * 100) * 10.0) / 10.0);
+				ctotallivebirths == 0 ? 0 : Math.round(((100.0 * ctotallowbirthwgt / ctotallivebirths)) * 10.0) / 10.0);
 
-		cindicators.setIptbr_oavg(
-				ctotallivebirths == 0 ? 0 : Math.round(((ctotalpretermbirths / ctotallivebirths) * 100) * 10.0) / 10.0);
+		cindicators.setIptbr_oavg(ctotallivebirths == 0 ? 0
+				: Math.round(((100.0 * ctotalpretermbirths / ctotallivebirths)) * 10.0) / 10.0);
 
 		cindicators.setMdeath_osum(ctotalmaternaldeaths);
 
