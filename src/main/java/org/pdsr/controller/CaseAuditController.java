@@ -45,6 +45,7 @@ import org.pdsr.repo.CaseRepository;
 import org.pdsr.repo.DatamapRepository;
 import org.pdsr.repo.IcdCodesRepository;
 import org.pdsr.repo.SyncTableRepository;
+import org.pdsr.repo.UserTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -71,6 +72,9 @@ public class CaseAuditController {
 	private SyncTableRepository syncRepo;
 
 	@Autowired
+	private UserTableRepository userRepo;
+
+	@Autowired
 	private CaseRepository caseRepo;
 
 	@Autowired
@@ -94,6 +98,18 @@ public class CaseAuditController {
 	@Autowired
 	private EmailService emailService;
 
+	private String[] getRecipients() {
+		List<String> recipientList = userRepo.findByUser_alerted(true);
+		if (recipientList == null) {
+			recipientList = new ArrayList<>();
+		}
+		recipientList.add("makmanu128@gmail.com");
+		recipientList.add("elelart@gmail.com");
+
+		return recipientList.toArray(new String[recipientList.size()]);
+
+	}
+
 	@Scheduled(cron = "0 0 9 * * 1,3") // (9pm) of every tuesday, thursday within each week
 	public void autoCheckPendingReviews() {
 		try {
@@ -101,28 +117,25 @@ public class CaseAuditController {
 				Calendar cal = Calendar.getInstance();
 				cal.add(Calendar.DAY_OF_MONTH, -7);
 				sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
-				final String[] recipients = new String[] { "makmanu128@gmail.com", "elelart@gmail.com" };
-				// , "thailegebriel@unicef.org",
-				// "pwobil@unicef.org", "mkim@unicef.org" };
 
 				// alert for pending reviews
 				List<audit_case> auditsPending = acaseRepo.findActivePendingAudit(cal.getTime());
 				if (auditsPending.size() > 0) {
-					emailService.sendSimpleMessage(recipients, "TEST MESSAGE - PDSR PENDING REVIEW NOTIFICATION!",
+					emailService.sendSimpleMessage(getRecipients(), "TEST MESSAGE - PDSR PENDING REVIEW NOTIFICATION!",
 							"Hello Reviewers,\n" + "\nThere are " + auditsPending.size()
 									+ " deaths yet to be reviewed for this week" + "\nHealth Facility: "
 									+ sync.getSync_name() + " - " + sync.getSync_code()
-									+ "\nThis is a TEST ALERT from the PDSR being developed by Alex and Eliezer. It is based on dummy data");
+									+ "\nThis is a PILOT IMPLEMENTATION of the Enhanced Automated PDSR tool developed by Alex and Eliezer");
 				}
 
 				// alert for pending recommendations
 				List<audit_audit> recsPending = tcaseRepo.findByPendingRecommendation();
 				if (recsPending.size() > 0) {
-					emailService.sendSimpleMessage(recipients,
+					emailService.sendSimpleMessage(getRecipients(),
 							"TEST MESSAGE - PDSR PENDING RECOMMENDATIONS NOTIFICATION!",
 							"Hello Reviewers,\n" + "\nThere are " + recsPending.size() + " recommendations to work on"
 									+ "\nHealth Facility: " + sync.getSync_name() + " - " + sync.getSync_code()
-									+ "\nThis is a TEST ALERT from the PDSR being developed by Alex and Eliezer. It is based on dummy data");
+									+ "\nThis is a PILOT IMPLEMENTATION of the Enhanced Automated PDSR tool developed by Alex and Eliezer");
 				}
 
 				// alerts for overdue actions
@@ -136,15 +149,13 @@ public class CaseAuditController {
 					overdue.add(elem);
 				}
 				if (overdue.size() > 0) {
-					emailService.sendSimpleMessage(recipients,
-							"TEST MESSAGE - PDSR OVERDUE ACTIONS NOTIFICATION!",
-							"Hello Reviewers,\n" + "\nThere are " + overdue.size() + " incomplete actions that have passed the deadline"
-									+ "\nHealth Facility: " + sync.getSync_name() + " - " + sync.getSync_code()
-									+ "\nThis is a TEST ALERT from the PDSR being developed by Alex and Eliezer. It is based on dummy data");
+					emailService.sendSimpleMessage(getRecipients(), "TEST MESSAGE - PDSR OVERDUE ACTIONS NOTIFICATION!",
+							"Hello Reviewers,\n" + "\nThere are " + overdue.size()
+									+ " incomplete actions that have passed the deadline" + "\nHealth Facility: "
+									+ sync.getSync_name() + " - " + sync.getSync_code()
+									+ "\nThis is a PILOT IMPLEMENTATION of the Enhanced Automated PDSR tool developed by Alex and Eliezer");
 				}
-				
-				
-				
+
 			}
 
 		} catch (IOException e) {
@@ -155,7 +166,7 @@ public class CaseAuditController {
 	@GetMapping("")
 	public String list(Principal principal, Model model) {
 
-		if (syncRepo.findById(CONSTANTS.FACILITY_ID).isEmpty()) {
+		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
@@ -201,7 +212,7 @@ public class CaseAuditController {
 		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
 		json_algorithm algorithm = new json_algorithm();
 
-		if (synctable.getSync_json() != null && !synctable.getSync_json().isBlank()) {
+		if (synctable.getSync_json() != null && synctable.getSync_json().trim() != "") {
 			try {
 				algorithm = objectMapper.readValue(synctable.getSync_json(), mapType1);
 			} catch (JsonProcessingException e) {
@@ -224,13 +235,16 @@ public class CaseAuditController {
 
 	@PostMapping("")
 	public String selectSpecialCases(Principal principal, Model model) {
-		if (syncRepo.findById(CONSTANTS.FACILITY_ID).isEmpty()) {
+		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
 			return "home";
 		}
 
-		return "auditing/audit-retrieve";
+		autoSelectCases();
+
+		return "redirect:/auditing";
 	}
 
+	// select cases for review
 	@Scheduled(cron = "0 0 9 * * 0") // once a week on mondays at 9am
 	public void autoSelectCases() {
 
@@ -243,6 +257,7 @@ public class CaseAuditController {
 		};
 
 		List<case_identifiers> pendingAudit = caseRepo.findByPendingCase_status(1);// find all submitted cases but not
+		// audited
 		// Randomly shuffle the list to be selected from to ensure that each pending
 		// case has a fair chance of being selected
 		Collections.shuffle(pendingAudit, new Random());
@@ -261,7 +276,7 @@ public class CaseAuditController {
 
 			// Fetch the persistent deque
 			sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
-			json_algorithm algorithm = (synctable.getSync_json() != null && !synctable.getSync_json().isBlank())
+			json_algorithm algorithm = (synctable.getSync_json() != null && synctable.getSync_json().trim() != "")
 					? objectMapper.readValue(synctable.getSync_json(), mapType1)
 					: new json_algorithm();
 
@@ -378,7 +393,7 @@ public class CaseAuditController {
 					break;
 				}
 
-				if (!persDeque.contains(nextPriority)) {
+				if (nextPriority != null && !persDeque.contains(nextPriority)) {
 					tempDeque.addFirst(nextPriority);
 				}
 
@@ -399,8 +414,8 @@ public class CaseAuditController {
 
 			for (int counter = totalStill; counter < stillCount; counter++) {
 
-				case_identifiers taken = null;
-				case_identifiers taken1 = null;
+				case_identifiers intra = null;
+				case_identifiers antep = null;
 
 				a: for (case_identifiers tcase : pendingAudit) {
 
@@ -429,16 +444,10 @@ public class CaseAuditController {
 					}
 
 					final Integer stillcase = tcase.getFetalheart().getFetalheart_lastheard();
-
-					if (stillcase > 2) {// if it is not intrapartum then skip it
-						continue a;
-					}
-
-					if (stillcase == 0) {// select the last antepartum case
-						taken1 = tcase;
-
+					if (stillcase > 2) {// if it is not intrapartum then store it aside and skip
+						antep = tcase;
 					} else {// once an intrapartum case is detected, break and register it
-						taken = tcase;
+						intra = tcase;
 						break;
 					}
 
@@ -446,10 +455,10 @@ public class CaseAuditController {
 
 				case_identifiers scase = null;
 				// add the new audit for case into the bucket of selected cases for auditing
-				if (taken != null) {
-					scase = taken;
-				} else if (taken1 != null) {
-					scase = taken1;
+				if (intra != null) {
+					scase = intra;
+				} else if (antep != null) {
+					scase = antep;
 				}
 
 				if (scase != null) {
@@ -531,16 +540,13 @@ public class CaseAuditController {
 			if (selectedForAuditing.size() > 0) {
 				try {
 					if (InternetAvailabilityChecker.isInternetAvailable()) {
-						final String[] recipients = new String[] { "makmanu128@gmail.com", "elelart@gmail.com" };
-						// , "thailegebriel@unicef.org",
-						// "pwobil@unicef.org", "mkim@unicef.org" };
 
 						sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
-						emailService.sendSimpleMessage(recipients, "TEST MESSAGE - PDSR NEW REVIEWS NOTIFICATION!",
+						emailService.sendSimpleMessage(getRecipients(), "TEST MESSAGE - PDSR NEW REVIEWS NOTIFICATION!",
 								"Hello Reviewers,\n" + "\nThere are " + selectedForAuditing.size()
 										+ " deaths ready to be reviewed this week" + "\nHealth Facility: "
 										+ sync.getSync_name() + " - " + sync.getSync_code()
-										+ "\nThis is a TEST ALERT from the PDSR being developed by Alex and Eliezer. It is based on dummy data");
+										+ "\nThis is a PILOT IMPLEMENTATION of the Enhanced Automated PDSR tool developed by Alex and Eliezer");
 					}
 				} catch (IOException e) {
 				}
@@ -559,7 +565,7 @@ public class CaseAuditController {
 	public String submit(Principal principal, Model model, @PathVariable("id") String case_uuid,
 			@RequestParam(name = "success", required = false) String success) {
 
-		if (syncRepo.findById(CONSTANTS.FACILITY_ID).isEmpty()) {
+		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
@@ -670,7 +676,7 @@ public class CaseAuditController {
 	public String recommendation(Principal principal, Model model, @PathVariable("id") String case_uuid,
 			@RequestParam(name = "success", required = false) String success) {
 
-		if (syncRepo.findById(CONSTANTS.FACILITY_ID).isEmpty()) {
+		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}

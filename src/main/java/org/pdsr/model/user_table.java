@@ -34,7 +34,6 @@ public class user_table implements Serializable {
 	@Size(min = 1, max = 80)
 	private String password;
 
-	
 	@NotNull
 	@Column(name = "enabled")
 	private boolean enabled;
@@ -53,6 +52,10 @@ public class user_table implements Serializable {
 	@Column(name = "usercontact", unique = true)
 	@Size(min = 1, max = 20)
 	private String usercontact;
+
+	@NotNull
+	@Column(name = "alerted")
+	private boolean alerted;
 
 	@Transient
 	private String cur_password;
@@ -113,6 +116,14 @@ public class user_table implements Serializable {
 		this.usercontact = usercontact;
 	}
 
+	public boolean isAlerted() {
+		return alerted;
+	}
+
+	public void setAlerted(boolean alerted) {
+		this.alerted = alerted;
+	}
+
 	public String getCur_password() {
 		return cur_password;
 	}
@@ -165,7 +176,7 @@ public class user_table implements Serializable {
 
 	@Override
 	public String toString() {
-		return username;
+		return useremail;
 	}
 
 }

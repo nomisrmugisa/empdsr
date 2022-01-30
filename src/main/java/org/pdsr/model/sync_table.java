@@ -41,8 +41,7 @@ public class sync_table implements Serializable {
 	@Column
 	@Size(min = 1, max = 80)	
 	private String sync_email;
-	
-	
+		
 	@Lob
 	@Column
 	private String sync_json;

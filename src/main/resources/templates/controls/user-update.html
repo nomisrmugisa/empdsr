@@ -22,9 +22,14 @@
 				</div>
 			</div>
 			<div class="row mb-3">
-				<label class="col-md-2 col-form-label" th:text="#{label.useremail}"></label>
+				<label class="col-md-2 col-form-label" th:utext="#{label.useremail}"></label>
 				<div class="col-md-6">
 					<input type="email" class="form-control form-control-sm" th:field="*{useremail}" required />
+					<label class="form-label text-danger mt-2"> <input type="checkbox" th:field="*{alerted}" />
+						[[#{label.alerted.note}]]
+					</label>
+					<small class="text-danger" th:if="${#fields.hasErrors('useremail')}"
+						th:errors="*{useremail}">error</small>
 				</div>
 			</div>
 			<div class="row mb-3">

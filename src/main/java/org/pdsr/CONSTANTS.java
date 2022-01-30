@@ -31,7 +31,7 @@ public class CONSTANTS {
     }
 
     public static final byte[] readICD10(String filename) throws IOException {
-        Path path = Paths.get(ROOT_LOCATION, new String[0]).resolve(filename);
+        Path path = Paths.get(filename);
         return Files.readAllBytes(path);
     }
 

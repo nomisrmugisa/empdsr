@@ -42,11 +42,10 @@
 
 		<div th:if="${activated}" class="mt-2 alert alert-danger">
 			<h4>Not Activated</h4>
-			<p>
-				[[#{activate.alert}]] <a href="#" th:href="@{/controls}" th:utext="#{controls}"></a>
+			<p>[[#{activate.alert}]] <a href="#" th:href="@{/controls}" th:utext="#{controls}"></a></p>
 		</div>
 	</div>
-	<div class="row">
+	<div class="row" th:unless="${activated}">
 		<div class="col-md-6 mb-3">
 			<img class="mb-3 border border-info" id="logo" src="img/logo.JPG" height="230" width="100%"
 				style="border-radius: 5px;">
@@ -353,7 +352,7 @@
 								<ul class="list-group">
 									<li class="list-group-item d-flex justify-content-between align-items-center"
 										th:each="item : ${top_cneonatal}">
-										<span><b class="text-danger">[[${item.pm_code}]]</b >: [[${item.pm_desc}]]</span>
+										<span><b class="text-danger">[[${item.pm_code}]]</b>: [[${item.pm_desc}]]</span>
 										<span class="badge bg-danger rounded-pill">[[${item.pm_tsum}]]</span>
 									</li>
 								</ul>
@@ -363,7 +362,7 @@
 								<ul class="list-group">
 									<li class="list-group-item d-flex justify-content-between align-items-center"
 										th:each="item : ${top_oneonatal}">
-										<span><b class="text-muted">[[${item.pm_code}]]</b >: [[${item.pm_desc}]]</span>
+										<span><b class="text-muted">[[${item.pm_code}]]</b>: [[${item.pm_desc}]]</span>
 										<span class="badge bg-dark rounded-pill">[[${item.pm_tsum}]]</span>
 									</li>
 								</ul>
@@ -384,7 +383,7 @@
 								<ul class="list-group">
 									<li class="list-group-item d-flex justify-content-between align-items-center"
 										th:each="item : ${top_cstillbirth}">
-										<span><b class="text-danger">[[${item.pm_code}]]</b >: [[${item.pm_desc}]]</span>
+										<span><b class="text-danger">[[${item.pm_code}]]</b>: [[${item.pm_desc}]]</span>
 										<span class="badge bg-danger rounded-pill">[[${item.pm_tsum}]]</span>
 									</li>
 								</ul>
@@ -394,11 +393,11 @@
 								<ul class="list-group">
 									<li class="list-group-item d-flex justify-content-between align-items-center"
 										th:each="item : ${top_ostillbirth}">
-										<span><b class="text-muted">[[${item.pm_code}]]</b >: [[${item.pm_desc}]]</span>
+										<span><b class="text-muted">[[${item.pm_code}]]</b>: [[${item.pm_desc}]]</span>
 										<span class="badge bg-dark rounded-pill">[[${item.pm_tsum}]]</span>
 									</li>
 								</ul>
-							</div >
+							</div>
 						</div>
 					</div>
 				</div>

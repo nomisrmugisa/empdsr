@@ -7,14 +7,14 @@
 	MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_VIEWS', 'View analysis and reports');
 
 
-    MERGE INTO user_table(username, enabled, password, usercontact, useremail, userfullname) KEY(username) 
+    MERGE INTO user_table(username, enabled, password, usercontact, useremail, userfullname, alerted) KEY(username) 
     VALUES (
 	    'webadmin'
 	    , true
 	    , '$2a$10$SLlNbnvkIqatweZxewyZUeF6yrGexjppQpJgntGXCxWMQCaT3ORdi'
 	    , '233246926396'
 	    , 'webadmin@kintampo-hrc.org'
-	    , 'ROOT ADMINISTRATOR'
+	    , 'ROOT ADMINISTRATOR',false
     );
 
 

@@ -70,7 +70,7 @@ public class ReportController {
 	public String list(Principal principal, Model model,
 			@RequestParam(name = "success", required = false) String success) {
 
-		if (syncRepo.findById(CONSTANTS.FACILITY_ID).isEmpty()) {
+		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 
@@ -246,7 +246,7 @@ public class ReportController {
 	public String add(Principal principal, Model model, @PathVariable("yearid") Integer yearid,
 			@PathVariable("monthid") Integer monthid) {
 
-		if (syncRepo.findById(CONSTANTS.FACILITY_ID).isEmpty()) {
+		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
@@ -374,7 +374,7 @@ public class ReportController {
 	public String add(Principal principal, Model model, @ModelAttribute("selected") weekgrid selected,
 			@PathVariable("yearid") Integer yearid, @PathVariable("monthid") Integer monthid) {
 
-		if (syncRepo.findById(CONSTANTS.FACILITY_ID).isEmpty()) {
+		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
@@ -387,7 +387,7 @@ public class ReportController {
 	@GetMapping("/search")
 	public String search(Principal principal, Model model) {
 
-		if (syncRepo.findById(CONSTANTS.FACILITY_ID).isEmpty()) {
+		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 
@@ -402,7 +402,7 @@ public class ReportController {
 	@PostMapping("/search")
 	public String search(Principal principal, Model model, @ModelAttribute("selected") wmsearch search) {
 
-		if (syncRepo.findById(CONSTANTS.FACILITY_ID).isEmpty()) {
+		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 

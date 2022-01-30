@@ -40,7 +40,7 @@ public class HomeController {
 	private IcdCodesRepository icdRepo;
 
 	@GetMapping("")
-	public String homee(Principal principal, Model model) {
+	public String home(Principal principal, Model model) {
 		final int year = Calendar.getInstance().get(Calendar.YEAR);
 		final java.util.Date date = new Date();
 
@@ -97,23 +97,28 @@ public class HomeController {
 		// SUMMARY STATISTICS
 		final String[] adata = wmRepo.findFrontPageRates().get(0);
 
-		Integer totaldeliveries = Integer.valueOf(adata[0]), totaldelvaginal = Integer.valueOf(adata[1]),
-				totaldelassisted = Integer.valueOf(adata[2]), totaldelcaesarean = Integer.valueOf(adata[3]),
+		Integer totaldeliveries = (adata[0] == null) ? 0 : Integer.valueOf(adata[0]),
+				totaldelvaginal = (adata[1] == null) ? 0 : Integer.valueOf(adata[1]),
+				totaldelassisted = (adata[2] == null) ? 0 : Integer.valueOf(adata[2]),
+				totaldelcaesarean = (adata[3] == null) ? 0 : Integer.valueOf(adata[3]),
 
-				totalbirths = Integer.valueOf(adata[4]),
+				totalbirths = (adata[4] == null) ? 0 : Integer.valueOf(adata[4]),
 
-				totalstillbirth = Integer.valueOf(adata[5]), totalintrapartum = Integer.valueOf(adata[6]),
+				totalstillbirth = (adata[5] == null) ? 0 : Integer.valueOf(adata[5]),
+				totalintrapartum = (adata[6] == null) ? 0 : Integer.valueOf(adata[6]),
 				// totalantepartum = Integer.valueOf(adata[7]),
 
-				totallivebirths = Integer.valueOf(adata[8]),
+				totallivebirths = (adata[8] == null) ? 0 : Integer.valueOf(adata[8]),
 
-				totalpretermbirths = Integer.valueOf(adata[9]), totallowbirthwgt = Integer.valueOf(adata[10]),
+				totalpretermbirths = (adata[9] == null) ? 0 : Integer.valueOf(adata[9]),
+				totallowbirthwgt = (adata[10] == null) ? 0 : Integer.valueOf(adata[10]),
 
-				totalneondeaths = Integer.valueOf(adata[11]),
+				totalneondeaths = (adata[11] == null) ? 0 : Integer.valueOf(adata[11]),
 
-				totalneondeaths_e = Integer.valueOf(adata[12]), totalneondeaths_l = Integer.valueOf(adata[13]),
+				totalneondeaths_e = (adata[12] == null) ? 0 : Integer.valueOf(adata[12]),
+				totalneondeaths_l = (adata[13] == null) ? 0 : Integer.valueOf(adata[13]),
 
-				totalmaternaldeaths = Integer.valueOf(adata[14]);
+				totalmaternaldeaths = (adata[13] == null) ? 0 : Integer.valueOf(adata[14]);
 
 		wmoindicators oindicators = new wmoindicators();
 		oindicators.setWmdesc("Overall Averages");
@@ -171,9 +176,9 @@ public class HomeController {
 		oindicators.setMdeath_osum(totalmaternaldeaths);
 
 		model.addAttribute("oavg", oindicators);
-
 		// SUMMARY STATISTICS - CURRENT YEAR
 		final String[] cdata = wmRepo.findFrontPageRates(year).get(0);
+
 		Integer ctotaldeliveries = Integer.valueOf(cdata[0] == null ? "0" : cdata[0]);
 		Integer ctotaldelvaginal = Integer.valueOf(cdata[1] == null ? "0" : cdata[1]);
 		Integer ctotaldelassisted = Integer.valueOf(cdata[2] == null ? "0" : cdata[2]);

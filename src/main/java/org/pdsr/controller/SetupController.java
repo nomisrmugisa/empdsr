@@ -92,7 +92,7 @@ public class SetupController {
 		// do the sync operations here
 		Optional<facility_table> object = facilityRepo.findByFacility_code(selected.getSync_code());
 
-		if (object.isEmpty()) {
+		if (!object.isPresent()) {
 			results.rejectValue("sync_code", "invalid.code");
 			selected.setSync_uuid("");
 			selected.setSync_name("");

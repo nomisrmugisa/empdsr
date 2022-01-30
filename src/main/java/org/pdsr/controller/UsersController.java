@@ -1,10 +1,8 @@
 package org.pdsr.controller;
 
 import java.security.Principal;
-import java.util.Optional;
 
 import org.pdsr.CONSTANTS;
-import org.pdsr.model.sync_table;
 import org.pdsr.model.user_table;
 import org.pdsr.repo.FacilityTableRepository;
 import org.pdsr.repo.GroupTableRepository;
@@ -55,8 +53,7 @@ public class UsersController {
 	public String addUser(Principal principal, final Model model,
 			@RequestParam(name = "success", required = false) String success) {
 
-		Optional<sync_table> sync = syncRepo.findById(CONSTANTS.FACILITY_ID);
-		if (sync.isEmpty()) {
+		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}

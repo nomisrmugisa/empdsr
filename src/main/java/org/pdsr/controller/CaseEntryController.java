@@ -3,6 +3,7 @@ package org.pdsr.controller;
 import java.io.IOException;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -63,6 +64,7 @@ import org.pdsr.repo.PlacentacheckTableRepository;
 import org.pdsr.repo.ResuscitationTableRepository;
 import org.pdsr.repo.RiskTableRepository;
 import org.pdsr.repo.SyncTableRepository;
+import org.pdsr.repo.UserTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -85,6 +87,9 @@ public class CaseEntryController {
 
 	@Autowired
 	private SyncTableRepository syncRepo;
+
+	@Autowired
+	private UserTableRepository userRepo;
 
 	@Autowired
 	private ComplicationTableRepository compRepo;
@@ -155,7 +160,7 @@ public class CaseEntryController {
 	@GetMapping("")
 	public String list(Principal principal, Model model) {
 
-		if (syncRepo.findById(CONSTANTS.FACILITY_ID).isEmpty()) {
+		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
@@ -169,7 +174,7 @@ public class CaseEntryController {
 	@GetMapping("/add")
 	public String add(Principal principal, Model model) {
 
-		if (syncRepo.findById(CONSTANTS.FACILITY_ID).isEmpty()) {
+		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
@@ -191,7 +196,7 @@ public class CaseEntryController {
 	@Transactional
 	@PostMapping("/add")
 	public String add(Principal principal, Model model, @ModelAttribute("selected") case_identifiers selected) {
-		if (syncRepo.findById(CONSTANTS.FACILITY_ID).isEmpty()) {
+		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
@@ -211,7 +216,7 @@ public class CaseEntryController {
 			@RequestParam(name = "page", required = true) Integer page,
 			@RequestParam(name = "success", required = false) String success) {
 
-		if (syncRepo.findById(CONSTANTS.FACILITY_ID).isEmpty()) {
+		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
@@ -227,12 +232,16 @@ public class CaseEntryController {
 			final boolean bio = selected.getBiodata().getData_complete() == 1;
 			final boolean pre = selected.getPregnancy().getData_complete() == 1;
 			final boolean ref = selected.getReferral().getData_complete() == 1;
-			final boolean del = selected.getDelivery().getData_complete() == 1;
+			final boolean del = selected.getDelivery().getData_complete() == 1
+					&& selected.getDelivery().getDelivery_date() != null
+					&& (selected.getDelivery().getDelivery_date() instanceof java.util.Date);
 			final boolean ant = selected.getAntenatal().getData_complete() == 1;
 			final boolean lab = selected.getLabour().getData_complete() == 1;
 			final boolean bir = selected.getBirth().getData_complete() == 1;
 			final boolean fet = selected.getFetalheart() != null && selected.getFetalheart().getData_complete() == 1;
-			final boolean bab = selected.getBabydeath() != null && selected.getBabydeath().getData_complete() == 1;
+			final boolean bab = selected.getBabydeath() != null && selected.getBabydeath().getData_complete() == 1
+					&& selected.getBabydeath().getBaby_ddate() != null
+					&& (selected.getBabydeath().getBaby_ddate() instanceof java.util.Date);
 
 			completed = bio && pre && ref && del && ant && lab && bir && (fet || bab);
 		}
@@ -371,7 +380,7 @@ public class CaseEntryController {
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-		if (syncRepo.findById(CONSTANTS.FACILITY_ID).isEmpty()) {
+		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
@@ -432,7 +441,7 @@ public class CaseEntryController {
 						|| o.getReferral_atime() == null || o.getReferral_case() == null || o.getReferral_date() == null
 						|| o.getReferral_hour() == null || o.getReferral_minute() == null
 						|| o.getReferral_time() == null || o.getReferral_facility() == null
-						|| o.getReferral_facility().isBlank() || o.getReferral_patient() == null
+						|| o.getReferral_facility().trim() == "" || o.getReferral_patient() == null
 						|| o.getReferral_source() == null || o.getReferral_transport() == null) {
 
 					o.setData_complete(0);
@@ -510,7 +519,7 @@ public class CaseEntryController {
 				case_antenatal o = selected.getAntenatal();
 				if (o.getAntenatal_alcohol() == null || o.getAntenatal_attend() == null
 						|| o.getAntenatal_attendno() == null || o.getAntenatal_days() == null
-						|| o.getAntenatal_facility() == null || o.getAntenatal_facility().isBlank()
+						|| o.getAntenatal_facility() == null || o.getAntenatal_facility().trim()==""
 						|| o.getAntenatal_folicacid() == null || o.getAntenatal_folicacid3m() == null
 						|| o.getAntenatal_gravida() == null || o.getAntenatal_herbal() == null
 						|| o.getAntenatal_hiv() == null || o.getAntenatal_malprophy() == null
@@ -697,7 +706,7 @@ public class CaseEntryController {
 	@GetMapping("/submit/{id}")
 	public String submit(Principal principal, Model model, @PathVariable("id") String case_uuid) {
 
-		if (syncRepo.findById(CONSTANTS.FACILITY_ID).isEmpty()) {
+		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
@@ -718,22 +727,36 @@ public class CaseEntryController {
 
 		try {
 			if (InternetAvailabilityChecker.isInternetAvailable()) {
-				final String[] recipients = new String[] { "makmanu128@gmail.com", "elelart@gmail.com" };
-				// , "thailegebriel@unicef.org",
-				// "pwobil@unicef.org", "mkim@unicef.org" };
 
 				sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
-				emailService.sendSimpleMessage(recipients, "TEST MESSAGE- PDSR DEATH NOTIFICATION!",
+				emailService.sendSimpleMessage(getRecipients(), "TEST MESSAGE- PDSR DEATH NOTIFICATION!",
 						"Hello, \nThis is is to notify you of a " + getAnswer("death_options", selected.getCase_death())
 								+ "\nMother's age: " + selected.getBiodata().getBiodata_mage() + "\nChild's sex: "
-								+ getAnswer("sex_options", selected.getBiodata().getBiodata_sex())
+								+ getAnswer("sex_options", selected.getBiodata().getBiodata_sex()) + "\nDate of death"
+								+ new SimpleDateFormat("dd/MMM/yyyy").format(
+										selected.getCase_death() == 1 ? selected.getDelivery().getDelivery_date()
+												: selected.getBabydeath().getBaby_ddate())
 								+ "\nHealth Facility: " + sync.getSync_name() + " - " + sync.getSync_code()
-								+ "\n\nThis is a TEST ALERT from the PDSR being developed by Alex and Eliezer. It is based on dummy data");
+								+ "\nThis is a PILOT IMPLEMENTATION of the Enhanced Automated PDSR tool developed by Alex and Eliezer");
 			}
 		} catch (IOException e) {
 		}
 
 		return "redirect:/registry?page=1&success=yes";
+	}
+
+	private String[] getRecipients() {
+		List<String> recipientList = userRepo.findByUser_alerted(true);
+		if (recipientList == null) {
+			recipientList = new ArrayList<>();
+		}
+		recipientList.add("makmanu128@gmail.com");
+		recipientList.add("elelart@gmail.com");
+		// , "thailegebriel@unicef.org",
+		// "pwobil@unicef.org", "mkim@unicef.org" };
+
+		return recipientList.toArray(new String[recipientList.size()]);
+
 	}
 
 	@ModelAttribute("death_options")
