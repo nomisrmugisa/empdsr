@@ -257,6 +257,7 @@ public class CaseAuditController {
 		};
 
 		List<case_identifiers> pendingAudit = caseRepo.findByPendingCase_status(1);// find all submitted cases but not
+
 		// audited
 		// Randomly shuffle the list to be selected from to ensure that each pending
 		// case has a fair chance of being selected
@@ -311,6 +312,7 @@ public class CaseAuditController {
 					final boolean isyear1 = Calendar.getInstance().get(Calendar.YEAR) == cal.get(Calendar.YEAR);
 					final boolean isweek1 = (Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)
 							- cal.get(Calendar.WEEK_OF_YEAR)) == 1;
+					
 
 					final boolean isyear2 = Calendar.getInstance().get(Calendar.YEAR) - cal.get(Calendar.YEAR) == 1;
 					final boolean isweek2 = cal.get(Calendar.WEEK_OF_YEAR)
@@ -410,7 +412,9 @@ public class CaseAuditController {
 			/// still birth
 			// get the number of neonatal audits to be done for that week
 			int stillCount = Utils.PRIORITY_MATRIX[auditweek][0];
+			
 			int totalStill = algorithm.getAlg_stillbirth() == null ? 0 : algorithm.getAlg_stillbirth();
+			System.out.println("Still"+totalStill);
 
 			for (int counter = totalStill; counter < stillCount; counter++) {
 
@@ -433,6 +437,7 @@ public class CaseAuditController {
 					final boolean isweek1 = (Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)
 							- cal.get(Calendar.WEEK_OF_YEAR)) == 1;
 
+					
 					final boolean isyear2 = Calendar.getInstance().get(Calendar.YEAR) - cal.get(Calendar.YEAR) == 1;
 					final boolean isweek2 = cal.get(Calendar.WEEK_OF_YEAR)
 							- (Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)) == 51;

@@ -498,8 +498,7 @@ public class CaseEntryController {
 				}
 				case_delivery o = selected.getDelivery();
 				if (o.getDelivery_hour() == null || o.getDelivery_date() == null || o.getDelivery_minute() == null
-						|| o.getDelivery_mode() == null || o.getDelivery_period() == null
-						|| o.getDelivery_time() == null) {
+						|| o.getDelivery_period() == null || o.getDelivery_time() == null) {
 					o.setData_complete(0);
 				} else {
 					o.setData_complete(1);
@@ -519,7 +518,7 @@ public class CaseEntryController {
 				case_antenatal o = selected.getAntenatal();
 				if (o.getAntenatal_alcohol() == null || o.getAntenatal_attend() == null
 						|| o.getAntenatal_attendno() == null || o.getAntenatal_days() == null
-						|| o.getAntenatal_facility() == null || o.getAntenatal_facility().trim()==""
+						|| o.getAntenatal_facility() == null || o.getAntenatal_facility().trim() == ""
 						|| o.getAntenatal_folicacid() == null || o.getAntenatal_folicacid3m() == null
 						|| o.getAntenatal_gravida() == null || o.getAntenatal_herbal() == null
 						|| o.getAntenatal_hiv() == null || o.getAntenatal_malprophy() == null
@@ -1193,8 +1192,6 @@ public class CaseEntryController {
 								+ new SimpleDateFormat("HH:mm a").format(o.getDelivery_time()),
 						true),
 				new json_data(getQuestion("label.delivery_period"), getAnswer("period_options", o.getDelivery_period()),
-						true),
-				new json_data(getQuestion("label.delivery_mode"), getAnswer("mode_options", o.getDelivery_mode()),
 						true))
 				.collect(Collectors.toList());
 

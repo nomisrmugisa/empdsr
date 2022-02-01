@@ -190,7 +190,7 @@
 		<div class="row mb-3">
 			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.referral_source}"></label>
 			<div class="col-auto">
-				<select id="referral_source" class="form-control form-control-sm"
+				<select id="referral_source" class="form-control form-control-sm" onchange="changeReferralFacilityToNA(this)"
 					th:field="*{referral.referral_source}">
 					<option th:each="option : ${source_options}" th:value="${option.key}" th:text="${option.value}">
 					</option>
@@ -318,14 +318,6 @@
 			</select>
 			<small class="badge bg-light text-danger" th:if="${#fields.hasErrors('delivery.delivery_period')}"
 				th:errors="*{delivery.delivery_period}">error</small>
-		</div>
-	</div>
-	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.delivery_mode}"></label>
-		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{delivery.delivery_mode}">
-				<option th:each="option : ${mode_options}" th:value="${option.key}" th:text="${option.value}"></option>
-			</select>
 		</div>
 	</div>
 	<fieldset hidden=true>

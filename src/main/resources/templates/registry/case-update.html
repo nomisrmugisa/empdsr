@@ -76,6 +76,18 @@
 
 <scripts>
 	<script>
+		function changeReferralFacilityToNA() {
+			var objCombo = document.getElementById("referral_source");
+			var rfac = document.getElementById("referral_facility");
+
+			if (objCombo.value != '0') {
+				rfac.value = "NA";
+				rfac.readOnly = true;
+			} else {
+				rfac.value = "";
+				rfac.readOnly = false;
+			}
+		}
 		function changeReferralView() {
 			var objCombo = document.getElementById("referral_case");
 
@@ -87,8 +99,22 @@
 			}
 		}
 		changeReferralView();
+		changeReferralFacilityToNA();
 	</script>
 	<script>
+		function changeReferralFacilityToNA() {
+			var objCombo = document.getElementById("referral_source");
+			var rfac = document.getElementById("referral_facility");
+
+			if (objCombo.value != '0') {
+				rfac.value = "NA";
+				rfac.readOnly = true;
+			} else {
+				rfac.value = "";
+				rfac.readOnly = false;
+			}
+		}
+
 		function changeReferralOtherToNA(objCombo) {
 			var rpat = document.getElementById("referral_patient");
 			var rsrc = document.getElementById("referral_source");
@@ -131,6 +157,20 @@
 				rfile.hidden = false;
 				rnotes.readOnly = false;
 			}
+			changeReferralFacilityToNA();
+		}
+	</script>
+	<script>
+		function changeReferralFacilityToNA(objCombo) {
+			var rfac = document.getElementById("referral_facility");
+
+			if (objCombo.value != '0') {
+				rfac.value = "NA";
+				rfac.readOnly = true;
+			} else {
+				rfac.value = "";
+				rfac.readOnly = false;
+			}
 		}
 	</script>
 	<script>
@@ -170,7 +210,6 @@
 			if (objCombo.value != '1') {
 				attno.value = '99';
 				atfac.value = "NA";
-				atfac.readOnly = true;
 				atwks.value = '99';
 				atdys.value = '99';
 
@@ -181,7 +220,6 @@
 
 				attno.value = '';
 				atfac.value = "";
-				atfac.readOnly = false;
 				atwks.value = '';
 				atdys.value = '';
 			}
@@ -214,15 +252,12 @@
 				}
 
 				nwrsks.value = "";
-				nwrsks.readOnly = true;
 
 				$('#antenatal_risks_fieldset').hide('fade');
 
 			} else {
 				$('#antenatal_risks_fieldset').show('fade');
 
-				atfac.value = "";
-				atfac.readOnly = false;
 			}
 		}
 	</script>
@@ -284,15 +319,12 @@
 				}
 
 				nwrsks.value = "";
-				nwrsks.readOnly = true;
 
 				$('#labour_complications_fieldset').hide('fade');
 
 			} else {
 				$('#labour_complications_fieldset').show('fade');
 
-				atfac.value = "";
-				atfac.readOnly = false;
 			}
 		}
 	</script>
@@ -430,15 +462,12 @@
 				}
 
 				nwrsks.value = "";
-				nwrsks.readOnly = true;
 
 				$('#birth_abnormalities_fieldset').hide('fade');
 
 			} else {
 				$('#birth_abnormalities_fieldset').show('fade');
 
-				atfac.value = "";
-				atfac.readOnly = false;
 			}
 		}
 	</script>
@@ -469,15 +498,12 @@
 				}
 
 				nwrsks.value = "";
-				nwrsks.readOnly = true;
 
 				$('#birth_cordfaults_fieldset').hide('fade');
 
 			} else {
 				$('#birth_cordfaults_fieldset').show('fade');
 
-				atfac.value = "";
-				atfac.readOnly = false;
 			}
 		}
 	</script>
@@ -508,15 +534,12 @@
 				}
 
 				nwrsks.value = "";
-				nwrsks.readOnly = true;
 
 				$('#birth_placentachecks_fieldset').hide('fade');
 
 			} else {
 				$('#birth_placentachecks_fieldset').show('fade');
 
-				atfac.value = "";
-				atfac.readOnly = false;
 			}
 		}
 	</script>
@@ -565,15 +588,12 @@
 				}
 
 				nwrsks.value = "";
-				nwrsks.readOnly = true;
 
 				$('#baby_resuscitation_fieldset').hide('fade');
 
 			} else {
 				$('#baby_resuscitation_fieldset').show('fade');
 
-				atfac.value = "";
-				atfac.readOnly = false;
 			}
 		}
 	</script>
@@ -605,15 +625,12 @@
 				}
 
 				nwrsks.value = "";
-				nwrsks.readOnly = true;
 
 				$('#baby_admitted_fieldset').hide('fade');
 
 			} else {
 				$('#baby_admitted_fieldset').show('fade');
 
-				atfac.value = "";
-				atfac.readOnly = false;
 			}
 		}
 	</script>

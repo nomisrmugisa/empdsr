@@ -61,9 +61,6 @@ public class case_delivery implements Serializable {
 	
 	
 	@Column
-	private Integer delivery_mode;
-		
-	@Column
 	private Integer data_complete;
 
 	@Lob
@@ -116,14 +113,6 @@ public class case_delivery implements Serializable {
 
 	public void setDelivery_minute(Integer delivery_minute) {
 		this.delivery_minute = delivery_minute;
-	}
-
-	public Integer getDelivery_mode() {
-		return delivery_mode;
-	}
-
-	public void setDelivery_mode(Integer delivery_mode) {
-		this.delivery_mode = delivery_mode;
 	}
 
 	public Integer getDelivery_period() {

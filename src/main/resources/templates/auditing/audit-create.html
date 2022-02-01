@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html th:replace="~{layout/auditing :: layout(_,~{::links},~{::scripts},~{::content},~{})}">
 <links>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" />
 	<link rel="stylesheet" href="webjars/jquery-steps/1.1.0/demo/css/jquery.steps.css" />
 </links>
 <content>
@@ -261,7 +262,19 @@
 </content>
 
 <scripts>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 	<script src="webjars/jquery-steps/1.1.0/build/jquery.steps.js"></script>
+	<script>
+		$(document).ready(function () {
+			$('#audit_icd10').select2({
+			});
+		});
+	</script>
+	<script>
+		$(document).ready(function () {
+			$('#audit_icdpm').select2();
+		});
+	</script>
 	<script>
 		$("#example-basic").steps({
 			headerTag: "h3",

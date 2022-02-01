@@ -27,33 +27,49 @@
     MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_SETUP');
 
 
-    MERGE INTO country_table KEY(country_uuid) values('1','Ghana');
+    MERGE INTO country_table KEY(country_uuid) values('2','Namibia');
 
 
     MERGE INTO risk_table KEY(risk_name) values('Cervical / uterine surgery','none');
     MERGE INTO risk_table KEY(risk_name) values('Last delivery > 10 years','none');
     MERGE INTO risk_table KEY(risk_name) values('Last delivery < 2 years','none');
 
-    MERGE INTO complication_table KEY(complication_name) values('Complex delivery','none');
-    MERGE INTO complication_table KEY(complication_name) values('More complex','none');
-    MERGE INTO complication_table KEY(complication_name) values('Very complex','none');
+    MERGE INTO complication_table KEY(complication_name) values('Complication option 1','none');
+    MERGE INTO complication_table KEY(complication_name) values('Complication option 2','none');
+    MERGE INTO complication_table KEY(complication_name) values('Complication option 3','none');
 
-    MERGE INTO abnormality_table KEY(abnormal_name) values('Abnormal birth','none');
-    MERGE INTO abnormality_table KEY(abnormal_name) values('More abnormal','none');
-    MERGE INTO abnormality_table KEY(abnormal_name) values('Very abnormal','none');
+    MERGE INTO abnormality_table KEY(abnormal_name) values('Microcephaly','none');
+    MERGE INTO abnormality_table KEY(abnormal_name) values('Exomphalos major','none');
+    MERGE INTO abnormality_table KEY(abnormal_name) values('Heart Defects','none');
+    MERGE INTO abnormality_table KEY(abnormal_name) values('Tetralogy of Fallot','none');
+    MERGE INTO abnormality_table KEY(abnormal_name) values('Neural Tube Defects (Spina Bifida)','none');
+    MERGE INTO abnormality_table KEY(abnormal_name) values('Hemangioma','none');
+    MERGE INTO abnormality_table KEY(abnormal_name) values('Osteogenesis Imperfecta','none');
+    MERGE INTO abnormality_table KEY(abnormal_name) values('Micrognathia','none');
+    MERGE INTO abnormality_table KEY(abnormal_name) values('Dysmorphic features','none');
+    MERGE INTO abnormality_table KEY(abnormal_name) values('Dyspigmentation','none');
 
-    MERGE INTO cordfault_table KEY(cordfault_name) values('Faulty cord','none');
-    MERGE INTO cordfault_table KEY(cordfault_name) values('More faulty','none');
-    MERGE INTO cordfault_table KEY(cordfault_name) values('Very faulty','none');
+    
+    MERGE INTO cordfault_table KEY(cordfault_name) values('Kinks and knots','none');
+    MERGE INTO cordfault_table KEY(cordfault_name) values('Degenerated cord','none');
 
-    MERGE INTO placentacheck_table KEY(placentacheck_name) values('Placenta check','none');
-    MERGE INTO placentacheck_table KEY(placentacheck_name) values('More placenta','none');
-    MERGE INTO placentacheck_table KEY(placentacheck_name) values('Very placenta','none');
+    MERGE INTO placentacheck_table KEY(placentacheck_name) values('Small size','none');
+    MERGE INTO placentacheck_table KEY(placentacheck_name) values('Pale placenta','none');
+    MERGE INTO placentacheck_table KEY(placentacheck_name) values('Foul-smelling','none');
+    MERGE INTO placentacheck_table KEY(placentacheck_name) values('Degenerated','none');
+    MERGE INTO placentacheck_table KEY(placentacheck_name) values('Loss of architecture','none');
+    MERGE INTO placentacheck_table KEY(placentacheck_name) values('Calcifications','none');
+    MERGE INTO placentacheck_table KEY(placentacheck_name) values('Accreta','none');
+    MERGE INTO placentacheck_table KEY(placentacheck_name) values('Praevia','none');
+    MERGE INTO placentacheck_table KEY(placentacheck_name) values('Abruptio','none');
+    MERGE INTO placentacheck_table KEY(placentacheck_name) values('Percreta','none');
 
 	MERGE INTO resuscitation_table KEY(resuscitation_name) values('Suction and stimulation','Suction and stimulation');
 	MERGE INTO resuscitation_table KEY(resuscitation_name) values('IPPV bag and mask','IPPV bag and mask');
 	MERGE INTO resuscitation_table KEY(resuscitation_name) values('Oxygen','Oxygen');
 	MERGE INTO resuscitation_table KEY(resuscitation_name) values('Chest compression','Chest compression');
+	MERGE INTO resuscitation_table KEY(resuscitation_name) values('Advanced resuscitation with adrenaline','Chest compression');
+	MERGE INTO resuscitation_table KEY(resuscitation_name) values('Intubation','Chest compression');
 
 	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Prematurity','Prematurity');
 	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Neonatal Jaundice','Neonatal Jaundice');
@@ -65,8 +81,15 @@
 	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Hypoglycaemia','Hypoglycaemia');
 	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Poor feeding','Poor feeding');
 	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Infection','Infection');
+	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Congenital Infection','none');
+	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Congenital Syphilis','none');
+	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Septicaemia','Infection');
+	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Respiratory Distress Syndrome (RDS)','none');
+	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Cardiac Abnormalities','none');
+	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Asphyxia (Hypoxic Ischaemic Encephalopathy, HIE)','none');
+	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Big baby (Macrosomia)','Infection');
 	
-	
+		
     MERGE INTO monitoring_table(gindex,glabel,mindex,mlabel,mdesc,gitem) KEY(mindex) values(10,'Total Deliveries','100','Total deliveries','mothers who gave birth',1);
     MERGE INTO monitoring_table(gindex,glabel,mindex,mlabel,mdesc,gitem) KEY(mindex) values(10,'Total Deliveries','101','SVDs/NVDs','none',0);
     MERGE INTO monitoring_table(gindex,glabel,mindex,mlabel,mdesc,gitem) KEY(mindex) values(10,'Total Deliveries','102','Assisted (forceps, vacuum, etc)','none',0);
@@ -281,11 +304,15 @@
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('provider_options',0,'Specialist');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('provider_options',1,'Resident');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('provider_options',2,'Medical Officer');
-	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('provider_options',3,'Midwife');
-	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('provider_options',4,'Nurse');
-	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('provider_options',5,'Traditional Birth Attendant (TBA)');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('provider_options',3,'Medical/Physician Assistant');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('provider_options',4,'House Officer');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('provider_options',5,'Midwife');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('provider_options',6,'Nurse (Registered General)');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('provider_options',7,'Enrolled/Comm/Public Heath Nurse');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('provider_options',8,'Traditional Birth Attendant (TBA)');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('provider_options',77,'Unknown');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('provider_options',88,'Not Stated');
+	
   
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('birthloc_options',0,'Health facility');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('birthloc_options',88,'Home');
