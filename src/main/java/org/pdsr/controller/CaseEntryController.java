@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -39,10 +40,13 @@ import org.pdsr.model.datamap;
 import org.pdsr.model.datamapPK;
 import org.pdsr.model.diagnoses_table;
 import org.pdsr.model.facility_table;
+import org.pdsr.model.icd_codes;
+import org.pdsr.model.icd_diagnoses;
 import org.pdsr.model.placentacheck_table;
 import org.pdsr.model.resuscitation_table;
 import org.pdsr.model.risk_table;
 import org.pdsr.model.sync_table;
+import org.pdsr.pojos.icdpm;
 import org.pdsr.repo.AbnormalityTableRepository;
 import org.pdsr.repo.CaseAntenatalRepository;
 import org.pdsr.repo.CaseBabyRepository;
@@ -60,6 +64,7 @@ import org.pdsr.repo.CordfaultTableRepository;
 import org.pdsr.repo.DatamapRepository;
 import org.pdsr.repo.DiagnosesTableRepository;
 import org.pdsr.repo.FacilityTableRepository;
+import org.pdsr.repo.IcdDiagnosesRepository;
 import org.pdsr.repo.PlacentacheckTableRepository;
 import org.pdsr.repo.ResuscitationTableRepository;
 import org.pdsr.repo.RiskTableRepository;
@@ -76,6 +81,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -99,6 +105,9 @@ public class CaseEntryController {
 
 	@Autowired
 	private DiagnosesTableRepository diagRepo;
+
+	@Autowired
+	private IcdDiagnosesRepository icddRepo;
 
 	@Autowired
 	private RiskTableRepository riskRepo;
@@ -436,6 +445,15 @@ public class CaseEntryController {
 					selected.getReferral().setReferral_ahour(atime.getHours());
 					selected.getReferral().setReferral_aminute(atime.getMinutes());
 				}
+
+				/*
+				 * if (time.after(atime)) { results.rejectValue("referral.referral_atime",
+				 * "error.refatime"); }
+				 * 
+				 * if (results.hasErrors()) { model.addAttribute("selected", selected);
+				 * model.addAttribute("page", page); return "registry/case-update"; }
+				 */
+
 				case_referral o = selected.getReferral();
 				if (o.getReferral_ahour() == null || o.getReferral_adate() == null || o.getReferral_aminute() == null
 						|| o.getReferral_atime() == null || o.getReferral_case() == null || o.getReferral_date() == null
@@ -572,6 +590,22 @@ public class CaseEntryController {
 					} else if (period == 5 && !midnight) {
 						results.rejectValue("labour.labour_seeperiod", "error.midnight");
 					}
+
+//					if (selected.getReferral() != null) {
+//						java.util.Date refatime = selected.getReferral().getReferral_atime();// date arrived at facility
+//																								// on referral
+//
+//						if (refatime != null && refatime.after(seetime)) {
+//							results.rejectValue("labour.labour_seetime", "error.seetime");
+//						}
+//
+//						if (results.hasErrors()) {
+//							model.addAttribute("selected", selected);
+//							model.addAttribute("page", page);
+//							return "registry/case-update";
+//						}
+//
+//					}
 
 					if (results.hasErrors()) {
 						model.addAttribute("selected", selected);
@@ -742,6 +776,14 @@ public class CaseEntryController {
 		}
 
 		return "redirect:/registry?page=1&success=yes";
+	}
+
+	@GetMapping(value = "/icdselect")
+	public @ResponseBody Set<icd_diagnoses> findByDiagnosis(@RequestParam(value = "q", required = true) String search) {
+
+		Set<icd_diagnoses> diaglist = icddRepo.findByDiagnosese("%" + search + "%");
+
+		return diaglist;
 	}
 
 	private String[] getRecipients() {
@@ -1348,8 +1390,8 @@ public class CaseEntryController {
 	}
 
 	private List<json_data> processListOf(case_babydeath o) {
-		boolean isresus = o.getBaby_resuscitation() == 1;
-		boolean isadmit = o.getBaby_admitted() == 1;
+		boolean isresus = o.getBaby_resuscitation() != null && o.getBaby_resuscitation() == 1;
+		boolean isadmit = o.getBaby_admitted() != null && o.getBaby_admitted() == 1;
 
 		String items = "", items1 = "";
 		for (resuscitation_table elem : o.getResuscitations()) {
@@ -1371,10 +1413,12 @@ public class CaseEntryController {
 						new json_data(getQuestion("label.baby_apgar5"), "" + o.getBaby_apgar5(), true),
 						new json_data(getQuestion("label.baby_admitted"),
 								getAnswer("yesnodk_options", o.getBaby_admitted()), true),
-						new json_data(getQuestion("label.diagnoses"), items1, isadmit),
+						new json_data(getQuestion(
+								"label.diagnoses"), items1, isadmit),
 						new json_data(getQuestion("label.baby_ddatetime"),
-								new SimpleDateFormat("dd-MMM-yyyy").format(o.getBaby_ddate()) + " at "
-										+ new SimpleDateFormat("HH:mm a").format(o.getBaby_dtime()),
+								(o.getBaby_ddate() == null) ? ""
+										: new SimpleDateFormat("dd-MMM-yyyy").format(o.getBaby_ddate()) + " at "
+												+ new SimpleDateFormat("HH:mm a").format(o.getBaby_dtime()),
 								isadmit)
 
 				).collect(Collectors.toList());

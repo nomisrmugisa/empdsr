@@ -16,19 +16,6 @@
 				</div>
 			</div>
 			<div class="row mb-3">
-				<label class="col-form-label" th:text="#{label.audit_icdpm}"></label>
-				<div class="col-md-11">
-					<select id="audit_icdpm" class="form-control form-control-sm" th:field="*{audit_icdpm}" required>
-						<option disabled="disabled" selected="selected" value="" th:unless="${pmsel}">
-							--select--</option>
-						<option th:if="${pmsel}" th:value="${pmsel.pm_code}"
-							th:text="|${pmsel.pm_code} : ${pmsel.pm_desc}|">--selected
-							pm--</option>
-					</select>
-					<div id="div_pmwarn" class="text-muted small"></div>
-				</div>
-			</div>
-			<div class="row mb-3">
 				<label class="col-form-label" th:text="#{label.audit_icd10}"></label>
 				<div class="col-md-11">
 					<select id="audit_icd10" class="form-control form-control-sm" th:field="*{audit_icd10}">
@@ -39,6 +26,19 @@
 							icd--</option>
 					</select>
 					<div id="div_pmcode" class="text-dark"></div>
+				</div>
+			</div>
+			<div class="row mb-3">
+				<label class="col-form-label" th:text="#{label.audit_icdpm}"></label>
+				<div class="col-md-11">
+					<select id="audit_icdpm" class="form-control form-control-sm" th:field="*{audit_icdpm}" required>
+						<option disabled="disabled" selected="selected" value="" th:unless="${pmsel}">
+							--select--</option>
+						<option th:if="${pmsel}" th:value="${pmsel.pm_code}"
+							th:text="|${pmsel.pm_code} : ${pmsel.pm_desc}|">--selected
+							pm--</option>
+					</select>
+					<div id="div_pmwarn" class="text-muted small"></div>
 				</div>
 			</div>
 			<div class="row mb-3">

@@ -74,7 +74,10 @@ public class case_babydeath implements Serializable {
 	@Lob
 	@Column
 	private String new_diagnoses;
-
+	
+	@ManyToMany(cascade = CascadeType.PERSIST)
+	@JoinTable(name = "baby_icd", joinColumns = @JoinColumn(name = "icd_uuid"), inverseJoinColumns = @JoinColumn(name = "icd_code"))
+	private List<icd_diagnoses> icd_diagnoses;
 	
 	@Column
 	@Temporal(TemporalType.DATE)
@@ -200,6 +203,14 @@ public class case_babydeath implements Serializable {
 
 	public void setNew_diagnoses(String new_diagnoses) {
 		this.new_diagnoses = new_diagnoses;
+	}
+
+	public List<icd_diagnoses> getIcd_diagnoses() {
+		return icd_diagnoses;
+	}
+
+	public void setIcd_diagnoses(List<icd_diagnoses> icd_diagnoses) {
+		this.icd_diagnoses = icd_diagnoses;
 	}
 
 	public java.util.Date getBaby_ddate() {

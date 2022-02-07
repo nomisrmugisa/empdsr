@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html th:replace="~{layout/registry :: layout(_,~{},~{::scripts},~{::content},~{})}">
+<html th:replace="~{layout/registry :: layout(_,~{::links},~{::scripts},~{::content},~{})}">
+<links>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" />
+</links>
 
 <content>
 	<div class="float-end" th:text="${selected.facility.facility_code}"></div>
@@ -75,6 +78,68 @@
 </content>
 
 <scripts>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+	<script th:inline="javascript">
+		$('#icd_diagnoses').select2({
+			minimumInputLength: 3,
+			ajax: {
+				url: 'http://localhost:5000/registry/icdselect',
+				dataType: 'json',
+				delay: 250,
+				data: function (params) {
+					return {
+						q: params.term, // search term
+						page: params.page
+					};
+				},
+				processResults: function (data, params) {
+					// parse the results into the format expected by Select2
+					// since we are using custom formatting functions we do not need to
+					// alter the remote JSON data, except to indicate that infinite
+					// scrolling can be used
+					params.page = params.page || 1;
+
+					var results = [];
+					$.each(data, function (k, v) {
+						results.push({
+							id: v.icd_code,
+							text: v.icd_desc
+						});
+					});
+
+					return {
+						results: results,
+						pagination:
+						{
+							more: (params.page * 30) < results.recordsTotal
+						}
+					};
+
+				},
+				cache: true
+			},
+			placeholder: /*[[#{hold.icd_diagnosis}]]*/ "",
+			templateResult: formatRepo,
+			templateSelection: formatRepoSelection
+		});
+
+		function formatRepo(repo) {
+			if (repo.loading) {
+				return repo.text;
+			}
+
+			var $container = $(
+				"<option value='" + repo.id + "'>" + repo.id + " : " + repo.text + "</option>"
+			);
+
+			return $container;
+		}
+
+		function formatRepoSelection(repo) {
+			return repo.id;
+		}
+	</script>
+
 	<script>
 		function changeReferralFacilityToNA() {
 			var objCombo = document.getElementById("referral_source");

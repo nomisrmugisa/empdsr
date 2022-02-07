@@ -18,12 +18,14 @@ import org.pdsr.model.country_table;
 import org.pdsr.model.district_table;
 import org.pdsr.model.facility_table;
 import org.pdsr.model.icd_codes;
+import org.pdsr.model.icd_diagnoses;
 import org.pdsr.model.region_table;
 import org.pdsr.model.sync_table;
 import org.pdsr.repo.CountryTableRepository;
 import org.pdsr.repo.DistrictTableRepository;
 import org.pdsr.repo.FacilityTableRepository;
 import org.pdsr.repo.IcdCodesRepository;
+import org.pdsr.repo.IcdDiagnosesRepository;
 import org.pdsr.repo.RegionTableRepository;
 import org.pdsr.repo.SyncTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +63,9 @@ public class SetupController {
 
 	@Autowired
 	private IcdCodesRepository icdRepo;
+	
+	@Autowired
+	private IcdDiagnosesRepository icddRepo;
 
 	@GetMapping("")
 	public String sync(Principal principal, Model model,
@@ -112,6 +117,15 @@ public class SetupController {
 		try {
 			List<icd_codes> icds = loadICD();
 			icdRepo.saveAll(icds);
+		} catch (IOException e) {
+			results.rejectValue("sync_code", "invalid.icds");
+			e.printStackTrace();
+			return "controls/dashboard";
+		}
+
+		try {
+			List<icd_diagnoses> icdds = loadICDD();
+			icddRepo.saveAll(icdds);
 		} catch (IOException e) {
 			results.rejectValue("sync_code", "invalid.icds");
 			e.printStackTrace();
@@ -257,6 +271,26 @@ public class SetupController {
 		try (Reader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)))) {
 
 			CsvToBean<icd_codes> csvToBean = new CsvToBeanBuilder<icd_codes>(reader).withType(icd_codes.class)
+					.withIgnoreLeadingWhiteSpace(true).build();
+
+			return csvToBean.parse();
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		return new ArrayList<>();
+	}
+
+	private List<icd_diagnoses> loadICDD() throws IOException {
+
+		byte[] bytes = new byte[0];
+
+		bytes = CONSTANTS.readICD10("icd_diagnoses.csv");
+
+		try (Reader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)))) {
+
+			CsvToBean<icd_diagnoses> csvToBean = new CsvToBeanBuilder<icd_diagnoses>(reader).withType(icd_diagnoses.class)
 					.withIgnoreLeadingWhiteSpace(true).build();
 
 			return csvToBean.parse();
