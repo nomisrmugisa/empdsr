@@ -27,7 +27,7 @@
     MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_SETUP');
 
 
-    MERGE INTO country_table KEY(country_uuid) values('3','Sierra Leone');
+    MERGE INTO country_table KEY(country_uuid) values('1','Ghana');
 
 
     MERGE INTO risk_table KEY(risk_name) values('Cervical / uterine surgery','none');

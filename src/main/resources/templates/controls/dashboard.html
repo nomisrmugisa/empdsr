@@ -26,12 +26,14 @@
 			<div class="mb-3" th:if="${selected.sync_uuid}">
 				<input type="text" class="form-control form-control-sm" th:field="*{sync_name}" readonly />
 			</div>
-			<div class="mb-3" th:if="${selected.sync_uuid}">
-				<a href="#" class="btn btn-outline-danger btn-sm" th:utext="#{merger.next.button}"></a>
-			</div>
-			
+
 			<hr class="mb-2 bg-primary">
-			<button class="btn btn-sm btn-primary" type="submit" th:utext="#{sync.button}"></button>
+			<div class="">
+				<button class="btn btn-sm btn-primary" type="submit" th:utext="#{sync.button}"></button>
+				<span class="mb-3">
+					<a th:href="@{/controls/datamerge}" class="btn btn-outline-danger btn-sm" th:utext="#{merger.next.button}"></a>
+				</span>
+			</div>
 
 		</form>
 	</div>
