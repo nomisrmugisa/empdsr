@@ -256,7 +256,8 @@
 			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.referral_file}"></label>
 			<div class="col-auto">
 				<div id="referral_file" class="custom-file">
-					<input type="file" class="custom-file-input" id="customFile" th:field="*{referral.referral_file}">
+					<input type="file" class="custom-file-input" id="customFile" th:field="*{referral.file}">
+					<a target="_blank" th:href="@{/registry/file/referral/{id}(id=${selected.case_uuid})}">Download</a>
 				</div>
 			</div>
 		</div>
@@ -1139,7 +1140,8 @@
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.notes_file}"></label>
 		<div class="col-auto">
 			<div class="custom-file">
-				<input type="file" class="custom-file-input" id="customFile" th:field="*{notes.notes_file}">
+				<input type="file" class="custom-file-input" id="customFile" th:field="*{notes.file}">
+				<a target="_blank" th:href="@{/registry/file/notes/{id}(id=${selected.case_uuid})}">Download</a>
 			</div>
 		</div>
 	</div>

@@ -17,25 +17,21 @@
 			<div class="col-md-4 mb-3">
 				<input type="text" class="form-control form-control-sm me-2" th:field="*{sync_code}" required
 					th:placeholder="#{sync.code}" />
-
-				<input type="email" class="form-control form-control-sm me-2 col-auto" th:field="*{sync_email}" required
-					th:placeholder="#{sync.email}" />
-				<span th:unless="${selected.sync_code}">
-					<button class="btn btn-sm btn-outline-primary" type="submit"
-						th:utext="#{sync.button.activate}"></button>
-				</span>
-
-
 				<p class="helpline text-danger" th:if="${#fields.hasErrors('sync_code')}" th:text="#{invalid.code}"></p>
 			</div>
-
+			<div class="col-md-4 mb-3">
+				<input type="email" class="form-control form-control-sm me-2 col-auto" th:field="*{sync_email}" required
+					th:placeholder="#{sync.email}" />
+			</div>
 			<div class="mb-3" th:if="${selected.sync_uuid}">
 				<input type="text" class="form-control form-control-sm" th:field="*{sync_name}" readonly />
 			</div>
-			<hr class="mb-2 bg-primary">
-			<div th:if="${selected.sync_code}">
-				<button class="btn btn-sm btn-primary" type="submit" th:utext="#{sync.button}"></button>
+			<div class="mb-3" th:if="${selected.sync_uuid}">
+				<a href="#" class="btn btn-outline-danger btn-sm" th:utext="#{merger.next.button}"></a>
 			</div>
+			
+			<hr class="mb-2 bg-primary">
+			<button class="btn btn-sm btn-primary" type="submit" th:utext="#{sync.button}"></button>
 
 		</form>
 	</div>

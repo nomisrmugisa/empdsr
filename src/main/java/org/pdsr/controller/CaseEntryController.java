@@ -1,5 +1,6 @@
 package org.pdsr.controller;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
@@ -16,62 +17,63 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.pdsr.CONSTANTS;
 import org.pdsr.EmailService;
 import org.pdsr.InternetAvailabilityChecker;
 import org.pdsr.json.json_data;
-import org.pdsr.model.abnormality_table;
-import org.pdsr.model.case_antenatal;
-import org.pdsr.model.case_babydeath;
-import org.pdsr.model.case_biodata;
-import org.pdsr.model.case_birth;
-import org.pdsr.model.case_delivery;
-import org.pdsr.model.case_fetalheart;
-import org.pdsr.model.case_identifiers;
-import org.pdsr.model.case_labour;
-import org.pdsr.model.case_notes;
-import org.pdsr.model.case_pregnancy;
-import org.pdsr.model.case_referral;
-import org.pdsr.model.complication_table;
-import org.pdsr.model.cordfault_table;
-import org.pdsr.model.datamap;
-import org.pdsr.model.datamapPK;
-import org.pdsr.model.diagnoses_table;
-import org.pdsr.model.facility_table;
-import org.pdsr.model.icd_codes;
-import org.pdsr.model.icd_diagnoses;
-import org.pdsr.model.placentacheck_table;
-import org.pdsr.model.resuscitation_table;
-import org.pdsr.model.risk_table;
-import org.pdsr.model.sync_table;
-import org.pdsr.pojos.icdpm;
-import org.pdsr.repo.AbnormalityTableRepository;
-import org.pdsr.repo.CaseAntenatalRepository;
-import org.pdsr.repo.CaseBabyRepository;
-import org.pdsr.repo.CaseBiodataRepository;
-import org.pdsr.repo.CaseBirthRepository;
-import org.pdsr.repo.CaseDeliveryRepository;
-import org.pdsr.repo.CaseFetalheartRepository;
-import org.pdsr.repo.CaseLabourRepository;
-import org.pdsr.repo.CaseNotesRepository;
-import org.pdsr.repo.CasePregnancyRepository;
-import org.pdsr.repo.CaseReferralRepository;
-import org.pdsr.repo.CaseRepository;
-import org.pdsr.repo.ComplicationTableRepository;
-import org.pdsr.repo.CordfaultTableRepository;
-import org.pdsr.repo.DatamapRepository;
-import org.pdsr.repo.DiagnosesTableRepository;
-import org.pdsr.repo.FacilityTableRepository;
-import org.pdsr.repo.IcdDiagnosesRepository;
-import org.pdsr.repo.PlacentacheckTableRepository;
-import org.pdsr.repo.ResuscitationTableRepository;
-import org.pdsr.repo.RiskTableRepository;
-import org.pdsr.repo.SyncTableRepository;
-import org.pdsr.repo.UserTableRepository;
+import org.pdsr.master.model.abnormality_table;
+import org.pdsr.master.model.case_antenatal;
+import org.pdsr.master.model.case_babydeath;
+import org.pdsr.master.model.case_biodata;
+import org.pdsr.master.model.case_birth;
+import org.pdsr.master.model.case_delivery;
+import org.pdsr.master.model.case_fetalheart;
+import org.pdsr.master.model.case_identifiers;
+import org.pdsr.master.model.case_labour;
+import org.pdsr.master.model.case_notes;
+import org.pdsr.master.model.case_pregnancy;
+import org.pdsr.master.model.case_referral;
+import org.pdsr.master.model.complication_table;
+import org.pdsr.master.model.cordfault_table;
+import org.pdsr.master.model.datamap;
+import org.pdsr.master.model.datamapPK;
+import org.pdsr.master.model.diagnoses_table;
+import org.pdsr.master.model.facility_table;
+import org.pdsr.master.model.icd_diagnoses;
+import org.pdsr.master.model.placentacheck_table;
+import org.pdsr.master.model.resuscitation_table;
+import org.pdsr.master.model.risk_table;
+import org.pdsr.master.model.sync_table;
+import org.pdsr.master.repo.AbnormalityTableRepository;
+import org.pdsr.master.repo.CaseAntenatalRepository;
+import org.pdsr.master.repo.CaseBabyRepository;
+import org.pdsr.master.repo.CaseBiodataRepository;
+import org.pdsr.master.repo.CaseBirthRepository;
+import org.pdsr.master.repo.CaseDeliveryRepository;
+import org.pdsr.master.repo.CaseFetalheartRepository;
+import org.pdsr.master.repo.CaseLabourRepository;
+import org.pdsr.master.repo.CaseNotesRepository;
+import org.pdsr.master.repo.CasePregnancyRepository;
+import org.pdsr.master.repo.CaseReferralRepository;
+import org.pdsr.master.repo.CaseRepository;
+import org.pdsr.master.repo.ComplicationTableRepository;
+import org.pdsr.master.repo.CordfaultTableRepository;
+import org.pdsr.master.repo.DatamapRepository;
+import org.pdsr.master.repo.DiagnosesTableRepository;
+import org.pdsr.master.repo.FacilityTableRepository;
+import org.pdsr.master.repo.IcdDiagnosesRepository;
+import org.pdsr.master.repo.PlacentacheckTableRepository;
+import org.pdsr.master.repo.ResuscitationTableRepository;
+import org.pdsr.master.repo.RiskTableRepository;
+import org.pdsr.master.repo.SyncTableRepository;
+import org.pdsr.master.repo.UserTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -82,6 +84,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -446,15 +449,19 @@ public class CaseEntryController {
 					selected.getReferral().setReferral_aminute(atime.getMinutes());
 				}
 
-				/*
-				 * if (time.after(atime)) { results.rejectValue("referral.referral_atime",
-				 * "error.refatime"); }
-				 * 
-				 * if (results.hasErrors()) { model.addAttribute("selected", selected);
-				 * model.addAttribute("page", page); return "registry/case-update"; }
-				 */
+				MultipartFile file = selected.getReferral().getFile();
+
+				if (file != null) {
+					try {
+						selected.getReferral().setReferral_file(file.getBytes());
+						selected.getReferral().setReferral_filetype(file.getContentType());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
 
 				case_referral o = selected.getReferral();
+
 				if (o.getReferral_ahour() == null || o.getReferral_adate() == null || o.getReferral_aminute() == null
 						|| o.getReferral_atime() == null || o.getReferral_case() == null || o.getReferral_date() == null
 						|| o.getReferral_hour() == null || o.getReferral_minute() == null
@@ -492,7 +499,7 @@ public class CaseEntryController {
 					boolean midday = (hour == 12);
 					boolean afternoon = (hour > 12 && hour < 18);
 					boolean evening = (hour > 17 && hour < 22);
-					boolean midnight = (hour > 21 && hour < 1);
+					boolean midnight = (hour > 21 || hour < 1);
 
 					if (period == 0 && !dawn) {
 						results.rejectValue("delivery.delivery_period", "error.dawn");
@@ -575,7 +582,7 @@ public class CaseEntryController {
 					boolean midday = (hour == 12);
 					boolean afternoon = (hour > 12 && hour < 18);
 					boolean evening = (hour > 17 && hour < 22);
-					boolean midnight = (hour > 21 && hour < 1);
+					boolean midnight = (hour > 21 || hour < 1);
 
 					if (period == 0 && !dawn) {
 						results.rejectValue("labour.labour_seeperiod", "error.dawn");
@@ -716,6 +723,17 @@ public class CaseEntryController {
 		}
 		case 9: {
 			try {
+				MultipartFile file = selected.getNotes().getFile();
+
+				if (file != null) {
+					try {
+						selected.getNotes().setNotes_file(file.getBytes());
+						selected.getNotes().setNotes_filetype(file.getContentType());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+
 				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getNotes()));
 				selected.getNotes().setNotes_json(arrayToJson);
 
@@ -765,7 +783,7 @@ public class CaseEntryController {
 				emailService.sendSimpleMessage(getRecipients(), "TEST MESSAGE- PDSR DEATH NOTIFICATION!",
 						"Hello, \nThis is is to notify you of a " + getAnswer("death_options", selected.getCase_death())
 								+ "\nMother's age: " + selected.getBiodata().getBiodata_mage() + "\nChild's sex: "
-								+ getAnswer("sex_options", selected.getBiodata().getBiodata_sex()) + "\nDate of death"
+								+ getAnswer("sex_options", selected.getBiodata().getBiodata_sex()) + "\nDate of death: "
 								+ new SimpleDateFormat("dd/MMM/yyyy").format(
 										selected.getCase_death() == 1 ? selected.getDelivery().getDelivery_date()
 												: selected.getBabydeath().getBaby_ddate())
@@ -1159,7 +1177,7 @@ public class CaseEntryController {
 
 		map.put(null, "Select one");
 		for (datamap elem : mapRepo.findByMap_feature("apgar_options")) {
-			map.put(elem.getMap_value(), "" + elem.getMap_value());
+			map.put(elem.getMap_value(), elem.getMap_label());
 		}
 
 		return map;
@@ -1433,6 +1451,42 @@ public class CaseEntryController {
 				.collect(Collectors.toList());
 
 		return list;
+	}
+
+	@GetMapping("/file/referral/{id}")
+	@ResponseBody
+	public void referralFile(@PathVariable("id") String id, HttpServletResponse response) {
+		case_identifiers selected = caseRepo.findById(id).get();
+
+		try {
+			response.setHeader(HttpHeaders.CONTENT_DISPOSITION, (new StringBuilder()).append("inline;filename=\"")
+					.append("referral_notes").append("\"").toString());
+
+			response.setContentType(selected.getReferral().getReferral_filetype());
+
+			java.io.OutputStream out = response.getOutputStream();
+			IOUtils.copy(new ByteArrayInputStream(selected.getReferral().getReferral_file()), out);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	@GetMapping("/file/notes/{id}")
+	@ResponseBody
+	public void notesFile(@PathVariable("id") String id, HttpServletResponse response) {
+		case_identifiers selected = caseRepo.findById(id).get();
+
+		try {
+			response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+					(new StringBuilder()).append("inline;filename=\"").append("case_summray").append("\"").toString());
+
+			response.setContentType(selected.getNotes().getNotes_filetype());
+
+			java.io.OutputStream out = response.getOutputStream();
+			IOUtils.copy(new ByteArrayInputStream(selected.getNotes().getNotes_file()), out);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
 	}
 
 }// end class

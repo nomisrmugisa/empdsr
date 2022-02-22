@@ -2,7 +2,7 @@ package org.pdsr;
 
 
 import org.hibernate.envers.RevisionListener;
-import org.pdsr.model.revision_audit_trail;
+import org.pdsr.master.model.revision_audit_trail;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 

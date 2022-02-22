@@ -3,11 +3,11 @@ package org.pdsr.controller;
 import java.security.Principal;
 
 import org.pdsr.CONSTANTS;
-import org.pdsr.model.user_table;
-import org.pdsr.repo.FacilityTableRepository;
-import org.pdsr.repo.GroupTableRepository;
-import org.pdsr.repo.SyncTableRepository;
-import org.pdsr.repo.UserTableRepository;
+import org.pdsr.master.model.user_table;
+import org.pdsr.master.repo.FacilityTableRepository;
+import org.pdsr.master.repo.GroupTableRepository;
+import org.pdsr.master.repo.SyncTableRepository;
+import org.pdsr.master.repo.UserTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;

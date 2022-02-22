@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/controls :: layout(_,~{},~{::scripts},~{::content},~{})}">
+
+
+<content>
+	<div class="jumbotron mt-4">
+		<h1 class="display-4" th:utext="#{merger.title}"></h1>
+		<p class="lead" th:text="#{merger.note}"></p>
+		<hr class="my-4">
+		<p th:text="#{merger.code.note}"></p>
+		<form action="#" th:action="@{/controls/datamerge}" th:object="${selected}" method="POST"
+			class="needs-validation" novalidate>
+
+			<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+			<div class="row">
+				<div class="col-md-12">
+					<label class="form-label fw-bold"> <input type="checkbox" th:field="*{merge_country}"
+							th:value="${selected.merge_country}" />
+						[[${merge.country}]]
+					</label>
+					<label class="form-label fw-bold"> <input type="checkbox" th:field="*{merge_region}"
+							th:value="${selected.merge_region}" />
+						[[${merge.region}]]
+					</label>
+					<label class="form-label fw-bold"> <input type="checkbox" th:field="*{merge_district}"
+							th:value="${selected.merge_district}" />
+						[[${merge.district}]]
+					</label>
+					<label class="form-label fw-bold"> <input type="checkbox" th:field="*{merge_facility}"
+							th:value="${selected.merge_facility}" />
+						[[${merge.facility}]]
+					</label>
+				</div>
+			</div>
+
+
+			<hr class="mb-2 bg-danger">
+			<button class="btn btn-sm btn-danger" type="submit" th:utext="#{merger.button}"></button>
+		</form>
+	</div>
+</content>
+<scripts>
+	<script>
+		(function () {
+			'use strict';
+			window.addEventListener('load', function () {
+				// Fetch all the forms we want to apply custom Bootstrap validation styles to
+				var forms = document.getElementsByClassName('needs-validation');
+
+				// Loop over them and prevent submission
+				var validation = Array.prototype.filter.call(forms, function (form) {
+					form.addEventListener('submit', function (event) {
+						if (form.checkValidity() === false) {
+							event.preventDefault();
+							event.stopPropagation();
+						}
+						form.classList.add('was-validated');
+
+					}, false);
+				});
+			}, false);
+		})();
+	</script>
+</scripts>
+
+</html>

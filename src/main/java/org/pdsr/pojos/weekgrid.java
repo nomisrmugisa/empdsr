@@ -3,7 +3,7 @@ package org.pdsr.pojos;
 import java.io.Serializable;
 import java.util.List;
 
-import org.pdsr.model.weekly_table;
+import org.pdsr.master.model.weekly_table;
 
 public class weekgrid implements Serializable {
 

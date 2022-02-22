@@ -6,13 +6,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.pdsr.master.repo.AuditAuditRepository;
+import org.pdsr.master.repo.AuditRecommendRepository;
+import org.pdsr.master.repo.CaseRepository;
+import org.pdsr.master.repo.IcdCodesRepository;
+import org.pdsr.master.repo.WeeklyMonitoringTableRepository;
 import org.pdsr.pojos.icdpm;
 import org.pdsr.pojos.wmoindicators;
-import org.pdsr.repo.AuditAuditRepository;
-import org.pdsr.repo.AuditRecommendRepository;
-import org.pdsr.repo.CaseRepository;
-import org.pdsr.repo.IcdCodesRepository;
-import org.pdsr.repo.WeeklyMonitoringTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
@@ -280,7 +280,7 @@ public class HomeController {
 
 		// top causes of death overall for neonatal
 		List<icdpm> oneonatal = new ArrayList<icdpm>();
-		for (String[] elem : audRepo.findByTopPMCodes(2, PageRequest.of(0, 5))) {
+		for (String[] elem : audRepo.findByTopPMCodesNeonatal(PageRequest.of(0, 5))) {
 
 			icdpm neonatal = new icdpm();
 			neonatal.setPm_code(elem[0]);
@@ -293,7 +293,7 @@ public class HomeController {
 
 		// top causes of death for neonatal for current year
 		List<icdpm> cneonatal = new ArrayList<icdpm>();
-		for (String[] elem : audRepo.findByTopPMCodes(2, year, PageRequest.of(0, 5))) {
+		for (String[] elem : audRepo.findByTopPMCodesNeonatal(year, PageRequest.of(0, 5))) {
 
 			icdpm neonatal = new icdpm();
 			neonatal.setPm_code(elem[0]);
@@ -306,7 +306,7 @@ public class HomeController {
 
 		// top causes of death overall for stillbirths
 		List<icdpm> ostillbirth = new ArrayList<icdpm>();
-		for (String[] elem : audRepo.findByTopPMCodes(1, PageRequest.of(0, 5))) {
+		for (String[] elem : audRepo.findByTopPMCodesStillBirth(PageRequest.of(0, 5))) {
 
 			icdpm stillbirth = new icdpm();
 			stillbirth.setPm_code(elem[0]);
@@ -322,7 +322,7 @@ public class HomeController {
 
 		// top causes of death for stillbirths for current year
 		List<icdpm> cstillbirth = new ArrayList<icdpm>();
-		for (String[] elem : audRepo.findByTopPMCodes(1, year, PageRequest.of(0, 5))) {
+		for (String[] elem : audRepo.findByTopPMCodesStillBirth(year, PageRequest.of(0, 5))) {
 
 			icdpm stillbirth = new icdpm();
 			stillbirth.setPm_code(elem[0]);

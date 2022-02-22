@@ -56,8 +56,9 @@
 			</div>
 		</div>
 
-		<form action="#" th:action="@{/registry/edit/{id}?page={pg}(id=${selected.case_uuid}, pg=${page})}"
-			th:object="${selected}" method="POST" class="needs-validation" novalidate>
+		<form action="#" enctype="multipart/form-data"
+			th:action="@{/registry/edit/{id}?page={pg}(id=${selected.case_uuid}, pg=${page})}" th:object="${selected}"
+			method="POST" class="needs-validation" novalidate>
 			<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
 
 			<div th:if="${page==0}" th:insert="fragments/update-case :: case_identifiers"></div>

@@ -1,5 +1,6 @@
 package org.pdsr.controller;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
@@ -20,8 +21,10 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.pdsr.CONSTANTS;
 import org.pdsr.EmailService;
 import org.pdsr.InternetAvailabilityChecker;
@@ -29,25 +32,26 @@ import org.pdsr.Utils;
 import org.pdsr.json.json_algorithm;
 import org.pdsr.json.json_data;
 import org.pdsr.json.json_list;
-import org.pdsr.model.audit_audit;
-import org.pdsr.model.audit_case;
-import org.pdsr.model.audit_recommendation;
-import org.pdsr.model.case_identifiers;
-import org.pdsr.model.datamap;
-import org.pdsr.model.datamapPK;
-import org.pdsr.model.icd_codes;
-import org.pdsr.model.sync_table;
+import org.pdsr.master.model.audit_audit;
+import org.pdsr.master.model.audit_case;
+import org.pdsr.master.model.audit_recommendation;
+import org.pdsr.master.model.case_identifiers;
+import org.pdsr.master.model.datamap;
+import org.pdsr.master.model.datamapPK;
+import org.pdsr.master.model.icd_codes;
+import org.pdsr.master.model.sync_table;
+import org.pdsr.master.repo.AuditAuditRepository;
+import org.pdsr.master.repo.AuditCaseRepository;
+import org.pdsr.master.repo.AuditRecommendRepository;
+import org.pdsr.master.repo.CaseRepository;
+import org.pdsr.master.repo.DatamapRepository;
+import org.pdsr.master.repo.IcdCodesRepository;
+import org.pdsr.master.repo.SyncTableRepository;
+import org.pdsr.master.repo.UserTableRepository;
 import org.pdsr.pojos.icdpm;
-import org.pdsr.repo.AuditAuditRepository;
-import org.pdsr.repo.AuditCaseRepository;
-import org.pdsr.repo.AuditRecommendRepository;
-import org.pdsr.repo.CaseRepository;
-import org.pdsr.repo.DatamapRepository;
-import org.pdsr.repo.IcdCodesRepository;
-import org.pdsr.repo.SyncTableRepository;
-import org.pdsr.repo.UserTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -996,4 +1000,42 @@ public class CaseAuditController {
 		return list;
 	}
 
+	@GetMapping("/file/notes/{id}")
+	@ResponseBody
+	public void notesFile(@PathVariable("id") String id, HttpServletResponse response) {
+		case_identifiers selected = caseRepo.findById(id).get();
+
+		try {
+			response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+					(new StringBuilder()).append("inline;filename=\"").append("case_summray").append("\"").toString());
+
+			response.setContentType(selected.getNotes().getNotes_filetype());
+
+			java.io.OutputStream out = response.getOutputStream();
+			IOUtils.copy(new ByteArrayInputStream(selected.getNotes().getNotes_file()), out);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	@GetMapping("/file/referral/{id}")
+	@ResponseBody
+	public void referralFile(@PathVariable("id") String id, HttpServletResponse response) {
+		case_identifiers selected = caseRepo.findById(id).get();
+
+		try {
+			response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+					(new StringBuilder()).append("inline;filename=\"").append("referral_notes").append("\"").toString());
+
+			response.setContentType(selected.getReferral().getReferral_filetype());
+
+			java.io.OutputStream out = response.getOutputStream();
+			IOUtils.copy(new ByteArrayInputStream(selected.getReferral().getReferral_file()), out);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	
+	
 }// end class

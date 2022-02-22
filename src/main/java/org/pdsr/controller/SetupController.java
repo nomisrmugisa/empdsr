@@ -14,20 +14,25 @@ import java.util.UUID;
 import javax.transaction.Transactional;
 
 import org.pdsr.CONSTANTS;
-import org.pdsr.model.country_table;
-import org.pdsr.model.district_table;
-import org.pdsr.model.facility_table;
-import org.pdsr.model.icd_codes;
-import org.pdsr.model.icd_diagnoses;
-import org.pdsr.model.region_table;
-import org.pdsr.model.sync_table;
-import org.pdsr.repo.CountryTableRepository;
-import org.pdsr.repo.DistrictTableRepository;
-import org.pdsr.repo.FacilityTableRepository;
-import org.pdsr.repo.IcdCodesRepository;
-import org.pdsr.repo.IcdDiagnosesRepository;
-import org.pdsr.repo.RegionTableRepository;
-import org.pdsr.repo.SyncTableRepository;
+import org.pdsr.master.model.country_table;
+import org.pdsr.master.model.district_table;
+import org.pdsr.master.model.facility_table;
+import org.pdsr.master.model.icd_codes;
+import org.pdsr.master.model.icd_diagnoses;
+import org.pdsr.master.model.region_table;
+import org.pdsr.master.model.sync_table;
+import org.pdsr.master.repo.CountryTableRepository;
+import org.pdsr.master.repo.DistrictTableRepository;
+import org.pdsr.master.repo.FacilityTableRepository;
+import org.pdsr.master.repo.IcdCodesRepository;
+import org.pdsr.master.repo.IcdDiagnosesRepository;
+import org.pdsr.master.repo.RegionTableRepository;
+import org.pdsr.master.repo.SyncTableRepository;
+import org.pdsr.pojos.datamerger;
+import org.pdsr.slave.repo.SlaveCountryTableRepository;
+import org.pdsr.slave.repo.SlaveDistrictTableRepository;
+import org.pdsr.slave.repo.SlaveFacilityTableRepository;
+import org.pdsr.slave.repo.SlaveRegionTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,9 +68,21 @@ public class SetupController {
 
 	@Autowired
 	private IcdCodesRepository icdRepo;
-	
+
 	@Autowired
 	private IcdDiagnosesRepository icddRepo;
+
+	@Autowired
+	private SlaveFacilityTableRepository sfacilityRepo;
+
+	@Autowired
+	private SlaveDistrictTableRepository sdistrictRepo;
+
+	@Autowired
+	private SlaveRegionTableRepository sregionRepo;
+
+	@Autowired
+	private SlaveCountryTableRepository scounrtyRepo;
 
 	@GetMapping("")
 	public String sync(Principal principal, Model model,
@@ -137,9 +154,9 @@ public class SetupController {
 
 	@GetMapping("/regions")
 	public String country(Principal principal, Model model) {
-
 		model.addAttribute("countryList", countryRepo.findAll());
 		model.addAttribute("loc", "active");
+		model.addAttribute("selected", new datamerger());
 
 		return "controls/setup-countries";
 	}
@@ -261,6 +278,108 @@ public class SetupController {
 
 		return "redirect:/controls/facility/" + selected.getDistrict_uuid() + "?success=yes";
 	}
+	
+
+	@GetMapping("/datamerge")
+	public String datamerge(Principal principal, Model model,
+			@RequestParam(name = "success", required = false) String success) {
+
+		model.addAttribute("selected", new datamerger());
+
+		if (success != null) {
+			model.addAttribute("success", "Merged Successfully!");
+		}
+
+		return "controls/merger";
+	}
+
+
+	@Transactional
+	@PostMapping("/datamerge")
+	public String datamerge(Principal principal, @ModelAttribute("selected") datamerger selected) {
+
+		// merge slave countries
+		if (selected.isMerge_country()) {
+			List<org.pdsr.slave.model.country_table> scountries = scounrtyRepo.findAll();
+			if (scountries != null && scountries.size() > 0) {
+				List<country_table> countries = new ArrayList<country_table>();
+				for (org.pdsr.slave.model.country_table s : scountries) {
+					country_table country = new country_table();
+					country.setCountry_uuid(s.getCountry_uuid());
+					country.setCountry_name(s.getCountry_name());
+					countries.add(country);
+				}
+				countryRepo.saveAll(countries);
+			}
+		}
+
+		// merge slave regions for which countries exist in master
+		if (selected.isMerge_region()) {
+			List<org.pdsr.slave.model.region_table> sregions = sregionRepo.findAll();
+			if (sregions != null && sregions.size() > 0) {
+				List<region_table> regions = new ArrayList<region_table>();
+				for (org.pdsr.slave.model.region_table s : sregions) {
+					Optional<country_table> country = countryRepo.findById(s.getCountry().getCountry_uuid());
+					if (country.isPresent()) {
+						region_table region = new region_table();
+						region.setRegion_uuid(s.getRegion_uuid());
+						region.setRegion_name(s.getRegion_name());
+						region.setCountry(country.get());
+
+						regions.add(region);
+					}
+				}
+				regionRepo.saveAll(regions);
+			}
+		}
+
+		// merge slave districts for which regions exist in master
+		if (selected.isMerge_district()) {
+			List<org.pdsr.slave.model.district_table> sdistricts = sdistrictRepo.findAll();
+			if (sdistricts != null && sdistricts.size() > 0) {
+				List<district_table> districts = new ArrayList<district_table>();
+				for (org.pdsr.slave.model.district_table s : sdistricts) {
+					Optional<region_table> region = regionRepo.findById(s.getRegion().getRegion_uuid());
+					if (region.isPresent()) {
+						district_table district = new district_table();
+						district.setDistrict_uuid(s.getDistrict_uuid());
+						district.setDistrict_name(s.getDistrict_name());
+						district.setRegion(region.get());
+
+						districts.add(district);
+					}
+				}
+
+				districtRepo.saveAll(districts);
+			}
+		}
+
+		// merge slave facilities for which master districts exist
+		if (selected.isMerge_facility()) {
+			List<org.pdsr.slave.model.facility_table> sfacilities = sfacilityRepo.findAll();
+			if (sfacilities != null && sfacilities.size() > 0) {
+				List<facility_table> facilities = new ArrayList<facility_table>();
+				for (org.pdsr.slave.model.facility_table s : sfacilities) {
+					Optional<district_table> district = districtRepo.findById(s.getDistrict().getDistrict_uuid());
+					if (district.isPresent()) {
+						facility_table facility = new facility_table();
+						facility.setFacility_uuid(s.getFacility_uuid());
+						facility.setFacility_code(s.getFacility_code());
+						facility.setFacility_name(s.getFacility_name());
+						facility.setDistrict(district.get());
+
+						facilities.add(facility);
+					}
+				}
+
+				facilityRepo.saveAll(facilities);
+			}
+		}
+		return "redirect:/controls/datamerge?success=yes";
+	}
+
+	
+	
 
 	private List<icd_codes> loadICD() throws IOException {
 
@@ -290,8 +409,8 @@ public class SetupController {
 
 		try (Reader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)))) {
 
-			CsvToBean<icd_diagnoses> csvToBean = new CsvToBeanBuilder<icd_diagnoses>(reader).withType(icd_diagnoses.class)
-					.withIgnoreLeadingWhiteSpace(true).build();
+			CsvToBean<icd_diagnoses> csvToBean = new CsvToBeanBuilder<icd_diagnoses>(reader)
+					.withType(icd_diagnoses.class).withIgnoreLeadingWhiteSpace(true).build();
 
 			return csvToBean.parse();
 
@@ -302,5 +421,6 @@ public class SetupController {
 		return new ArrayList<>();
 	}
 
+	
 }
 // end class

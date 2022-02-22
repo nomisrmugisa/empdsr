@@ -14,8 +14,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.pdsr.model.weekly_monitoring;
-import org.pdsr.model.weekly_table;
+import org.pdsr.master.model.weekly_monitoring;
+import org.pdsr.master.model.weekly_table;
 
 //import com.itextpdf.text.Font;
 

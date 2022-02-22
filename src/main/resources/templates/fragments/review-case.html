@@ -4,7 +4,7 @@
 		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 	</div>
 	<div id="example-basic">
-		<h3>ICD Codes</h3>
+		<h3>[[#{th.audit.icdpm}]]</h3>
 		<section>
 			<div class="row mb-3">
 				<label class="col-form-label" th:text="#{label.audit_death}"></label>
@@ -48,7 +48,7 @@
 				</div>
 			</div>
 		</section>
-		<h3>Delays</h3>
+		<h3>[[#{th.audit.delays}]]</h3>
 		<section class="overflow-auto">
 
 			<div class="row mb-1 alert alert-warning">
@@ -105,7 +105,7 @@
 				</div>
 			</div>
 		</section>
-		<h3>Modifiables</h3 >
+		<h3>[[#{th.audit.mf}]]</h3 >
 		<section class="overflow-auto">
 			<div class="row mb-1 alert alert-success">
 				<h6 th:text="#{label.audit_ifcmfs}"></h6>
@@ -237,6 +237,12 @@
 	<div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
 		[[${success}]]
 		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+	<div class="row mb-4">
+		<label class="col-form-label" th:utext="#{recommend.modify.dead}"></label>
+		<div class="col-auto">
+			<input th:field="*{recommendation_deadline}"/>
+		</div>
 	</div>
 	<div class="row mb-4">
 		<label class="col-form-label" th:text="#{label.recommend.status}"></label>

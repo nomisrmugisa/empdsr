@@ -3,9 +3,9 @@ package org.pdsr;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.pdsr.model.group_table;
-import org.pdsr.model.user_table;
-import org.pdsr.repo.UserTableRepository;
+import org.pdsr.master.model.group_table;
+import org.pdsr.master.model.user_table;
+import org.pdsr.master.repo.UserTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

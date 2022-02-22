@@ -3,7 +3,7 @@ package org.pdsr;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import org.pdsr.repo.SyncTableRepository;
+import org.pdsr.master.repo.SyncTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
