@@ -33,7 +33,7 @@ public class MasterDatasourceConfig {
 	@Bean(name = "masterEntityManagerFactory")
 	public LocalContainerEntityManagerFactoryBean masterEntityManagerFactory(EntityManagerFactoryBuilder builder,
 			@Qualifier("dbmaster") DataSource masterDataSource) {
-		return builder.dataSource(masterDataSource).packages("org.pdsr.master").build();
+		return builder.dataSource(masterDataSource).packages("org.pdsr.master","org.pdsr.summary").build();
 	}
 
 	@Primary

@@ -5,40 +5,39 @@
 <content>
 	<div class="jumbotron mt-4">
 		<h1 class="display-4 text-danger" th:utext="#{merger.title}"></h1>
-		<p class="lead" th:text="#{merger.note}"></p>
+		<p class="lead" th:utext="#{merger.note}"></p>
 		<hr class="my-4">
-		<p th:text="#{merger.code.note}"></p>
+		<p th:utext="#{merger.code.note}"></p>
 		<form action="#" th:action="@{/controls/datamerge}" th:object="${selected}" method="POST"
 			class="needs-validation" novalidate>
 
 			<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
 
 			<div class="col-md-12">
-				<label class="form-label fw-bold"> <input type="checkbox" th:field="*{merge_country}"
-						th:value="${selected.merge_country}" />
-					[[#{merge.country}]]
+				<label class="form-label fw-bold"> <input type="checkbox" th:field="*{merge_location}"
+						th:value="${selected.merge_location}" />
+					[[#{merge.location}]]
 				</label>
 			</div>
 			<div class="col-md-12">
-				<label class="form-label fw-bold"> <input type="checkbox" th:field="*{merge_region}"
-						th:value="${selected.merge_region}" />
-					[[#{merge.region}]]
+				<label class="form-label fw-bold"> <input type="checkbox" th:field="*{merge_cases}"
+						th:value="${selected.merge_cases}" />
+					[[#{merge.cases}]]
 				</label>
 			</div>
 			<div class="col-md-12">
-				<label class="form-label fw-bold"> <input type="checkbox" th:field="*{merge_district}"
-						th:value="${selected.merge_district}" />
-					[[#{merge.district}]]
+				<label class="form-label fw-bold"> <input type="checkbox" th:field="*{merge_audit}"
+						th:value="${selected.merge_audit}" />
+					[[#{merge.audit}]]
 				</label>
 			</div>
 			<div class="col-md-12">
-				<label class="form-label fw-bold"> <input type="checkbox" th:field="*{merge_facility}"
-						th:value="${selected.merge_facility}" />
-					[[#{merge.facility}]]
+				<label class="form-label fw-bold"> <input type="checkbox" th:field="*{merge_weekly}"
+						th:value="${selected.merge_weekly}" />
+					[[#{merge.weekrep}]]
 				</label>
 			</div>
 			<hr class="mb-2 bg-danger">
-
 			<button class="btn btn-sm btn-danger" type="submit" th:utext="#{merger.button}"></button>
 		</form>
 	</div>

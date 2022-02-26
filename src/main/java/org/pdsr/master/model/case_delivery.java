@@ -49,6 +49,9 @@ public class case_delivery implements Serializable {
 	@Column
 	private Integer delivery_minute;
 	
+	@Column
+	private Double delivery_weight;
+	
 	
 	@Column
 	@Temporal(TemporalType.TIME)
@@ -129,6 +132,14 @@ public class case_delivery implements Serializable {
 
 	public void setDelivery_time(java.util.Date delivery_time) {
 		this.delivery_time = delivery_time;
+	}
+
+	public Double getDelivery_weight() {
+		return delivery_weight;
+	}
+
+	public void setDelivery_weight(Double delivery_weight) {
+		this.delivery_weight = delivery_weight;
 	}
 
 	public Integer getData_complete() {

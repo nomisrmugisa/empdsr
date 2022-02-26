@@ -12,6 +12,10 @@ public interface AuditRecommendRepository extends JpaRepository<audit_recommenda
 
 	@Query("select r FROM audit_recommendation r ORDER BY r.recommendation_date DESC")
 	List<audit_recommendation> findByPendingAction();
+	
+	@Query("select r FROM audit_recommendation r WHERE YEAR(r.recommendation_date)=?1 AND MONTH(r.recommendation_date)=?2 ORDER BY r.recommendation_date DESC")
+	List<audit_recommendation> findActionsByMonthYear(Integer year, Integer month);
+
 
 	@Query("select COUNT(r) FROM audit_recommendation r WHERE r.recommendation_status=2")
 	Integer countByCompleted();
@@ -35,5 +39,6 @@ public interface AuditRecommendRepository extends JpaRepository<audit_recommenda
 
 	@Query("select COUNT(r) FROM audit_recommendation r WHERE r.recommendation_status<>2 AND recommendation_deadline <= ?1 AND YEAR(r.recommendation_date)=?2")
 	Integer countByOverdue(java.util.Date date, Integer year);
+	
 
 }

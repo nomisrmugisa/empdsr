@@ -523,9 +523,11 @@ public class CaseEntryController {
 				}
 				case_delivery o = selected.getDelivery();
 				if (o.getDelivery_hour() == null || o.getDelivery_date() == null || o.getDelivery_minute() == null
-						|| o.getDelivery_period() == null || o.getDelivery_time() == null) {
+						|| o.getDelivery_period() == null || o.getDelivery_time() == null
+						|| o.getDelivery_weight() == null) {
 					o.setData_complete(0);
 				} else {
+
 					o.setData_complete(1);
 					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getDelivery()));
 					selected.getDelivery().setDelivery_json(arrayToJson);

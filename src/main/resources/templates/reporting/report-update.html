@@ -5,48 +5,49 @@
 		th:href="@{/reporting/export/excel/{yearid}/{monthid}(yearid=${selected.grid_year},monthid=${selected.grid_month})}">
 		<i class="fa fa-download"></i> [[#{export.excel}]]</a>
 	<div class="float-end" th:text="${facility_code}"></div>
-	<div class="col-md-12 py-3 my-3 mx-auto p-1 rounded box-shadow">
-		<form action="#"
-			th:action="@{/reporting/edit/{yearid}/{monthid}(yearid=${selected.grid_year},monthid=${selected.grid_month})}"
-			th:object="${selected}" method="POST" class="needs-validation" novalidate>
+	<div class="row">
+		<div class="col-md-8 py-3 my-3 mx-auto p-1 rounded box-shadow">
+			<form action="#"
+				th:action="@{/reporting/edit/{yearid}/{monthid}(yearid=${selected.grid_year},monthid=${selected.grid_month})}"
+				th:object="${selected}" method="POST" class="needs-validation" novalidate>
 
-			<input type="hidden" th:field="*{grid_year}" />
-			<input type="hidden" th:field="*{grid_month}" />
-			<input type="hidden" th:field="*{grid_yearmonth}" />
+				<input type="hidden" th:field="*{grid_year}" />
+				<input type="hidden" th:field="*{grid_month}" />
+				<input type="hidden" th:field="*{grid_yearmonth}" />
 
-			<div class="row">
-				<div class="col-md-12" th:with="item = ${selected.grid_weekly[0]}">
-					<table class="table table-hover table-bordered table-sm table-responsive-sm small">
-						<thead class="table-dark">
-							<tr>
-								<th style="width: 30%;">[[${selected.grid_yearmonth}]]</th>
-								<th th:text="|#{th.mon.wek}-${witem.weekly_week}|"
-									th:each="witem : ${selected.grid_weekly}">Value</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr th:each="subitem, subitemStat : ${item.statistics}"
-								th:class="${subitem.wm_indices.gitem}?'table-primary':''">
-								<td th:class="${!subitem.wm_indices.gitem}?'text-end':'fw-bold small'">
-									[(${subitem.wm_indices.mlabel})] <span
-										th:if="${subitem.wm_indices.gitem}">([[${subitem.wm_indices.mdesc}]])</span>
-								</td>
-								<td th:each="aitem, aitemStat : *{grid_weekly}">
-									<input type="hidden" th:field="*{grid_weekly[__${aitemStat.index}__]}" />
-									<input type="hidden"
-										th:field="*{grid_weekly[__${aitemStat.index}__].statistics[__${subitemStat.index}__].wm_grids}" />
-									<input type="hidden"
-										th:field="*{grid_weekly[__${aitemStat.index}__].statistics[__${subitemStat.index}__].wm_indices}" />
-									<input type="hidden"
-										th:field="*{grid_weekly[__${aitemStat.index}__].statistics[__${subitemStat.index}__].id.weekly_id}" />
-									<input type="hidden"
-										th:field="*{grid_weekly[__${aitemStat.index}__].statistics[__${subitemStat.index}__].id.mindex}" />
+				<div class="row">
+					<div class="col-md-12" th:with="item = ${selected.grid_weekly[0]}">
+						<table class="table table-hover table-bordered table-sm table-responsive-sm small">
+							<thead class="table-dark">
+								<tr>
+									<th style="width: 30%;">[[${selected.grid_yearmonth}]]</th>
+									<th th:text="|#{th.mon.wek}-${witem.weekly_week}|"
+										th:each="witem : ${selected.grid_weekly}">Value</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="subitem, subitemStat : ${item.statistics}"
+									th:class="${subitem.wm_indices.gitem}?'table-primary':''">
+									<td th:class="${!subitem.wm_indices.gitem}?'text-end':'fw-bold small'">
+										[(${subitem.wm_indices.mlabel})] <span
+											th:if="${subitem.wm_indices.gitem}">([[${subitem.wm_indices.mdesc}]])</span>
+									</td>
+									<td th:each="aitem, aitemStat : *{grid_weekly}">
+										<input type="hidden" th:field="*{grid_weekly[__${aitemStat.index}__]}" />
+										<input type="hidden"
+											th:field="*{grid_weekly[__${aitemStat.index}__].statistics[__${subitemStat.index}__].wm_grids}" />
+										<input type="hidden"
+											th:field="*{grid_weekly[__${aitemStat.index}__].statistics[__${subitemStat.index}__].wm_indices}" />
+										<input type="hidden"
+											th:field="*{grid_weekly[__${aitemStat.index}__].statistics[__${subitemStat.index}__].id.weekly_id}" />
+										<input type="hidden"
+											th:field="*{grid_weekly[__${aitemStat.index}__].statistics[__${subitemStat.index}__].id.mindex}" />
 
 
-									<input class="form-control form-control-sm text-center" required
-										th:field="*{grid_weekly[__${aitemStat.index}__].statistics[__${subitemStat.index}__].wm_values}"
-										th:style="(${subitem.wm_indices.gitem}?'font-weight:bold;' :'') + 'background-color: rgba(0, 0, 0, 0); border:none;'"
-										th:classappend="${subitem.wm_indices.gitem}? 
+										<input class="form-control form-control-sm text-center" required
+											th:field="*{grid_weekly[__${aitemStat.index}__].statistics[__${subitemStat.index}__].wm_values}"
+											th:style="(${subitem.wm_indices.gitem}?'font-weight:bold;' :'') + 'background-color: rgba(0, 0, 0, 0); border:none;'"
+											th:classappend="${subitem.wm_indices.gitem}? 
 											(${selected.grid_weekly[__${aitemStat.index}__].statistics[__${subitemStat.index}__].wm_subval!=0}?
 														'bg-white text-danger':
 												(
@@ -64,16 +65,39 @@
 												)
 											)
 										" />
-								</td>
-							</tr>
-						</tbody>
-					</table>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 				</div>
-			</div>
-			<div class="d-grid gap-2 mt-3">
-				<button class="btn btn-primary btn-lg" type="submit" th:utext="#{save.button}"></button>
-			</div>
-		</form>
+				<div class="d-grid gap-2 mt-3">
+					<button class="btn btn-primary btn-lg" type="submit" th:utext="#{save.button}"></button>
+				</div>
+			</form>
+		</div>
+		<div class="col-md-4 my-3 py-3 mx-auto jumbotron">
+			<p class="lead" th:text="|#{title.recommendation}|"></p>
+			<hr>
+			<ul class="list-group" th:if="${ymaction}">
+				<li th:each="item : ${ymaction}" class="list-group-item m-1 rounded" th:classappend="${item.rec_color}">
+					<strong>[[${item.recommendation_title}]]</strong>
+					<div class="small">
+						<div class="small fw-light">
+							<strong>[[#{recommendation.lead}]]</strong>
+							[[${item.recommendation_leader}]]&nbsp;&frasl;&nbsp;
+							<strong>[[#{recommendation.dead}]]</strong>
+							[[${#dates.format(item.recommendation_deadline,'dd-MMM-yyyy')}]]&nbsp;&frasl;&nbsp;
+							<strong>[[#{recommendation.memb}]]</strong>
+							[[${item.recommendation_reporter}]]
+						</div>
+					</div>
+					<div class="small border-top mt-2">
+						[[${item.recommendation_task}]]
+					</div>
+				</li>
+			</ul>
+		</div>
 	</div>
 </content>
 

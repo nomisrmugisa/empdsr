@@ -9,37 +9,36 @@ public class datamerger implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private boolean merge_country;
-	private boolean merge_region;
-	private boolean merge_district;
-	private boolean merge_facility;
+	private boolean merge_location;
+	private boolean merge_weekly;
+	private boolean merge_cases;
+	private boolean merge_audit;
 	
 	
-	public boolean isMerge_country() {
-		return merge_country;
+	public boolean isMerge_location() {
+		return merge_location;
 	}
-	public void setMerge_country(boolean merge_country) {
-		this.merge_country = merge_country;
-	}
-	public boolean isMerge_region() {
-		return merge_region;
-	}
-	public void setMerge_region(boolean merge_region) {
-		this.merge_region = merge_region;
-	}
-	public boolean isMerge_district() {
-		return merge_district;
-	}
-	public void setMerge_district(boolean merge_district) {
-		this.merge_district = merge_district;
-	}
-	public boolean isMerge_facility() {
-		return merge_facility;
-	}
-	public void setMerge_facility(boolean merge_facility) {
-		this.merge_facility = merge_facility;
+	public void setMerge_location(boolean merge_location) {
+		this.merge_location = merge_location;
 	}
 	
-	
+	public boolean isMerge_weekly() {
+		return merge_weekly;
+	}
+	public void setMerge_weekly(boolean merge_weekly) {
+		this.merge_weekly = merge_weekly;
+	}
+	public boolean isMerge_cases() {
+		return merge_cases;
+	}
+	public void setMerge_cases(boolean merge_cases) {
+		this.merge_cases = merge_cases;
+	}
+	public boolean isMerge_audit() {
+		return merge_audit;
+	}
+	public void setMerge_audit(boolean merge_audit) {
+		this.merge_audit = merge_audit;
+	}
 
 }

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AuditAuditRepository extends JpaRepository<audit_audit, String> {
 
-	@Query("select t FROM audit_audit t LEFT JOIN audit_recommendation r ON(t.audit_uuid=r.audit_uuid) WHERE r.recommendation_uuid IS NULL")
+	@Query("select t FROM audit_audit t WHERE t.rec_complete IS NULL")
 	List<audit_audit> findByPendingRecommendation();
 
 	@Query("select t.audit_icdpm, count(t.audit_icdpm) FROM audit_audit t WHERE t.audit_death=1 "

@@ -105,7 +105,15 @@ public class audit_audit implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "audit_uuid")
 	private List<audit_recommendation> recommendations = new ArrayList<>();
 
-	
+	@Column
+	private Integer rec_complete;
+
+	public Integer getRec_complete() {
+		return rec_complete;
+	}
+	public void setRec_complete(Integer rec_complete) {
+		this.rec_complete = rec_complete;
+	}
 	public String getAudit_uuid() {
 		return audit_uuid;
 	}

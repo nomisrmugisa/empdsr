@@ -86,7 +86,6 @@ public class audit_recommendation implements Serializable {
 	@Transient
 	private String bg_color;
 
-	
 	public String getBg_color() {
 		return bg_color;
 	}

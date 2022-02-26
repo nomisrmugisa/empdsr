@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -84,7 +85,7 @@ public class case_antenatal implements Serializable {
 	@Column
 	private Integer antenatal_risks;// firisit
 
-	@ManyToMany(cascade = CascadeType.PERSIST)
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = "antenatal_risks", joinColumns = @JoinColumn(name = "antenatal_uuid"), inverseJoinColumns = @JoinColumn(name = "risk_name"))
 	private List<risk_table> risks = new ArrayList<>();
 

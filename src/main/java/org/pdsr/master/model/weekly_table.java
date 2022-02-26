@@ -43,7 +43,10 @@ public class weekly_table implements Serializable {
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private java.util.Date weekly_date;
 
-	
+	@Column
+	private String case_sync;
+
+		
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "wm_grids")
 	private List<weekly_monitoring> statistics = new ArrayList<>();
 
@@ -93,6 +96,14 @@ public class weekly_table implements Serializable {
 
 	public void setWeekly_date(java.util.Date weekly_date) {
 		this.weekly_date = weekly_date;
+	}
+
+	public String getCase_sync() {
+		return case_sync;
+	}
+
+	public void setCase_sync(String case_sync) {
+		this.case_sync = case_sync;
 	}
 
 	public List<weekly_monitoring> getStatistics() {

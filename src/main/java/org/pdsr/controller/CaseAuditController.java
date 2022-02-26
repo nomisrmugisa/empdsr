@@ -63,6 +63,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -211,6 +212,7 @@ public class CaseAuditController {
 
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+		objectMapper.configure(Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
 		TypeReference<json_algorithm> mapType1 = new TypeReference<json_algorithm>() {
 		};
 		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
@@ -255,6 +257,8 @@ public class CaseAuditController {
 		// prepare a mapping reference type for converting the JSON strings to objects
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+		objectMapper.configure(Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+		objectMapper.configure(Feature.ALLOW_SINGLE_QUOTES, true);
 		TypeReference<List<json_data>> mapType = new TypeReference<List<json_data>>() {
 		};
 		TypeReference<json_algorithm> mapType1 = new TypeReference<json_algorithm>() {
@@ -761,10 +765,21 @@ public class CaseAuditController {
 		selected.setAudit_uuid(audit);
 
 		audit.getRecommendations().add(selected);
-
+		
 		tcaseRepo.save(audit);
 
 		return "redirect:/auditing/recommend/" + case_uuid + "?success=yes";
+	}
+
+	@GetMapping("/recommend/complete/{id}")
+	public String recommendation(Principal principal, @PathVariable("id") String case_uuid) {
+
+		audit_audit audit = tcaseRepo.findById(case_uuid).get();
+		audit.setRec_complete(1);
+
+		tcaseRepo.save(audit);
+
+		return "redirect:/auditing?success=yes";
 	}
 
 	@GetMapping("/cstatus/{id}")
