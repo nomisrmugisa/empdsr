@@ -459,7 +459,7 @@ public class SetupController {
 			model.addAttribute("success", "Merged Successfully!");
 		}
 
-		return "controls/merger";
+		return "controls/merger-peer";
 	}
 
 	@Transactional
@@ -492,6 +492,39 @@ public class SetupController {
 		}
 
 		return "redirect:/controls/datamerge?success=yes";
+	}
+
+	@GetMapping("/centralmerge")
+	public String centralmerge(Principal principal, Model model,
+			@RequestParam(name = "success", required = false) String success) {
+
+		if (success != null) {
+			model.addAttribute("success", "Transmitted Successfully!");
+		}
+
+		return "controls/merger-central";
+	}
+
+
+	@Transactional
+	@PostMapping("/centralmerge")
+	public String centralmerge(Principal principal) {
+		
+		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		
+		facility_table facility = facilityRepo.findByFacility_code(sync.getSync_code()).get();
+
+		final String country = facility.getDistrict().getRegion().getCountry().getCountry_name();
+		final String region = facility.getDistrict().getRegion().getRegion_name();
+		final String district = facility.getDistrict().getDistrict_name();
+		final String code = facility.getFacility_code();
+		
+		pushCaseData(code, district, region, country);
+		pushAuditData(code, district, region, country);
+		pushRecommendationData(code, district, region, country);
+		pushMonitoringData(code, district, region, country);
+		
+		return "redirect:/controls/centralmerge?success=yes";
 	}
 
 	private void mergeCountry() {

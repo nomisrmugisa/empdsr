@@ -12,8 +12,6 @@ import org.pdsr.json.json_audit_audit;
 import org.pdsr.json.json_audit_recommendation;
 import org.pdsr.json.json_case_identifiers;
 import org.pdsr.json.json_weekly_monitoring;
-import org.pdsr.master.repo.SyncTableRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -29,7 +27,7 @@ public class ServiceApi {
 //	private SyncTableRepository syncRepo;
 	
 	private final RestTemplate restTemplate;
-	private final String BASE_URL = "https://olincgroup.com/api/pdsr/ghana";
+	private final String BASE_URL = "https://olincgroup.com/pdsr/ghana";
 
 	public ServiceApi(final RestTemplateBuilder restTemplateBuilder) {
 		this.restTemplate = restTemplateBuilder.build();
@@ -190,7 +188,7 @@ public class ServiceApi {
 	/////////////// CASE WEEKLY MONITORING////////////////////////////////
 	public String save(DecryptedWeeklyMonitoring data) {
 
-		final String URL = BASE_URL.concat("/saveactions.php");
+		final String URL = BASE_URL.concat("/saveweeklys.php");
 		EncryptedMessage json = new EncryptedMessage();
 
 		json.setError(false);

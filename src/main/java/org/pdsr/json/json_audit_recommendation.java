@@ -19,7 +19,6 @@ public class json_audit_recommendation implements Serializable {
 	private String country;
 	private String region;
 	private String district;
-	private String audit_uuid;
 	private java.util.Date recommendation_date;
 	private String recommendation_title;
 	private String recommendation_task;
@@ -36,7 +35,7 @@ public class json_audit_recommendation implements Serializable {
 
 
 	public json_audit_recommendation(String id, String code, String country, String region, String district,
-			String audit_uuid, Date recommendation_date, String recommendation_title, String recommendation_task,
+			Date recommendation_date, String recommendation_title, String recommendation_task,
 			String recommendation_leader, String recommendation_reporter, Date recommendation_deadline,
 			String recommendation_resources, Integer recommendation_status, String recommendation_comments) {
 		super();
@@ -45,7 +44,6 @@ public class json_audit_recommendation implements Serializable {
 		this.country = country;
 		this.region = region;
 		this.district = district;
-		this.audit_uuid = audit_uuid;
 		this.recommendation_date = recommendation_date;
 		this.recommendation_title = recommendation_title;
 		this.recommendation_task = recommendation_task;
@@ -95,14 +93,6 @@ public class json_audit_recommendation implements Serializable {
 
 	public void setDistrict(String district) {
 		this.district = district;
-	}
-
-	public String getAudit_uuid() {
-		return audit_uuid;
-	}
-
-	public void setAudit_uuid(String audit_uuid) {
-		this.audit_uuid = audit_uuid;
 	}
 
 	public java.util.Date getRecommendation_date() {
