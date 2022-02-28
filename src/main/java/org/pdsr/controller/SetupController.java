@@ -14,6 +14,15 @@ import java.util.UUID;
 import javax.transaction.Transactional;
 
 import org.pdsr.CONSTANTS;
+import org.pdsr.ServiceApi;
+import org.pdsr.json.DecryptedAuditAudit;
+import org.pdsr.json.DecryptedAuditRecommendation;
+import org.pdsr.json.DecryptedCaseIdentifiers;
+import org.pdsr.json.DecryptedWeeklyMonitoring;
+import org.pdsr.json.json_audit_audit;
+import org.pdsr.json.json_audit_recommendation;
+import org.pdsr.json.json_case_identifiers;
+import org.pdsr.json.json_weekly_monitoring;
 import org.pdsr.master.model.abnormality_table;
 import org.pdsr.master.model.audit_audit;
 import org.pdsr.master.model.audit_case;
@@ -108,6 +117,9 @@ import com.opencsv.bean.CsvToBeanBuilder;
 @Controller
 @RequestMapping("/controls")
 public class SetupController {
+
+	@Autowired
+	private ServiceApi api;
 
 	@Autowired
 	private SyncTableRepository syncRepo;
@@ -223,29 +235,24 @@ public class SetupController {
 
 	@Autowired
 	private SlaveCaseNotesRepository snoteRepo;
-	
-	
+
 	@Autowired
 	private AuditCaseRepository audRepo;
-	
+
 	@Autowired
 	private SlaveAuditCaseRepository saudRepo;
-	
-	
+
 	@Autowired
 	private AuditAuditRepository aaudRepo;
-	
+
 	@Autowired
 	private SlaveAuditAuditRepository saaudRepo;
-	
-	
+
 	@Autowired
 	private AuditRecommendRepository recRepo;
-	
+
 	@Autowired
 	private SlaveAuditRecommendRepository srecRepo;
-	
-	
 
 	@GetMapping("")
 	public String sync(Principal principal, Model model,
@@ -478,9 +485,9 @@ public class SetupController {
 		if (selected.isMerge_cases()) {
 			mergeCaseIdentifier();
 		}
-		
-		//merge case audits from slave to master (overrides if exists)
-		if(selected.isMerge_audit()) {
+
+		// merge case audits from slave to master (overrides if exists)
+		if (selected.isMerge_audit()) {
 			mergeAuditCase();
 		}
 
@@ -598,6 +605,7 @@ public class SetupController {
 					monitor.setWm_subval(s.getWm_subval());
 					monitor.setWm_grids(weekly.get());
 					monitor.setWm_indices(mont.get());
+					monitor.setData_sent(s.getData_sent());
 
 					monitors.add(monitor);
 				}
@@ -623,6 +631,7 @@ public class SetupController {
 					death.setCase_status(s.getCase_status());
 					death.setCase_death(s.getCase_death());
 					death.setCase_sync(s.getCase_sync());
+					death.setData_sent(s.getData_sent());
 
 					death.setFacility(facility.get());
 
@@ -1081,7 +1090,7 @@ public class SetupController {
 					mcase.setNotes_file(s.getNotes_file());
 					mcase.setNotes_filetype(s.getNotes_filetype());
 					mcase.setNotes_text(s.getNotes_text());
-					
+
 					mcase.setNotes_json(s.getNotes_json());
 
 					mcase.setCase_uuid(icase.get());
@@ -1095,23 +1104,22 @@ public class SetupController {
 		}
 
 	}
-	
-	
+
 	private void mergeAuditCase() {
 		List<org.pdsr.slave.model.audit_case> scases = saudRepo.findAll();
 		if (scases != null && scases.size() > 0) {
 
 			List<audit_case> mcases = new ArrayList<audit_case>();
 			for (org.pdsr.slave.model.audit_case s : scases) {
-					audit_case mcase = new audit_case();
-					mcase.setAudit_uuid(s.getAudit_uuid());
-					mcase.setAudit_data(s.getAudit_data());
-					mcase.setAudit_date(s.getAudit_date());
-					mcase.setAudit_expired(s.getAudit_expired());
-					mcase.setCase_death(s.getCase_death());
+				audit_case mcase = new audit_case();
+				mcase.setAudit_uuid(s.getAudit_uuid());
+				mcase.setAudit_data(s.getAudit_data());
+				mcase.setAudit_date(s.getAudit_date());
+				mcase.setAudit_expired(s.getAudit_expired());
+				mcase.setCase_death(s.getCase_death());
 
-					mcases.add(mcase);
-				
+				mcases.add(mcase);
+
 			}
 
 			// save master
@@ -1120,7 +1128,7 @@ public class SetupController {
 
 		mergeAuditAudit();
 	}
-	
+
 	private void mergeAuditAudit() {
 		List<org.pdsr.slave.model.audit_audit> scases = saaudRepo.findAll();
 		if (scases != null && scases.size() > 0) {
@@ -1144,9 +1152,10 @@ public class SetupController {
 					mcase.setAudit_icd10(s.getAudit_icd10());
 					mcase.setAudit_icdpm(s.getAudit_icdpm());
 					mcase.setAudit_ifcmfs(s.getAudit_ifcmfs());
-					
+					mcase.setData_sent(s.getData_sent());
+
 					mcase.setAudit_json(s.getAudit_json());
-					
+
 					mcase.setAudit_case(icase.get());
 
 					mcases.add(mcase);
@@ -1156,11 +1165,11 @@ public class SetupController {
 			// save master
 			aaudRepo.saveAll(mcases);
 		}
-		
+
 		mergeAuditRecommendations();
 
 	}
-	
+
 	private void mergeAuditRecommendations() {
 		List<org.pdsr.slave.model.audit_recommendation> scases = srecRepo.findAll();
 		if (scases != null && scases.size() > 0) {
@@ -1180,7 +1189,8 @@ public class SetupController {
 					mcase.setRecommendation_status(s.getRecommendation_status());
 					mcase.setRecommendation_task(s.getRecommendation_task());
 					mcase.setRecommendation_title(s.getRecommendation_title());
-					
+					mcase.setData_sent(s.getData_sent());
+
 					mcase.setAudit_uuid(icase.get());
 
 					mcases.add(mcase);
@@ -1192,9 +1202,136 @@ public class SetupController {
 		}
 
 	}
-	
-	
-	
+
+	private void pushCaseData(final String code, final String district, final String region, final String country) {
+		List<case_identifiers> cases = caseRepo.findBySubmittedToPush();
+		for (case_identifiers elem : cases) {
+
+			json_case_identifiers json = new json_case_identifiers();
+			json.setId(elem.getCase_uuid() + code.toUpperCase());
+			json.setCode(code);
+			json.setDistrict(district);
+			json.setRegion(region);
+			json.setCountry(country);
+
+			json.setCase_death(elem.getCase_death());
+			json.setCase_date(elem.getCase_date());
+			json.setCase_status(elem.getCase_status());
+
+			DecryptedCaseIdentifiers d = new DecryptedCaseIdentifiers();
+			d.setSelected(json);
+
+			api.save(d);
+
+			elem.setData_sent(1);
+			caseRepo.saveAndFlush(elem);
+
+		}
+
+	}
+
+	private void pushAuditData(final String code, final String district, final String region, final String country) {
+		List<audit_audit> cases = aaudRepo.findByAuditsToPush();
+		for (audit_audit elem : cases) {
+
+			json_audit_audit json = new json_audit_audit();
+			json.setId(elem.getAudit_uuid() + code.toUpperCase());
+			json.setCode(code);
+			json.setDistrict(district);
+			json.setRegion(region);
+			json.setCountry(country);
+			json.setRec_complete(elem.getRec_complete());
+			json.setAudit_cdate(elem.getAudit_cdate());
+			json.setAudit_csc(elem.getAudit_csc());
+			json.setAudit_death(elem.getAudit_death());
+			json.setAudit_delay1(elem.getAudit_delay1());
+			json.setAudit_delay2(elem.getAudit_delay2());
+			json.setAudit_delay3a(elem.getAudit_delay3a());
+			json.setAudit_delay3b(elem.getAudit_delay3b());
+			json.setAudit_delay3c(elem.getAudit_delay3c());
+			json.setAudit_facmfs(elem.getAudit_facmfs());
+			json.setAudit_icd10(elem.getAudit_icd10());
+			json.setAudit_icdpm(elem.getAudit_icdpm());
+			json.setAudit_ifcmfs(elem.getAudit_ifcmfs());
+			json.setAudit_sysmfs(elem.getAudit_sysmfs());
+			json.setAudit_hwkmfs(elem.getAudit_hwkmfs());
+			
+			DecryptedAuditAudit d = new DecryptedAuditAudit();
+			d.setSelected(json);
+
+			api.save(d);
+
+			elem.setData_sent(1);
+
+			aaudRepo.saveAndFlush(elem);
+
+		}
+
+	}
+
+	private void pushRecommendationData(final String code, final String district, final String region, final String country) {
+		List<audit_recommendation> cases = recRepo.findActionsToPush();
+		for (audit_recommendation elem : cases) {
+
+			json_audit_recommendation json = new json_audit_recommendation();
+			json.setId(elem.getAudit_uuid() + code.toUpperCase());
+			json.setCode(code);
+			json.setDistrict(district);
+			json.setRegion(region);
+			json.setCountry(country);
+			json.setRecommendation_comments(elem.getRecommendation_comments());
+			json.setRecommendation_date(elem.getRecommendation_date());
+			json.setRecommendation_deadline(elem.getRecommendation_deadline());
+			json.setRecommendation_leader(elem.getRecommendation_leader());
+			json.setRecommendation_reporter(elem.getRecommendation_reporter());
+			json.setRecommendation_resources(elem.getRecommendation_resources());
+			json.setRecommendation_status(elem.getRecommendation_status());
+			json.setRecommendation_task(elem.getRecommendation_task());
+			json.setRecommendation_title(elem.getRecommendation_title());
+			
+			DecryptedAuditRecommendation d = new DecryptedAuditRecommendation();
+			d.setSelected(json);
+
+			api.save(d);
+
+			elem.setData_sent(1);
+
+			recRepo.saveAndFlush(elem);
+
+		}
+
+	}
+
+	private void pushMonitoringData(final String code, final String district, final String region, final String country) {
+		List<weekly_monitoring> cases = weekMRepo.findMonitoringToPush();
+		for (weekly_monitoring elem : cases) {
+
+			json_weekly_monitoring json = new json_weekly_monitoring();
+			json.setId(""+elem.getId().getWeekly_id()+elem.getId().getWeekly_id() + code.toUpperCase());
+			json.setCode(code);
+			json.setDistrict(district);
+			json.setRegion(region);
+			json.setCountry(country);
+			json.setMindex(elem.getId().getMindex());
+			json.setWeekly_mdesc(elem.getWm_grids().getWeekly_mdesc());
+			json.setWeekly_month(elem.getWm_grids().getWeekly_month());
+			json.setWeekly_week(elem.getWm_grids().getWeekly_week());
+			json.setWeekly_year(elem.getWm_grids().getWeekly_year());
+			json.setWm_subval(elem.getWm_subval());
+			json.setWm_values(elem.getWm_values());
+			
+			DecryptedWeeklyMonitoring d = new DecryptedWeeklyMonitoring();
+			d.setSelected(json);
+
+			api.save(d);
+
+			elem.setData_sent(1);
+
+			weekMRepo.saveAndFlush(elem);
+
+		}
+
+	}
 
 	private List<icd_codes> loadICD() throws IOException {
 

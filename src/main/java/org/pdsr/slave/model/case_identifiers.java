@@ -63,7 +63,18 @@ public class case_identifiers implements Serializable {
 	
 	@Column
 	private Integer case_status;//0 entry, 1 auditing new submissions, 2 auditing started auditing, 3 process complete
-    	
+    
+	@Column
+	private Integer data_sent;
+	
+	public Integer getData_sent() {
+		return data_sent;
+	}
+
+	public void setData_sent(Integer data_sent) {
+		this.data_sent = data_sent;
+	}
+
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "facility", referencedColumnName = "facility_uuid", insertable = true, updatable = true)
 	private facility_table facility;

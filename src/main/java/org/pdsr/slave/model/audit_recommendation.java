@@ -80,6 +80,17 @@ public class audit_recommendation implements Serializable {
 	@Column
 	private String recommendation_comments;
 	
+	@Column
+	private Integer data_sent;
+	
+	public Integer getData_sent() {
+		return data_sent;
+	}
+
+	public void setData_sent(Integer data_sent) {
+		this.data_sent = data_sent;
+	}
+
 	@Transient
 	private String rec_color;
 

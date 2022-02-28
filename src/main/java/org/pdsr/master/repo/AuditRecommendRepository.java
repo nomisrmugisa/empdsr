@@ -13,6 +13,9 @@ public interface AuditRecommendRepository extends JpaRepository<audit_recommenda
 	@Query("select r FROM audit_recommendation r ORDER BY r.recommendation_date DESC")
 	List<audit_recommendation> findByPendingAction();
 	
+	@Query("select r FROM audit_recommendation r WHERE r.data_sent IS NULL")
+	List<audit_recommendation> findActionsToPush();
+	
 	@Query("select r FROM audit_recommendation r WHERE YEAR(r.recommendation_date)=?1 AND MONTH(r.recommendation_date)=?2 ORDER BY r.recommendation_date DESC")
 	List<audit_recommendation> findActionsByMonthYear(Integer year, Integer month);
 

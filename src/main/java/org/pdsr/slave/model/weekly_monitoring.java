@@ -37,6 +37,16 @@ public class weekly_monitoring implements Serializable {
     @Column
     private Integer wm_subval;
     
+	@Column
+	private Integer data_sent;
+	
+	public Integer getData_sent() {
+		return data_sent;
+	}
+
+	public void setData_sent(Integer data_sent) {
+		this.data_sent = data_sent;
+	}
 
 	public wmPK getId() {
 		return id;

@@ -10,8 +10,14 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CaseRepository extends JpaRepository<case_identifiers, String> {
 
-	@Query("select c from case_identifiers c where c.case_status=?1")
-	List<case_identifiers> findByCase_status(Integer case_status);
+	@Query("select c from case_identifiers c where c.case_status = 0")
+	List<case_identifiers> findByDraftCases();
+
+	@Query("select c from case_identifiers c where c.case_status = 1")
+	List<case_identifiers> findBySubmittedCases();
+
+	@Query("select c from case_identifiers c where c.data_sent IS NULL")
+	List<case_identifiers> findBySubmittedToPush();
 
 	@Query("select c from case_identifiers c LEFT JOIN audit_case a ON(c.case_uuid=a.audit_uuid) WHERE a.audit_uuid IS NULL AND c.case_status=?1")
 	List<case_identifiers> findByPendingCase_status(Integer case_status);
@@ -24,11 +30,11 @@ public interface CaseRepository extends JpaRepository<case_identifiers, String> 
 	Integer countByCase_death(Integer case_death, Integer year);
 
 
-	@Query("select COUNT(c) from case_identifiers c where c.case_status=?1 AND c.case_death=?2")
-	Integer countByCase_statusAndType(Integer case_status, Integer case_death);
+	@Query("select COUNT(c) from case_identifiers c where c.case_status = 1 AND c.case_death=?1")
+	Integer countBySubmittedAndType(Integer case_death);
 
-	@Query("select COUNT(c) from case_identifiers c where c.case_status=?1 AND c.case_death=?2 and year(c.case_date)=?3")
-	Integer countByCase_statusAndType(Integer case_status, Integer case_death, Integer year);
+	@Query("select COUNT(c) from case_identifiers c where c.case_status = 1 AND c.case_death=?1 and year(c.case_date)=?2")
+	Integer countBySubmittedAndType(Integer case_death, Integer year);
 
 
 	@Query("select COUNT(c) from case_identifiers c INNER JOIN audit_case a ON(c.case_uuid=a.audit_uuid) WHERE c.case_death=?1")

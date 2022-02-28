@@ -177,7 +177,7 @@ public class CaseEntryController {
 			return "home";
 		}
 
-		model.addAttribute("items", caseRepo.findByCase_status(0));
+		model.addAttribute("items", caseRepo.findByDraftCases());
 		model.addAttribute("back", "back");
 
 		return "registry/case-retrieve";

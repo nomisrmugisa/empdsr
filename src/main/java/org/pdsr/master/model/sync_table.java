@@ -42,6 +42,9 @@ public class sync_table implements Serializable {
 	@Size(min = 1, max = 80)	
 	private String sync_email;
 		
+	@Column
+	private String sync_url;
+		
 	@Lob
 	@Column
 	private String sync_json;
@@ -84,6 +87,14 @@ public class sync_table implements Serializable {
 
 	public void setSync_email(String sync_email) {
 		this.sync_email = sync_email;
+	}
+
+	public String getSync_url() {
+		return sync_url;
+	}
+
+	public void setSync_url(String sync_url) {
+		this.sync_url = sync_url;
 	}
 
 	public String getSync_json() {

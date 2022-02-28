@@ -97,6 +97,7 @@ public class audit_audit implements Serializable {
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private java.util.Date audit_cdate;
 
+	
 	@Lob
 	@Column
 	private String audit_json;
@@ -104,6 +105,17 @@ public class audit_audit implements Serializable {
 	@NotAudited
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "audit_uuid")
 	private List<audit_recommendation> recommendations = new ArrayList<>();
+
+	@Column
+	private Integer data_sent;
+	
+	public Integer getData_sent() {
+		return data_sent;
+	}
+
+	public void setData_sent(Integer data_sent) {
+		this.data_sent = data_sent;
+	}
 
 	@Column
 	private Integer rec_complete;

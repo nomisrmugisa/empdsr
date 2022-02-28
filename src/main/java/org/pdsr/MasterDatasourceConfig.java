@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(entityManagerFactoryRef = "masterEntityManagerFactory", transactionManagerRef = "masterTransactionManager", basePackages = {
-		"org.pdsr.master" })
+		"org.pdsr.master","org.pdsr.summary" })
 public class MasterDatasourceConfig {
 
 	@Bean(name = "dbmaster")

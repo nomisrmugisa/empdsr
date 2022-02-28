@@ -7,48 +7,44 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class summaryPk implements Serializable {
+public class SummaryPk implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
 	@Column
-	private String facility_code;
+	private String id;
 	@Column
-	private String wmdesc;
+	private String code;
+	@Column 
+	private String country;
+	@Column
+	private String region;
+	@Column
+	private String district;
 	
-	public summaryPk() {
+	
+	public SummaryPk() {
 		super();
 	}
-	
-	public summaryPk(String facility_code, String wmdesc) {
+
+
+	public SummaryPk(String id, String code, String country, String region, String district) {
 		super();
-		this.facility_code = facility_code;
-		this.wmdesc = wmdesc;
+		this.id = id;
+		this.code = code;
+		this.country = country;
+		this.region = region;
+		this.district = district;
 	}
 
-	public String getFacility_code() {
-		return facility_code;
-	}
-
-	public void setFacility_code(String facility_code) {
-		this.facility_code = facility_code;
-	}
-
-	public String getWmdesc() {
-		return wmdesc;
-	}
-
-	public void setWmdesc(String wmdesc) {
-		this.wmdesc = wmdesc;
-	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(facility_code, wmdesc);
+		return Objects.hash(code, country, district, id, region);
 	}
+
 
 	@Override
 	public boolean equals(Object obj) {
@@ -58,10 +54,13 @@ public class summaryPk implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		summaryPk other = (summaryPk) obj;
-		return Objects.equals(facility_code, other.facility_code) && Objects.equals(wmdesc, other.wmdesc);
+		SummaryPk other = (SummaryPk) obj;
+		return Objects.equals(code, other.code) && Objects.equals(country, other.country)
+				&& Objects.equals(district, other.district) && Objects.equals(id, other.id)
+				&& Objects.equals(region, other.region);
 	}
 
-	
 
+	
+	
 }

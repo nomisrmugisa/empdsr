@@ -10,7 +10,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface WeeklyMonitoringTableRepository extends JpaRepository<weekly_monitoring, wmPK> {
-
+	
+	@Query("select w FROM weekly_monitoring w WHERE w.data_sent IS NULL")
+	List<weekly_monitoring> findMonitoringToPush();
+	
 	@Query("SELECT w.wm_grids.weekly_year, w.wm_grids.weekly_month, w.wm_grids.weekly_mdesc, "
 			+ "SUM(CASE WHEN (w.wm_indices.mindex = 100) THEN w.wm_values ELSE 0 END) AS totaldeliveries, "// 3
 			+ "SUM(CASE WHEN (w.wm_indices.mindex = 101) THEN w.wm_values ELSE 0 END) AS totaldelvaginal, "// 4

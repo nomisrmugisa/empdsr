@@ -5,6 +5,9 @@
     MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_TASKS', 'Monitor and change action status');
 	MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_SETUP', 'Manage users, facility code from the controls section');
 	MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_VIEWS', 'View analysis and reports');
+	MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_NATIONAL', 'National level viewing');
+	MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_REGIONAL', 'Regional level viewing');
+	MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_DISTRICT', 'District level viewing');
 
 
     MERGE INTO user_table(username, enabled, password, usercontact, useremail, userfullname, alerted) KEY(username) 
@@ -25,6 +28,9 @@
     MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_TASKS');
     MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_VIEWS');
     MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_SETUP');
+    MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_NATIONAL');
+    MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_REGIONAL');
+    MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_DISTRICT');
 
 
     MERGE INTO country_table KEY(country_uuid) values('1','Ghana');
