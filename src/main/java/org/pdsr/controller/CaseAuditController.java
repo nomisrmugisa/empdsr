@@ -43,6 +43,7 @@ import org.pdsr.master.model.sync_table;
 import org.pdsr.master.repo.AuditAuditRepository;
 import org.pdsr.master.repo.AuditCaseRepository;
 import org.pdsr.master.repo.AuditRecommendRepository;
+import org.pdsr.master.repo.CFactorsRepository;
 import org.pdsr.master.repo.CaseRepository;
 import org.pdsr.master.repo.DatamapRepository;
 import org.pdsr.master.repo.IcdCodesRepository;
@@ -99,6 +100,9 @@ public class CaseAuditController {
 
 	@Autowired
 	private MessageSource msg;
+	
+	@Autowired
+	private CFactorsRepository cfactRepo;
 
 	@Autowired
 	private EmailService emailService;
@@ -657,10 +661,17 @@ public class CaseAuditController {
 			e.printStackTrace();
 		}
 
+		model.addAttribute("factor_patient", cfactRepo.findByIdgroup(100));
+		model.addAttribute("factor_transport", cfactRepo.findByIdgroup(200));
+		model.addAttribute("factor_administrative", cfactRepo.findByIdgroup(300));
+		model.addAttribute("factor_healthworker", cfactRepo.findByIdgroup(400));
+		model.addAttribute("factor_document", cfactRepo.findByIdgroup(500));
+		
 		model.addAttribute("facility_code", caseRepo.findById(case_uuid).get().getFacility().getFacility_code());
 
 		return "auditing/audit-create";
 	}
+
 
 	@PostMapping("/edit/{id}")
 	public String submit(Principal principal, @ModelAttribute("selected") audit_audit selected,

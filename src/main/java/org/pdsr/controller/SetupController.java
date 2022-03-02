@@ -38,6 +38,7 @@ import org.pdsr.master.model.case_labour;
 import org.pdsr.master.model.case_notes;
 import org.pdsr.master.model.case_pregnancy;
 import org.pdsr.master.model.case_referral;
+import org.pdsr.master.model.cfactor_table;
 import org.pdsr.master.model.complication_table;
 import org.pdsr.master.model.cordfault_table;
 import org.pdsr.master.model.country_table;
@@ -100,6 +101,15 @@ import org.pdsr.slave.repo.SlaveFacilityTableRepository;
 import org.pdsr.slave.repo.SlaveRegionTableRepository;
 import org.pdsr.slave.repo.SlaveWeeklyMonitoringTableRepository;
 import org.pdsr.slave.repo.SlaveWeeklyTableRepository;
+import org.pdsr.summary.model.SummaryPK;
+import org.pdsr.summary.model.big_audit_audit;
+import org.pdsr.summary.model.big_audit_recommendation;
+import org.pdsr.summary.model.big_case_identifiers;
+import org.pdsr.summary.model.big_weekly_monitoring;
+import org.pdsr.summary.repo.BigAuditAuditRepository;
+import org.pdsr.summary.repo.BigAuditRecommendRepository;
+import org.pdsr.summary.repo.BigCaseRepository;
+import org.pdsr.summary.repo.BigWeeklyMonitoringTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -171,7 +181,13 @@ public class SetupController {
 	private WeeklyMonitoringTableRepository weekMRepo;
 
 	@Autowired
+	private BigWeeklyMonitoringTableRepository bweekMRepo;
+
+	@Autowired
 	private CaseRepository caseRepo;
+
+	@Autowired
+	private BigCaseRepository bcaseRepo;
 
 	@Autowired
 	private SlaveCaseRepository scaseRepo;
@@ -246,10 +262,16 @@ public class SetupController {
 	private AuditAuditRepository aaudRepo;
 
 	@Autowired
+	private BigAuditAuditRepository baaudRepo;
+
+	@Autowired
 	private SlaveAuditAuditRepository saaudRepo;
 
 	@Autowired
 	private AuditRecommendRepository recRepo;
+
+	@Autowired
+	private BigAuditRecommendRepository brecRepo;
 
 	@Autowired
 	private SlaveAuditRecommendRepository srecRepo;
@@ -505,26 +527,48 @@ public class SetupController {
 		return "controls/merger-central";
 	}
 
-
 	@Transactional
 	@PostMapping("/centralmerge")
 	public String centralmerge(Principal principal) {
-		
+
 		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
-		
+
 		facility_table facility = facilityRepo.findByFacility_code(sync.getSync_code()).get();
 
 		final String country = facility.getDistrict().getRegion().getCountry().getCountry_name();
 		final String region = facility.getDistrict().getRegion().getRegion_name();
 		final String district = facility.getDistrict().getDistrict_name();
 		final String code = facility.getFacility_code();
-		
+
 		pushCaseData(code, district, region, country);
 		pushAuditData(code, district, region, country);
 		pushRecommendationData(code, district, region, country);
 		pushMonitoringData(code, district, region, country);
-		
+
 		return "redirect:/controls/centralmerge?success=yes";
+	}
+
+	@GetMapping("/downloadmerge")
+	public String downloadmerge(Principal principal, Model model,
+			@RequestParam(name = "success", required = false) String success) {
+
+		if (success != null) {
+			model.addAttribute("success", "Transmitted Successfully!");
+		}
+
+		return "controls/merger-download";
+	}
+
+	@Transactional
+	@PostMapping("/downloadmerge")
+	public String downloadmerge(Principal principal) {
+
+		pullCaseData();
+		pullAuditData();
+		pullRecommendationData();
+		pullMonitoringData();
+
+		return "redirect:/controls/downloadmerge?success=yes";
 	}
 
 	private void mergeCountry() {
@@ -1185,6 +1229,58 @@ public class SetupController {
 					mcase.setAudit_icd10(s.getAudit_icd10());
 					mcase.setAudit_icdpm(s.getAudit_icdpm());
 					mcase.setAudit_ifcmfs(s.getAudit_ifcmfs());
+
+					List<cfactor_table> list1 = new ArrayList<cfactor_table>();
+					for (org.pdsr.slave.model.cfactor_table r : saaudRepo.findPatientFactorsByUuid(s.getAudit_uuid())) {
+						cfactor_table item = new cfactor_table();
+						item.setId(r.getId());
+						item.setIdgroup(r.getIdgroup());
+						item.setCfactor_name(r.getCfactor_name());
+						list1.add(item);
+					}
+					mcase.setPatient_factors(list1);
+
+					List<cfactor_table> list2 = new ArrayList<cfactor_table>();
+					for (org.pdsr.slave.model.cfactor_table r : saaudRepo.findTransportFactorsByUuid(s.getAudit_uuid())) {
+						cfactor_table item = new cfactor_table();
+						item.setId(r.getId());
+						item.setIdgroup(r.getIdgroup());
+						item.setCfactor_name(r.getCfactor_name());
+						list2.add(item);
+					}
+					mcase.setTransport_factors(list2);
+
+					List<cfactor_table> list3 = new ArrayList<cfactor_table>();
+					for (org.pdsr.slave.model.cfactor_table r : saaudRepo.findAdministrativeFactorsByUuid(s.getAudit_uuid())) {
+						cfactor_table item = new cfactor_table();
+						item.setId(r.getId());
+						item.setIdgroup(r.getIdgroup());
+						item.setCfactor_name(r.getCfactor_name());
+						list3.add(item);
+					}
+					mcase.setAdministrative_factors(list3);
+
+					List<cfactor_table> list4 = new ArrayList<cfactor_table>();
+					for (org.pdsr.slave.model.cfactor_table r : saaudRepo.findHealthworkerFactorsByUuid(s.getAudit_uuid())) {
+						cfactor_table item = new cfactor_table();
+						item.setId(r.getId());
+						item.setIdgroup(r.getIdgroup());
+						item.setCfactor_name(r.getCfactor_name());
+						list4.add(item);
+					}
+					mcase.setHealthworker_factors(list4);
+
+					List<cfactor_table> list5 = new ArrayList<cfactor_table>();
+					for (org.pdsr.slave.model.cfactor_table r : saaudRepo.findDocumentFactorsByUuid(s.getAudit_uuid())) {
+						cfactor_table item = new cfactor_table();
+						item.setId(r.getId());
+						item.setIdgroup(r.getIdgroup());
+						item.setCfactor_name(r.getCfactor_name());
+						list5.add(item);
+					}
+					mcase.setDocument_factors(list5);
+
+					
 					mcase.setData_sent(s.getData_sent());
 
 					mcase.setAudit_json(s.getAudit_json());
@@ -1238,10 +1334,12 @@ public class SetupController {
 
 	private void pushCaseData(final String code, final String district, final String region, final String country) {
 		List<case_identifiers> cases = caseRepo.findBySubmittedToPush();
+		List<case_identifiers> sent = new ArrayList<>();
+		List<json_case_identifiers> jsons = new ArrayList<>();
 		for (case_identifiers elem : cases) {
 
 			json_case_identifiers json = new json_case_identifiers();
-			json.setId(elem.getCase_uuid() + code.toUpperCase());
+			json.setId(elem.getCase_uuid() + country + code.toUpperCase());
 			json.setCode(code);
 			json.setDistrict(district);
 			json.setRegion(region);
@@ -1251,24 +1349,50 @@ public class SetupController {
 			json.setCase_date(elem.getCase_date());
 			json.setCase_status(elem.getCase_status());
 
-			DecryptedCaseIdentifiers d = new DecryptedCaseIdentifiers();
-			d.setSelected(json);
-
-			api.save(d);
+			jsons.add(json);
 
 			elem.setData_sent(1);
-			caseRepo.saveAndFlush(elem);
+
+			sent.add(elem);
 
 		}
+		DecryptedCaseIdentifiers d = new DecryptedCaseIdentifiers();
+		d.setData(jsons);
+		final String msg = api.saveAll(d);
+		if ("success".equals(msg)) {
+			caseRepo.saveAll(sent);
+		}
+	}
 
+	private void pullCaseData() {
+		List<json_case_identifiers> jsons = api.findAllCases();
+		List<big_case_identifiers> received = new ArrayList<>();
+		for (json_case_identifiers elem : jsons) {
+
+			big_case_identifiers json = new big_case_identifiers();
+
+			SummaryPK pk = new SummaryPK(elem.getId(), elem.getCode(), elem.getCountry(), elem.getRegion(),
+					elem.getDistrict());
+			json.setSummaryPk(pk);
+
+			json.setCase_death(elem.getCase_death());
+			json.setCase_date(elem.getCase_date());
+			json.setCase_status(elem.getCase_status());
+
+			received.add(json);
+
+		}
+		bcaseRepo.saveAll(received);
 	}
 
 	private void pushAuditData(final String code, final String district, final String region, final String country) {
 		List<audit_audit> cases = aaudRepo.findByAuditsToPush();
+		List<audit_audit> sent = new ArrayList<>();
+		List<json_audit_audit> jsons = new ArrayList<>();
 		for (audit_audit elem : cases) {
 
 			json_audit_audit json = new json_audit_audit();
-			json.setId(elem.getAudit_uuid() + code.toUpperCase());
+			json.setId(elem.getAudit_uuid() + country + code.toUpperCase());
 			json.setCode(code);
 			json.setDistrict(district);
 			json.setRegion(region);
@@ -1288,26 +1412,67 @@ public class SetupController {
 			json.setAudit_ifcmfs(elem.getAudit_ifcmfs());
 			json.setAudit_sysmfs(elem.getAudit_sysmfs());
 			json.setAudit_hwkmfs(elem.getAudit_hwkmfs());
-			
-			DecryptedAuditAudit d = new DecryptedAuditAudit();
-			d.setSelected(json);
 
-			api.save(d);
+			jsons.add(json);
 
 			elem.setData_sent(1);
 
-			aaudRepo.saveAndFlush(elem);
+			sent.add(elem);
 
+		}
+		DecryptedAuditAudit d = new DecryptedAuditAudit();
+		d.setData(jsons);
+		final String msg = api.saveAll(d);
+		if ("success".equals(msg)) {
+			aaudRepo.saveAll(sent);
 		}
 
 	}
 
-	private void pushRecommendationData(final String code, final String district, final String region, final String country) {
+	private void pullAuditData() {
+		List<json_audit_audit> jsons = api.findAllAudits();
+		List<big_audit_audit> received = new ArrayList<>();
+
+		for (json_audit_audit elem : jsons) {
+
+			big_audit_audit json = new big_audit_audit();
+
+			SummaryPK pk = new SummaryPK(elem.getId(), elem.getCode(), elem.getCountry(), elem.getRegion(),
+					elem.getDistrict());
+			json.setSummaryPk(pk);
+
+			json.setRec_complete(elem.getRec_complete());
+			json.setAudit_cdate(elem.getAudit_cdate());
+			json.setAudit_csc(elem.getAudit_csc());
+			json.setAudit_death(elem.getAudit_death());
+			json.setAudit_delay1(elem.getAudit_delay1());
+			json.setAudit_delay2(elem.getAudit_delay2());
+			json.setAudit_delay3a(elem.getAudit_delay3a());
+			json.setAudit_delay3b(elem.getAudit_delay3b());
+			json.setAudit_delay3c(elem.getAudit_delay3c());
+			json.setAudit_facmfs(elem.getAudit_facmfs());
+			json.setAudit_icd10(elem.getAudit_icd10());
+			json.setAudit_icdpm(elem.getAudit_icdpm());
+			json.setAudit_ifcmfs(elem.getAudit_ifcmfs());
+			json.setAudit_sysmfs(elem.getAudit_sysmfs());
+			json.setAudit_hwkmfs(elem.getAudit_hwkmfs());
+
+			received.add(json);
+
+		}
+		baaudRepo.saveAll(received);
+
+	}
+
+	private void pushRecommendationData(final String code, final String district, final String region,
+			final String country) {
 		List<audit_recommendation> cases = recRepo.findActionsToPush();
+		List<audit_recommendation> sent = new ArrayList<>();
+		List<json_audit_recommendation> jsons = new ArrayList<>();
 		for (audit_recommendation elem : cases) {
 
 			json_audit_recommendation json = new json_audit_recommendation();
-			json.setId(elem.getAudit_uuid() + code.toUpperCase());
+			json.setId(elem.getAudit_uuid() + country + code.toUpperCase());
 			json.setCode(code);
 			json.setDistrict(district);
 			json.setRegion(region);
@@ -1321,26 +1486,61 @@ public class SetupController {
 			json.setRecommendation_status(elem.getRecommendation_status());
 			json.setRecommendation_task(elem.getRecommendation_task());
 			json.setRecommendation_title(elem.getRecommendation_title());
-			
-			DecryptedAuditRecommendation d = new DecryptedAuditRecommendation();
-			d.setSelected(json);
 
-			api.save(d);
+			jsons.add(json);
 
 			elem.setData_sent(1);
 
-			recRepo.saveAndFlush(elem);
+			sent.add(elem);
 
+		}
+		DecryptedAuditRecommendation d = new DecryptedAuditRecommendation();
+		d.setData(jsons);
+		final String msg = api.saveAll(d);
+		if ("success".equals(msg)) {
+			recRepo.saveAll(sent);
 		}
 
 	}
 
-	private void pushMonitoringData(final String code, final String district, final String region, final String country) {
+	private void pullRecommendationData() {
+		List<json_audit_recommendation> jsons = api.findAllRecommendations();
+		List<big_audit_recommendation> received = new ArrayList<>();
+
+		for (json_audit_recommendation elem : jsons) {
+
+			big_audit_recommendation json = new big_audit_recommendation();
+
+			SummaryPK pk = new SummaryPK(elem.getId(), elem.getCode(), elem.getCountry(), elem.getRegion(),
+					elem.getDistrict());
+			json.setSummaryPk(pk);
+
+			json.setRecommendation_comments(elem.getRecommendation_comments());
+			json.setRecommendation_date(elem.getRecommendation_date());
+			json.setRecommendation_deadline(elem.getRecommendation_deadline());
+			json.setRecommendation_leader(elem.getRecommendation_leader());
+			json.setRecommendation_reporter(elem.getRecommendation_reporter());
+			json.setRecommendation_resources(elem.getRecommendation_resources());
+			json.setRecommendation_status(elem.getRecommendation_status());
+			json.setRecommendation_task(elem.getRecommendation_task());
+			json.setRecommendation_title(elem.getRecommendation_title());
+
+			received.add(json);
+
+		}
+		brecRepo.saveAll(received);
+
+	}
+
+	private void pushMonitoringData(final String code, final String district, final String region,
+			final String country) {
 		List<weekly_monitoring> cases = weekMRepo.findMonitoringToPush();
+		List<weekly_monitoring> sent = new ArrayList<>();
+		List<json_weekly_monitoring> jsons = new ArrayList<>();
 		for (weekly_monitoring elem : cases) {
 
 			json_weekly_monitoring json = new json_weekly_monitoring();
-			json.setId(""+elem.getId().getWeekly_id()+elem.getId().getWeekly_id() + code.toUpperCase());
+			json.setId("" + elem.getId().getWeekly_id() + elem.getId().getMindex() + country + code.toUpperCase());
 			json.setCode(code);
 			json.setDistrict(district);
 			json.setRegion(region);
@@ -1352,17 +1552,49 @@ public class SetupController {
 			json.setWeekly_year(elem.getWm_grids().getWeekly_year());
 			json.setWm_subval(elem.getWm_subval());
 			json.setWm_values(elem.getWm_values());
-			
-			DecryptedWeeklyMonitoring d = new DecryptedWeeklyMonitoring();
-			d.setSelected(json);
 
-			api.save(d);
+			jsons.add(json);
 
 			elem.setData_sent(1);
 
-			weekMRepo.saveAndFlush(elem);
+			sent.add(elem);
 
 		}
+
+		DecryptedWeeklyMonitoring d = new DecryptedWeeklyMonitoring();
+		d.setData(jsons);
+		final String msg = api.saveAll(d);
+		if ("success".equals(msg)) {
+			weekMRepo.saveAll(sent);
+		}
+
+	}
+
+	private void pullMonitoringData() {
+
+		List<json_weekly_monitoring> jsons = api.findAllMonitoring();
+		List<big_weekly_monitoring> received = new ArrayList<>();
+		for (json_weekly_monitoring elem : jsons) {
+
+			big_weekly_monitoring json = new big_weekly_monitoring();
+
+			SummaryPK pk = new SummaryPK(elem.getId(), elem.getCode(), elem.getCountry(), elem.getRegion(),
+					elem.getDistrict());
+			json.setSummaryPk(pk);
+
+			json.setMindex(elem.getMindex());
+			json.setWeekly_mdesc(elem.getWeekly_mdesc());
+			json.setWeekly_month(elem.getWeekly_month());
+			json.setWeekly_week(elem.getWeekly_week());
+			json.setWeekly_year(elem.getWeekly_year());
+			json.setWm_subval(elem.getWm_subval());
+			json.setWm_values(elem.getWm_values());
+
+			received.add(json);
+
+		}
+
+		bweekMRepo.saveAll(received);
 
 	}
 

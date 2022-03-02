@@ -112,6 +112,17 @@
 				<small class="text-dark" th:utext="#{notes.audit_ifcmfs}"></small>
 				<div class="col-md-12">
 					<textarea rows="5" class="form-control form-control-sm" th:field="*{audit_ifcmfs}"></textarea>
+					<div class="row">
+						<small class="fw-bold" th:text="#{label.audit_patient}"></small>
+						<div class="col-md-12">
+							<select id="patient_factors" class="form-control form-control-sm" required
+								th:field="*{patient_factors}" multiple="multiple" style="width: 100%;">
+								<option th:each="options : ${factor_patient}" th:value="${options.id}">
+									[[${options.cfactor_name}]]
+								</option>
+							</select>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="row mb-1 alert alert-success">
@@ -119,6 +130,17 @@
 				<small class="text-dark" th:utext="#{notes.audit_sysmfs}"></small>
 				<div class="col-md-12">
 					<textarea rows="5" class="form-control form-control-sm" th:field="*{audit_sysmfs}"></textarea>
+					<div class="row">
+						<small class="fw-bold" th:text="#{label.audit_transport}"></small>
+						<div class="col-md-12">
+							<select id="transport_factors" class="form-control form-control-sm" required
+								th:field="*{transport_factors}" multiple="multiple" style="width: 100%;">
+								<option th:each="options : ${factor_transport}" th:value="${options.id}">
+									[[${options.cfactor_name}]]
+								</option>
+							</select>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="row mb-1 alert alert-success">
@@ -126,6 +148,17 @@
 				<small class="text-dark" th:utext="#{notes.audit_facmfs}"></small>
 				<div class="col-md-12">
 					<textarea rows="5" class="form-control form-control-sm" th:field="*{audit_facmfs}"></textarea>
+					<div class="row">
+						<small class="fw-bold" th:text="#{label.audit_administrative}"></small>
+						<div class="col-md-12">
+							<select id="administrative_factors" class="form-control form-control-sm" required
+								th:field="*{administrative_factors}" multiple="multiple" style="width: 100%;">
+								<option th:each="options : ${factor_administrative}" th:value="${options.id}">
+									[[${options.cfactor_name}]]
+								</option>
+							</select>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="row mb-1 alert alert-success">
@@ -133,6 +166,28 @@
 				<small class="text-dark mb-2" th:utext="#{notes.audit_hwkmfs}"></small>
 				<div class="col-md-12">
 					<textarea rows="5" class="form-control form-control-sm" th:field="*{audit_hwkmfs}"></textarea>
+					<div class="row">
+						<small class="fw-bold" th:text="#{label.audit_healthworker}"></small>
+						<div class="col-md-12">
+							<select id="healthworker_factors" class="form-control form-control-sm" required
+								th:field="*{healthworker_factors}" multiple="multiple" style="width: 100%;">
+								<option th:each="options : ${factor_healthworker}" th:value="${options.id}">
+									[[${options.cfactor_name}]]
+								</option>
+							</select>
+						</div>
+					</div>
+					<div class="row">
+						<small class="fw-bold" th:text="#{label.audit_document}"></small>
+						<div class="col-md-12">
+							<select id="document_factors" class="form-control form-control-sm" required
+								th:field="*{document_factors}" multiple="multiple" style="width: 100%;">
+								<option th:each="options : ${factor_document}" th:value="${options.id}">
+									[[${options.cfactor_name}]]
+								</option>
+							</select>
+						</div>
+					</div>
 				</div>
 			</div>
 

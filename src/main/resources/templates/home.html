@@ -53,7 +53,7 @@
 					href="#" th:href="@{/regional}" th:text="#{button.regional}"></a>
 				<a sec:authorize="hasRole('DISTRICT')" class="btn btn-sm btn-primary" th:classappend="${district}"
 					href="#" th:href="@{/district}" th:text="#{button.district}"></a>
-				<a class="btn btn-sm btn-primary" href="#" th:href="@{/}" th:utext="#{button.facility}"
+				<a class="btn btn-sm btn-dark" href="#" th:href="@{/}" th:utext="#{button.facility}"
 					th:if="${national} or ${regional} or ${district}"></a>
 			</div>
 			<div class="float-end mb-1" th:unless="${activated}" sec:authorize="hasRole('NATIONAL')"
@@ -102,7 +102,7 @@
 											<th class="" th:text="#{fp.rates}"></th>
 										</tr>
 									</thead>
-									<tbody>
+									<tbody class="small">
 										<tr>
 											<td th:text="#{label.totalbirths}"></td>
 											<td>[[${oavg.totalbirths}]]</td>
@@ -133,7 +133,7 @@
 											<td>[[${oavg.mdeath_osum}]]</td>
 											<td>[[${oavg.immr_oavg}]]</td>
 										</tr>
-									</tbody>
+									</tbody >
 								</table>
 							</div>
 						</div>
@@ -150,7 +150,7 @@
 											<th class="" th:text="#{fp.rates}"></th>
 										</tr>
 									</thead>
-									<tbody>
+									<tbody class="small">
 										<tr>
 											<td th:text="#{label.totalbirths}"></td>
 											<td>[[${cavg.totalbirths}]]</td>
@@ -185,7 +185,7 @@
 											<td class="text-white">[[${#numbers.formatDecimal(cavg.immr_oavg,
 												1, 'COMMA', 1, 'POINT')}]]</td>
 										</tr>
-									</tbody>
+									</tbody >
 								</table>
 							</div>
 						</div>
@@ -290,7 +290,7 @@
 								<th class="" th:text="#{fp.neodeaths}"></th>
 							</tr>
 						</thead>
-						<tbody>
+						<tbody class="small">
 							<tr>
 								<td th:text="#{fp.cases.entered}"></td>
 								<td class="fw-bold">[[${entered_sb}]]</td>
@@ -325,7 +325,7 @@
 										'POINT')}]]%)</span></td>
 
 							</tr>
-						</tbody>
+						</tbody >
 					</table>
 					<table class="table table-sm table-responsive text-white">
 						<thead class="table-primary small">
@@ -335,7 +335,7 @@
 								<th class="" th:text="#{fp.neodeaths}"></th>
 							</tr>
 						</thead>
-						<tbody>
+						<tbody class="small">
 							<tr>
 								<td th:text="#{fp.cases.entered}"></td>
 								<td class="fw-bold">[[${c_entered_sb}]]</td>
@@ -373,7 +373,7 @@
 										'COMMA', 1,
 										'POINT')}]]%)</span></td>
 							</tr>
-						</tbody>
+						</tbody >
 					</table>
 				</div>
 				<div class="row">

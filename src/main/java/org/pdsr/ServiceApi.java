@@ -38,12 +38,32 @@ public class ServiceApi {
 	/////////////// CASE IDENTIFIERS////////////////////////////////
 	public String save(DecryptedCaseIdentifiers data) {
 
-		final String URL = BASE_URL.concat("/savecases.php");
+		final String URL = BASE_URL.concat("/savecase.php");
 		EncryptedMessage json = new EncryptedMessage();
 
 		json.setError(false);
 		json.setMessage("Encrypted");
 		json.setJwt(data.encrypt(json.getKEY(), json.getISS(), json.getAUD()));
+
+		try {
+
+			return restTemplate.postForObject(URL, json, EncryptedMessage.class).getMessage();
+
+		} catch (Exception ex) {
+
+			return new EncryptedMessage(Boolean.TRUE, ex.getLocalizedMessage()).getMessage();
+		}
+
+	}
+
+	public String saveAll(DecryptedCaseIdentifiers data) {
+
+		final String URL = BASE_URL.concat("/savecases.php");
+		EncryptedMessage json = new EncryptedMessage();
+
+		json.setError(false);
+		json.setMessage("Encrypted");
+		json.setJwt(data.encryptList(json.getKEY(), json.getISS(), json.getAUD()));
 
 		try {
 
@@ -88,12 +108,32 @@ public class ServiceApi {
 	/////////////// CASE AUDIT AUDIT////////////////////////////////
 	public String save(DecryptedAuditAudit data) {
 
-		final String URL = BASE_URL.concat("/saveaudits.php");
+		final String URL = BASE_URL.concat("/saveaudit.php");
 		EncryptedMessage json = new EncryptedMessage();
 
 		json.setError(false);
 		json.setMessage("Encrypted");
 		json.setJwt(data.encrypt(json.getKEY(), json.getISS(), json.getAUD()));
+
+		try {
+
+			return restTemplate.postForObject(URL, json, EncryptedMessage.class).getMessage();
+
+		} catch (Exception ex) {
+
+			return new EncryptedMessage(Boolean.TRUE, ex.getLocalizedMessage()).getMessage();
+		}
+
+	}
+
+	public String saveAll(DecryptedAuditAudit data) {
+
+		final String URL = BASE_URL.concat("/saveaudits.php");
+		EncryptedMessage json = new EncryptedMessage();
+
+		json.setError(false);
+		json.setMessage("Encrypted");
+		json.setJwt(data.encryptList(json.getKEY(), json.getISS(), json.getAUD()));
 
 		try {
 
@@ -138,12 +178,32 @@ public class ServiceApi {
 	/////////////// CASE AUDIT RECOMMENDATIONS////////////////////////////////
 	public String save(DecryptedAuditRecommendation data) {
 
-		final String URL = BASE_URL.concat("/saveactions.php");
+		final String URL = BASE_URL.concat("/saveaction.php");
 		EncryptedMessage json = new EncryptedMessage();
 
 		json.setError(false);
 		json.setMessage("Encrypted");
 		json.setJwt(data.encrypt(json.getKEY(), json.getISS(), json.getAUD()));
+
+		try {
+
+			return restTemplate.postForObject(URL, json, EncryptedMessage.class).getMessage();
+
+		} catch (Exception ex) {
+
+			return new EncryptedMessage(Boolean.TRUE, ex.getLocalizedMessage()).getMessage();
+		}
+
+	}
+
+	public String saveAll(DecryptedAuditRecommendation data) {
+
+		final String URL = BASE_URL.concat("/saveactions.php");
+		EncryptedMessage json = new EncryptedMessage();
+
+		json.setError(false);
+		json.setMessage("Encrypted");
+		json.setJwt(data.encryptList(json.getKEY(), json.getISS(), json.getAUD()));
 
 		try {
 
@@ -188,12 +248,32 @@ public class ServiceApi {
 	/////////////// CASE WEEKLY MONITORING////////////////////////////////
 	public String save(DecryptedWeeklyMonitoring data) {
 
-		final String URL = BASE_URL.concat("/saveweeklys.php");
+		final String URL = BASE_URL.concat("/saveweekly.php");
 		EncryptedMessage json = new EncryptedMessage();
 
 		json.setError(false);
 		json.setMessage("Encrypted");
 		json.setJwt(data.encrypt(json.getKEY(), json.getISS(), json.getAUD()));
+
+		try {
+
+			return restTemplate.postForObject(URL, json, EncryptedMessage.class).getMessage();
+
+		} catch (Exception ex) {
+
+			return new EncryptedMessage(Boolean.TRUE, ex.getLocalizedMessage()).getMessage();
+		}
+
+	}
+
+	public String saveAll(DecryptedWeeklyMonitoring data) {
+
+		final String URL = BASE_URL.concat("/saveweeklys.php");
+		EncryptedMessage json = new EncryptedMessage();
+
+		json.setError(false);
+		json.setMessage("Encrypted");
+		json.setJwt(data.encryptList(json.getKEY(), json.getISS(), json.getAUD()));
 
 		try {
 

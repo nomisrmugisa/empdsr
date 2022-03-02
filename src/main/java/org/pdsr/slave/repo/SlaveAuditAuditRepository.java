@@ -3,6 +3,7 @@ package org.pdsr.slave.repo;
 import java.util.List;
 
 import org.pdsr.slave.model.audit_audit;
+import org.pdsr.slave.model.cfactor_table;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,6 +13,23 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SlaveAuditAuditRepository extends JpaRepository<audit_audit, String> {
 
+	@Query("select t.patient_factors FROM audit_audit t WHERE t.audit_uuid=?1")
+	List<cfactor_table> findPatientFactorsByUuid(String uuid);
+
+	@Query("select t.transport_factors FROM audit_audit t WHERE t.audit_uuid=?1")
+	List<cfactor_table> findTransportFactorsByUuid(String uuid);
+
+	@Query("select t.administrative_factors FROM audit_audit t WHERE t.audit_uuid=?1")
+	List<cfactor_table> findAdministrativeFactorsByUuid(String uuid);
+
+	@Query("select t.healthworker_factors FROM audit_audit t WHERE t.audit_uuid=?1")
+	List<cfactor_table> findHealthworkerFactorsByUuid(String uuid);
+
+	@Query("select t.document_factors FROM audit_audit t WHERE t.audit_uuid=?1")
+	List<cfactor_table> findDocumentFactorsByUuid(String uuid);
+
+
+	
 	@Query("select t FROM audit_audit t LEFT JOIN audit_recommendation r ON(t.audit_uuid=r.audit_uuid) WHERE r.recommendation_uuid IS NULL")
 	List<audit_audit> findByPendingRecommendation();
 

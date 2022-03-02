@@ -1,19 +1,22 @@
 <!DOCTYPE html>
-<html th:replace="~{layout/controls :: layout(_,~{},~{::scripts},~{::content},~{})}">
+<html th:replace="~{layout/controls :: layout(_,~{},~{},~{::content},~{})}">
 
 
 <content>
 	<div class="jumbotron mt-4">
-		<h1 class="display-4 text-danger" th:utext="#{merger.title}"></h1>
+		<h1 class="display-4 text-danger" th:utext="#{merger.central.title}"></h1>
 		<p class="lead" th:utext="#{merger.central.note}"></p>
 		<hr class="my-4">
-		<form action="#" th:action="@{/controls/centralmerge}" th:object="${selected}" method="POST"
-			class="needs-validation" novalidate>
+		<form action="#" th:action="@{/controls/centralmerge}" method="POST" class="needs-validation" novalidate>
 
 			<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
 
-			<hr class="mb-2 bg-danger">
 			<button class="btn btn-sm btn-danger" type="submit" th:utext="#{merger.central.button}"></button>
+			<span class="mb-3">
+				<a th:href="@{/controls/downloadmerge}" class="btn btn-outline-primary btn-sm"
+					th:utext="#{merger.download.next.button}"></a>
+			</span>
+
 		</form>
 	</div>
 </content>

@@ -16,7 +16,7 @@ public class big_weekly_monitoring implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@EmbeddedId
-	private SummaryPk summaryPk;
+	private SummaryPK summaryPk;
 
 	@Column
 	private Integer weekly_year;
@@ -40,11 +40,11 @@ public class big_weekly_monitoring implements Serializable {
     private Integer wm_subval;
     
 
-	public SummaryPk getSummaryPk() {
+	public SummaryPK getSummaryPk() {
 		return summaryPk;
 	}
 
-	public void setSummaryPk(SummaryPk summaryPk) {
+	public void setSummaryPk(SummaryPK summaryPk) {
 		this.summaryPk = summaryPk;
 	}
 

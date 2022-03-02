@@ -273,7 +273,7 @@ public class CaseEntryController {
 			break;
 		}
 
-		case 2: {
+		case 3: {
 			if (selected.getPregnancy() == null) {
 				case_pregnancy data = new case_pregnancy();
 				data.setPregnancy_uuid(UUID.randomUUID().toString());
@@ -283,7 +283,7 @@ public class CaseEntryController {
 			break;
 		}
 
-		case 3: {
+		case 2: {
 			if (selected.getReferral() == null) {
 				case_referral data = new case_referral();
 				data.setReferral_uuid(UUID.randomUUID().toString());
@@ -292,7 +292,7 @@ public class CaseEntryController {
 			}
 			break;
 		}
-		case 4: {
+		case 6: {
 			if (selected.getDelivery() == null) {
 				case_delivery data = new case_delivery();
 				data.setDelivery_uuid(UUID.randomUUID().toString());
@@ -302,7 +302,7 @@ public class CaseEntryController {
 			break;
 		}
 
-		case 5: {
+		case 4: {
 			if (selected.getAntenatal() == null) {
 				case_antenatal data = new case_antenatal();
 				data.setAntenatal_uuid(UUID.randomUUID().toString());
@@ -313,7 +313,7 @@ public class CaseEntryController {
 			break;
 		}
 
-		case 6: {
+		case 5: {
 			if (selected.getLabour() == null) {
 				case_labour data = new case_labour();
 				data.setLabour_uuid(UUID.randomUUID().toString());
@@ -417,7 +417,7 @@ public class CaseEntryController {
 
 			break;
 		}
-		case 2: {
+		case 3: {
 			try {
 
 				case_pregnancy o = selected.getPregnancy();
@@ -434,7 +434,7 @@ public class CaseEntryController {
 			}
 			break;
 		}
-		case 3: {
+		case 2: {
 			try {
 
 				java.util.Date time = selected.getReferral().getReferral_time();
@@ -482,7 +482,7 @@ public class CaseEntryController {
 			}
 			break;
 		}
-		case 4: {
+		case 6: {
 			try {
 
 				java.util.Date time = selected.getDelivery().getDelivery_time();
@@ -539,7 +539,7 @@ public class CaseEntryController {
 			}
 			break;
 		}
-		case 5: {
+		case 4: {
 			try {
 
 				case_antenatal o = selected.getAntenatal();
@@ -566,7 +566,7 @@ public class CaseEntryController {
 
 			break;
 		}
-		case 6: {
+		case 5: {
 			try {
 
 				java.util.Date seetime = selected.getLabour().getLabour_seetime();
@@ -600,21 +600,6 @@ public class CaseEntryController {
 						results.rejectValue("labour.labour_seeperiod", "error.midnight");
 					}
 
-//					if (selected.getReferral() != null) {
-//						java.util.Date refatime = selected.getReferral().getReferral_atime();// date arrived at facility
-//																								// on referral
-//
-//						if (refatime != null && refatime.after(seetime)) {
-//							results.rejectValue("labour.labour_seetime", "error.seetime");
-//						}
-//
-//						if (results.hasErrors()) {
-//							model.addAttribute("selected", selected);
-//							model.addAttribute("page", page);
-//							return "registry/case-update";
-//						}
-//
-//					}
 
 					if (results.hasErrors()) {
 						model.addAttribute("selected", selected);

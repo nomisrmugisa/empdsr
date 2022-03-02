@@ -24,7 +24,7 @@ public class big_audit_audit implements Serializable {
 
 	
 	@EmbeddedId
-	private SummaryPk summaryPk;
+	private SummaryPK summaryPk;
 	
 	@NotNull
 	@Column
@@ -90,10 +90,10 @@ public class big_audit_audit implements Serializable {
 	public void setRec_complete(Integer rec_complete) {
 		this.rec_complete = rec_complete;
 	}
-	public SummaryPk getSummaryPk() {
+	public SummaryPK getSummaryPk() {
 		return summaryPk;
 	}
-	public void setSummaryPk(SummaryPk summaryPk) {
+	public void setSummaryPk(SummaryPK summaryPk) {
 		this.summaryPk = summaryPk;
 	}
 	public Integer getAudit_death() {

@@ -1,14 +1,14 @@
 package org.pdsr.summary.repo;
 
 
-import org.pdsr.summary.model.SummaryPk;
+import org.pdsr.summary.model.SummaryPK;
 import org.pdsr.summary.model.big_case_identifiers;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BigCaseRepository extends JpaRepository<big_case_identifiers, SummaryPk> {
+public interface BigCaseRepository extends JpaRepository<big_case_identifiers, SummaryPK> {
 
 	@Query("select COUNT(c) from big_case_identifiers c where c.case_death=?1" 
 	+ " and c.summaryPk.country=?2")

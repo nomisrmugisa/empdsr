@@ -22,7 +22,7 @@ public class big_case_identifiers implements Serializable {
 	
 
 	@EmbeddedId
-	private SummaryPk summaryPk;
+	private SummaryPK summaryPk;
 	
 	@Column
 	@Temporal(TemporalType.DATE)
@@ -35,11 +35,11 @@ public class big_case_identifiers implements Serializable {
 	@Column
 	private Integer case_status;//0 entry, 1 submitted, 2 selected, 3 reviewed
 	
-	public SummaryPk getSummaryPk() {
+	public SummaryPK getSummaryPk() {
 		return summaryPk;
 	}
 
-	public void setSummaryPk(SummaryPk summaryPk) {
+	public void setSummaryPk(SummaryPK summaryPk) {
 		this.summaryPk = summaryPk;
 	}
 

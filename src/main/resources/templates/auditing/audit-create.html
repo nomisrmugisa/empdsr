@@ -275,6 +275,46 @@
 			$('#audit_icdpm').select2();
 		});
 	</script>
+	<script th:inline="javascript">
+		$(document).ready(function () {
+			$('#patient_factors').select2({
+				placeholder: /*[[#{label.audit_patient}]]*/ "",
+
+			});
+		});
+	</script>
+	<script th:inline="javascript">
+		$(document).ready(function () {
+			$('#transport_factors').select2({
+				placeholder: /*[[#{label.audit_transport}]]*/ "",
+
+			});
+		});
+	</script>
+	<script th:inline="javascript">
+		$(document).ready(function () {
+			$('#administrative_factors').select2({
+				placeholder: /*[[#{label.audit_administrative}]]*/ "",
+
+			});
+		});
+	</script>
+	<script th:inline="javascript">
+		$(document).ready(function () {
+			$('#healthworker_factors').select2({
+				placeholder: /*[[#{label.audit_healthworker}]]*/ "",
+
+			});
+		});
+	</script>
+	<script th:inline="javascript">
+		$(document).ready(function () {
+			$('#document_factors').select2({
+				placeholder: /*[[#{label.audit_document}]]*/ "",
+
+			});
+		});
+	</script>
 	<script>
 		$("#example-basic").steps({
 			headerTag: "h3",

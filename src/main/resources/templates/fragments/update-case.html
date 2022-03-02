@@ -116,53 +116,6 @@
 </div>
 <!--  biodata end -->
 
-<div th:fragment="case_pregnancy">
-	<h4 th:text="#{title.pregnancy}" class="bg-dark text-light p-1 rounded"></h4>
-	<div th:insert="fragments/update-case :: core_data"></div>
-	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.pregnancy_gest}"></label>
-		<div class="col-auto">
-			<div class="row">
-				<div class="col-auto">
-					<select class="form-control form-control-sm" th:field="*{pregnancy.pregnancy_weeks}">
-						<option value="" th:text="#{in.weeks}"></option>
-						<option th:each="option : ${pweeks_options}" th:value="${option.key}" th:text="${option.value}">
-						</option>
-					</select>
-				</div>
-				<div class="col-auto">
-					<select class="form-control form-control-sm col-md-4" th:field="*{pregnancy.pregnancy_days}">
-						<option value="" th:text="#{in.days}"></option>
-						<option th:each="option : ${pdays_options}" th:value="${option.key}" th:text="${option.value}">
-						</option>
-					</select>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.pregnancy_type}"></label>
-		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{pregnancy.pregnancy_type}">
-				<option th:each="option : ${ptype_options}" th:value="${option.key}" th:text="${option.value}"></option>
-			</select>
-		</div>
-	</div>
-	<fieldset hidden=true>
-		<input th:field="*{pregnancy.pregnancy_uuid}" /> <input th:field="*{pregnancy.case_uuid}" />
-	</fieldset>
-	<hr class="mb-2 bg-secondary">
-	<div class="">
-		<a class="btn btn-light" th:utext="#{prev.button}"
-			th:href="@{/registry/edit/{id}?page=1(id=${selected.case_uuid})}"></a>
-		<button class="btn btn-primary" type="submit" th:utext="#{save.stay.button}"></button>
-		<button class="btn btn-primary" type="submit"
-			th:formaction="@{/registry/edit/{id}?page={pg}&go=1(id=${selected.case_uuid}, pg=${page})}"
-			th:utext="#{save.next.button}"></button>
-	</div>
-</div>
-<!--  pregnancy end -->
-
 <div th:fragment="case_referral">
 	<h4 th:text="#{title.referral}" class="bg-dark text-light p-1 rounded"></h4>
 	<div th:insert="fragments/update-case :: core_data"></div>
@@ -275,7 +228,7 @@
 	<hr class="mb-2 bg-secondary">
 	<div class="">
 		<a class="btn btn-light" th:utext="#{prev.button}"
-			th:href="@{/registry/edit/{id}?page=2(id=${selected.case_uuid})}"></a>
+			th:href="@{/registry/edit/{id}?page=1(id=${selected.case_uuid})}"></a>
 		<button class="btn btn-primary" type="submit" th:utext="#{save.stay.button}"></button>
 		<button class="btn btn-primary" type="submit"
 			th:formaction="@{/registry/edit/{id}?page={pg}&go=1(id=${selected.case_uuid}, pg=${page})}"
@@ -284,69 +237,52 @@
 </div>
 <!-- referral end -->
 
-
-
-
-
-<div th:fragment="case_delivery">
-	<h4 th:text="#{title.delivery}" class="bg-dark text-light p-1 rounded"></h4>
+<div th:fragment="case_pregnancy">
+	<h4 th:text="#{title.pregnancy}" class="bg-dark text-light p-1 rounded"></h4>
 	<div th:insert="fragments/update-case :: core_data"></div>
-
 	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.delivery_datetime}"></label>
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.pregnancy_gest}"></label>
 		<div class="col-auto">
 			<div class="row">
 				<div class="col-auto">
-					<input class="form-control form-control-sm datepicker" th:field="*{delivery.delivery_date}" />
+					<select class="form-control form-control-sm" th:field="*{pregnancy.pregnancy_weeks}">
+						<option value="" th:text="#{in.weeks}"></option>
+						<option th:each="option : ${pweeks_options}" th:value="${option.key}" th:text="${option.value}">
+						</option>
+					</select>
 				</div>
 				<div class="col-auto">
-					<div class="row">
-						<div class="col-auto">
-							<input class="form-control form-control-sm timepicker"
-								th:field="*{delivery.delivery_time}" />
-						</div>
-					</div>
+					<select class="form-control form-control-sm col-md-4" th:field="*{pregnancy.pregnancy_days}">
+						<option value="" th:text="#{in.days}"></option>
+						<option th:each="option : ${pdays_options}" th:value="${option.key}" th:text="${option.value}">
+						</option>
+					</select>
 				</div>
 			</div>
 		</div>
 	</div>
 	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.delivery_period}"></label>
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.pregnancy_type}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{delivery.delivery_period}">
-				<option th:each="option : ${period_options}" th:value="${option.key}" th:text="${option.value}">
-				</option>
+			<select class="form-control form-control-sm" th:field="*{pregnancy.pregnancy_type}">
+				<option th:each="option : ${ptype_options}" th:value="${option.key}" th:text="${option.value}"></option>
 			</select>
-			<small class="badge bg-light text-danger" th:if="${#fields.hasErrors('delivery.delivery_period')}"
-				th:errors="*{delivery.delivery_period}">error</small>
 		</div>
 	</div>
-	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.delivery_weight}"></label>
-		<div class="col-auto">
-			<input type="number" min="0" step="0.1" class="form-control form-control-sm" th:field="*{delivery.delivery_weight}"/>
-		</div>
-	</div>
-
 	<fieldset hidden=true>
-		<input th:field="*{delivery.delivery_uuid}" /> <input th:field="*{delivery.case_uuid}" />
+		<input th:field="*{pregnancy.pregnancy_uuid}" /> <input th:field="*{pregnancy.case_uuid}" />
 	</fieldset>
-
 	<hr class="mb-2 bg-secondary">
 	<div class="">
 		<a class="btn btn-light" th:utext="#{prev.button}"
-			th:href="@{/registry/edit/{id}?page=3(id=${selected.case_uuid})}"></a>
+			th:href="@{/registry/edit/{id}?page=2(id=${selected.case_uuid})}"></a>
 		<button class="btn btn-primary" type="submit" th:utext="#{save.stay.button}"></button>
 		<button class="btn btn-primary" type="submit"
 			th:formaction="@{/registry/edit/{id}?page={pg}&go=1(id=${selected.case_uuid}, pg=${page})}"
 			th:utext="#{save.next.button}"></button>
 	</div>
 </div>
-<!--  delivery end -->
-
-
-
-
+<!--  pregnancy end -->
 
 <div th:fragment="case_antenatal">
 	<h4 th:text="#{title.antenatal}" class="bg-dark text-light p-1 rounded"></h4>
@@ -546,7 +482,7 @@
 	<hr class="mb-2 bg-secondary">
 	<div class="">
 		<a class="btn btn-light" th:utext="#{prev.button}"
-			th:href="@{/registry/edit/{id}?page=4(id=${selected.case_uuid})}"></a>
+			th:href="@{/registry/edit/{id}?page=3(id=${selected.case_uuid})}"></a>
 		<button class="btn btn-primary" type="submit" th:utext="#{save.stay.button}"></button>
 		<button class="btn btn-primary" type="submit"
 			th:formaction="@{/registry/edit/{id}?page={pg}&go=1(id=${selected.case_uuid}, pg=${page})}"
@@ -716,7 +652,7 @@
 	<hr class="mb-2 bg-secondary">
 	<div class="">
 		<a class="btn btn-light" th:utext="#{prev.button}"
-			th:href="@{/registry/edit/{id}?page=5(id=${selected.case_uuid})}"></a>
+			th:href="@{/registry/edit/{id}?page=4(id=${selected.case_uuid})}"></a>
 		<button class="btn btn-primary" type="submit" th:utext="#{save.stay.button}"></button>
 		<button class="btn btn-primary" type="submit"
 			th:formaction="@{/registry/edit/{id}?page={pg}&go=1(id=${selected.case_uuid}, pg=${page})}"
@@ -724,6 +660,66 @@
 	</div>
 </div>
 <!--  labour end -->
+
+
+
+
+<div th:fragment="case_delivery">
+	<h4 th:text="#{title.delivery}" class="bg-dark text-light p-1 rounded"></h4>
+	<div th:insert="fragments/update-case :: core_data"></div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.delivery_datetime}"></label>
+		<div class="col-auto">
+			<div class="row">
+				<div class="col-auto">
+					<input class="form-control form-control-sm datepicker" th:field="*{delivery.delivery_date}" />
+				</div>
+				<div class="col-auto">
+					<div class="row">
+						<div class="col-auto">
+							<input class="form-control form-control-sm timepicker"
+								th:field="*{delivery.delivery_time}" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.delivery_period}"></label>
+		<div class="col-auto">
+			<select class="form-control form-control-sm" th:field="*{delivery.delivery_period}">
+				<option th:each="option : ${period_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+			<small class="badge bg-light text-danger" th:if="${#fields.hasErrors('delivery.delivery_period')}"
+				th:errors="*{delivery.delivery_period}">error</small>
+		</div>
+	</div>
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.delivery_weight}"></label>
+		<div class="col-auto">
+			<input type="number" min="0" step="0.1" class="form-control form-control-sm" th:field="*{delivery.delivery_weight}"/>
+		</div>
+	</div>
+
+	<fieldset hidden=true>
+		<input th:field="*{delivery.delivery_uuid}" /> <input th:field="*{delivery.case_uuid}" />
+	</fieldset>
+
+	<hr class="mb-2 bg-secondary">
+	<div class="">
+		<a class="btn btn-light" th:utext="#{prev.button}"
+			th:href="@{/registry/edit/{id}?page=5(id=${selected.case_uuid})}"></a>
+		<button class="btn btn-primary" type="submit" th:utext="#{save.stay.button}"></button>
+		<button class="btn btn-primary" type="submit"
+			th:formaction="@{/registry/edit/{id}?page={pg}&go=1(id=${selected.case_uuid}, pg=${page})}"
+			th:utext="#{save.next.button}"></button>
+	</div>
+</div>
+<!--  delivery end -->
+
 
 
 

@@ -40,9 +40,21 @@
     MERGE INTO risk_table KEY(risk_name) values('Last delivery > 10 years','none');
     MERGE INTO risk_table KEY(risk_name) values('Last delivery < 2 years','none');
 
-    MERGE INTO complication_table KEY(complication_name) values('Complication option 1','none');
-    MERGE INTO complication_table KEY(complication_name) values('Complication option 2','none');
-    MERGE INTO complication_table KEY(complication_name) values('Complication option 3','none');
+    MERGE INTO complication_table KEY(complication_name) values('Cephalo-pelvic disproportion (CPD)','none');
+    MERGE INTO complication_table KEY(complication_name) values('Premature rupture of membranes','none');
+    MERGE INTO complication_table KEY(complication_name) values('Infection (including UTI/Chorioamnionitis)','none');
+    MERGE INTO complication_table KEY(complication_name) values('Hypertension (Pre-eclampsia)','none');
+    MERGE INTO complication_table KEY(complication_name) values('Gestational diabetes','none');
+    MERGE INTO complication_table KEY(complication_name) values('Uterine rupture','none');
+    MERGE INTO complication_table KEY(complication_name) values('Poor progress of labour','none');
+    MERGE INTO complication_table KEY(complication_name) values('Delayed 2nd stage','none');
+    MERGE INTO complication_table KEY(complication_name) values('Fetal distress','none');
+    MERGE INTO complication_table KEY(complication_name) values('Transverse/oblique lie','none');
+    MERGE INTO complication_table KEY(complication_name) values('Breech, hand,foot, or other compound presentations','none');
+    MERGE INTO complication_table KEY(complication_name) values('Obstetric haemorrhage (antepartum)','none');
+    MERGE INTO complication_table KEY(complication_name) values('Latrogenic complications','none');
+    MERGE INTO complication_table KEY(complication_name) values('Latrogenic complications','none');
+    MERGE INTO complication_table KEY(complication_name) values('Severe anaemia','none');
 
     MERGE INTO abnormality_table KEY(abnormal_name) values('Microcephaly','none');
     MERGE INTO abnormality_table KEY(abnormal_name) values('Exomphalos major','none');
@@ -95,6 +107,72 @@
 	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Asphyxia (Hypoxic Ischaemic Encephalopathy, HIE)','none');
 	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Big baby (Macrosomia)','Infection');
 	
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(101,100,'Never initiated antenatal care');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(102,100,'Booked late in pregnancy');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(103,100,'Inadequate visits to antenatal clinic (<4 visits by  36/52)');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(104,100,'Delay in seeking care when complications set in');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(105,100,'Delay in seeking medical attention during labour');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(106,100,'Attempted termination of pregnancy');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(107,100,'Failed to return on prescribed date');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(108,100,'Declined admission/treatment for personal/social reasons');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(109,100,'Partner/family declined admission/treatment');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(110,100,'Assault');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(111,100,'Substance abuse (alcohol, smoking etc.)');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(112,100,'Delay in seeking help when baby was ill');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(113,100,'Infanticide');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(114,100,'Abandoned baby');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(115,100,'Use of herbal medicine');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(116,100,'Financial constraints');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(117,100,'No knowledge of danger symptoms');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(118,100,'ANC routine labs not done (Hb, Syphilis, Blood Group etc.)');
+	
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(201,200,'Lack of transport - Home to facility');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(202,200,'Lack of transport between facilities');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(203,200,'Patient transfer not communicated to receiving Facility');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(204,200,'Inappropriate care during transport');
+	
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(301,300,'ANC routine labs not done due to shortages (Hb, Syphilis, Blood Grp etc.)');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(302,300,'Inadequate facilities / resuscitation equipment in neonatal unit / Nursery');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(303,300,'Inadequate theatre facilities');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(304,300,'Insufficient blood / blood products available');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(305,300,'Personnel insufficiently trained or too junior to manage the patient');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(306,300,'Insufficient nurses on duty to manage the patient adequately');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(307,300,'Insufficient doctors to manage the patient');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(308,300,'Anaesthetic delay');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(309,300,'Delay in securing bed space at receiving facility');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(310,300,'Health worker industrial strike');
+	
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(401,400,'Poor estimation of foetal size by medical personnel');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(402,400,'Inappropriate management of complications when they set in during antepartum period');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(403,400,'No or inappropriate intervention to maternal hypertension');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(404,400,'Abnormal presentation not diagnosed until late in labour');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(405,400,'Multiple pregnancy not diagnosed during ANC or intrapartum');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(406,400,'Partogram not used to monitor labour');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(407,400,'Partogram used to monitor labour, but not interpreted correctly');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(408,400,'Poor progress in labour, not picked up early');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(409,400,'Foetal distress not detected during ANC or intrapartum, foetus not monitored');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(410,400,'Foetal distress not detected during ANC or intrapartum, foetus monitored');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(411,400,'Antenatal steroids not given');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(412,400,'Incorrect management of complications');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(413,400,'Incorrect or missed diagnosis');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(414,400,'Physical examination of the patient at the clinic/hospital incomplete');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(415,400,'Management of the second stage prolonged with no intervention');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(416,400,'Management of the second stage prolonged with inappropriate intervention(s)');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(417,400,'Delay in medical personnel calling for expert assistance');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(418,400,'Delay in referring patient for secondary/tertiary care');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(419,400,'Inappropriate response to apparent post-term pregnancy');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(420,400,'Neonatal care: inadequate monitoring');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(421,400,'Neonatal resuscitation inadequate');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(422,400,'Neonatal care: management plan inadequate');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(423,400,'Baby sent home inappropriately when not well');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(424,400,'Doctor did not respond to call or delayed in responding');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(425,400,'Nosocomial infection');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(426,400,'Baby managed incorrectly at Hospital/Clinic');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(427,400,'Anaesthesia complications during operative delivery');
+
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(501,500,'Insufficient notes');
+	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(502,500,'Patient notes or mothers ANC card missing');
+
 		
     MERGE INTO monitoring_table(gindex,glabel,mindex,mlabel,mdesc,gitem) KEY(mindex) values(10,'Total Deliveries','100','Total deliveries','mothers who gave birth',1);
     MERGE INTO monitoring_table(gindex,glabel,mindex,mlabel,mdesc,gitem) KEY(mindex) values(10,'Total Deliveries','101','SVDs/NVDs','none',0);

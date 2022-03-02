@@ -7,7 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class SummaryPk implements Serializable {
+public class SummaryPK implements Serializable {
 
 	/**
 	 * 
@@ -25,12 +25,12 @@ public class SummaryPk implements Serializable {
 	private String district;
 	
 	
-	public SummaryPk() {
+	public SummaryPK() {
 		super();
 	}
 
 
-	public SummaryPk(String id, String code, String country, String region, String district) {
+	public SummaryPK(String id, String code, String country, String region, String district) {
 		super();
 		this.id = id;
 		this.code = code;
@@ -54,7 +54,7 @@ public class SummaryPk implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		SummaryPk other = (SummaryPk) obj;
+		SummaryPK other = (SummaryPK) obj;
 		return Objects.equals(code, other.code) && Objects.equals(country, other.country)
 				&& Objects.equals(district, other.district) && Objects.equals(id, other.id)
 				&& Objects.equals(region, other.region);

@@ -126,7 +126,7 @@
 												th:utext="#{search.button}"></button>
 										</div>
 										<div class="btn-group">
-											<a class="btn btn-secondary" href="#" th:href="@{/reporting/search}"
+											<a class="btn btn-secondary" href="#" th:href="@{/national/search}"
 												th:utext="#{clear.button}"></a>
 										</div>
 									</div>
@@ -157,7 +157,7 @@
 							</thead>
 							<tbody>
 								<tr th:each="item : ${items}">
-									<td>[[${item.wmdesc}]]-[[${item.wyear}]]</td>
+									<td>[[${item.wmdesc}]]</td>
 									<td>[[${#numbers.formatDecimal(item.isbr, 1, 'COMMA', 1, 'POINT')}]]</td>
 									<td>[[${#numbers.formatDecimal(item.iisbr, 1, 'COMMA', 1, 'POINT')}]]</td>
 									<td>[[${#numbers.formatDecimal(item.aisbr, 1, 'COMMA', 1, 'POINT')}]]</td>

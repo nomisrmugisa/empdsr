@@ -1,13 +1,13 @@
 package org.pdsr.summary.repo;
 
-import org.pdsr.summary.model.SummaryPk;
+import org.pdsr.summary.model.SummaryPK;
 import org.pdsr.summary.model.big_audit_recommendation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BigAuditRecommendRepository extends JpaRepository<big_audit_recommendation, SummaryPk> {
+public interface BigAuditRecommendRepository extends JpaRepository<big_audit_recommendation, SummaryPK> {
 
 	@Query("select COUNT(r) FROM big_audit_recommendation r WHERE r.summaryPk.country=?1")
 	Integer count(String country);

@@ -96,5 +96,37 @@ public class DecryptedWeeklyMonitoring implements Serializable {
 		return jwt;
 
 	}
+	
+	public String encryptList(final String KEY, final String ISS, final String AUD) {
+
+
+		// The JWT signature algorithm we will be using to sign the token
+		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
+		// We will sign our JWT with our ApiKey secret
+		Key hmacKey;
+		try {
+			hmacKey = new SecretKeySpec(KEY.getBytes("UTF-8"), SignatureAlgorithm.HS256.getJcaName());
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			hmacKey = null;
+			e.printStackTrace();
+		}
+
+		// Let's set the JWT Claims
+		JwtBuilder builder = Jwts.builder()
+				.setIssuer(ISS)
+				.setAudience(AUD)
+				.setHeaderParam("typ", "JWT")
+				.claim("data", data)
+				.signWith(signatureAlgorithm, hmacKey);
+
+		// Builds the JWT and serializes it to a compact, URL-safe string
+
+		final String jwt = builder.compact();
+
+		return jwt;
+
+	}
 
 }

@@ -10,7 +10,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.MapsId;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -75,21 +77,42 @@ public class audit_audit implements Serializable {
 	@NotNull
 	private Integer audit_delay3c;
 
+	@ManyToMany(cascade = CascadeType.PERSIST)
+	@JoinTable(name = "audit_patient", joinColumns = @JoinColumn(name = "audit_uuid"), inverseJoinColumns = @JoinColumn(name = "id"))
+	private List<cfactor_table> patient_factors;
+
 	@Lob
 	@Column
 	private String audit_ifcmfs;
 	
+
+	@ManyToMany(cascade = CascadeType.PERSIST)
+	@JoinTable(name = "audit_transport", joinColumns = @JoinColumn(name = "audit_uuid"), inverseJoinColumns = @JoinColumn(name = "id"))
+	private List<cfactor_table> transport_factors;
+
 	@Lob
 	@Column
 	private String audit_sysmfs;
 	
+	@ManyToMany(cascade = CascadeType.PERSIST)
+	@JoinTable(name = "audit_administrative", joinColumns = @JoinColumn(name = "audit_uuid"), inverseJoinColumns = @JoinColumn(name = "id"))
+	private List<cfactor_table> administrative_factors;
+
 	@Lob
 	@Column
 	private String audit_facmfs;
 
+	@ManyToMany(cascade = CascadeType.PERSIST)
+	@JoinTable(name = "audit_healthworker", joinColumns = @JoinColumn(name = "audit_uuid"), inverseJoinColumns = @JoinColumn(name = "id"))
+	private List<cfactor_table> healthworker_factors;
+
 	@Lob
 	@Column
 	private String audit_hwkmfs;
+
+	@ManyToMany(cascade = CascadeType.PERSIST)
+	@JoinTable(name = "audit_document", joinColumns = @JoinColumn(name = "audit_uuid"), inverseJoinColumns = @JoinColumn(name = "id"))
+	private List<cfactor_table> document_factors;
 
 	@NotNull
 	@Column
@@ -238,6 +261,47 @@ public class audit_audit implements Serializable {
 	public void setRecommendations(List<audit_recommendation> recommendations) {
 		this.recommendations = recommendations;
 	}
+	
+	public List<cfactor_table> getPatient_factors() {
+		return patient_factors;
+	}
+
+	public void setPatient_factors(List<cfactor_table> patient_factors) {
+		this.patient_factors = patient_factors;
+	}
+
+	public List<cfactor_table> getTransport_factors() {
+		return transport_factors;
+	}
+
+	public void setTransport_factors(List<cfactor_table> transport_factors) {
+		this.transport_factors = transport_factors;
+	}
+
+	public List<cfactor_table> getAdministrative_factors() {
+		return administrative_factors;
+	}
+
+	public void setAdministrative_factors(List<cfactor_table> administrative_factors) {
+		this.administrative_factors = administrative_factors;
+	}
+
+	public List<cfactor_table> getHealthworker_factors() {
+		return healthworker_factors;
+	}
+
+	public void setHealthworker_factors(List<cfactor_table> healthworker_factors) {
+		this.healthworker_factors = healthworker_factors;
+	}
+
+	public List<cfactor_table> getDocument_factors() {
+		return document_factors;
+	}
+
+	public void setDocument_factors(List<cfactor_table> document_factors) {
+		this.document_factors = document_factors;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(audit_uuid);

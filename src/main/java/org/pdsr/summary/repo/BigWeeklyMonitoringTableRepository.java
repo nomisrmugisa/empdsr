@@ -2,14 +2,14 @@ package org.pdsr.summary.repo;
 
 import java.util.List;
 
-import org.pdsr.summary.model.SummaryPk;
+import org.pdsr.summary.model.SummaryPK;
 import org.pdsr.summary.model.big_weekly_monitoring;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BigWeeklyMonitoringTableRepository extends JpaRepository<big_weekly_monitoring, SummaryPk> {
+public interface BigWeeklyMonitoringTableRepository extends JpaRepository<big_weekly_monitoring, SummaryPK> {
 
 	@Query("select DISTINCT w.weekly_year FROM big_weekly_monitoring w ORDER BY w.weekly_year")
 	List<Integer> findYears();

@@ -25,7 +25,7 @@ public class big_audit_recommendation implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@EmbeddedId
-	private SummaryPk summaryPk;
+	private SummaryPK summaryPk;
 	
 	@Column
 	private String audit_uuid;
@@ -97,11 +97,11 @@ public class big_audit_recommendation implements Serializable {
 		this.rec_color = rec_color;
 	}
 
-	public SummaryPk getSummaryPk() {
+	public SummaryPK getSummaryPk() {
 		return summaryPk;
 	}
 
-	public void setSummaryPk(SummaryPk summaryPk) {
+	public void setSummaryPk(SummaryPK summaryPk) {
 		this.summaryPk = summaryPk;
 	}
 

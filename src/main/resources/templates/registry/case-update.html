@@ -16,23 +16,23 @@
 				</a>
 				<a th:href="@{/registry/edit/{id}?page=2(id=${selected.case_uuid})}">
 					<span class="btn small"
-						th:classappend="${selected.pregnancy}?(${selected.pregnancy.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Pregnancy</span>
+						th:classappend="${selected.referral}?(${selected.referral.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Referral</span>
 				</a>
 				<a th:href="@{/registry/edit/{id}?page=3(id=${selected.case_uuid})}">
 					<span class="btn small"
-						th:classappend="${selected.referral}?(${selected.referral.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Referral</span>
+						th:classappend="${selected.pregnancy}?(${selected.pregnancy.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Pregnancy</span>
 				</a>
 				<a th:href="@{/registry/edit/{id}?page=4(id=${selected.case_uuid})}">
 					<span class="btn small"
-						th:classappend="${selected.delivery}?(${selected.delivery.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Delivery</span>
+						th:classappend="${selected.antenatal}?(${selected.antenatal.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Antenatal</span>
 				</a>
 				<a th:href="@{/registry/edit/{id}?page=5(id=${selected.case_uuid})}">
 					<span class="btn small"
-						th:classappend="${selected.antenatal}?(${selected.antenatal.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Antenatal</span>
+						th:classappend="${selected.labour}?(${selected.labour.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Labour</span>
 				</a>
 				<a th:href="@{/registry/edit/{id}?page=6(id=${selected.case_uuid})}">
 					<span class="btn small"
-						th:classappend="${selected.labour}?(${selected.labour.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Labour</span>
+						th:classappend="${selected.delivery}?(${selected.delivery.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Delivery</span>
 				</a>
 				<a th:href="@{/registry/edit/{id}?page=7(id=${selected.case_uuid})}">
 					<span class="btn small"
@@ -63,11 +63,11 @@
 
 			<div th:if="${page==0}" th:insert="fragments/update-case :: case_identifiers"></div>
 			<div th:if="${page==1}" th:insert="fragments/update-case :: case_biodata"></div>
-			<div th:if="${page==2}" th:insert="fragments/update-case :: case_pregnancy"></div>
-			<div th:if="${page==3}" th:insert="fragments/update-case :: case_referral"></div>
-			<div th:if="${page==4}" th:insert="fragments/update-case :: case_delivery"></div>
-			<div th:if="${page==5}" th:insert="fragments/update-case :: case_antenatal"></div>
-			<div th:if="${page==6}" th:insert="fragments/update-case :: case_labour"></div>
+			<div th:if="${page==2}" th:insert="fragments/update-case :: case_referral"></div>
+			<div th:if="${page==3}" th:insert="fragments/update-case :: case_pregnancy"></div>
+			<div th:if="${page==4}" th:insert="fragments/update-case :: case_antenatal"></div>
+			<div th:if="${page==5}" th:insert="fragments/update-case :: case_labour"></div>
+			<div th:if="${page==6}" th:insert="fragments/update-case :: case_delivery"></div>
 			<div th:if="${page==7}" th:insert="fragments/update-case :: case_birth"></div>
 			<div th:if="${page==8 and selected.case_death==1}" th:insert="fragments/update-case :: case_fetalheart">
 			</div>
