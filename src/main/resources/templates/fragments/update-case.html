@@ -183,6 +183,9 @@
 					<div class="col-auto">
 						<input id="referral_adate" class="form-control form-control-sm datepicker"
 							th:field="*{referral.referral_adate}" />
+						<small class="badge bg-light text-danger"
+							th:if="${#fields.hasErrors('referral.referral_adate')}"
+							th:errors="*{referral.referral_adate}">error</small>
 					</div>
 					<div class="col-auto">
 						<div class="row">
@@ -190,6 +193,9 @@
 								<input id="referral_atime" class="form-control form-control-sm timepicker"
 									th:field="*{referral.referral_atime}" />
 							</div>
+							<small class="badge bg-light text-danger"
+								th:if="${#fields.hasErrors('referral.referral_atime')}"
+								th:errors="*{referral.referral_atime}">error</small>
 						</div>
 					</div>
 				</div>
@@ -210,7 +216,8 @@
 			<div class="col-auto">
 				<div id="referral_file" class="custom-file">
 					<input type="file" class="custom-file-input" id="customFile" th:field="*{referral.file}">
-					<a target="_blank" th:href="@{/registry/file/referral/{id}(id=${selected.case_uuid})}" th:if="${selected.referral.referral_filetype}">Download</a>
+					<a target="_blank" th:href="@{/registry/file/referral/{id}(id=${selected.case_uuid})}"
+						th:if="${selected.referral.referral_filetype}">Download</a>
 				</div>
 			</div>
 		</div>
@@ -403,11 +410,23 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_hiv}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{antenatal.antenatal_hiv}">
+			<select id="antenatal_hiv" class="form-control form-control-sm" th:field="*{antenatal.antenatal_hiv}"
+				onchange="changeAntenatalHIVOtherToNA(this)">
 				<option th:each="option : ${hiv_options}" th:value="${option.key}" th:text="${option.value}"></option>
 			</select>
 		</div>
 	</div>
+	<fieldset id="antenatal_hiv_fieldset">
+		<div class="row mb-3">
+			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_art}"></label>
+			<div class="col-auto">
+				<select id="antenatal_art" class="form-control form-control-sm" th:field="*{antenatal.antenatal_art}">
+					<option th:each="option : ${yesnodkna_options}" th:value="${option.key}" th:text="${option.value}">
+					</option>
+				</select>
+			</div>
+		</div>
+	</fieldset>
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_alcohol}"></label>
 		<div class="col-auto">
@@ -505,12 +524,17 @@
 			<div class="row">
 				<div class="col-auto">
 					<input class="form-control form-control-sm datepicker" th:field="*{labour.labour_seedate}" />
+					<small class="badge bg-light text-danger" th:if="${#fields.hasErrors('labour.labour_seedate')}"
+						th:errors="*{labour.labour_seedate}">error</small>
 				</div>
 				<div class="col-auto">
 					<div class="row">
 						<div class="col-auto">
 							<input class="form-control form-control-sm timepicker"
 								th:field="*{labour.labour_seetime}" />
+							<small class="badge bg-light text-danger"
+								th:if="${#fields.hasErrors('labour.labour_seetime')}"
+								th:errors="*{labour.labour_seetime}">error</small>
 						</div>
 					</div>
 				</div>
@@ -526,6 +550,7 @@
 			</select>
 			<small class="badge bg-light text-danger" th:if="${#fields.hasErrors('labour.labour_seeperiod')}"
 				th:errors="*{labour.labour_seeperiod}">error</small>
+
 		</div>
 	</div>
 	<div class="row mb-3">
@@ -674,12 +699,17 @@
 			<div class="row">
 				<div class="col-auto">
 					<input class="form-control form-control-sm datepicker" th:field="*{delivery.delivery_date}" />
+					<small class="badge bg-light text-danger" th:if="${#fields.hasErrors('delivery.delivery_date')}"
+						th:errors="*{delivery.delivery_date}">error</small>
 				</div>
 				<div class="col-auto">
 					<div class="row">
 						<div class="col-auto">
 							<input class="form-control form-control-sm timepicker"
 								th:field="*{delivery.delivery_time}" />
+							<small class="badge bg-light text-danger"
+								th:if="${#fields.hasErrors('delivery.delivery_time')}"
+								th:errors="*{delivery.delivery_time}">error</small>
 						</div>
 					</div>
 				</div>
@@ -700,7 +730,8 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.delivery_weight}"></label>
 		<div class="col-auto">
-			<input type="number" min="0" step="0.1" class="form-control form-control-sm" th:field="*{delivery.delivery_weight}"/>
+			<input type="number" min="0" step="0.1" class="form-control form-control-sm"
+				th:field="*{delivery.delivery_weight}" />
 		</div>
 	</div>
 
@@ -749,11 +780,27 @@
 			</div>
 		</div>
 		<div class="row mb-3" id="insistnormal_div">
-			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.birth_csproposetime}"></label>
+			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.birth_csproposedatetime}"></label>
 			<div class="col-auto">
-				<div class="col-md-6">
-					<input id="birth_csproposetime" class="form-control form-control-sm timepicker"
-						th:field="*{birth.birth_csproposetime}" />
+				<div class="row">
+					<div class="col-auto">
+						<input id="birth_csproposedate" class="form-control form-control-sm datepicker"
+							th:field="*{birth.birth_csproposedate}" />
+						<small class="badge bg-light text-danger"
+							th:if="${#fields.hasErrors('birth.birth_csproposedate')}"
+							th:errors="*{birth.birth_csproposedate}">error</small>
+					</div>
+					<div class="col-auto">
+						<div class="row">
+							<div class="col-auto">
+								<input id="birth_csproposetime" class="form-control form-control-sm timepicker"
+									th:field="*{birth.birth_csproposetime}" />
+								<small class="badge bg-light text-danger"
+									th:if="${#fields.hasErrors('birth.birth_csproposetime')}"
+									th:errors="*{birth.birth_csproposetime}">error</small>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -1088,8 +1135,6 @@
 				</div>
 			</div>
 		</div>
-
-
 	</fieldset>
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.baby_ddatetime}"></label>
@@ -1097,11 +1142,16 @@
 			<div class="row">
 				<div class="col-auto">
 					<input class="form-control form-control-sm datepicker" th:field="*{babydeath.baby_ddate}" />
+					<small class="badge bg-light text-danger" th:if="${#fields.hasErrors('babydeath.baby_ddate')}"
+						th:errors="*{babydeath.baby_ddate}">error</small>
 				</div>
 				<div class="col-auto">
 					<div class="row">
 						<div class="col-auto">
 							<input class="form-control form-control-sm timepicker" th:field="*{babydeath.baby_dtime}" />
+							<small class="badge bg-light text-danger"
+								th:if="${#fields.hasErrors('babydeath.baby_dtime')}"
+								th:errors="*{babydeath.baby_dtime}">error</small>
 						</div>
 					</div>
 				</div>
@@ -1144,7 +1194,8 @@
 		<div class="col-auto">
 			<div class="custom-file">
 				<input type="file" class="custom-file-input" id="customFile" th:field="*{notes.file}">
-				<a target="_blank" th:href="@{/registry/file/notes/{id}(id=${selected.case_uuid})}" th:if="${selected.notes.notes_filetype}">Download</a>
+				<a target="_blank" th:href="@{/registry/file/notes/{id}(id=${selected.case_uuid})}"
+					th:if="${selected.notes.notes_filetype}">Download</a>
 			</div>
 		</div>
 	</div>

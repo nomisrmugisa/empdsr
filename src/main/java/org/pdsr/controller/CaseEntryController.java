@@ -3,8 +3,10 @@ package org.pdsr.controller;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.Principal;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -273,16 +275,6 @@ public class CaseEntryController {
 			break;
 		}
 
-		case 3: {
-			if (selected.getPregnancy() == null) {
-				case_pregnancy data = new case_pregnancy();
-				data.setPregnancy_uuid(UUID.randomUUID().toString());
-				data.setCase_uuid(selected);
-				selected.setPregnancy(data);
-			}
-			break;
-		}
-
 		case 2: {
 			if (selected.getReferral() == null) {
 				case_referral data = new case_referral();
@@ -292,12 +284,13 @@ public class CaseEntryController {
 			}
 			break;
 		}
-		case 6: {
-			if (selected.getDelivery() == null) {
-				case_delivery data = new case_delivery();
-				data.setDelivery_uuid(UUID.randomUUID().toString());
+
+		case 3: {
+			if (selected.getPregnancy() == null) {
+				case_pregnancy data = new case_pregnancy();
+				data.setPregnancy_uuid(UUID.randomUUID().toString());
 				data.setCase_uuid(selected);
-				selected.setDelivery(data);
+				selected.setPregnancy(data);
 			}
 			break;
 		}
@@ -321,6 +314,16 @@ public class CaseEntryController {
 				selected.setLabour(data);
 			}
 			model.addAttribute("complication_options", compRepo.findAll());
+			break;
+		}
+
+		case 6: {
+			if (selected.getDelivery() == null) {
+				case_delivery data = new case_delivery();
+				data.setDelivery_uuid(UUID.randomUUID().toString());
+				data.setCase_uuid(selected);
+				selected.setDelivery(data);
+			}
 			break;
 		}
 
@@ -397,6 +400,8 @@ public class CaseEntryController {
 			return "home";
 		}
 
+		case_identifiers existing = caseRepo.findById(selected.getCase_uuid()).get();
+
 		switch (page) {
 		case 1: {
 
@@ -415,23 +420,6 @@ public class CaseEntryController {
 				e.printStackTrace();
 			}
 
-			break;
-		}
-		case 3: {
-			try {
-
-				case_pregnancy o = selected.getPregnancy();
-				if (o.getPregnancy_days() == null || o.getPregnancy_type() == null || o.getPregnancy_weeks() == null) {
-					o.setData_complete(0);
-				} else {
-					o.setData_complete(1);
-					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getPregnancy()));
-					selected.getPregnancy().setPregnancy_json(arrayToJson);
-				}
-				preRepo.save(o);
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
 			break;
 		}
 		case 2: {
@@ -460,6 +448,18 @@ public class CaseEntryController {
 					}
 				}
 
+				if (selected.getReferral().getReferral_case() == 1) {
+
+					validateTheTimesOnReferralPage(model, results, selected, existing);
+
+					if (results.hasErrors()) {
+						model.addAttribute("selected", selected);
+						model.addAttribute("page", page);
+						return "registry/case-update";
+					}
+
+				}
+
 				case_referral o = selected.getReferral();
 
 				if (o.getReferral_ahour() == null || o.getReferral_adate() == null || o.getReferral_aminute() == null
@@ -482,58 +482,18 @@ public class CaseEntryController {
 			}
 			break;
 		}
-		case 6: {
+		case 3: {
 			try {
 
-				java.util.Date time = selected.getDelivery().getDelivery_time();
-				if (time != null) {
-					selected.getDelivery().setDelivery_hour(time.getHours());
-					selected.getDelivery().setDelivery_minute(time.getMinutes());
-				}
-				final Integer period = selected.getDelivery().getDelivery_period();
-				final Integer hour = selected.getDelivery().getDelivery_hour();
-
-				if (period != null && hour != null) {
-					boolean dawn = (hour > 0 && hour < 6);
-					boolean morning = (hour > 5 && hour < 12);
-					boolean midday = (hour == 12);
-					boolean afternoon = (hour > 12 && hour < 18);
-					boolean evening = (hour > 17 && hour < 22);
-					boolean midnight = (hour > 21 || hour < 1);
-
-					if (period == 0 && !dawn) {
-						results.rejectValue("delivery.delivery_period", "error.dawn");
-					} else if (period == 1 && !morning) {
-						results.rejectValue("delivery.delivery_period", "error.morning");
-					} else if (period == 2 && !midday) {
-						results.rejectValue("delivery.delivery_period", "error.midday");
-					} else if (period == 3 && !afternoon) {
-						results.rejectValue("delivery.delivery_period", "error.afternoon");
-					} else if (period == 4 && !evening) {
-						results.rejectValue("delivery.delivery_period", "error.evening");
-					} else if (period == 5 && !midnight) {
-						results.rejectValue("delivery.delivery_period", "error.midnight");
-					}
-
-					if (results.hasErrors()) {
-						model.addAttribute("selected", selected);
-						model.addAttribute("page", page);
-						return "registry/case-update";
-					}
-				}
-				case_delivery o = selected.getDelivery();
-				if (o.getDelivery_hour() == null || o.getDelivery_date() == null || o.getDelivery_minute() == null
-						|| o.getDelivery_period() == null || o.getDelivery_time() == null
-						|| o.getDelivery_weight() == null) {
+				case_pregnancy o = selected.getPregnancy();
+				if (o.getPregnancy_days() == null || o.getPregnancy_type() == null || o.getPregnancy_weeks() == null) {
 					o.setData_complete(0);
 				} else {
-
 					o.setData_complete(1);
-					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getDelivery()));
-					selected.getDelivery().setDelivery_json(arrayToJson);
+					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getPregnancy()));
+					selected.getPregnancy().setPregnancy_json(arrayToJson);
 				}
-
-				delRepo.save(selected.getDelivery());
+				preRepo.save(o);
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
 			}
@@ -600,13 +560,25 @@ public class CaseEntryController {
 						results.rejectValue("labour.labour_seeperiod", "error.midnight");
 					}
 
-
 					if (results.hasErrors()) {
 						model.addAttribute("selected", selected);
 						model.addAttribute("page", page);
 						return "registry/case-update";
 					}
 				}
+
+				if (existing.getReferral() != null && existing.getReferral().getReferral_case() == 1) {
+
+					validateTheTimesOnLabourPage(model, results, selected, existing);
+
+					if (results.hasErrors()) {
+						model.addAttribute("selected", selected);
+						model.addAttribute("page", page);
+						return "registry/case-update";
+					}
+
+				}
+
 				case_labour o = selected.getLabour();
 				if (o.getLabour_complications() == null || o.getLabour_herbalaug() == null
 						|| o.getLabour_lasthour1() == null || o.getLabour_lasthour2() == null
@@ -628,25 +600,105 @@ public class CaseEntryController {
 			}
 			break;
 		}
+		case 6: {
+			try {
+
+				java.util.Date time = selected.getDelivery().getDelivery_time();
+				if (time != null) {
+					selected.getDelivery().setDelivery_hour(time.getHours());
+					selected.getDelivery().setDelivery_minute(time.getMinutes());
+				}
+				final Integer period = selected.getDelivery().getDelivery_period();
+				final Integer hour = selected.getDelivery().getDelivery_hour();
+
+				if (period != null && hour != null) {
+					boolean dawn = (hour > 0 && hour < 6);
+					boolean morning = (hour > 5 && hour < 12);
+					boolean midday = (hour == 12);
+					boolean afternoon = (hour > 12 && hour < 18);
+					boolean evening = (hour > 17 && hour < 22);
+					boolean midnight = (hour > 21 || hour < 1);
+
+					if (period == 0 && !dawn) {
+						results.rejectValue("delivery.delivery_period", "error.dawn");
+					} else if (period == 1 && !morning) {
+						results.rejectValue("delivery.delivery_period", "error.morning");
+					} else if (period == 2 && !midday) {
+						results.rejectValue("delivery.delivery_period", "error.midday");
+					} else if (period == 3 && !afternoon) {
+						results.rejectValue("delivery.delivery_period", "error.afternoon");
+					} else if (period == 4 && !evening) {
+						results.rejectValue("delivery.delivery_period", "error.evening");
+					} else if (period == 5 && !midnight) {
+						results.rejectValue("delivery.delivery_period", "error.midnight");
+					}
+
+					if (results.hasErrors()) {
+						model.addAttribute("selected", selected);
+						model.addAttribute("page", page);
+						return "registry/case-update";
+					}
+				}
+				if (existing.getBirth() != null) {
+
+					validateTheTimesOnDeliveryPage(model, results, selected, existing);
+
+					if (results.hasErrors()) {
+						model.addAttribute("selected", selected);
+						model.addAttribute("page", page);
+						return "registry/case-update";
+					}
+
+				}
+
+				case_delivery o = selected.getDelivery();
+				if (o.getDelivery_hour() == null || o.getDelivery_date() == null || o.getDelivery_minute() == null
+						|| o.getDelivery_period() == null || o.getDelivery_time() == null
+						|| o.getDelivery_weight() == null) {
+					o.setData_complete(0);
+				} else {
+
+					o.setData_complete(1);
+					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getDelivery()));
+					selected.getDelivery().setDelivery_json(arrayToJson);
+				}
+
+				delRepo.save(selected.getDelivery());
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
+			break;
+		}
 		case 7: {
 			try {
 				java.util.Date cstime = selected.getBirth().getBirth_csproposetime();
 
 				if (cstime != null) {
-
 					selected.getBirth().setBirth_csproposehour(cstime.getHours());
 					selected.getBirth().setBirth_csproposeminute(cstime.getMinutes());
+				}
+
+				if (existing.getDelivery() != null) {
+
+					validateTheTimesOnBirthPage(model, results, selected, existing);
+
+					if (results.hasErrors()) {
+						model.addAttribute("selected", selected);
+						model.addAttribute("page", page);
+						return "registry/case-update";
+					}
+
 				}
 
 				case_birth o = selected.getBirth();
 				if (o.getBirth_abnormalities() == null || o.getBirth_babyoutcome() == null
 						|| o.getBirth_cordfaults() == null || o.getBirth_csproposehour() == null
-						|| o.getBirth_csproposeminute() == null || o.getBirth_csproposetime() == null
-						|| o.getBirth_facility() == null || o.getBirth_insistnormal() == null
-						|| o.getBirth_liqourcolor() == null || o.getBirth_liqourodour() == null
-						|| o.getBirth_liqourvolume() == null || o.getBirth_mode() == null
-						|| o.getBirth_motheroutcome() == null || o.getBirth_placentachecks() == null
-						|| o.getBirth_provider() == null) {
+						|| o.getBirth_csproposedate() == null || o.getBirth_csproposeminute() == null
+						|| o.getBirth_csproposetime() == null || o.getBirth_facility() == null
+						|| o.getBirth_insistnormal() == null || o.getBirth_liqourcolor() == null
+						|| o.getBirth_liqourodour() == null || o.getBirth_liqourvolume() == null
+						|| o.getBirth_mode() == null || o.getBirth_motheroutcome() == null
+						|| o.getBirth_placentachecks() == null || o.getBirth_provider() == null) {
 					o.setData_complete(0);
 				} else {
 					o.setData_complete(1);
@@ -687,6 +739,19 @@ public class CaseEntryController {
 						selected.getBabydeath().setBaby_dhour(time.getHours());
 						selected.getBabydeath().setBaby_dminute(time.getMinutes());
 					}
+					
+					if (existing.getDelivery() != null) {
+
+						validateTheTimesOnBabydeathPage(model, results, selected, existing);
+
+						if (results.hasErrors()) {
+							model.addAttribute("selected", selected);
+							model.addAttribute("page", page);
+							return "registry/case-update";
+						}
+
+					}
+
 					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getBabydeath()));
 					selected.getBabydeath().setBaby_json(arrayToJson);
 
@@ -783,6 +848,219 @@ public class CaseEntryController {
 		return "redirect:/registry?page=1&success=yes";
 	}
 
+	private void validateTheTimesOnReferralPage(Model model, BindingResult results, case_identifiers selected,
+			case_identifiers existing) {
+		// validate
+		final Date referralDate = selected.getReferral().getReferral_date();
+		final Date arrivalDate = selected.getReferral().getReferral_adate();
+		if (referralDate != null && arrivalDate != null) {
+
+			if (arrivalDate.before(referralDate)) {
+				results.rejectValue("referral.referral_adate", "error.date.arrived.before.referral");
+			} else {
+				final Date referralTime = selected.getReferral().getReferral_date();
+				final Date arrivalTime = selected.getReferral().getReferral_adate();
+
+				if (referralTime != null && arrivalTime != null) {
+					final Integer referralHour = selected.getReferral().getReferral_hour();
+					final Integer referralMins = selected.getReferral().getReferral_minute();
+
+					final Integer arrivalHour = selected.getReferral().getReferral_ahour();
+					final Integer arrivalMins = selected.getReferral().getReferral_aminute();
+
+					if ((arrivalHour + arrivalMins) <= (referralHour + referralMins)) {
+						results.rejectValue("referral.referral_atime", "error.time.arrived.before.referral");
+ 					}
+				}
+			}
+
+		}
+
+		if (existing.getLabour() != null) {
+			final Date seenDate = existing.getLabour().getLabour_seedate();
+
+			if (arrivalDate != null && seenDate != null) {
+
+				if (seenDate.before(arrivalDate)) {
+					results.rejectValue("referral.referral_adate", "error.date.seen.before.arrival");
+				} else {
+					final Date arrivalTime = selected.getReferral().getReferral_date();
+					final Date seenTime = existing.getLabour().getLabour_seetime();
+
+					if (arrivalTime != null && seenTime != null) {
+						final Integer arrivalHour = selected.getReferral().getReferral_hour();
+						final Integer arrivalMins = selected.getReferral().getReferral_minute();
+
+						final Integer seenHour = existing.getLabour().getLabour_seehour();
+						final Integer seenMins = existing.getLabour().getLabour_seeminute();
+
+						DecimalFormat f = new DecimalFormat("00");
+						if ((seenHour + seenMins) <= (arrivalHour + arrivalMins)) {
+							results.rejectValue("referral.referral_atime", "error.time.seen.before.arrival");
+						}
+					}
+				}
+
+			}
+		}
+
+	}
+
+	private void validateTheTimesOnLabourPage(Model model, BindingResult results, case_identifiers selected,
+			case_identifiers existing) {
+		// validate
+		final Date arrivalDate = existing.getReferral().getReferral_adate();
+		final Date seenDate = selected.getLabour().getLabour_seedate();
+
+		if (arrivalDate != null && seenDate != null) {
+
+			if (seenDate.before(arrivalDate)) {
+				results.rejectValue("labour.labour_seedate", "error.date.seen.before.arrival");
+			} else {
+				final Date arrivalTime = existing.getReferral().getReferral_date();
+				final Date seenTime = selected.getLabour().getLabour_seetime();
+
+				if (arrivalTime != null && seenTime != null) {
+					final Integer arrivalHour = existing.getReferral().getReferral_ahour();
+					final Integer arrivalMins = existing.getReferral().getReferral_aminute();
+
+					final Integer seenHour = selected.getLabour().getLabour_seehour();
+					final Integer seenMins = selected.getLabour().getLabour_seeminute();
+
+					DecimalFormat f = new DecimalFormat("00");
+					if ((seenHour + seenMins) <= (arrivalHour + arrivalMins)) {
+						results.rejectValue("labour.labour_seetime", "error.time.seen.before.arrival");
+					}
+				}
+			}
+
+		}
+
+	}
+
+	private void validateTheTimesOnDeliveryPage(Model model, BindingResult results, case_identifiers selected,
+			case_identifiers existing) {
+		// validate
+		final Date csdecisionDate = existing.getBirth().getBirth_csproposedate();
+		final Date deliveryDate = selected.getDelivery().getDelivery_date();
+
+		if (deliveryDate != null && csdecisionDate != null) {
+
+			if (deliveryDate.before(csdecisionDate)) {
+				results.rejectValue("delivery.delivery_date", "error.date.delivery.before.csdecision");
+			} else {
+				final Date csdecisionTime = existing.getBirth().getBirth_csproposedate();
+				final Date deliveryTime = selected.getDelivery().getDelivery_time();
+
+				if (csdecisionTime != null && deliveryTime != null) {
+					final Integer csdecisionHour = existing.getBirth().getBirth_csproposehour();
+					final Integer csdecisionMins = existing.getBirth().getBirth_csproposeminute();
+
+					final Integer deliveryHour = selected.getDelivery().getDelivery_hour();
+					final Integer deliveryMins = selected.getDelivery().getDelivery_minute();
+
+					DecimalFormat f = new DecimalFormat("00");
+					if ((deliveryHour + deliveryMins) <= (csdecisionHour + csdecisionMins)) {
+						results.rejectValue("delivery.delivery_time", "error.time.delivery.before.csdecision");
+					}
+				}
+			}
+
+		}
+		
+		final Date deathDate = existing.getBabydeath().getBaby_ddate();
+
+		if (deathDate != null && deliveryDate != null) {
+
+			if (deathDate.before(deliveryDate)) {
+				results.rejectValue("delivery.delivery_date", "error.date.death.before.delivery");
+			} else {
+				final Date deliveryTime = selected.getDelivery().getDelivery_time();
+				final Date deathTime = existing.getBabydeath().getBaby_dtime();
+
+				if (deliveryTime != null && deathTime != null) {
+					final Integer deliveryHour = selected.getDelivery().getDelivery_hour();
+					final Integer deliveryMins = selected.getDelivery().getDelivery_minute();
+
+					final Integer deathHour = existing.getBabydeath().getBaby_dhour();
+					final Integer deathMins = existing.getBabydeath().getBaby_dminute();
+
+					DecimalFormat f = new DecimalFormat("00");
+					if ((deathHour + deathMins) <= (deliveryHour + deliveryMins)) {
+						results.rejectValue("delivery.delivery_time", "error.time.death.before.delivery");
+					}
+				}
+			}
+
+		}
+
+
+	}
+
+	private void validateTheTimesOnBirthPage(Model model, BindingResult results, case_identifiers selected,
+			case_identifiers existing) {
+		// validate
+		final Date csdecisionDate = selected.getBirth().getBirth_csproposedate();
+		final Date deliveryDate = existing.getDelivery().getDelivery_date();
+
+		if (deliveryDate != null && csdecisionDate != null) {
+			if (deliveryDate.before(csdecisionDate)) {
+				results.rejectValue("birth.birth_csproposedate", "error.date.delivery.before.csdecision");
+			} else {
+				final Date csdecisionTime = selected.getBirth().getBirth_csproposetime();
+				final Date deliveryTime = existing.getDelivery().getDelivery_time();
+
+				if (csdecisionTime != null && deliveryTime != null) {
+					final Integer csdecisionHour = selected.getBirth().getBirth_csproposehour();
+					final Integer csdecisionMins = selected.getBirth().getBirth_csproposeminute();
+
+					final Integer deliveryHour = existing.getDelivery().getDelivery_hour();
+					final Integer deliveryMins = existing.getDelivery().getDelivery_minute();
+
+					DecimalFormat f = new DecimalFormat("00");
+					if ((deliveryHour + deliveryMins) < (csdecisionHour + csdecisionMins)) {
+						results.rejectValue("birth.birth_csproposetime", "error.time.delivery.before.csdecision");
+					}
+				}
+			}
+
+		}
+
+	}
+
+	private void validateTheTimesOnBabydeathPage(Model model, BindingResult results, case_identifiers selected,
+			case_identifiers existing) {
+		// validate
+		final Date deliveryDate = existing.getDelivery().getDelivery_date();
+		final Date deathDate = selected.getBabydeath().getBaby_ddate();
+
+		if (deathDate != null && deliveryDate != null) {
+
+			if (deathDate.before(deliveryDate)) {
+				results.rejectValue("babydeath.baby_ddate", "error.date.death.before.delivery");
+			} else {
+				final Date deliveryTime = existing.getDelivery().getDelivery_time();
+				final Date deathTime = selected.getBabydeath().getBaby_dtime();
+
+				if (deliveryTime != null && deathTime != null) {
+					final Integer deliveryHour = existing.getDelivery().getDelivery_hour();
+					final Integer deliveryMins = existing.getDelivery().getDelivery_minute();
+
+					final Integer deathHour = selected.getBabydeath().getBaby_dhour();
+					final Integer deathMins = selected.getBabydeath().getBaby_dminute();
+
+					DecimalFormat f = new DecimalFormat("00");
+					if ((deathHour + deathMins) <= (deliveryHour + deliveryMins)) {
+						results.rejectValue("babydeath.baby_dtime", "error.time.death.before.delivery");
+					}
+				}
+			}
+
+		}
+
+	}
+
+	
 	@GetMapping(value = "/icdselect")
 	public @ResponseBody Set<icd_diagnoses> findByDiagnosis(@RequestParam(value = "q", required = true) String search) {
 

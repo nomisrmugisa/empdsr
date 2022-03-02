@@ -883,6 +883,7 @@ public class SetupController {
 					mcase.setAntenatal_gravida(s.getAntenatal_gravida());
 					mcase.setAntenatal_herbal(s.getAntenatal_herbal());
 					mcase.setAntenatal_hiv(s.getAntenatal_hiv());
+					mcase.setAntenatal_art(s.getAntenatal_art());
 					mcase.setAntenatal_malprophy(s.getAntenatal_malprophy());
 					mcase.setAntenatal_para(s.getAntenatal_para());
 					mcase.setAntenatal_risks(s.getAntenatal_risks());
@@ -1009,6 +1010,8 @@ public class SetupController {
 					mcase.setCordfaults(list1);
 					mcase.setNew_cordfaults(s.getNew_cordfaults());
 
+					
+					mcase.setBirth_csproposedate(s.getBirth_csproposedate());
 					mcase.setBirth_csproposehour(s.getBirth_csproposehour());
 					mcase.setBirth_csproposeminute(s.getBirth_csproposeminute());
 					mcase.setBirth_csproposetime(s.getBirth_csproposetime());

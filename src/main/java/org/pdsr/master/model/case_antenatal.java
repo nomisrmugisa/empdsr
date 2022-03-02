@@ -62,6 +62,9 @@ public class case_antenatal implements Serializable {
 	private Integer antenatal_hiv;// first visit
 
 	@Column
+	private Integer antenatal_art;// first visit
+
+	@Column
 	private Integer antenatal_alcohol;// first visit
 
 	@Column
@@ -274,6 +277,14 @@ public class case_antenatal implements Serializable {
 
 	public void setNew_risks(String new_risks) {
 		this.new_risks = new_risks;
+	}
+
+	public Integer getAntenatal_art() {
+		return antenatal_art;
+	}
+
+	public void setAntenatal_art(Integer antenatal_art) {
+		this.antenatal_art = antenatal_art;
 	}
 
 	@Override

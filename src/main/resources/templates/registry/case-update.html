@@ -357,6 +357,36 @@
 			}
 		}
 	</script>
+	<script>
+		function changeAntenatalHIVView() {
+			var objCombo = document.getElementById("antenatal_hiv");
+
+			if (objCombo.value != '1') {
+				$('#antenatal_hiv_fieldset').hide();
+
+			} else {
+				$('#antenatal_hiv_fieldset').show();
+			}
+		}
+		changeAntenatalHIVView();
+	</script>
+	<script>
+		function changeAntenatalHIVOtherToNA(objCombo) {
+			var art = document.getElementById("antenatal_art");
+
+			if (objCombo.value != '1') {
+
+				art.value = "99";
+
+				$('#antenatal_hiv_fieldset').hide('fade');
+
+			} else {
+				$('#antenatal_hiv_fieldset').show('fade');
+
+				art.value = "";
+			}
+		}
+	</script>
 
 	<script>
 		function changeLabourComplicationView() {
@@ -455,13 +485,16 @@
 		function changeBirthInsistnormalView() {
 			var objCombo = document.getElementById("birth_insistnormal");
 			var cstime = document.getElementById("birth_csproposetime");
+			var csdate = document.getElementById("birth_csproposedate");
 
 			if (objCombo.value != '1') {
 				cstime.value = '00:00';
+				csdate.value = '01/01/1970';
 				$('#insistnormal_div').hide();
 
 			} else {
-				cstime.value = '';
+				//cstime.value = '';
+				//csdate.value = '';
 				$('#insistnormal_div').show();
 			}
 		}
@@ -488,14 +521,17 @@
 	<script>
 		function changeBirthInsistnormalOtherToNA(objCombo) {
 			var cstime = document.getElementById("birth_csproposetime");
+			var csdate = document.getElementById("birth_csproposedate");
 
 			if (objCombo.value != '1') {
 				cstime.value = '00:00';
+				csdate.value = '01/01/1970';
 
 				$('#insistnormal_div').hide('fade');
 
 			} else {
 				cstime.value = '';
+				csdate.value = '';
 				$('#insistnormal_div').show('fade');
 
 			}

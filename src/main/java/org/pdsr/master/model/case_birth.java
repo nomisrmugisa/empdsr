@@ -47,7 +47,11 @@ public class case_birth implements Serializable {
 	@Column
 	private Integer birth_insistnormal;
 
-	
+	@Column
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
+	private java.util.Date birth_csproposedate;
+
 	@Column
 	private Integer birth_csproposehour;
 	
@@ -179,6 +183,14 @@ public class case_birth implements Serializable {
 
 	public void setBirth_insistnormal(Integer birth_insistnormal) {
 		this.birth_insistnormal = birth_insistnormal;
+	}
+
+	public java.util.Date getBirth_csproposedate() {
+		return birth_csproposedate;
+	}
+
+	public void setBirth_csproposedate(java.util.Date birth_csproposedate) {
+		this.birth_csproposedate = birth_csproposedate;
 	}
 
 	public Integer getBirth_csproposehour() {

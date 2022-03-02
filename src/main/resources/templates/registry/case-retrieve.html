@@ -29,19 +29,19 @@
 							<span class="badge" th:classappend="${item.biodata}?(${item.biodata.data_complete==1}?'bg-success':'bg-warning text-dark'):'bg-danger'">Profile</span>
 						</a>
 						<a th:href="@{/registry/edit/{id}?page=2(id=${item.case_uuid})}">
-							<span class="badge" th:classappend="${item.pregnancy}?(${item.pregnancy.data_complete==1}?'bg-success':'bg-warning text-dark'):'bg-danger'">Pregnancy</span>
-						</a>
-						<a th:href="@{/registry/edit/{id}?page=3(id=${item.case_uuid})}">
 							<span class="badge" th:classappend="${item.referral}?(${item.referral.data_complete==1}?'bg-success':'bg-warning text-dark'):'bg-danger'">Referral</span>
 						</a>
-						<a th:href="@{/registry/edit/{id}?page=4(id=${item.case_uuid})}">
-							<span class="badge" th:classappend="${item.delivery}?(${item.delivery.data_complete==1}?'bg-success':'bg-warning text-dark'):'bg-danger'">Delivery</span>
+						<a th:href="@{/registry/edit/{id}?page=3(id=${item.case_uuid})}">
+							<span class="badge" th:classappend="${item.pregnancy}?(${item.pregnancy.data_complete==1}?'bg-success':'bg-warning text-dark'):'bg-danger'">Pregnancy</span>
 						</a>
-						<a th:href="@{/registry/edit/{id}?page=5(id=${item.case_uuid})}">
+						<a th:href="@{/registry/edit/{id}?page=4(id=${item.case_uuid})}">
 							<span class="badge" th:classappend="${item.antenatal}?(${item.antenatal.data_complete==1}?'bg-success':'bg-warning text-dark'):'bg-danger'">Antenatal</span>
 						</a>
-						<a th:href="@{/registry/edit/{id}?page=6(id=${item.case_uuid})}">
+						<a th:href="@{/registry/edit/{id}?page=5(id=${item.case_uuid})}">
 							<span class="badge" th:classappend="${item.labour}?(${item.labour.data_complete==1}?'bg-success':'bg-warning text-dark'):'bg-danger'">Labour</span>
+						</a>
+						<a th:href="@{/registry/edit/{id}?page=6(id=${item.case_uuid})}">
+							<span class="badge" th:classappend="${item.delivery}?(${item.delivery.data_complete==1}?'bg-success':'bg-warning text-dark'):'bg-danger'">Delivery</span>
 						</a>
 						<a th:href="@{/registry/edit/{id}?page=7(id=${item.case_uuid})}">
 							<span class="badge" th:classappend="${item.birth}?(${item.birth.data_complete==1}?'bg-success':'bg-warning text-dark'):'bg-danger'">Birth</span>
