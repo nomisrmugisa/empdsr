@@ -126,7 +126,7 @@ public interface BigWeeklyMonitoringTableRepository extends JpaRepository<big_we
 
 			+ "SUM(CASE WHEN (w.mindex = 161) THEN w.wm_values ELSE 0 END) AS totalmaternaldeaths "// 17
 
-			+ "FROM big_weekly_monitoring w WHERE w.summaryPk.country=?1")
+			+ "FROM big_weekly_monitoring w WHERE w.summaryPk.country=?1 GROUP BY w.summaryPk.country")
 	List<String[]> findFrontPageRates(String country);
 
 	@Query("SELECT SUM(CASE WHEN (w.mindex = 100) THEN w.wm_values ELSE 0 END) AS totaldeliveries, "// 3
@@ -153,7 +153,8 @@ public interface BigWeeklyMonitoringTableRepository extends JpaRepository<big_we
 			+ "FROM big_weekly_monitoring w WHERE w.summaryPk.country=?1 AND w.summaryPk.region=?2")
 	List<String[]> findFrontPageRates(String country, String region);
 
-	@Query("SELECT SUM(CASE WHEN (w.mindex = 100) THEN w.wm_values ELSE 0 END) AS totaldeliveries, "// 3
+	@Query("SELECT "
+			+ "SUM(CASE WHEN (w.mindex = 100) THEN w.wm_values ELSE 0 END) AS totaldeliveries, "// 3
 			+ "SUM(CASE WHEN (w.mindex = 101) THEN w.wm_values ELSE 0 END) AS totaldelvaginal, "// 4
 			+ "SUM(CASE WHEN (w.mindex = 102) THEN w.wm_values ELSE 0 END) AS totaldelassisted, "// 5
 			+ "SUM(CASE WHEN (w.mindex = 103) THEN w.wm_values ELSE 0 END) AS totaldelcaesarean, "// 6
@@ -175,7 +176,7 @@ public interface BigWeeklyMonitoringTableRepository extends JpaRepository<big_we
 			+ "SUM(CASE WHEN (w.mindex = 161) THEN w.wm_values ELSE 0 END) AS totalmaternaldeaths "// 17
 
 			+ "FROM big_weekly_monitoring w"
-			+ " WHERE w.summaryPk.country=?1 and w.summaryPk.region=?2 AND w.summaryPk.district=?2")
+			+ " WHERE w.summaryPk.country=?1 AND w.summaryPk.region=?2 AND w.summaryPk.district=?3")
 	List<String[]> findFrontPageRates(String country, String region, String district);
 
 	@Query("SELECT SUM(CASE WHEN (w.mindex = 100) THEN w.wm_values ELSE 0 END) AS totaldeliveries, "// 0

@@ -57,7 +57,7 @@
 					th:if="${national} or ${regional} or ${district}"></a>
 			</div>
 			<div class="float-end mb-1" th:unless="${activated}" sec:authorize="hasRole('NATIONAL')"
-				th:if="${national}">
+				th:if="${national} or ${national_regional}">
 				<a class="btn btn-sm btn-outline-primary" th:classappend="${page}?'':'active'" href="#"
 					th:href="@{/national}" th:text="#{button.summary}"> </a>
 				<a class="btn btn-sm btn-outline-primary" th:classappend="${page}?'active':''" href="#"
@@ -80,7 +80,8 @@
 		</div>
 	</div>
 	<div th:if="${page}">
-		<div th:if="${national}" th:insert="fragments/home-national"></div>
+		<div th:if="${national_level}" th:insert="fragments/home-national"></div>
+		<div th:if="${national_regional}" th:insert="fragments/home-national-regional"></div>
 		<div th:if="${regional}" th:insert="fragments/home-regional"></div>
 		<div th:if="${district}" th:insert="fragments/home-district"></div>
 	</div>

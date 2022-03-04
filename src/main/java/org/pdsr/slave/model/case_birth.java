@@ -48,7 +48,7 @@ public class case_birth implements Serializable {
 	private Integer birth_insistnormal;
 
 	@Column
-	@Temporal(TemporalType.TIME)
+	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private java.util.Date birth_csproposedate;
 	

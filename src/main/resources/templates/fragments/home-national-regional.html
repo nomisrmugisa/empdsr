@@ -1,0 +1,224 @@
+<div class="row mb-3" th:unless="${activated}">
+	<div class="col-md-12 mb-3">
+		<div class="row bg-light rounded mb-3 py-1 mx-auto border">
+			<small class="col-md-3">
+				<span class="badge bg-info text-dark">[[#{th.isbr}]]</span>
+				[[#{label.isbr}]]&nbsp;&nbsp;
+			</small>
+			<small class="col-md-3">
+				<span class="badge bg-info text-dark">[[#{th.iisbr}]]</span>
+				[[#{label.iisbr}]]&nbsp;&nbsp;
+			</small>
+			<small class="col-md-3">
+				<span class="badge bg-info text-dark">[[#{th.aisbr}]]</span>
+				[[#{label.aisbr}]]&nbsp;&nbsp;
+			</small>
+			<small class="col-md-3">
+				<span class="badge bg-info text-dark">[[#{th.piisbr}]]</span>
+				[[#{label.piisbr}]]&nbsp;&nbsp;
+			</small>
+			<small class="col-md-3">
+				<span class="badge bg-info text-dark">[[#{th.einmr}]]</span>
+				[[#{label.einmr}]]&nbsp;&nbsp;
+			</small>
+			<small class="col-md-3">
+				<span class="badge bg-info text-dark">[[#{th.ipmr}]]</span>
+				[[#{label.ipmr}]]&nbsp;&nbsp;
+			</small>
+			<small class="col-md-3">
+				<span class="badge bg-info text-dark">[[#{th.inmr}]]</span>
+				[[#{label.inmr}]]&nbsp;&nbsp;
+			</small>
+			<small class="col-md-3">
+				<span class="badge bg-info text-dark">[[#{th.immr}]]</span>
+				[[#{label.immr}]]&nbsp;&nbsp;
+			</small>
+			<small class="col-md-3">
+				<span class="badge bg-info text-dark">[[#{th.icsr}]]</span>
+				[[#{label.icsr}]]&nbsp;&nbsp;
+			</small>
+			<small class="col-md-3">
+				<span class="badge bg-info text-dark">[[#{th.iadr}]]</span>
+				[[#{label.iadr}]]&nbsp;&nbsp;
+			</small>
+			<small class="col-md-3">
+				<span class="badge bg-info text-dark">[[#{th.ilbwr}]]</span>
+				[[#{label.ilbwr}]]&nbsp;&nbsp;
+			</small>
+			<small class="col-md-3">
+				<span class="badge bg-info text-dark">[[#{th.iptbr}]]</span>
+				[[#{label.iptbr}]]&nbsp;&nbsp;
+			</small>
+			<small class="col-md-3">
+				<span class="badge bg-info text-dark">[[#{th.ndrwk1}]]</span>
+				[[#{label.ndrwk1}]]&nbsp;&nbsp;
+			</small>
+			<small class="col-md-3">
+				<span class="badge bg-info text-dark">[[#{th.tmd}]]</span>
+				[[#{label.tmd}]]&nbsp;&nbsp;
+			</small>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="card text-white" style="background-color: rgb(49, 92, 128);">
+					<div class="card-header border-bottom">
+						<form action="#" th:action="@{/national/search/{region}(region=${national_regional})}" th:object="${selected}" method="POST"
+							class="needs-validation small" novalidate>
+							<div class="row rounded">
+								<div class="col-md-3">
+									<h4>[[${region_name}]]</h4>
+									<small>[[${country_name}]]</small >
+								</div>
+								<div class="col-md-3 mb-1">
+									<div class="row">
+										<label class="col-auto col-form-label fw-bold"
+											th:text="#{search.start}"></label>
+										<div class="col-md-8">
+											<div class="row">
+												<div class="col-md-6">
+													<select class="form-control form-control-sm"
+														th:field="*{wm_startyear}" required>
+														<option th:each="option : ${wmyear_options}"
+															th:value="${option.key}" th:text="${option.value}">
+														</option>
+													</select>
+												</div>
+												<div class="col-md-6">
+													<select class="form-control form-control-sm"
+														th:field="*{wm_startmonth}" required>
+														<option th:each="option : ${wmmonth_options}"
+															th:value="${option.key}" th:text="${option.value}">
+														</option>
+													</select>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-3 mb-1">
+									<div class="row">
+										<label class="col-auto col-form-label fw-bold" th:text="#{search.end}"></label>
+										<div class="col-md-8">
+											<div class="row">
+												<div class="col-md-6">
+													<select class="form-control form-control-sm"
+														th:field="*{wm_endyear}" required>
+														<option th:each="option : ${wmyear_options}"
+															th:value="${option.key}" th:text="${option.value}">
+														</option>
+													</select>
+												</div>
+												<div class="col-md-6">
+													<select class="form-control form-control-sm"
+														th:field="*{wm_endmonth}" required>
+														<option th:each="option : ${wmmonth_options}"
+															th:value="${option.key}" th:text="${option.value}">
+														</option>
+													</select>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-auto d-grid gap-2">
+									<div class="">
+										<div class="btn-group">
+											<button class="btn btn-primary" type="submit"
+												th:utext="#{search.button}"></button>
+										</div>
+										<div class="btn-group">
+											<a class="btn btn-secondary" href="#" th:href="@{/regional/search}"
+												th:utext="#{clear.button}"></a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="card-body">
+						<table class="table table-sm table-responsive text-end text-white" th:unless="${#lists.isEmpty(items)}">
+							<thead class="small">
+								<tr>
+									<th style="width: 20%;" th:text="#{label.level}"></th>
+									<th th:text="#{th.isbr}">SBR</th>
+									<th th:text="#{th.iisbr}">I.SBR</th>
+									<th th:text="#{th.aisbr}">A.SBR</th>
+									<th th:text="#{th.piisbr}">I.SBR(%)</th>
+									<th th:text="#{th.einmr}">iENMR</th>
+									<th th:text="#{th.ipmr}">iPMR</th>
+									<th th:text="#{th.inmr}">iNMR</th>
+									<th th:text="#{th.immr}">iMMR</th>
+									<th th:text="#{th.icsr}">CSR</th>
+									<th th:text="#{th.iadr}">ADR</th>
+									<th th:text="#{th.ilbwr}">iLBWR</th>
+									<th th:text="#{th.iptbr}">iPTBR</th>
+									<th th:text="#{th.ndrwk1}">NDRwk1</th>
+									<th th:text="#{th.tmd}">TMD</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="item : ${items}">
+									<td>[[${item.wmdesc}]]</td>
+									<td>[[${#numbers.formatDecimal(item.isbr, 1, 'COMMA', 1, 'POINT')}]]</td>
+									<td>[[${#numbers.formatDecimal(item.iisbr, 1, 'COMMA', 1, 'POINT')}]]</td>
+									<td>[[${#numbers.formatDecimal(item.aisbr, 1, 'COMMA', 1, 'POINT')}]]</td>
+									<td>[[${#numbers.formatDecimal(item.piisbr, 1, 'COMMA', 1, 'POINT')}]]%</td>
+									<td>[[${#numbers.formatDecimal(item.einmr, 1, 'COMMA', 1, 'POINT')}]]</td>
+									<td>[[${#numbers.formatDecimal(item.ipmr, 1, 'COMMA', 1, 'POINT')}]]</td>
+									<td>[[${#numbers.formatDecimal(item.inmr, 1, 'COMMA', 1, 'POINT')}]]</td>
+									<td>[[${#numbers.formatDecimal(item.immr, 1, 'COMMA', 1, 'POINT')}]]</td>
+									<td>[[${#numbers.formatDecimal(item.icsr, 1, 'COMMA', 1, 'POINT')}]]%</td>
+									<td>[[${#numbers.formatDecimal(item.iadr, 1, 'COMMA', 1, 'POINT')}]]%</td>
+									<td>[[${#numbers.formatDecimal(item.ilbwr, 1, 'COMMA', 1, 'POINT')}]]%</td>
+									<td>[[${#numbers.formatDecimal(item.iptbr, 1, 'COMMA', 1, 'POINT')}]]%</td>
+									<td>[[${#numbers.formatDecimal(item.indwk1, 1, 'COMMA', 1, 'POINT')}]]%</td>
+									<td>[[${#numbers.formatDecimal(item.mdeath, 1, 'COMMA', 0, 'POINT')}]]*</td>
+								</tr>
+								<tr>
+									<th class="small">[[${oavg.wmdesc}]]</th>
+									<th>[[${#numbers.formatDecimal(oavg.isbr_oavg, 1, 'COMMA', 1, 'POINT')}]]</th>
+									<th>[[${#numbers.formatDecimal(oavg.iisbr_oavg, 1, 'COMMA', 1, 'POINT')}]]</th>
+									<th>[[${#numbers.formatDecimal(oavg.aisbr_oavg, 1, 'COMMA', 1, 'POINT')}]]</th>
+									<th>[[${#numbers.formatDecimal(oavg.piisbr_oavg, 1, 'COMMA', 1, 'POINT')}]]%</th>
+									<th>[[${#numbers.formatDecimal(oavg.einmr_oavg, 1, 'COMMA', 1, 'POINT')}]]</th>
+									<th>[[${#numbers.formatDecimal(oavg.ipmr_oavg, 1, 'COMMA', 1, 'POINT')}]]</th>
+									<th>[[${#numbers.formatDecimal(oavg.inmr_oavg, 1, 'COMMA', 1, 'POINT')}]]</th>
+									<th>[[${#numbers.formatDecimal(oavg.immr_oavg, 1, 'COMMA', 1, 'POINT')}]]</th>
+									<th>[[${#numbers.formatDecimal(oavg.icsr_oavg, 1, 'COMMA', 1, 'POINT')}]]%</th>
+									<th>[[${#numbers.formatDecimal(oavg.iadr_oavg, 1, 'COMMA', 1, 'POINT')}]]%</th>
+									<th>[[${#numbers.formatDecimal(oavg.ilbwr_oavg, 1, 'COMMA', 1, 'POINT')}]]%</th>
+									<th>[[${#numbers.formatDecimal(oavg.iptbr_oavg, 1, 'COMMA', 1, 'POINT')}]]%</th>
+									<th>[[${#numbers.formatDecimal(oavg.indwk1_oavg, 1, 'COMMA', 1, 'POINT')}]]%</th>
+									<th>[[${#numbers.formatDecimal(oavg.mdeath_osum, 1, 'COMMA', 0, 'POINT')}]]*</th>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<scripts>
+	<script>
+		(function () {
+			'use strict';
+			window.addEventListener('load', function () {
+				// Fetch all the forms we want to apply custom Bootstrap validation styles to
+				var forms = document.getElementsByClassName('needs-validation');
+
+				// Loop over them and prevent submission
+				var validation = Array.prototype.filter.call(forms, function (form) {
+					form.addEventListener('submit', function (event) {
+						if (form.checkValidity() === false) {
+							event.preventDefault();
+							event.stopPropagation();
+						}
+						form.classList.add('was-validated');
+
+					}, false);
+				});
+			}, false);
+		})();
+	</script>
+</scripts>

@@ -157,7 +157,7 @@
 							</thead>
 							<tbody>
 								<tr th:each="item : ${items}">
-									<td>[[${item.wmdesc}]]</td>
+									<td><a th:href="@{/national/search/{region}(region=${item.wmdesc})}">[[${item.wmdesc}]]</a ></td>
 									<td>[[${#numbers.formatDecimal(item.isbr, 1, 'COMMA', 1, 'POINT')}]]</td>
 									<td>[[${#numbers.formatDecimal(item.iisbr, 1, 'COMMA', 1, 'POINT')}]]</td>
 									<td>[[${#numbers.formatDecimal(item.aisbr, 1, 'COMMA', 1, 'POINT')}]]</td>

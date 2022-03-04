@@ -14,6 +14,7 @@ import java.util.UUID;
 import javax.transaction.Transactional;
 
 import org.pdsr.CONSTANTS;
+import org.pdsr.InternetAvailabilityChecker;
 import org.pdsr.ServiceApi;
 import org.pdsr.json.DecryptedAuditAudit;
 import org.pdsr.json.DecryptedAuditRecommendation;
@@ -489,6 +490,26 @@ public class SetupController {
 	public String datamerge(Principal principal, @ModelAttribute("selected") datamerger selected) {
 
 		// merge location data from slave to master (overrides if exists)
+		if (icdRepo.count() == 0) {
+			try {
+				List<icd_codes> icds = loadICD();
+				icdRepo.saveAll(icds);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		if (icddRepo.count() == 0) {
+			try {
+				List<icd_diagnoses> icdds = loadICDD();
+				icddRepo.saveAll(icdds);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		}
+
 		if (selected.isMerge_location()) {
 			mergeCountry();
 			mergeRegion();
@@ -521,7 +542,11 @@ public class SetupController {
 			@RequestParam(name = "success", required = false) String success) {
 
 		if (success != null) {
-			model.addAttribute("success", "Transmitted Successfully!");
+			if ("1".equals(success)) {
+				model.addAttribute("success", "Transmitted Successfully!");
+			} else if ("0".equals(success)) {
+				model.addAttribute("success", "No internet connection detected!");
+			}
 		}
 
 		return "controls/merger-central";
@@ -531,21 +556,30 @@ public class SetupController {
 	@PostMapping("/centralmerge")
 	public String centralmerge(Principal principal) {
 
-		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		try {
+			if (InternetAvailabilityChecker.isInternetAvailable()) {
+				sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
 
-		facility_table facility = facilityRepo.findByFacility_code(sync.getSync_code()).get();
+				facility_table facility = facilityRepo.findByFacility_code(sync.getSync_code()).get();
 
-		final String country = facility.getDistrict().getRegion().getCountry().getCountry_name();
-		final String region = facility.getDistrict().getRegion().getRegion_name();
-		final String district = facility.getDistrict().getDistrict_name();
-		final String code = facility.getFacility_code();
+				final String country = facility.getDistrict().getRegion().getCountry().getCountry_name();
+				final String region = facility.getDistrict().getRegion().getRegion_name();
+				final String district = facility.getDistrict().getDistrict_name();
+				final String code = facility.getFacility_code();
 
-		pushCaseData(code, district, region, country);
-		pushAuditData(code, district, region, country);
-		pushRecommendationData(code, district, region, country);
-		pushMonitoringData(code, district, region, country);
+				pushCaseData(code, district, region, country);
+				pushAuditData(code, district, region, country);
+				pushRecommendationData(code, district, region, country);
+				pushMonitoringData(code, district, region, country);
 
-		return "redirect:/controls/centralmerge?success=yes";
+				return "redirect:/controls/centralmerge?success=1";
+			} else {
+				return "redirect:/controls/centralmerge?success=0";
+
+			}
+		} catch (IOException e) {
+			return "redirect:/controls/centralmerge?failure=1";
+		}
 	}
 
 	@GetMapping("/downloadmerge")
@@ -553,7 +587,11 @@ public class SetupController {
 			@RequestParam(name = "success", required = false) String success) {
 
 		if (success != null) {
-			model.addAttribute("success", "Transmitted Successfully!");
+			if ("1".equals(success)) {
+				model.addAttribute("success", "Downloaded Successfully!");
+			} else if ("0".equals(success)) {
+				model.addAttribute("success", "No internet connection detected!");
+			}
 		}
 
 		return "controls/merger-download";
@@ -562,13 +600,23 @@ public class SetupController {
 	@Transactional
 	@PostMapping("/downloadmerge")
 	public String downloadmerge(Principal principal) {
+		try {
+			if (InternetAvailabilityChecker.isInternetAvailable()) {
 
-		pullCaseData();
-		pullAuditData();
-		pullRecommendationData();
-		pullMonitoringData();
+				pullCaseData();
+				pullAuditData();
+				pullRecommendationData();
+				pullMonitoringData();
 
-		return "redirect:/controls/downloadmerge?success=yes";
+				return "redirect:/controls/downloadmerge?success=1";
+			} else {
+				return "redirect:/controls/downloadmerge?success=0";
+
+			}
+		} catch (IOException e) {
+			return "redirect:/controls/downloadmerge?failure=1";
+		}
+
 	}
 
 	private void mergeCountry() {
@@ -1010,7 +1058,6 @@ public class SetupController {
 					mcase.setCordfaults(list1);
 					mcase.setNew_cordfaults(s.getNew_cordfaults());
 
-					
 					mcase.setBirth_csproposedate(s.getBirth_csproposedate());
 					mcase.setBirth_csproposehour(s.getBirth_csproposehour());
 					mcase.setBirth_csproposeminute(s.getBirth_csproposeminute());
@@ -1244,7 +1291,8 @@ public class SetupController {
 					mcase.setPatient_factors(list1);
 
 					List<cfactor_table> list2 = new ArrayList<cfactor_table>();
-					for (org.pdsr.slave.model.cfactor_table r : saaudRepo.findTransportFactorsByUuid(s.getAudit_uuid())) {
+					for (org.pdsr.slave.model.cfactor_table r : saaudRepo
+							.findTransportFactorsByUuid(s.getAudit_uuid())) {
 						cfactor_table item = new cfactor_table();
 						item.setId(r.getId());
 						item.setIdgroup(r.getIdgroup());
@@ -1254,7 +1302,8 @@ public class SetupController {
 					mcase.setTransport_factors(list2);
 
 					List<cfactor_table> list3 = new ArrayList<cfactor_table>();
-					for (org.pdsr.slave.model.cfactor_table r : saaudRepo.findAdministrativeFactorsByUuid(s.getAudit_uuid())) {
+					for (org.pdsr.slave.model.cfactor_table r : saaudRepo
+							.findAdministrativeFactorsByUuid(s.getAudit_uuid())) {
 						cfactor_table item = new cfactor_table();
 						item.setId(r.getId());
 						item.setIdgroup(r.getIdgroup());
@@ -1264,7 +1313,8 @@ public class SetupController {
 					mcase.setAdministrative_factors(list3);
 
 					List<cfactor_table> list4 = new ArrayList<cfactor_table>();
-					for (org.pdsr.slave.model.cfactor_table r : saaudRepo.findHealthworkerFactorsByUuid(s.getAudit_uuid())) {
+					for (org.pdsr.slave.model.cfactor_table r : saaudRepo
+							.findHealthworkerFactorsByUuid(s.getAudit_uuid())) {
 						cfactor_table item = new cfactor_table();
 						item.setId(r.getId());
 						item.setIdgroup(r.getIdgroup());
@@ -1274,7 +1324,8 @@ public class SetupController {
 					mcase.setHealthworker_factors(list4);
 
 					List<cfactor_table> list5 = new ArrayList<cfactor_table>();
-					for (org.pdsr.slave.model.cfactor_table r : saaudRepo.findDocumentFactorsByUuid(s.getAudit_uuid())) {
+					for (org.pdsr.slave.model.cfactor_table r : saaudRepo
+							.findDocumentFactorsByUuid(s.getAudit_uuid())) {
 						cfactor_table item = new cfactor_table();
 						item.setId(r.getId());
 						item.setIdgroup(r.getIdgroup());
@@ -1283,7 +1334,6 @@ public class SetupController {
 					}
 					mcase.setDocument_factors(list5);
 
-					
 					mcase.setData_sent(s.getData_sent());
 
 					mcase.setAudit_json(s.getAudit_json());

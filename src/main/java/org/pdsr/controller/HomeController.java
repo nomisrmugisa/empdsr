@@ -32,6 +32,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -156,9 +157,10 @@ public class HomeController {
 
 		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
+		model.addAttribute("country_name", facility.getDistrict().getRegion().getCountry().getCountry_name());
 		model.addAttribute("regional", "active");
 		model.addAttribute("page", "active");
-		model.addAttribute("country_name", facility.getDistrict().getRegion().getRegion_name());
+		model.addAttribute("region_name", facility.getDistrict().getRegion().getRegion_name());
 		model.addAttribute("selected", new wmsearch());
 		model.addAttribute("oavg", new wmoindicators());
 		return "home";
@@ -173,7 +175,7 @@ public class HomeController {
 
 		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
-		regionalIndicators(model, search, facility);
+		regionalIndicators(model, search, facility, null);
 
 		return "home";
 	}
@@ -202,6 +204,7 @@ public class HomeController {
 		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		model.addAttribute("national", "active");
+		model.addAttribute("national_level", facility.getDistrict().getRegion().getCountry().getCountry_name());
 		model.addAttribute("page", "active");
 		model.addAttribute("country_name", facility.getDistrict().getRegion().getCountry().getCountry_name());
 		model.addAttribute("selected", new wmsearch());
@@ -220,6 +223,41 @@ public class HomeController {
 		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		nationalIndicators(model, search, facility);
+
+		return "home";
+	}
+
+	@GetMapping("/national/search/{region}")
+	public String nationalSearch(Principal principal, Model model, @PathVariable("region") String region_name) {
+		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+			model.addAttribute("activated", "0");
+			return "home";
+		}
+
+		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
+		model.addAttribute("national", "active");
+		model.addAttribute("national_regional", region_name);
+		model.addAttribute("country_name", facility.getDistrict().getRegion().getCountry().getCountry_name());
+		model.addAttribute("page", "active");
+		model.addAttribute("region_name", region_name);
+		model.addAttribute("selected", new wmsearch());
+		model.addAttribute("oavg", new wmoindicators());
+
+		return "home";
+	}
+
+	@PostMapping("/national/search/{region}")
+	public String nationalSearch(Principal principal, Model model, @PathVariable("region") String region_name,
+			@ModelAttribute("selected") wmsearch search) {
+		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+			model.addAttribute("activated", "0");
+			return "home";
+		}
+
+		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
+		regionalIndicators(model, search, facility, region_name);
 
 		return "home";
 	}
@@ -618,6 +656,9 @@ public class HomeController {
 										DISTRICT_NAME));
 
 		// SUMMARY STATISTICS
+		System.out.println(bwmRepo.findFrontPageRates(COUNTRY_NAME, REGION_NAME, DISTRICT_NAME).size());
+		
+		
 		final String[] adata = bwmRepo.findFrontPageRates(COUNTRY_NAME, REGION_NAME, DISTRICT_NAME).get(0);
 
 		Integer totaldeliveries = (adata[0] == null) ? 0 : Integer.valueOf(adata[0]),
@@ -1535,6 +1576,7 @@ public class HomeController {
 		final String COUNTRY_NAME = facility.getDistrict().getRegion().getCountry().getCountry_name();
 
 		model.addAttribute("national", "active");
+		model.addAttribute("national_level", COUNTRY_NAME);
 		model.addAttribute("page", "active");
 		model.addAttribute("country_name", COUNTRY_NAME);
 
@@ -1735,13 +1777,18 @@ public class HomeController {
 
 	}
 
-	private void regionalIndicators(Model model, wmsearch search, facility_table facility) {
+	private void regionalIndicators(Model model, wmsearch search, facility_table facility, String region_name) {
 
 		final String COUNTRY_NAME = facility.getDistrict().getRegion().getCountry().getCountry_name();
-		final String REGION_NAME = facility.getDistrict().getRegion().getRegion_name();
+		final String REGION_NAME = (region_name != null) ? region_name
+				: facility.getDistrict().getRegion().getRegion_name();
 
-		model.addAttribute("regional", "active");
+		model.addAttribute((region_name != null) ? "national" : "regional", "active");
+		if (region_name != null) {
+			model.addAttribute("national_regional", region_name);
+		}
 		model.addAttribute("page", "active");
+		model.addAttribute("country_name", COUNTRY_NAME);
 		model.addAttribute("region_name", REGION_NAME);
 
 		Integer startYM = ((search.getWm_startyear() % 2000) * 12) + search.getWm_startmonth();

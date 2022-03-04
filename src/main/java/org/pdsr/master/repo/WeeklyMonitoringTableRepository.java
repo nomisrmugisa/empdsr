@@ -42,7 +42,8 @@ public interface WeeklyMonitoringTableRepository extends JpaRepository<weekly_mo
 			+ "ORDER BY w.wm_grids.weekly_year, w.wm_grids.weekly_month")
 	List<String[]> findAllRates(Integer startyearmonth, Integer endyearmonth);
 
-	@Query("SELECT " + "SUM(CASE WHEN (w.wm_indices.mindex = 100) THEN w.wm_values ELSE 0 END) AS totaldeliveries, "// 3
+	@Query("SELECT " 
+			+ "SUM(CASE WHEN (w.wm_indices.mindex = 100) THEN w.wm_values ELSE 0 END) AS totaldeliveries, "// 3
 			+ "SUM(CASE WHEN (w.wm_indices.mindex = 101) THEN w.wm_values ELSE 0 END) AS totaldelvaginal, "// 4
 			+ "SUM(CASE WHEN (w.wm_indices.mindex = 102) THEN w.wm_values ELSE 0 END) AS totaldelassisted, "// 5
 			+ "SUM(CASE WHEN (w.wm_indices.mindex = 103) THEN w.wm_values ELSE 0 END) AS totaldelcaesarean, "// 6
