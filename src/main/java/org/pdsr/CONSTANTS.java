@@ -9,15 +9,9 @@ import java.nio.file.attribute.FileAttribute;
 
 public class CONSTANTS {
 
-    // public static final String ROOT_LOCATION = (new StringBuilder()).append(isWindows() ? "classpath:/" : "/")
-    //         .append("memo/attachments").toString();
 	public static final String FACILITY_ID="PDRS";
     public static final String ROOT_LOCATION ="attachments";
-    public static final String ROOT_ADMIN = "webadmin@kintampo-hrc.org";
-    public static final String IMAGE_LOGO = "/home/ubuntu/jdesk/KHRCLOGO1.jfif";
     
-    public static final String[] CASE_STAGE = {"Case Entry","Case Auditing","Process Complete"};
-
     public static final void writeToDisk(final String USER, final String MEMO, String filename, byte bytes[])
             throws IOException {
         Path path = Paths.get(ROOT_LOCATION, new String[0]).resolve(USER).resolve(MEMO).resolve(filename);

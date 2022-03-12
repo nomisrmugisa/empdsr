@@ -426,7 +426,6 @@ public class CaseAuditController {
 			int stillCount = Utils.PRIORITY_MATRIX[auditweek][0];
 			
 			int totalStill = algorithm.getAlg_stillbirth() == null ? 0 : algorithm.getAlg_stillbirth();
-			System.out.println("Still"+totalStill);
 
 			for (int counter = totalStill; counter < stillCount; counter++) {
 

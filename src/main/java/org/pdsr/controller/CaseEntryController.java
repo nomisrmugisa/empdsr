@@ -3,7 +3,6 @@ package org.pdsr.controller;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.Principal;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -894,7 +893,6 @@ public class CaseEntryController {
 						final Integer seenHour = existing.getLabour().getLabour_seehour();
 						final Integer seenMins = existing.getLabour().getLabour_seeminute();
 
-						DecimalFormat f = new DecimalFormat("00");
 						if ((seenHour + seenMins) <= (arrivalHour + arrivalMins)) {
 							results.rejectValue("referral.referral_atime", "error.time.seen.before.arrival");
 						}
@@ -927,7 +925,6 @@ public class CaseEntryController {
 					final Integer seenHour = selected.getLabour().getLabour_seehour();
 					final Integer seenMins = selected.getLabour().getLabour_seeminute();
 
-					DecimalFormat f = new DecimalFormat("00");
 					if ((seenHour + seenMins) <= (arrivalHour + arrivalMins)) {
 						results.rejectValue("labour.labour_seetime", "error.time.seen.before.arrival");
 					}
@@ -959,7 +956,6 @@ public class CaseEntryController {
 					final Integer deliveryHour = selected.getDelivery().getDelivery_hour();
 					final Integer deliveryMins = selected.getDelivery().getDelivery_minute();
 
-					DecimalFormat f = new DecimalFormat("00");
 					if ((deliveryHour + deliveryMins) <= (csdecisionHour + csdecisionMins)) {
 						results.rejectValue("delivery.delivery_time", "error.time.delivery.before.csdecision");
 					}
@@ -985,7 +981,6 @@ public class CaseEntryController {
 					final Integer deathHour = existing.getBabydeath().getBaby_dhour();
 					final Integer deathMins = existing.getBabydeath().getBaby_dminute();
 
-					DecimalFormat f = new DecimalFormat("00");
 					if ((deathHour + deathMins) <= (deliveryHour + deliveryMins)) {
 						results.rejectValue("delivery.delivery_time", "error.time.death.before.delivery");
 					}
@@ -1017,7 +1012,6 @@ public class CaseEntryController {
 					final Integer deliveryHour = existing.getDelivery().getDelivery_hour();
 					final Integer deliveryMins = existing.getDelivery().getDelivery_minute();
 
-					DecimalFormat f = new DecimalFormat("00");
 					if ((deliveryHour + deliveryMins) < (csdecisionHour + csdecisionMins)) {
 						results.rejectValue("birth.birth_csproposetime", "error.time.delivery.before.csdecision");
 					}
@@ -1049,7 +1043,6 @@ public class CaseEntryController {
 					final Integer deathHour = selected.getBabydeath().getBaby_dhour();
 					final Integer deathMins = selected.getBabydeath().getBaby_dminute();
 
-					DecimalFormat f = new DecimalFormat("00");
 					if ((deathHour + deathMins) <= (deliveryHour + deliveryMins)) {
 						results.rejectValue("babydeath.baby_dtime", "error.time.death.before.delivery");
 					}
@@ -1629,7 +1622,7 @@ public class CaseEntryController {
 				.of(new json_data(getQuestion("label.birth_mode"), getAnswer("mode_options", o.getBirth_mode()), true),
 						new json_data(getQuestion("label.birth_insistnormal"),
 								getAnswer("yesnodkna_options", o.getBirth_insistnormal()), true),
-						new json_data(getQuestion("label.birth_csproposetime"),
+						new json_data(getQuestion("label.birth_csproposedatetime"),
 								new SimpleDateFormat("HH:mm a").format(o.getBirth_csproposetime()), forcenormal),
 						new json_data(getQuestion("label.birth_provider"),
 								getAnswer("provider_options", o.getBirth_provider()), true),

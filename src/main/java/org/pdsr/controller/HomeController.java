@@ -656,7 +656,7 @@ public class HomeController {
 										DISTRICT_NAME));
 
 		// SUMMARY STATISTICS
-		System.out.println(bwmRepo.findFrontPageRates(COUNTRY_NAME, REGION_NAME, DISTRICT_NAME).size());
+//		System.out.println(bwmRepo.findFrontPageRates(COUNTRY_NAME, REGION_NAME, DISTRICT_NAME).size());
 		
 		
 		final String[] adata = bwmRepo.findFrontPageRates(COUNTRY_NAME, REGION_NAME, DISTRICT_NAME).get(0);

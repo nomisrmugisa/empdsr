@@ -107,6 +107,57 @@
 	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Asphyxia (Hypoxic Ischaemic Encephalopathy, HIE)','none');
 	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Big baby (Macrosomia)','Infection');
 	
+    MERGE INTO mcgroup_table KEY(icdmgroup,icdmgroup_name) values('M1','Complications of placenta, cord and membranes');
+    MERGE INTO mcgroup_table KEY(icdmgroup,icdmgroup_name) values('M2','Maternal complications of pregnancy');
+    MERGE INTO mcgroup_table KEY(icdmgroup,icdmgroup_name) values('M3','Other complications of labour and delivery');
+    MERGE INTO mcgroup_table KEY(icdmgroup,icdmgroup_name) values('M4','Maternal medical and surgical conditions');
+    MERGE INTO mcgroup_table KEY(icdmgroup,icdmgroup_name) values('M5','No maternal condition');
+
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M1.1','M1','placenta praevia');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M1.2','M1','other forms of placental separation and haemorrhage');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M1.3','M1','placental dysfunction, infarction, insufficiency');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M1.4','M1','fetal-placental transfusion syndromes');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M1.5','M1','prolapsed cord, other compression of umbilical cord');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M1.6','M1','chorioamnionitis');
+	MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M1.7','M1','other complications of membranes');
+	
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M2.1','M2','incompetent cervix');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M2.2','M2','preterm rupture of membranes');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M2.3','M2','oligohydramnios/polyhydramnios');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M2.4','M2','ectopic pregnancy');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M2.5','M2','multiple pregnancy');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M2.6','M2','maternal death');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M2.7','M2','malpresentation before labour');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M2.8','M2','other complications of pregnancy');
+	
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M3.1','M3','breech delivery and extraction');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M3.2','M3','other malpresentation, malposition and disproportion during labour and delivery');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M3.3','M3','forceps delivery/vacuum extraction');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M3.4','M3','caesarean delivery');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M3.5','M3','precipitate delivery');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M3.6','M3','preterm labour and delivery');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M3.7','M3','other complications of labour and delivery, including');
+	
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M4.1','M4','pre-eclampsia, eclampsia');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M4.2','M4','gestational hypertension');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M4.3','M4','other hypertensive disorders');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M4.4','M4','renal and urinary tract diseases');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M4.5','M4','infectious and parasitic disease');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M4.6','M4','circulatory and respiratory disease');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M4.7','M4','nutritional disorders');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M4.8','M4','injury');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M4.9','M4','surgical procedure');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M4.10','M4','other medical procedures');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M4.11','M4','maternal diabetes, including gestational diabetes');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M4.12','M4','maternal anaesthesia and analgesia');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M4.13','M4','maternal medication');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M4.14','M4','tobacco/alcohol/drugs of addiction');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M4.15','M4','nutritional chemical substances');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M4.16','M4','environmental chemical substances');
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M4.17','M4','unspecified maternal condition');
+
+    MERGE INTO mcondition_table KEY(icdm,icdmgroup,icdm_name) values('M5.1','M5','no maternal condition identified (healthy mother)');
+
 	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(101,100,'Never initiated antenatal care');
 	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(102,100,'Booked late in pregnancy');
 	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(103,100,'Inadequate visits to antenatal clinic (<4 visits by  36/52)');
@@ -314,6 +365,7 @@
     MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pweeks_options',88,'Not Stated');
     MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pweeks_options',99,'Not Applicable');
 
+    MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pdays_options',0,'Days');
     MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pdays_options',1,'Day');
     MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pdays_options',2,'Days');
     MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pdays_options',3,'Days');

@@ -53,7 +53,7 @@ public class audit_audit implements Serializable {
 	@Column
 	@NotNull
 	private String audit_icdpm;
-	
+		
 	@Column
 	private String audit_csc;
 	
