@@ -48,6 +48,7 @@ import org.pdsr.master.model.district_table;
 import org.pdsr.master.model.facility_table;
 import org.pdsr.master.model.icd_codes;
 import org.pdsr.master.model.icd_diagnoses;
+import org.pdsr.master.model.mcondition_table;
 import org.pdsr.master.model.monitoring_table;
 import org.pdsr.master.model.placentacheck_table;
 import org.pdsr.master.model.region_table;
@@ -1333,6 +1334,18 @@ public class SetupController {
 						list5.add(item);
 					}
 					mcase.setDocument_factors(list5);
+
+					List<mcondition_table> list6 = new ArrayList<mcondition_table>();
+					for (org.pdsr.slave.model.mcondition_table r : saaudRepo
+							.findMaternalConditionsByUuid(s.getAudit_uuid())) {
+						mcondition_table item = new mcondition_table();
+						item.setIcdm(r.getIcdm());
+						item.setIcdmgroup(r.getIcdmgroup());
+						item.setIcdm_name(r.getIcdm_name());
+						list6.add(item);
+					}
+					mcase.setMaternal_conditions(list6);
+					
 
 					mcase.setData_sent(s.getData_sent());
 

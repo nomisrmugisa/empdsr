@@ -81,6 +81,11 @@ public class audit_audit implements Serializable {
 	@JoinTable(name = "audit_patient", joinColumns = @JoinColumn(name = "audit_uuid"), inverseJoinColumns = @JoinColumn(name = "id"))
 	private List<cfactor_table> patient_factors;
 
+	@ManyToMany(cascade = CascadeType.PERSIST)
+	@JoinTable(name = "audit_mconditions", joinColumns = @JoinColumn(name = "audit_uuid"), inverseJoinColumns = @JoinColumn(name = "icdm"))
+	private List<mcondition_table> maternal_conditions;
+	
+
 	@Lob
 	@Column
 	private String audit_ifcmfs;
@@ -300,6 +305,14 @@ public class audit_audit implements Serializable {
 
 	public void setDocument_factors(List<cfactor_table> document_factors) {
 		this.document_factors = document_factors;
+	}
+
+	public List<mcondition_table> getMaternal_conditions() {
+		return maternal_conditions;
+	}
+
+	public void setMaternal_conditions(List<mcondition_table> maternal_conditions) {
+		this.maternal_conditions = maternal_conditions;
 	}
 
 	@Override

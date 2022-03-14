@@ -39,6 +39,8 @@ import org.pdsr.master.model.case_identifiers;
 import org.pdsr.master.model.datamap;
 import org.pdsr.master.model.datamapPK;
 import org.pdsr.master.model.icd_codes;
+import org.pdsr.master.model.mcgroup_table;
+import org.pdsr.master.model.mcondition_table;
 import org.pdsr.master.model.sync_table;
 import org.pdsr.master.repo.AuditAuditRepository;
 import org.pdsr.master.repo.AuditCaseRepository;
@@ -47,6 +49,8 @@ import org.pdsr.master.repo.CFactorsRepository;
 import org.pdsr.master.repo.CaseRepository;
 import org.pdsr.master.repo.DatamapRepository;
 import org.pdsr.master.repo.IcdCodesRepository;
+import org.pdsr.master.repo.McgroupRepository;
+import org.pdsr.master.repo.MconditionsRepository;
 import org.pdsr.master.repo.SyncTableRepository;
 import org.pdsr.master.repo.UserTableRepository;
 import org.pdsr.pojos.icdpm;
@@ -100,9 +104,15 @@ public class CaseAuditController {
 
 	@Autowired
 	private MessageSource msg;
-	
+
 	@Autowired
 	private CFactorsRepository cfactRepo;
+
+	@Autowired
+	private MconditionsRepository mcondRepo;
+
+	@Autowired
+	private McgroupRepository mcgrpRepo;
 
 	@Autowired
 	private EmailService emailService;
@@ -324,7 +334,6 @@ public class CaseAuditController {
 					final boolean isyear1 = Calendar.getInstance().get(Calendar.YEAR) == cal.get(Calendar.YEAR);
 					final boolean isweek1 = (Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)
 							- cal.get(Calendar.WEEK_OF_YEAR)) == 1;
-					
 
 					final boolean isyear2 = Calendar.getInstance().get(Calendar.YEAR) - cal.get(Calendar.YEAR) == 1;
 					final boolean isweek2 = cal.get(Calendar.WEEK_OF_YEAR)
@@ -424,7 +433,7 @@ public class CaseAuditController {
 			/// still birth
 			// get the number of neonatal audits to be done for that week
 			int stillCount = Utils.PRIORITY_MATRIX[auditweek][0];
-			
+
 			int totalStill = algorithm.getAlg_stillbirth() == null ? 0 : algorithm.getAlg_stillbirth();
 
 			for (int counter = totalStill; counter < stillCount; counter++) {
@@ -448,7 +457,6 @@ public class CaseAuditController {
 					final boolean isweek1 = (Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)
 							- cal.get(Calendar.WEEK_OF_YEAR)) == 1;
 
-					
 					final boolean isyear2 = Calendar.getInstance().get(Calendar.YEAR) - cal.get(Calendar.YEAR) == 1;
 					final boolean isweek2 = cal.get(Calendar.WEEK_OF_YEAR)
 							- (Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)) == 51;
@@ -579,7 +587,8 @@ public class CaseAuditController {
 
 	@GetMapping("/edit/{id}")
 	public String submit(Principal principal, Model model, @PathVariable("id") String case_uuid,
-			@RequestParam(name = "success", required = false) String success) {
+			@RequestParam(name = "success", required = false) String success,
+			@RequestParam(name = "error", required = false) String error) {
 
 		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
 			model.addAttribute("activated", "0");
@@ -588,6 +597,8 @@ public class CaseAuditController {
 
 		if (success != null) {
 			model.addAttribute("success", "Saved Successfully");
+		} else if (error != null) {
+			model.addAttribute("error", "No maternal condition has been selected from the (2.M.Cond) section");
 		}
 		// load the ICD 10 codes
 
@@ -665,16 +676,25 @@ public class CaseAuditController {
 		model.addAttribute("factor_administrative", cfactRepo.findByIdgroup(300));
 		model.addAttribute("factor_healthworker", cfactRepo.findByIdgroup(400));
 		model.addAttribute("factor_document", cfactRepo.findByIdgroup(500));
-		
+
+		Map<mcgroup_table, List<mcondition_table>> map = new LinkedHashMap<>();
+		map.put(mcgrpRepo.findById("M1").get(), mcondRepo.findByIcdmgroup("M1"));
+		map.put(mcgrpRepo.findById("M2").get(), mcondRepo.findByIcdmgroup("M2"));
+		map.put(mcgrpRepo.findById("M3").get(), mcondRepo.findByIcdmgroup("M3"));
+		map.put(mcgrpRepo.findById("M4").get(), mcondRepo.findByIcdmgroup("M4"));
+		map.put(mcgrpRepo.findById("M5").get(), mcondRepo.findByIcdmgroup("M5"));
+
+		model.addAttribute("mcond_options", map);
+
 		model.addAttribute("facility_code", caseRepo.findById(case_uuid).get().getFacility().getFacility_code());
 
 		return "auditing/audit-create";
 	}
 
-
 	@PostMapping("/edit/{id}")
 	public String submit(Principal principal, @ModelAttribute("selected") audit_audit selected,
 			@PathVariable("id") String case_uuid) {
+
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 
@@ -692,7 +712,11 @@ public class CaseAuditController {
 			return "auditing/audit-create";
 		}
 
-		return "redirect:/auditing?success=yes";
+		if (selected.getMaternal_conditions() == null || selected.getMaternal_conditions().isEmpty()) {
+			return "redirect:/auditing/edit/" + case_uuid + "?error=yes";
+		}
+
+		return "redirect:/auditing/edit/" + case_uuid + "?success=yes";
 	}
 
 	@GetMapping("/recommend/{id}")
@@ -775,7 +799,7 @@ public class CaseAuditController {
 		selected.setAudit_uuid(audit);
 
 		audit.getRecommendations().add(selected);
-		
+
 		tcaseRepo.save(audit);
 
 		return "redirect:/auditing/recommend/" + case_uuid + "?success=yes";
@@ -1042,15 +1066,15 @@ public class CaseAuditController {
 			ex.printStackTrace();
 		}
 	}
-	
+
 	@GetMapping("/file/referral/{id}")
 	@ResponseBody
 	public void referralFile(@PathVariable("id") String id, HttpServletResponse response) {
 		case_identifiers selected = caseRepo.findById(id).get();
 
 		try {
-			response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
-					(new StringBuilder()).append("inline;filename=\"").append("referral_notes").append("\"").toString());
+			response.setHeader(HttpHeaders.CONTENT_DISPOSITION, (new StringBuilder()).append("inline;filename=\"")
+					.append("referral_notes").append("\"").toString());
 
 			response.setContentType(selected.getReferral().getReferral_filetype());
 
@@ -1060,7 +1084,5 @@ public class CaseAuditController {
 			ex.printStackTrace();
 		}
 	}
-	
-	
-	
+
 }// end class

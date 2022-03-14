@@ -10,7 +10,6 @@ import javax.persistence.Lob;
 
 import org.hibernate.annotations.Immutable;
 
-@Immutable
 @Entity
 public class mcondition_table implements Serializable {
 

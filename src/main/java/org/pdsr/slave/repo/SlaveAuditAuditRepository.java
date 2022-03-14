@@ -2,6 +2,7 @@ package org.pdsr.slave.repo;
 
 import java.util.List;
 
+import org.pdsr.slave.model.mcondition_table;
 import org.pdsr.slave.model.audit_audit;
 import org.pdsr.slave.model.cfactor_table;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +28,9 @@ public interface SlaveAuditAuditRepository extends JpaRepository<audit_audit, St
 
 	@Query("select t.document_factors FROM audit_audit t WHERE t.audit_uuid=?1")
 	List<cfactor_table> findDocumentFactorsByUuid(String uuid);
+
+	@Query("select t.maternal_conditions FROM audit_audit t WHERE t.audit_uuid=?1")
+	List<mcondition_table> findMaternalConditionsByUuid(String uuid);
 
 
 	

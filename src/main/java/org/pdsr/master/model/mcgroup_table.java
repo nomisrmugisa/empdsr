@@ -10,7 +10,6 @@ import javax.persistence.Lob;
 
 import org.hibernate.annotations.Immutable;
 
-@Immutable
 @Entity
 public class mcgroup_table implements Serializable {
 

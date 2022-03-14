@@ -3,6 +3,10 @@
 		[[${success}]]
 		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 	</div>
+	<div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+		[[${error}]]
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
 	<div id="example-basic">
 		<h3>[[#{th.audit.icdpm}]]</h3>
 		<section>
@@ -48,9 +52,23 @@
 				</div>
 			</div>
 		</section>
+		<h3>[[#{th.audit.icdmc}]]</h3>
+		<section class="overflow-auto">
+			<label class="col-md-12 fw-bold text-center" th:utext="#{label.mconditions}"></label>
+			<hr class="mt-0" />
+			<div class="row" th:each="otitle : ${mcond_options}">
+				<div class="fw-bold"><span class="text-success">[[${otitle.key.icdmgroup}]]</span>
+					[[${otitle.key.icdmgroup_name}]]</div>
+				<div class="col-md-12 small" th:each="option : ${otitle.value}">
+					<label class="form-label fw-normal"> <input class="mcond_options" type="checkbox"
+							th:field="*{maternal_conditions}" th:value="${option.icdm}"/>
+						<span class="text-danger">[[${option.icdm}]]</span> [[${option.icdm_name}]]
+					</label>
+				</div>
+			</div>
+		</section>
 		<h3>[[#{th.audit.delays}]]</h3>
 		<section class="overflow-auto">
-
 			<div class="row mb-1 alert alert-warning">
 				<label class="col-md-8 col-form-label fw-bold" th:text="#{label.audit_delay1}"></label>
 				<div class="col-auto">
