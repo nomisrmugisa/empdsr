@@ -49,6 +49,9 @@ public class case_notes implements Serializable {
 	@Transient
 	private MultipartFile file;
 	
+	@Transient
+	private String base64image;
+	
 	@Lob
 	@Column
 	private String notes_json;
@@ -107,6 +110,14 @@ public class case_notes implements Serializable {
 
 	public void setFile(MultipartFile file) {
 		this.file = file;
+	}
+
+	public String getBase64image() {
+		return base64image;
+	}
+
+	public void setBase64image(String base64image) {
+		this.base64image = base64image;
 	}
 
 	@Override

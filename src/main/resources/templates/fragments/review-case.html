@@ -45,27 +45,33 @@
 					<div id="div_pmwarn" class="text-muted small"></div>
 				</div>
 			</div>
-			<div class="row mb-3">
-				<label class="col-form-label" th:text="#{label.audit_csc}"></label>
-				<div class="col-md-11">
-					<input type="text" class="form-control form-control-sm" th:field="*{audit_csc}" />
-				</div>
-			</div>
 		</section>
 		<h3>[[#{th.audit.icdmc}]]</h3>
 		<section class="overflow-auto">
 			<label class="col-md-12 fw-bold text-center" th:utext="#{label.mconditions}"></label>
 			<hr class="mt-0" />
-			<div class="row" th:each="otitle : ${mcond_options}">
-				<div class="fw-bold"><span class="text-success">[[${otitle.key.icdmgroup}]]</span>
-					[[${otitle.key.icdmgroup_name}]]</div>
-				<div class="col-md-12 small" th:each="option : ${otitle.value}">
-					<label class="form-label fw-normal"> <input class="mcond_options" type="checkbox"
-							th:field="*{maternal_conditions}" th:value="${option.icdm}"/>
-						<span class="text-danger">[[${option.icdm}]]</span> [[${option.icdm_name}]]
-					</label>
+			<div class="row mb-3">
+				<label class="col-form-label" th:text="#{label.maternal_condition}"></label>
+				<div class="col-auto">
+					<select id="maternal_condition" class="form-control form-control-sm"
+						th:field="*{maternal_condition}" onchange="changeMCToNA(this)" required>
+						<option th:each="option : ${yesnomc_options}" th:value="${option.key}"
+							th:text="${option.value}"></option>
+					</select>
 				</div>
 			</div>
+			<fieldset id="mc_fieldset">
+				<div class="row" th:each="otitle : ${mcond_options}">
+					<div class="fw-bold"><span class="text-success">[[${otitle.key.icdmgroup}]]</span>
+						[[${otitle.key.icdmgroup_name}]]</div>
+					<div class="col-md-12 small" th:each="option : ${otitle.value}">
+						<label class="form-label fw-normal"> <input class="mcond_options" type="checkbox"
+								th:field="*{maternal_conditions}" th:value="${option.icdm}" />
+							<span class="text-danger">[[${option.icdm}]]</span> [[${option.icdm_name}]]
+						</label>
+					</div>
+				</div>
+			</fieldset>
 		</section>
 		<h3>[[#{th.audit.delays}]]</h3>
 		<section class="overflow-auto">
@@ -129,81 +135,91 @@
 				<h6 th:text="#{label.audit_ifcmfs}"></h6>
 				<small class="text-dark" th:utext="#{notes.audit_ifcmfs}"></small>
 				<div class="col-md-12">
-					<textarea rows="5" class="form-control form-control-sm" th:field="*{audit_ifcmfs}"></textarea>
 					<div class="row">
 						<small class="fw-bold" th:text="#{label.audit_patient}"></small>
 						<div class="col-md-12">
-							<select id="patient_factors" class="form-control form-control-sm" required
-								th:field="*{patient_factors}" multiple="multiple" style="width: 100%;">
-								<option th:each="options : ${factor_patient}" th:value="${options.id}">
-									[[${options.cfactor_name}]]
-								</option>
-							</select>
+							<div class="col-md-12 small" th:each="option : ${factor_patient}">
+								<label class="form-label fw-normal">
+									<input class="factor_options" type="checkbox" th:field="*{patient_factors}"
+										th:value="${option.id}" />
+									[[${option.cfactor_name}]]
+								</label>
+							</div>
 						</div>
 					</div>
+					<textarea rows="5" class="form-control form-control-sm" th:field="*{audit_ifcmfs}"
+						th:placeholder="#{additional.comments}"></textarea>
 				</div>
 			</div>
+
 			<div class="row mb-1 alert alert-success">
 				<h6 th:text="#{label.audit_sysmfs}"></h6>
 				<small class="text-dark" th:utext="#{notes.audit_sysmfs}"></small>
 				<div class="col-md-12">
-					<textarea rows="5" class="form-control form-control-sm" th:field="*{audit_sysmfs}"></textarea>
 					<div class="row">
 						<small class="fw-bold" th:text="#{label.audit_transport}"></small>
 						<div class="col-md-12">
-							<select id="transport_factors" class="form-control form-control-sm" required
-								th:field="*{transport_factors}" multiple="multiple" style="width: 100%;">
-								<option th:each="options : ${factor_transport}" th:value="${options.id}">
-									[[${options.cfactor_name}]]
-								</option>
-							</select>
+							<div class="col-md-12 small" th:each="option : ${factor_transport}">
+								<label class="form-label fw-normal">
+									<input class="factor_options" type="checkbox" th:field="*{transport_factors}"
+										th:value="${option.id}" />
+									[[${option.cfactor_name}]]
+								</label>
+							</div>
 						</div>
 					</div>
+					<textarea rows="5" class="form-control form-control-sm" th:field="*{audit_sysmfs}"
+						th:placeholder="#{additional.comments}"></textarea>
 				</div>
 			</div>
 			<div class="row mb-1 alert alert-success">
 				<h6 th:text="#{label.audit_facmfs}"></h6>
 				<small class="text-dark" th:utext="#{notes.audit_facmfs}"></small>
 				<div class="col-md-12">
-					<textarea rows="5" class="form-control form-control-sm" th:field="*{audit_facmfs}"></textarea>
 					<div class="row">
 						<small class="fw-bold" th:text="#{label.audit_administrative}"></small>
 						<div class="col-md-12">
-							<select id="administrative_factors" class="form-control form-control-sm" required
-								th:field="*{administrative_factors}" multiple="multiple" style="width: 100%;">
-								<option th:each="options : ${factor_administrative}" th:value="${options.id}">
-									[[${options.cfactor_name}]]
-								</option>
-							</select>
+							<div class="col-md-12 small" th:each="option : ${factor_administrative}">
+								<label class="form-label fw-normal">
+									<input class="factor_options" type="checkbox" th:field="*{administrative_factors}"
+										th:value="${option.id}" />
+									[[${option.cfactor_name}]]
+								</label>
+							</div>
 						</div>
 					</div>
+					<textarea rows="5" class="form-control form-control-sm" th:field="*{audit_facmfs}"
+						th:placeholder="#{additional.comments}"></textarea>
 				</div>
 			</div>
 			<div class="row mb-1 alert alert-success">
 				<h6 th:text="#{label.audit_hwkmfs}"></h6>
 				<small class="text-dark mb-2" th:utext="#{notes.audit_hwkmfs}"></small>
 				<div class="col-md-12">
-					<textarea rows="5" class="form-control form-control-sm" th:field="*{audit_hwkmfs}"></textarea>
-					<div class="row">
+					<div class="row mb-2">
 						<small class="fw-bold" th:text="#{label.audit_healthworker}"></small>
 						<div class="col-md-12">
-							<select id="healthworker_factors" class="form-control form-control-sm" required
-								th:field="*{healthworker_factors}" multiple="multiple" style="width: 100%;">
-								<option th:each="options : ${factor_healthworker}" th:value="${options.id}">
-									[[${options.cfactor_name}]]
-								</option>
-							</select>
+							<div class="col-md-12 small" th:each="option : ${factor_healthworker}">
+								<label class="form-label fw-normal">
+									<input class="factor_options" type="checkbox" th:field="*{healthworker_factors}"
+										th:value="${option.id}" />
+									[[${option.cfactor_name}]]
+								</label>
+							</div>
 						</div>
+						<textarea rows="5" class="form-control form-control-sm" th:field="*{audit_hwkmfs}"
+							th:placeholder="#{additional.comments}"></textarea>
 					</div>
 					<div class="row">
 						<small class="fw-bold" th:text="#{label.audit_document}"></small>
 						<div class="col-md-12">
-							<select id="document_factors" class="form-control form-control-sm" required
-								th:field="*{document_factors}" multiple="multiple" style="width: 100%;">
-								<option th:each="options : ${factor_document}" th:value="${options.id}">
-									[[${options.cfactor_name}]]
-								</option>
-							</select>
+							<div class="col-md-12 small" th:each="option : ${factor_document}">
+								<label class="form-label fw-normal">
+									<input class="factor_options" type="checkbox" th:field="*{document_factors}"
+										th:value="${option.id}" />
+									[[${option.cfactor_name}]]
+								</label>
+							</div>
 						</div>
 					</div>
 				</div>

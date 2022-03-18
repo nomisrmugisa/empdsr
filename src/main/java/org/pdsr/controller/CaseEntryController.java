@@ -89,7 +89,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 @Controller
 @RequestMapping("/registry")
@@ -245,26 +244,23 @@ public class CaseEntryController {
 			final boolean bio = selected.getBiodata().getData_complete() == 1;
 			final boolean pre = selected.getPregnancy().getData_complete() == 1;
 			final boolean ref = selected.getReferral().getData_complete() == 1;
-			final boolean del = selected.getDelivery().getData_complete() == 1
-					&& selected.getDelivery().getDelivery_date() != null
-					&& (selected.getDelivery().getDelivery_date() instanceof java.util.Date);
+			final boolean del = selected.getDelivery().getData_complete() == 1;
+			;
 			final boolean ant = selected.getAntenatal().getData_complete() == 1;
 			final boolean lab = selected.getLabour().getData_complete() == 1;
 			final boolean bir = selected.getBirth().getData_complete() == 1;
 			final boolean fet = selected.getFetalheart() != null && selected.getFetalheart().getData_complete() == 1;
-			final boolean bab = selected.getBabydeath() != null && selected.getBabydeath().getData_complete() == 1
-					&& selected.getBabydeath().getBaby_ddate() != null
-					&& (selected.getBabydeath().getBaby_ddate() instanceof java.util.Date);
+			final boolean bab = selected.getBabydeath() != null && selected.getBabydeath().getData_complete() == 1;
 
 			completed = bio && pre && ref && del && ant && lab && bir && (fet || bab);
 		}
-
 		if (completed) {
 			model.addAttribute("completed", completed);
 		}
 
 		switch (page) {
 		case 1: {
+			model.addAttribute("bioactive", "active text-warning");
 			if (selected.getBiodata() == null) {
 				case_biodata data = new case_biodata();
 				data.setBiodata_uuid(UUID.randomUUID().toString());
@@ -275,16 +271,20 @@ public class CaseEntryController {
 		}
 
 		case 2: {
+			model.addAttribute("refactive", "active text-warning");
 			if (selected.getReferral() == null) {
 				case_referral data = new case_referral();
 				data.setReferral_uuid(UUID.randomUUID().toString());
 				data.setCase_uuid(selected);
 				selected.setReferral(data);
 			}
+			final String encodedImage = CONSTANTS.convertBinImageToString(selected.getReferral().getReferral_file());
+			selected.getReferral().setBase64image(encodedImage);
 			break;
 		}
 
 		case 3: {
+			model.addAttribute("preactive", "active text-warning");
 			if (selected.getPregnancy() == null) {
 				case_pregnancy data = new case_pregnancy();
 				data.setPregnancy_uuid(UUID.randomUUID().toString());
@@ -295,6 +295,7 @@ public class CaseEntryController {
 		}
 
 		case 4: {
+			model.addAttribute("antactive", "active text-warning");
 			if (selected.getAntenatal() == null) {
 				case_antenatal data = new case_antenatal();
 				data.setAntenatal_uuid(UUID.randomUUID().toString());
@@ -306,6 +307,7 @@ public class CaseEntryController {
 		}
 
 		case 5: {
+			model.addAttribute("labactive", "active text-warning");
 			if (selected.getLabour() == null) {
 				case_labour data = new case_labour();
 				data.setLabour_uuid(UUID.randomUUID().toString());
@@ -317,6 +319,7 @@ public class CaseEntryController {
 		}
 
 		case 6: {
+			model.addAttribute("delactive", "active text-warning");
 			if (selected.getDelivery() == null) {
 				case_delivery data = new case_delivery();
 				data.setDelivery_uuid(UUID.randomUUID().toString());
@@ -327,6 +330,7 @@ public class CaseEntryController {
 		}
 
 		case 7: {
+			model.addAttribute("biractive", "active text-warning");
 			if (selected.getBirth() == null) {
 				case_birth data = new case_birth();
 				data.setBirth_uuid(UUID.randomUUID().toString());
@@ -341,6 +345,7 @@ public class CaseEntryController {
 
 		case 8: {
 			if (selected.getCase_death() == 1) {
+				model.addAttribute("fetactive", "active text-warning");
 				if (selected.getFetalheart() == null) {
 					case_fetalheart data = new case_fetalheart();
 					data.setFetalheart_uuid(UUID.randomUUID().toString());
@@ -350,6 +355,7 @@ public class CaseEntryController {
 				}
 			} else if (selected.getCase_death() == 2) {
 
+				model.addAttribute("babactive", "active text-warning");
 				if (selected.getBabydeath() == null) {
 					case_babydeath data = new case_babydeath();
 					data.setBaby_uuid(UUID.randomUUID().toString());
@@ -363,12 +369,17 @@ public class CaseEntryController {
 		}
 
 		case 9: {
+			model.addAttribute("notactive", "active text-warning");
 			if (selected.getNotes() == null) {
 				case_notes data = new case_notes();
 				data.setNotes_uuid(UUID.randomUUID().toString());
 				data.setCase_uuid(selected);
 				selected.setNotes(data);
 			}
+
+			final String encodedImage = CONSTANTS.convertBinImageToString(selected.getNotes().getNotes_file());
+			selected.getNotes().setBase64image(encodedImage);
+
 			break;
 		}
 
@@ -392,7 +403,7 @@ public class CaseEntryController {
 			@RequestParam(name = "go", required = false) Integer go, BindingResult results) {
 
 		ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+		// objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 
 		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
 			model.addAttribute("activated", "0");
@@ -438,13 +449,13 @@ public class CaseEntryController {
 
 				MultipartFile file = selected.getReferral().getFile();
 
-				if (file != null) {
-					try {
+				try {
+					if (file != null && file.getBytes() != null && file.getBytes().length > 0) {
 						selected.getReferral().setReferral_file(file.getBytes());
 						selected.getReferral().setReferral_filetype(file.getContentType());
-					} catch (IOException e) {
-						e.printStackTrace();
 					}
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 
 				if (selected.getReferral().getReferral_case() == 1) {
@@ -461,12 +472,32 @@ public class CaseEntryController {
 
 				case_referral o = selected.getReferral();
 
-				if (o.getReferral_ahour() == null || o.getReferral_adate() == null || o.getReferral_aminute() == null
-						|| o.getReferral_atime() == null || o.getReferral_case() == null || o.getReferral_date() == null
-						|| o.getReferral_hour() == null || o.getReferral_minute() == null
-						|| o.getReferral_time() == null || o.getReferral_facility() == null
-						|| o.getReferral_facility().trim() == "" || o.getReferral_patient() == null
-						|| o.getReferral_source() == null || o.getReferral_transport() == null) {
+				boolean referral_adatetime_expected = (o.getReferral_adatetime_notstated() == null
+						|| o.getReferral_adatetime_notstated() == 0);
+
+				boolean referral_adatetime_any_specified = o.getReferral_ahour() != null
+						|| o.getReferral_adate() != null || o.getReferral_aminute() != null
+						|| o.getReferral_atime() != null;
+
+				boolean referral_adatetime_any_missing = o.getReferral_ahour() == null || o.getReferral_adate() == null
+						|| o.getReferral_aminute() == null || o.getReferral_atime() == null;
+
+				boolean referral_datetime_expected = (o.getReferral_datetime_notstated() == null
+						|| o.getReferral_datetime_notstated() == 0);
+
+				boolean referral_datetime_any_specified = o.getReferral_hour() != null || o.getReferral_date() != null
+						|| o.getReferral_minute() != null || o.getReferral_time() != null;
+
+				boolean referral_datetime_any_missing = o.getReferral_hour() == null || o.getReferral_date() == null
+						|| o.getReferral_minute() == null || o.getReferral_time() == null;
+
+				if ((referral_adatetime_expected && referral_adatetime_any_missing)
+						|| (!referral_adatetime_expected && referral_adatetime_any_specified)
+						|| o.getReferral_case() == null || (referral_datetime_expected && referral_datetime_any_missing)
+						|| (!referral_datetime_expected && referral_datetime_any_specified)
+						|| o.getReferral_facility() == null || o.getReferral_facility().trim() == ""
+						|| o.getReferral_patient() == null || o.getReferral_source() == null
+						|| o.getReferral_transport() == null) {
 
 					o.setData_complete(0);
 				} else {
@@ -538,25 +569,19 @@ public class CaseEntryController {
 				final Integer hour = selected.getLabour().getLabour_seehour();
 
 				if (period != null && hour != null) {
-					boolean dawn = (hour > 0 && hour < 6);
-					boolean morning = (hour > 5 && hour < 12);
-					boolean midday = (hour == 12);
-					boolean afternoon = (hour > 12 && hour < 18);
-					boolean evening = (hour > 17 && hour < 22);
-					boolean midnight = (hour > 21 || hour < 1);
+					// boolean dawn = (hour > 0 && hour < 6);
+					boolean morning = (hour >= 8 && hour < 14);
+					// boolean midday = (hour == 12);
+					boolean afternoon = (hour >= 14 && hour < 20);
+					boolean night = (hour >= 20 || hour < 8);
+					// boolean midnight = (hour > 21 || hour < 1);
 
-					if (period == 0 && !dawn) {
-						results.rejectValue("labour.labour_seeperiod", "error.dawn");
-					} else if (period == 1 && !morning) {
+					if (period == 1 && !morning) {
 						results.rejectValue("labour.labour_seeperiod", "error.morning");
-					} else if (period == 2 && !midday) {
-						results.rejectValue("labour.labour_seeperiod", "error.midday");
 					} else if (period == 3 && !afternoon) {
 						results.rejectValue("labour.labour_seeperiod", "error.afternoon");
-					} else if (period == 4 && !evening) {
-						results.rejectValue("labour.labour_seeperiod", "error.evening");
-					} else if (period == 5 && !midnight) {
-						results.rejectValue("labour.labour_seeperiod", "error.midnight");
+					} else if (period == 6 && !night) {
+						results.rejectValue("labour.labour_seeperiod", "error.night");
 					}
 
 					if (results.hasErrors()) {
@@ -579,13 +604,24 @@ public class CaseEntryController {
 				}
 
 				case_labour o = selected.getLabour();
+
+				boolean labour_seedatetime_expected = (o.getLabour_seedatetime_notstated() == null
+						|| o.getLabour_seedatetime_notstated() == 0);
+
+				boolean labour_seedatetime_any_specified = o.getLabour_seehour() != null
+						|| o.getLabour_seedate() != null || o.getLabour_seeminute() != null
+						|| o.getLabour_seetime() != null;
+
+				boolean labour_seedatetime_any_missing = o.getLabour_seehour() == null || o.getLabour_seedate() == null
+						|| o.getLabour_seeminute() == null || o.getLabour_seetime() == null;
+
 				if (o.getLabour_complications() == null || o.getLabour_herbalaug() == null
 						|| o.getLabour_lasthour1() == null || o.getLabour_lasthour2() == null
 						|| o.getLabour_lastminute1() == null || o.getLabour_lastminute2() == null
-						|| o.getLabour_partograph() == null || o.getLabour_seedate() == null
-						|| o.getLabour_seehour() == null || o.getLabour_seeminute() == null
-						|| o.getLabour_seeperiod() == null || o.getLabour_seetime() == null
-						|| o.getLabour_startmode() == null) {
+						|| o.getLabour_partograph() == null
+						|| (labour_seedatetime_expected && labour_seedatetime_any_missing)
+						|| (!labour_seedatetime_expected && labour_seedatetime_any_specified)
+						|| o.getLabour_seeperiod() == null || o.getLabour_startmode() == null) {
 					o.setData_complete(0);
 				} else {
 					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getLabour()));
@@ -611,25 +647,25 @@ public class CaseEntryController {
 				final Integer hour = selected.getDelivery().getDelivery_hour();
 
 				if (period != null && hour != null) {
-					boolean dawn = (hour > 0 && hour < 6);
-					boolean morning = (hour > 5 && hour < 12);
-					boolean midday = (hour == 12);
-					boolean afternoon = (hour > 12 && hour < 18);
-					boolean evening = (hour > 17 && hour < 22);
-					boolean midnight = (hour > 21 || hour < 1);
+					// boolean dawn = (hour > 0 && hour < 6);
+					boolean morning = (hour >= 8 && hour < 14);
+					// boolean midday = (hour == 12);
+					boolean afternoon = (hour >= 14 && hour < 20);
+					boolean night = (hour >= 20 || hour < 8);
+					// boolean midnight = (hour > 21 || hour < 1);
 
-					if (period == 0 && !dawn) {
-						results.rejectValue("delivery.delivery_period", "error.dawn");
-					} else if (period == 1 && !morning) {
+					if (period == 1 && !morning) {
 						results.rejectValue("delivery.delivery_period", "error.morning");
-					} else if (period == 2 && !midday) {
-						results.rejectValue("delivery.delivery_period", "error.midday");
+//					} else if (period == 2 && !midday) {
+//						results.rejectValue("delivery.delivery_period", "error.midday");
 					} else if (period == 3 && !afternoon) {
 						results.rejectValue("delivery.delivery_period", "error.afternoon");
-					} else if (period == 4 && !evening) {
-						results.rejectValue("delivery.delivery_period", "error.evening");
-					} else if (period == 5 && !midnight) {
-						results.rejectValue("delivery.delivery_period", "error.midnight");
+//					} else if (period == 4 && !evening) {
+//						results.rejectValue("delivery.delivery_period", "error.evening");
+//					} else if (period == 5 && !midnight) {
+//						results.rejectValue("delivery.delivery_period", "error.midnight");
+					} else if (period == 6 && !night) {
+						results.rejectValue("delivery.delivery_period", "error.night");
 					}
 
 					if (results.hasErrors()) {
@@ -651,9 +687,18 @@ public class CaseEntryController {
 				}
 
 				case_delivery o = selected.getDelivery();
-				if (o.getDelivery_hour() == null || o.getDelivery_date() == null || o.getDelivery_minute() == null
-						|| o.getDelivery_period() == null || o.getDelivery_time() == null
-						|| o.getDelivery_weight() == null) {
+				boolean delivery_datetime_expected = (o.getDelivery_datetime_notstated() == null
+						|| o.getDelivery_datetime_notstated() == 0);
+
+				boolean delivery_datetime_any_specified = o.getDelivery_hour() != null || o.getDelivery_date() != null
+						|| o.getDelivery_minute() != null || o.getDelivery_time() != null;
+
+				boolean delivery_datetime_any_missing = o.getDelivery_hour() == null || o.getDelivery_date() == null
+						|| o.getDelivery_minute() == null || o.getDelivery_time() == null;
+
+				if ((delivery_datetime_expected && delivery_datetime_any_missing)
+						|| (!delivery_datetime_expected && delivery_datetime_any_specified)
+						|| o.getDelivery_period() == null || o.getDelivery_weight() == null) {
 					o.setData_complete(0);
 				} else {
 
@@ -738,7 +783,7 @@ public class CaseEntryController {
 						selected.getBabydeath().setBaby_dhour(time.getHours());
 						selected.getBabydeath().setBaby_dminute(time.getMinutes());
 					}
-					
+
 					if (existing.getDelivery() != null) {
 
 						validateTheTimesOnBabydeathPage(model, results, selected, existing);
@@ -755,9 +800,18 @@ public class CaseEntryController {
 					selected.getBabydeath().setBaby_json(arrayToJson);
 
 					case_babydeath o = selected.getBabydeath();
+					boolean baby_ddatetime_expected = (o.getBaby_ddatetime_notstated() == null
+							|| o.getBaby_ddatetime_notstated() == 0);
+
+					boolean baby_ddatetime_any_specified = o.getBaby_dhour() != null || o.getBaby_ddate() != null
+							|| o.getBaby_dminute() != null || o.getBaby_dtime() != null;
+
+					boolean baby_ddatetime_any_missing = o.getBaby_dhour() == null || o.getBaby_ddate() == null
+							|| o.getBaby_dminute() == null || o.getBaby_dtime() == null;
+
 					if (o.getBaby_admitted() == null || o.getBaby_apgar1() == null || o.getBaby_apgar5() == null
-							|| o.getBaby_cry() == null || o.getBaby_ddate() == null || o.getBaby_dhour() == null
-							|| o.getBaby_dminute() == null || o.getBaby_dtime() == null
+							|| o.getBaby_cry() == null || (baby_ddatetime_expected && baby_ddatetime_any_missing)
+							|| (!baby_ddatetime_expected && baby_ddatetime_any_specified)
 							|| o.getBaby_medicalcod() == null || o.getBaby_resuscitation() == null) {
 						o.setData_complete(0);
 					} else {
@@ -776,13 +830,13 @@ public class CaseEntryController {
 			try {
 				MultipartFile file = selected.getNotes().getFile();
 
-				if (file != null) {
-					try {
+				try {
+					if (file != null && file.getBytes() != null && file.getBytes().length > 0) {
 						selected.getNotes().setNotes_file(file.getBytes());
 						selected.getNotes().setNotes_filetype(file.getContentType());
-					} catch (IOException e) {
-						e.printStackTrace();
 					}
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 
 				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getNotes()));
@@ -835,9 +889,13 @@ public class CaseEntryController {
 						"Hello, \nThis is is to notify you of a " + getAnswer("death_options", selected.getCase_death())
 								+ "\nMother's age: " + selected.getBiodata().getBiodata_mage() + "\nChild's sex: "
 								+ getAnswer("sex_options", selected.getBiodata().getBiodata_sex()) + "\nDate of death: "
-								+ new SimpleDateFormat("dd/MMM/yyyy").format(
-										selected.getCase_death() == 1 ? selected.getDelivery().getDelivery_date()
-												: selected.getBabydeath().getBaby_ddate())
+								+ (selected.getCase_death() == 1
+										? (selected.getDelivery().getDelivery_date() == null ? "Not stated"
+												: new SimpleDateFormat("dd/MMM/yyyy")
+														.format(selected.getDelivery().getDelivery_date()))
+										: (selected.getBabydeath().getBaby_ddate() == null ? "Not stated"
+												: new SimpleDateFormat("dd/MMM/yyyy")
+														.format(selected.getBabydeath().getBaby_ddate())))
 								+ "\nHealth Facility: " + sync.getSync_name() + " - " + sync.getSync_code()
 								+ "\nThis is a PILOT IMPLEMENTATION of the Enhanced Automated PDSR tool developed by Alex and Eliezer");
 			}
@@ -847,7 +905,7 @@ public class CaseEntryController {
 		return "redirect:/registry?page=1&success=yes";
 	}
 
-	private void validateTheTimesOnReferralPage(Model model, BindingResult results, case_identifiers selected,
+	private Integer validateTheTimesOnReferralPage(Model model, BindingResult results, case_identifiers selected,
 			case_identifiers existing) {
 		// validate
 		final Date referralDate = selected.getReferral().getReferral_date();
@@ -856,7 +914,9 @@ public class CaseEntryController {
 
 			if (arrivalDate.before(referralDate)) {
 				results.rejectValue("referral.referral_adate", "error.date.arrived.before.referral");
-			} else {
+				return 1;
+
+			} else if (arrivalDate.compareTo(referralDate) == 0) {
 				final Date referralTime = selected.getReferral().getReferral_date();
 				final Date arrivalTime = selected.getReferral().getReferral_adate();
 
@@ -867,9 +927,10 @@ public class CaseEntryController {
 					final Integer arrivalHour = selected.getReferral().getReferral_ahour();
 					final Integer arrivalMins = selected.getReferral().getReferral_aminute();
 
-					if ((arrivalHour + arrivalMins) <= (referralHour + referralMins)) {
+					if (((arrivalHour * 60) + arrivalMins) <= ((referralHour * 60) + referralMins)) {
 						results.rejectValue("referral.referral_atime", "error.time.arrived.before.referral");
- 					}
+						return 2;
+					}
 				}
 			}
 
@@ -882,7 +943,8 @@ public class CaseEntryController {
 
 				if (seenDate.before(arrivalDate)) {
 					results.rejectValue("referral.referral_adate", "error.date.seen.before.arrival");
-				} else {
+					return 3;
+				} else if (arrivalDate.compareTo(seenDate) == 0) {
 					final Date arrivalTime = selected.getReferral().getReferral_date();
 					final Date seenTime = existing.getLabour().getLabour_seetime();
 
@@ -893,8 +955,9 @@ public class CaseEntryController {
 						final Integer seenHour = existing.getLabour().getLabour_seehour();
 						final Integer seenMins = existing.getLabour().getLabour_seeminute();
 
-						if ((seenHour + seenMins) <= (arrivalHour + arrivalMins)) {
+						if (((seenHour * 60) + seenMins) <= ((arrivalHour * 60) + arrivalMins)) {
 							results.rejectValue("referral.referral_atime", "error.time.seen.before.arrival");
+							return 4;
 						}
 					}
 				}
@@ -902,9 +965,11 @@ public class CaseEntryController {
 			}
 		}
 
+		return 0;
+
 	}
 
-	private void validateTheTimesOnLabourPage(Model model, BindingResult results, case_identifiers selected,
+	private Integer validateTheTimesOnLabourPage(Model model, BindingResult results, case_identifiers selected,
 			case_identifiers existing) {
 		// validate
 		final Date arrivalDate = existing.getReferral().getReferral_adate();
@@ -914,7 +979,8 @@ public class CaseEntryController {
 
 			if (seenDate.before(arrivalDate)) {
 				results.rejectValue("labour.labour_seedate", "error.date.seen.before.arrival");
-			} else {
+				return 1;
+			} else if (seenDate.compareTo(arrivalDate) == 0) {
 				final Date arrivalTime = existing.getReferral().getReferral_date();
 				final Date seenTime = selected.getLabour().getLabour_seetime();
 
@@ -925,17 +991,20 @@ public class CaseEntryController {
 					final Integer seenHour = selected.getLabour().getLabour_seehour();
 					final Integer seenMins = selected.getLabour().getLabour_seeminute();
 
-					if ((seenHour + seenMins) <= (arrivalHour + arrivalMins)) {
+					if (((seenHour * 60) + seenMins) <= ((arrivalHour * 60) + arrivalMins)) {
 						results.rejectValue("labour.labour_seetime", "error.time.seen.before.arrival");
+						return 2;
 					}
 				}
 			}
 
 		}
 
+		return 0;
+
 	}
 
-	private void validateTheTimesOnDeliveryPage(Model model, BindingResult results, case_identifiers selected,
+	private Integer validateTheTimesOnDeliveryPage(Model model, BindingResult results, case_identifiers selected,
 			case_identifiers existing) {
 		// validate
 		final Date csdecisionDate = existing.getBirth().getBirth_csproposedate();
@@ -945,7 +1014,8 @@ public class CaseEntryController {
 
 			if (deliveryDate.before(csdecisionDate)) {
 				results.rejectValue("delivery.delivery_date", "error.date.delivery.before.csdecision");
-			} else {
+				return 1;
+			} else if (deliveryDate.compareTo(csdecisionDate) == 0) {
 				final Date csdecisionTime = existing.getBirth().getBirth_csproposedate();
 				final Date deliveryTime = selected.getDelivery().getDelivery_time();
 
@@ -956,43 +1026,49 @@ public class CaseEntryController {
 					final Integer deliveryHour = selected.getDelivery().getDelivery_hour();
 					final Integer deliveryMins = selected.getDelivery().getDelivery_minute();
 
-					if ((deliveryHour + deliveryMins) <= (csdecisionHour + csdecisionMins)) {
+					if (((deliveryHour * 60) + deliveryMins) <= ((csdecisionHour * 60) + csdecisionMins)) {
 						results.rejectValue("delivery.delivery_time", "error.time.delivery.before.csdecision");
-					}
-				}
-			}
-
-		}
-		
-		final Date deathDate = existing.getBabydeath().getBaby_ddate();
-
-		if (deathDate != null && deliveryDate != null) {
-
-			if (deathDate.before(deliveryDate)) {
-				results.rejectValue("delivery.delivery_date", "error.date.death.before.delivery");
-			} else {
-				final Date deliveryTime = selected.getDelivery().getDelivery_time();
-				final Date deathTime = existing.getBabydeath().getBaby_dtime();
-
-				if (deliveryTime != null && deathTime != null) {
-					final Integer deliveryHour = selected.getDelivery().getDelivery_hour();
-					final Integer deliveryMins = selected.getDelivery().getDelivery_minute();
-
-					final Integer deathHour = existing.getBabydeath().getBaby_dhour();
-					final Integer deathMins = existing.getBabydeath().getBaby_dminute();
-
-					if ((deathHour + deathMins) <= (deliveryHour + deliveryMins)) {
-						results.rejectValue("delivery.delivery_time", "error.time.death.before.delivery");
+						return 2;
 					}
 				}
 			}
 
 		}
 
+		if (existing.getBabydeath() != null) {
+
+			final Date deathDate = existing.getBabydeath().getBaby_ddate();
+
+			if (deathDate != null && deliveryDate != null) {
+
+				if (deathDate.before(deliveryDate)) {
+					results.rejectValue("delivery.delivery_date", "error.date.death.before.delivery");
+					return 3;
+				} else if (deathDate.compareTo(deliveryDate) == 0) {
+					final Date deliveryTime = selected.getDelivery().getDelivery_time();
+					final Date deathTime = existing.getBabydeath().getBaby_dtime();
+
+					if (deliveryTime != null && deathTime != null) {
+						final Integer deliveryHour = selected.getDelivery().getDelivery_hour();
+						final Integer deliveryMins = selected.getDelivery().getDelivery_minute();
+
+						final Integer deathHour = existing.getBabydeath().getBaby_dhour();
+						final Integer deathMins = existing.getBabydeath().getBaby_dminute();
+
+						if (((deathHour * 60) + deathMins) <= ((deliveryHour * 60) + deliveryMins)) {
+							results.rejectValue("delivery.delivery_time", "error.time.death.before.delivery");
+							return 4;
+						}
+					}
+				}
+			}
+		}
+
+		return 0;
 
 	}
 
-	private void validateTheTimesOnBirthPage(Model model, BindingResult results, case_identifiers selected,
+	private Integer validateTheTimesOnBirthPage(Model model, BindingResult results, case_identifiers selected,
 			case_identifiers existing) {
 		// validate
 		final Date csdecisionDate = selected.getBirth().getBirth_csproposedate();
@@ -1001,7 +1077,8 @@ public class CaseEntryController {
 		if (deliveryDate != null && csdecisionDate != null) {
 			if (deliveryDate.before(csdecisionDate)) {
 				results.rejectValue("birth.birth_csproposedate", "error.date.delivery.before.csdecision");
-			} else {
+				return 1;
+			} else if (deliveryDate.compareTo(csdecisionDate) == 0) {
 				final Date csdecisionTime = selected.getBirth().getBirth_csproposetime();
 				final Date deliveryTime = existing.getDelivery().getDelivery_time();
 
@@ -1012,17 +1089,20 @@ public class CaseEntryController {
 					final Integer deliveryHour = existing.getDelivery().getDelivery_hour();
 					final Integer deliveryMins = existing.getDelivery().getDelivery_minute();
 
-					if ((deliveryHour + deliveryMins) < (csdecisionHour + csdecisionMins)) {
+					if (((deliveryHour * 60) + deliveryMins) < ((csdecisionHour * 60) + csdecisionMins)) {
 						results.rejectValue("birth.birth_csproposetime", "error.time.delivery.before.csdecision");
+						return 2;
 					}
 				}
 			}
 
 		}
 
+		return 0;
+
 	}
 
-	private void validateTheTimesOnBabydeathPage(Model model, BindingResult results, case_identifiers selected,
+	private Integer validateTheTimesOnBabydeathPage(Model model, BindingResult results, case_identifiers selected,
 			case_identifiers existing) {
 		// validate
 		final Date deliveryDate = existing.getDelivery().getDelivery_date();
@@ -1032,7 +1112,8 @@ public class CaseEntryController {
 
 			if (deathDate.before(deliveryDate)) {
 				results.rejectValue("babydeath.baby_ddate", "error.date.death.before.delivery");
-			} else {
+				return 1;
+			} else if (deathDate.compareTo(deliveryDate) == 0) {
 				final Date deliveryTime = existing.getDelivery().getDelivery_time();
 				final Date deathTime = selected.getBabydeath().getBaby_dtime();
 
@@ -1043,17 +1124,18 @@ public class CaseEntryController {
 					final Integer deathHour = selected.getBabydeath().getBaby_dhour();
 					final Integer deathMins = selected.getBabydeath().getBaby_dminute();
 
-					if ((deathHour + deathMins) <= (deliveryHour + deliveryMins)) {
+					if (((deathHour * 60) + deathMins) <= ((deliveryHour * 60) + deliveryMins)) {
 						results.rejectValue("babydeath.baby_dtime", "error.time.death.before.delivery");
+						return 2;
 					}
 				}
 			}
 
 		}
 
+		return 0;
 	}
 
-	
 	@GetMapping(value = "/icdselect")
 	public @ResponseBody Set<icd_diagnoses> findByDiagnosis(@RequestParam(value = "q", required = true) String search) {
 
@@ -1235,9 +1317,9 @@ public class CaseEntryController {
 		final Map<Integer, String> map = new LinkedHashMap<>();
 
 		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("period_options")) {
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
+		map.put(1, getQuestion("shift.morning"));
+		map.put(3, getQuestion("shift.afternoon"));
+		map.put(6, getQuestion("shift.night"));
 
 		return map;
 	}
@@ -1486,17 +1568,22 @@ public class CaseEntryController {
 						isreferral),
 				new json_data(getQuestion("label.referral_facility"), o.getReferral_facility(), isreferral),
 				new json_data(getQuestion("label.referral_datetime"),
-						new SimpleDateFormat("dd-MMM-yyyy").format(o.getReferral_date()) + " at "
-								+ new SimpleDateFormat("HH:mm a").format(o.getReferral_time()),
+						(o.getReferral_datetime_notstated() != null && o.getReferral_datetime_notstated() == 1)
+								? "Not stated"
+								: new SimpleDateFormat("dd-MMM-yyyy").format(o.getReferral_date()) + " at "
+										+ new SimpleDateFormat("HH:mm a").format(o.getReferral_time()),
 						isreferral),
 				new json_data(getQuestion("label.referral_adatetime"),
-						new SimpleDateFormat("dd-MMM-yyyy").format(o.getReferral_adate()) + " at "
-								+ new SimpleDateFormat("HH:mm a").format(o.getReferral_atime()),
+						(o.getReferral_adatetime_notstated() != null && o.getReferral_adatetime_notstated() == 1)
+								? "Not stated"
+								: new SimpleDateFormat("dd-MMM-yyyy").format(o.getReferral_adate()) + " at "
+										+ new SimpleDateFormat("HH:mm a").format(o.getReferral_atime()),
 						isreferral),
 				new json_data(getQuestion("label.referral_transport"),
 						getAnswer("trans_options", o.getReferral_transport()), isreferral),
-				new json_data(getQuestion("label.referral_file"), o.getReferral_file().toString(), isreferral),
-				new json_data(getQuestion("label.referral_notes"), o.getReferral_notes(), isreferral)
+				new json_data(getQuestion("label.referral_notes"), o.getReferral_notes(), isreferral),
+				new json_data(getQuestion("label.referral_file"),
+						CONSTANTS.IMAGE_TAG + CONSTANTS.convertBinImageToString(o.getReferral_file()), isreferral)
 
 		).collect(Collectors.toList());
 
@@ -1506,8 +1593,10 @@ public class CaseEntryController {
 	private List<json_data> processListOf(case_delivery o) {
 		List<json_data> list = Stream.of(
 				new json_data(getQuestion("label.delivery_datetime"),
-						new SimpleDateFormat("dd-MMM-yyyy").format(o.getDelivery_date()) + " at "
-								+ new SimpleDateFormat("HH:mm a").format(o.getDelivery_time()),
+						(o.getDelivery_datetime_notstated() != null && o.getDelivery_datetime_notstated() == 1)
+								? "Not stated"
+								: new SimpleDateFormat("dd-MMM-yyyy").format(o.getDelivery_date()) + " at "
+										+ new SimpleDateFormat("HH:mm a").format(o.getDelivery_time()),
 						true),
 				new json_data(getQuestion("label.delivery_period"), getAnswer("period_options", o.getDelivery_period()),
 						true))
@@ -1569,8 +1658,10 @@ public class CaseEntryController {
 
 		List<json_data> list = Stream
 				.of(new json_data(getQuestion("label.labour_datetime"),
-						new SimpleDateFormat("dd-MMM-yyyy").format(o.getLabour_seedate()) + " at "
-								+ new SimpleDateFormat("HH:mm a").format(o.getLabour_seetime()),
+						(o.getLabour_seedatetime_notstated() != null && o.getLabour_seedatetime_notstated() == 1)
+								? "Not stated"
+								: new SimpleDateFormat("dd-MMM-yyyy").format(o.getLabour_seedate()) + " at "
+										+ new SimpleDateFormat("HH:mm a").format(o.getLabour_seetime()),
 						true),
 						new json_data(getQuestion("label.labour_seeperiod"),
 								getAnswer("period_options", o.getLabour_seeperiod()), true),
@@ -1703,10 +1794,11 @@ public class CaseEntryController {
 	}
 
 	private List<json_data> processListOf(case_notes o) {
-		List<json_data> list = Stream
-				.of(new json_data(getQuestion("label.notes_file"), o.getNotes_file().toString(), true),
-						new json_data(getQuestion("label.notes_text"), o.getNotes_text(), true))
-				.collect(Collectors.toList());
+		List<json_data> list = Stream.of(new json_data(getQuestion("label.notes_text"), o.getNotes_text(), true),
+				new json_data(getQuestion("label.notes_file"),
+						CONSTANTS.IMAGE_TAG + CONSTANTS.convertBinImageToString(o.getNotes_file()), true)
+
+		).collect(Collectors.toList());
 
 		return list;
 	}

@@ -75,7 +75,7 @@
 <!--  core data end -->
 
 <div th:fragment="case_biodata">
-	<h4 th:text="#{title.biodata}" class="bg-dark text-light p-1 rounded"></h4>
+	<h4 th:text="#{title.biodata}" class="text-light p-1 rounded" style="background-color: rgb(57, 106, 147)"></h4>
 	<div th:insert="fragments/update-case :: core_data"></div>
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.biodata_sex}"></label>
@@ -117,13 +117,13 @@
 <!--  biodata end -->
 
 <div th:fragment="case_referral">
-	<h4 th:text="#{title.referral}" class="bg-dark text-light p-1 rounded"></h4>
+	<h4 th:text="#{title.referral}" class="text-light p-1 rounded" style="background-color: rgb(57, 106, 147)"></h4>
 	<div th:insert="fragments/update-case :: core_data"></div>
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.referral_case}"></label>
 		<div class="col-auto">
 			<select id="referral_case" class="form-control form-control-sm" th:field="*{referral.referral_case}"
-				onchange="changeReferralOtherToNA(this)">
+				onchange="changeReferralViewDynamic(this)">
 				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -144,7 +144,7 @@
 			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.referral_source}"></label>
 			<div class="col-auto">
 				<select id="referral_source" class="form-control form-control-sm"
-					onchange="changeReferralFacilityToNA(this)" th:field="*{referral.referral_source}">
+					onchange="changeReferralFacilityToNADynamic(this)" th:field="*{referral.referral_source}">
 					<option th:each="option : ${source_options}" th:value="${option.key}" th:text="${option.value}">
 					</option>
 				</select>
@@ -166,12 +166,16 @@
 							th:field="*{referral.referral_date}" />
 					</div>
 					<div class="col-auto">
-						<div class="row">
-							<div class="col-auto">
-								<input id="referral_time" class="form-control form-control-sm timepicker"
-									th:field="*{referral.referral_time}" />
-							</div>
-						</div>
+						<input id="referral_time" class="form-control form-control-sm timepicker"
+							th:field="*{referral.referral_time}" />
+					</div>
+					<div class="col-auto">
+						<label>
+							<input id="referral_datetime_notstated" type="checkbox" value="1" class="custom-checkbox"
+								th:field="*{referral.referral_datetime_notstated}"
+								onchange="changeReferralDateTimeToREADONLYDynamic(this)" />
+							[[#{label.notstated}]]
+						</label>
 					</div>
 				</div>
 			</div>
@@ -188,16 +192,21 @@
 							th:errors="*{referral.referral_adate}">error</small>
 					</div>
 					<div class="col-auto">
-						<div class="row">
-							<div class="col-auto">
-								<input id="referral_atime" class="form-control form-control-sm timepicker"
-									th:field="*{referral.referral_atime}" />
-							</div>
-							<small class="badge bg-light text-danger"
-								th:if="${#fields.hasErrors('referral.referral_atime')}"
-								th:errors="*{referral.referral_atime}">error</small>
-						</div>
+						<input id="referral_atime" class="form-control form-control-sm timepicker"
+							th:field="*{referral.referral_atime}" />
+						<small class="badge bg-light text-danger"
+							th:if="${#fields.hasErrors('referral.referral_atime')}"
+							th:errors="*{referral.referral_atime}">error</small>
 					</div>
+					<div class="col-auto">
+						<label>
+							<input id="referral_adatetime_notstated" type="checkbox" value="1" class="custom-checkbox"
+								th:field="*{referral.referral_adatetime_notstated}"
+								onchange="changeReferralaDateTimeToREADONLYDynamic(this)" />
+							[[#{label.notstated}]]
+						</label>
+					</div>
+
 				</div>
 			</div>
 		</div>
@@ -215,9 +224,9 @@
 			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.referral_file}"></label>
 			<div class="col-auto">
 				<div id="referral_file" class="custom-file">
-					<input type="file" class="custom-file-input" id="customFile" th:field="*{referral.file}">
-					<a target="_blank" th:href="@{/registry/file/referral/{id}(id=${selected.case_uuid})}"
-						th:if="${selected.referral.referral_filetype}">Download</a>
+					<input type="file" class="custom-file-input" id="customFile" th:field="*{referral.file}"
+						accept="image/png, image/jpg, image/jpeg">
+						<input th:field="*{referral.referral_file}" type="hidden"/>
 				</div>
 			</div>
 		</div>
@@ -226,6 +235,8 @@
 			<div class="col-md-8">
 				<textarea id="referral_notes" rows="5" class="form-control form-control-sm"
 					th:field="*{referral.referral_notes}" placeholder="Optional notes"></textarea>
+				<h6 class="text-center">Uploaded Photo</h6>
+				<img id="refphoto" th:src="'data:image/png;base64,'+${selected.referral.base64image}" width="100%" />
 			</div>
 		</div>
 	</fieldset>
@@ -245,7 +256,7 @@
 <!-- referral end -->
 
 <div th:fragment="case_pregnancy">
-	<h4 th:text="#{title.pregnancy}" class="bg-dark text-light p-1 rounded"></h4>
+	<h4 th:text="#{title.pregnancy}" class="text-light p-1 rounded" style="background-color: rgb(57, 106, 147)"></h4>
 	<div th:insert="fragments/update-case :: core_data"></div>
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.pregnancy_gest}"></label>
@@ -292,7 +303,7 @@
 <!--  pregnancy end -->
 
 <div th:fragment="case_antenatal">
-	<h4 th:text="#{title.antenatal}" class="bg-dark text-light p-1 rounded"></h4>
+	<h4 th:text="#{title.antenatal}" class="text-light p-1 rounded" style="background-color: rgb(57, 106, 147)"></h4>
 	<div th:insert="fragments/update-case :: core_data"></div>
 
 	<div class="row mb-3">
@@ -515,7 +526,7 @@
 
 
 <div th:fragment="case_labour">
-	<h4 th:text="#{title.labour}" class="bg-dark text-light p-1 rounded"></h4>
+	<h4 th:text="#{title.labour}" class="text-light p-1 rounded" style="background-color: rgb(57, 106, 147)"></h4>
 	<div th:insert="fragments/update-case :: core_data"></div>
 
 	<div class="row mb-3">
@@ -523,21 +534,26 @@
 		<div class="col-auto">
 			<div class="row">
 				<div class="col-auto">
-					<input class="form-control form-control-sm datepicker" th:field="*{labour.labour_seedate}" />
+					<input id="labour_seedate" class="form-control form-control-sm datepicker"
+						th:field="*{labour.labour_seedate}" />
 					<small class="badge bg-light text-danger" th:if="${#fields.hasErrors('labour.labour_seedate')}"
 						th:errors="*{labour.labour_seedate}">error</small>
 				</div>
 				<div class="col-auto">
-					<div class="row">
-						<div class="col-auto">
-							<input class="form-control form-control-sm timepicker"
-								th:field="*{labour.labour_seetime}" />
-							<small class="badge bg-light text-danger"
-								th:if="${#fields.hasErrors('labour.labour_seetime')}"
-								th:errors="*{labour.labour_seetime}">error</small>
-						</div>
-					</div>
+					<input id="labour_seetime" class="form-control form-control-sm timepicker"
+						th:field="*{labour.labour_seetime}" />
+					<small class="badge bg-light text-danger" th:if="${#fields.hasErrors('labour.labour_seetime')}"
+						th:errors="*{labour.labour_seetime}">error</small>
 				</div>
+				<div class="col-auto">
+					<label>
+						<input id="labour_seedatetime_notstated" type="checkbox" value="1" class="custom-checkbox"
+							th:field="*{labour.labour_seedatetime_notstated}"
+							onchange="changeLabourSeeDateTimeToREADONLYDynamic(this)" />
+						[[#{label.notstated}]]
+					</label>
+				</div>
+
 			</div>
 		</div>
 	</div>
@@ -690,7 +706,7 @@
 
 
 <div th:fragment="case_delivery">
-	<h4 th:text="#{title.delivery}" class="bg-dark text-light p-1 rounded"></h4>
+	<h4 th:text="#{title.delivery}" class="text-light p-1 rounded" style="background-color: rgb(57, 106, 147)"></h4>
 	<div th:insert="fragments/update-case :: core_data"></div>
 
 	<div class="row mb-3">
@@ -698,20 +714,24 @@
 		<div class="col-auto">
 			<div class="row">
 				<div class="col-auto">
-					<input class="form-control form-control-sm datepicker" th:field="*{delivery.delivery_date}" />
+					<input id="delivery_date" class="form-control form-control-sm datepicker"
+						th:field="*{delivery.delivery_date}" />
 					<small class="badge bg-light text-danger" th:if="${#fields.hasErrors('delivery.delivery_date')}"
 						th:errors="*{delivery.delivery_date}">error</small>
 				</div>
 				<div class="col-auto">
-					<div class="row">
-						<div class="col-auto">
-							<input class="form-control form-control-sm timepicker"
-								th:field="*{delivery.delivery_time}" />
-							<small class="badge bg-light text-danger"
-								th:if="${#fields.hasErrors('delivery.delivery_time')}"
-								th:errors="*{delivery.delivery_time}">error</small>
-						</div>
-					</div>
+					<input id="delivery_time" class="form-control form-control-sm timepicker"
+						th:field="*{delivery.delivery_time}" />
+					<small class="badge bg-light text-danger" th:if="${#fields.hasErrors('delivery.delivery_time')}"
+						th:errors="*{delivery.delivery_time}">error</small>
+				</div>
+				<div class="col-auto">
+					<label>
+						<input id="delivery_datetime_notstated" type="checkbox" value="1" class="custom-checkbox"
+							th:field="*{delivery.delivery_datetime_notstated}"
+							onchange="changeDeliveryDateTimeToREADONLYDynamic(this)" />
+						[[#{label.notstated}]]
+					</label>
 				</div>
 			</div>
 		</div>
@@ -755,7 +775,7 @@
 
 
 <div th:fragment="case_birth">
-	<h4 th:text="#{title.birth}" class="bg-dark text-light p-1 rounded"></h4>
+	<h4 th:text="#{title.birth}" class="text-light p-1 rounded" style="background-color: rgb(57, 106, 147)"></h4>
 	<div th:insert="fragments/update-case :: core_data"></div>
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.birth_mode}"></label>
@@ -986,7 +1006,7 @@
 
 
 <div th:fragment="case_fetalheart">
-	<h4 th:text="#{title.fetalheart}" class="bg-dark text-light p-1 rounded"></h4>
+	<h4 th:text="#{title.fetalheart}" class="text-light p-1 rounded" style="background-color: rgb(57, 106, 147)"></h4>
 	<div th:insert="fragments/update-case :: core_data"></div>
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.fetalheart_refered}"></label>
@@ -1032,7 +1052,7 @@
 <!-- fetal heart end -->
 
 <div th:fragment="case_babydeath">
-	<h4 th:text="#{title.baby}" class="bg-dark text-light p-1 rounded"></h4>
+	<h4 th:text="#{title.baby}" class="text-light p-1 rounded" style="background-color: rgb(57, 106, 147)"></h4>
 	<div th:insert="fragments/update-case :: core_data"></div>
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.baby_cry}"></label>
@@ -1141,19 +1161,24 @@
 		<div class="col-auto">
 			<div class="row">
 				<div class="col-auto">
-					<input class="form-control form-control-sm datepicker" th:field="*{babydeath.baby_ddate}" />
+					<input id="baby_ddate" class="form-control form-control-sm datepicker"
+						th:field="*{babydeath.baby_ddate}" />
 					<small class="badge bg-light text-danger" th:if="${#fields.hasErrors('babydeath.baby_ddate')}"
 						th:errors="*{babydeath.baby_ddate}">error</small>
 				</div>
 				<div class="col-auto">
-					<div class="row">
-						<div class="col-auto">
-							<input class="form-control form-control-sm timepicker" th:field="*{babydeath.baby_dtime}" />
-							<small class="badge bg-light text-danger"
-								th:if="${#fields.hasErrors('babydeath.baby_dtime')}"
-								th:errors="*{babydeath.baby_dtime}">error</small>
-						</div>
-					</div>
+					<input id="baby_dtime" class="form-control form-control-sm timepicker"
+						th:field="*{babydeath.baby_dtime}" />
+					<small class="badge bg-light text-danger" th:if="${#fields.hasErrors('babydeath.baby_dtime')}"
+						th:errors="*{babydeath.baby_dtime}">error</small>
+				</div>
+				<div class="col-auto">
+					<label>
+						<input id="babydeath.baby_ddatetime_notstated" type="checkbox" value="1" class="custom-checkbox"
+							th:field="*{babydeath.baby_ddatetime_notstated}"
+							onchange="changeBabydDateTimeToREADONLYDynamic(this)" />
+						[[#{label.notstated}]]
+					</label>
 				</div>
 			</div>
 		</div>
@@ -1187,22 +1212,26 @@
 
 
 <div th:fragment="case_notes">
-	<h4 th:text="#{title.notes}" class="bg-dark text-light p-1 rounded"></h4>
+	<h4 th:text="#{title.notes}" class="text-light p-1 rounded" style="background-color: rgb(57, 106, 147)"></h4>
 	<div th:insert="fragments/update-case :: core_data"></div>
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.notes_file}"></label>
 		<div class="col-auto">
 			<div class="custom-file">
-				<input type="file" class="custom-file-input" id="customFile" th:field="*{notes.file}">
-				<a target="_blank" th:href="@{/registry/file/notes/{id}(id=${selected.case_uuid})}"
-					th:if="${selected.notes.notes_filetype}">Download</a>
+				<input type="file" class="custom-file-input" id="customFile" th:field="*{notes.file}"
+					accept="image/png,image/jpg,image/jpeg">
+						<input th:field="*{notes.notes_file}" type="hidden"/>
 			</div>
 		</div>
 	</div>
 	<div class="row mb-3">
 		<div class="col-md-12">
-			<textarea rows="15" class="form-control form-control-sm" th:field="*{notes.notes_text}"
+			<textarea rows="10" class="form-control form-control-sm" th:field="*{notes.notes_text}"
 				th:placeholder="#{label.notes_text}"></textarea>
+		</div>
+		<h6 class="text-center">Uploaded Photo</h6>
+		<div class="col-md-12">
+			<img id="photo" th:src="'data:image/png;base64,'+${selected.notes.base64image}" width="100%" />
 		</div>
 	</div>
 

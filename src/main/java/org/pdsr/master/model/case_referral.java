@@ -72,6 +72,9 @@ public class case_referral implements Serializable {
 	@Temporal(TemporalType.TIME)
 	@DateTimeFormat(pattern = "HH:mm")
 	private java.util.Date referral_time;
+	
+	@Column
+	private Integer referral_datetime_notstated;
 
 	
 	@Column
@@ -93,6 +96,8 @@ public class case_referral implements Serializable {
 	@DateTimeFormat(pattern = "HH:mm")
 	private java.util.Date referral_atime;
 
+	@Column
+	private Integer referral_adatetime_notstated;
 	
 	@Column
 	private Integer referral_transport;
@@ -119,6 +124,18 @@ public class case_referral implements Serializable {
 
 	@Column
 	private Integer data_complete;
+	
+	@Transient
+	private String base64image;
+	
+
+	public String getBase64image() {
+		return base64image;
+	}
+
+	public void setBase64image(String base64image) {
+		this.base64image = base64image;
+	}
 
 	public Integer getData_complete() {
 		return data_complete;
@@ -287,6 +304,22 @@ public class case_referral implements Serializable {
 
 	public void setReferral_json(String referral_json) {
 		this.referral_json = referral_json;
+	}
+
+	public Integer getReferral_datetime_notstated() {
+		return referral_datetime_notstated;
+	}
+
+	public void setReferral_datetime_notstated(Integer referral_datetime_notstated) {
+		this.referral_datetime_notstated = referral_datetime_notstated;
+	}
+
+	public Integer getReferral_adatetime_notstated() {
+		return referral_adatetime_notstated;
+	}
+
+	public void setReferral_adatetime_notstated(Integer referral_adatetime_notstated) {
+		this.referral_adatetime_notstated = referral_adatetime_notstated;
 	}
 
 	@Override

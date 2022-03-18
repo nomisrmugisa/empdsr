@@ -58,6 +58,8 @@ public class case_delivery implements Serializable {
 	@DateTimeFormat(pattern = "HH:mm")
 	private java.util.Date delivery_time;
 
+	@Column
+	private Integer delivery_datetime_notstated;
 	
 	@Column
 	private Integer delivery_period;//dawn,morning,afternoon,evening,night
@@ -148,6 +150,14 @@ public class case_delivery implements Serializable {
 
 	public void setData_complete(Integer data_complete) {
 		this.data_complete = data_complete;
+	}
+
+	public Integer getDelivery_datetime_notstated() {
+		return delivery_datetime_notstated;
+	}
+
+	public void setDelivery_datetime_notstated(Integer delivery_datetime_notstated) {
+		this.delivery_datetime_notstated = delivery_datetime_notstated;
 	}
 
 	@Override

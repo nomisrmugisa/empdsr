@@ -1,15 +1,3 @@
- 
-  
-    MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_ENTRY', 'Enter cases into the system');
-    MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_AUDIT', 'Review and recommend actions on submitted cases');
-    MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_TASKS', 'Monitor and change action status');
-	MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_SETUP', 'Manage users, facility code from the controls section');
-	MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_VIEWS', 'View analysis and reports');
-	MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_NATIONAL', 'National level viewing');
-	MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_REGIONAL', 'Regional level viewing');
-	MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_DISTRICT', 'District level viewing');
-
-
     MERGE INTO user_table(username, enabled, password, usercontact, useremail, userfullname, alerted) KEY(username) 
     VALUES (
 	    'webadmin'
@@ -19,6 +7,16 @@
 	    , 'webadmin@kintampo-hrc.org'
 	    , 'ROOT ADMINISTRATOR',false
     );
+
+    MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_ENTRY', 'Enter cases into the system');
+    MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_AUDIT', 'Review and recommend actions on submitted cases');
+    MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_TASKS', 'Monitor and change action status');
+	MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_SETUP', 'Manage users, facility code from the controls section');
+	MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_VIEWS', 'View analysis and reports');
+	MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_NATIONAL', 'National level viewing');
+	MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_REGIONAL', 'Regional level viewing');
+	MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_DISTRICT', 'District level viewing');
+
 
 
 	DELETE FROM user_group WHERE username='webadmin';
@@ -31,10 +29,7 @@
     MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_REGIONAL');
     MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_DISTRICT');
 
-    MERGE INTO country_table KEY(country_uuid) values('1','Ghana');
     MERGE INTO country_table KEY(country_uuid) values('2','Namibia');
-    MERGE INTO country_table KEY(country_uuid) values('3','Sierra Leone');
-
 
     MERGE INTO risk_table KEY(risk_name) values('Cervical / uterine surgery','none');
     MERGE INTO risk_table KEY(risk_name) values('Last delivery > 10 years','none');
@@ -111,7 +106,6 @@
     MERGE INTO mcgroup_table(icdmgroup,icdmgroup_name) KEY(icdmgroup) values('M2','Maternal complications of pregnancy');
     MERGE INTO mcgroup_table(icdmgroup,icdmgroup_name) KEY(icdmgroup) values('M3','Other complications of labour and delivery');
     MERGE INTO mcgroup_table(icdmgroup,icdmgroup_name) KEY(icdmgroup) values('M4','Maternal medical and surgical conditions');
-    MERGE INTO mcgroup_table(icdmgroup,icdmgroup_name) KEY(icdmgroup) values('M5','No maternal condition');
 
     MERGE INTO mcondition_table(icdm,icdmgroup,icdm_name) KEY(icdm) values('M1.1','M1','placenta praevia');
     MERGE INTO mcondition_table(icdm,icdmgroup,icdm_name) KEY(icdm) values('M1.2','M1','other forms of placental separation and haemorrhage');
@@ -156,7 +150,6 @@
     MERGE INTO mcondition_table(icdm,icdmgroup,icdm_name) KEY(icdm) values('M4.16','M4','environmental chemical substances');
     MERGE INTO mcondition_table(icdm,icdmgroup,icdm_name) KEY(icdm) values('M4.17','M4','unspecified maternal condition');
 
-    MERGE INTO mcondition_table(icdm,icdmgroup,icdm_name) KEY(icdm) values('M5.1','M5','no maternal condition identified (healthy mother)');
 
 	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(101,100,'Never initiated antenatal care');
 	MERGE INTO cfactor_table(id,idgroup,cfactor_name) KEY(id) values(102,100,'Booked late in pregnancy');
@@ -425,6 +418,7 @@
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('period_options',3,'Afternoon');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('period_options',4,'Evening');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('period_options',5,'Midnight');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('period_options',6,'Night');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('period_options',88,'Not Stated');
   
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mode_options',0,'Spontaneous Vaginal Delivery');

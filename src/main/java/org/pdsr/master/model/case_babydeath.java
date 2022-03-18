@@ -99,6 +99,9 @@ public class case_babydeath implements Serializable {
 	private java.util.Date baby_dtime;
 
 	@Column
+	private Integer baby_ddatetime_notstated;
+
+	@Column
 	private Integer baby_medicalcod;
 
 	@Lob
@@ -259,6 +262,14 @@ public class case_babydeath implements Serializable {
 
 	public void setBaby_json(String baby_json) {
 		this.baby_json = baby_json;
+	}
+
+	public Integer getBaby_ddatetime_notstated() {
+		return baby_ddatetime_notstated;
+	}
+
+	public void setBaby_ddatetime_notstated(Integer baby_ddatetime_notstated) {
+		this.baby_ddatetime_notstated = baby_ddatetime_notstated;
 	}
 
 	@Override

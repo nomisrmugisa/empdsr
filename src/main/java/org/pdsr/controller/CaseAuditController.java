@@ -72,7 +72,6 @@ import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 @Controller
 @RequestMapping("/auditing")
@@ -225,7 +224,7 @@ public class CaseAuditController {
 		model.addAttribute("back", "back");
 
 		ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+		// objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 		objectMapper.configure(Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
 		TypeReference<json_algorithm> mapType1 = new TypeReference<json_algorithm>() {
 		};
@@ -270,7 +269,7 @@ public class CaseAuditController {
 
 		// prepare a mapping reference type for converting the JSON strings to objects
 		ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+		// objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 		objectMapper.configure(Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
 		objectMapper.configure(Feature.ALLOW_SINGLE_QUOTES, true);
 		TypeReference<List<json_data>> mapType = new TypeReference<List<json_data>>() {
@@ -322,6 +321,10 @@ public class CaseAuditController {
 				a: for (case_identifiers scase : pendingAudit) {
 
 					if (scase.getCase_death() != 2 || scase.getBabydeath() == null) {
+						continue a;
+					}
+
+					if (scase.getBabydeath().getBaby_ddate() == null) {
 						continue a;
 					}
 
@@ -444,6 +447,10 @@ public class CaseAuditController {
 				a: for (case_identifiers tcase : pendingAudit) {
 
 					if (tcase.getCase_death() != 1 || tcase.getFetalheart() == null) {
+						continue a;
+					}
+
+					if (tcase.getDelivery().getDelivery_date() == null) {
 						continue a;
 					}
 
@@ -603,7 +610,7 @@ public class CaseAuditController {
 		// load the ICD 10 codes
 
 		ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+		// objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 		TypeReference<json_list> mapType = new TypeReference<json_list>() {
 		};
 
@@ -682,7 +689,7 @@ public class CaseAuditController {
 		map.put(mcgrpRepo.findById("M2").get(), mcondRepo.findByIcdmgroup("M2"));
 		map.put(mcgrpRepo.findById("M3").get(), mcondRepo.findByIcdmgroup("M3"));
 		map.put(mcgrpRepo.findById("M4").get(), mcondRepo.findByIcdmgroup("M4"));
-		map.put(mcgrpRepo.findById("M5").get(), mcondRepo.findByIcdmgroup("M5"));
+		// map.put(mcgrpRepo.findById("M5").get(), mcondRepo.findByIcdmgroup("M5"));
 
 		model.addAttribute("mcond_options", map);
 
@@ -696,12 +703,13 @@ public class CaseAuditController {
 			@PathVariable("id") String case_uuid) {
 
 		ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+		// objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 
 		try {
 			selected.setAudit_uuid(case_uuid);
 			selected.setAudit_cdate(new java.util.Date());
 			selected.setAudit_case(acaseRepo.findById(case_uuid).get());
+			selected.setAudit_csc("None");
 
 			String arrayToJson;
 			arrayToJson = objectMapper.writeValueAsString(processListOf(selected));
@@ -712,7 +720,8 @@ public class CaseAuditController {
 			return "auditing/audit-create";
 		}
 
-		if (selected.getMaternal_conditions() == null || selected.getMaternal_conditions().isEmpty()) {
+		if (selected.getMaternal_condition() == 1
+				&& (selected.getMaternal_conditions() == null || selected.getMaternal_conditions().isEmpty())) {
 			return "redirect:/auditing/edit/" + case_uuid + "?error=yes";
 		}
 
@@ -734,7 +743,7 @@ public class CaseAuditController {
 		// load the ICD 10 codes
 
 		ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+		// objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 		TypeReference<List<json_data>> mapType = new TypeReference<List<json_data>>() {
 		};
 
@@ -971,6 +980,17 @@ public class CaseAuditController {
 		map.put(null, "Select one");
 		map.put(1, getQuestion("label.yes"));
 		map.put(2, getQuestion("label.no"));
+
+		return map;
+	}
+
+	@ModelAttribute("yesnomc_options")
+	public Map<Integer, String> yesnmcOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		map.put(1, getQuestion("label.yes"));
+		map.put(2, "M5: No maternal condition identified (healthy mother)");
 
 		return map;
 	}

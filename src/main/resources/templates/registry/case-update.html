@@ -9,47 +9,48 @@
 
 	<div class="col-md-12 py-3 my-3 mx-auto p-5 rounded box-shadow" style="background-color: #92c7f2;">
 		<div class="row">
-			<div class="col-auto mb-3 small">
+			<div class="col-auto mb-1 small">
 				<a th:href="@{/registry/edit/{id}?page=1(id=${selected.case_uuid})}">
-					<span class="btn smalll"
+					<span th:class="${bioactive} + ' btn small'"
 						th:classappend="${selected.biodata}?(${selected.biodata.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Profile</span>
 				</a>
 				<a th:href="@{/registry/edit/{id}?page=2(id=${selected.case_uuid})}">
-					<span class="btn small"
+					<span th:class="${refactive} + ' btn small'"
 						th:classappend="${selected.referral}?(${selected.referral.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Referral</span>
 				</a>
 				<a th:href="@{/registry/edit/{id}?page=3(id=${selected.case_uuid})}">
-					<span class="btn small"
+					<span th:class="${preactive} + ' btn small'"
 						th:classappend="${selected.pregnancy}?(${selected.pregnancy.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Pregnancy</span>
 				</a>
 				<a th:href="@{/registry/edit/{id}?page=4(id=${selected.case_uuid})}">
-					<span class="btn small"
+					<span th:class="${antactive} + ' btn small'"
 						th:classappend="${selected.antenatal}?(${selected.antenatal.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Antenatal</span>
 				</a>
 				<a th:href="@{/registry/edit/{id}?page=5(id=${selected.case_uuid})}">
-					<span class="btn small"
+					<span th:class="${labactive} + ' btn small'"
 						th:classappend="${selected.labour}?(${selected.labour.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Labour</span>
 				</a>
 				<a th:href="@{/registry/edit/{id}?page=6(id=${selected.case_uuid})}">
-					<span class="btn small"
+					<span th:class="${delactive} + ' btn small'"
 						th:classappend="${selected.delivery}?(${selected.delivery.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Delivery</span>
 				</a>
 				<a th:href="@{/registry/edit/{id}?page=7(id=${selected.case_uuid})}">
-					<span class="btn small"
+					<span th:class="${biractive} + ' btn small'"
 						th:classappend="${selected.birth}?(${selected.birth.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Birth</span>
 				</a>
 				<a th:href="@{/registry/edit/{id}?page=8(id=${selected.case_uuid})}" th:if="${selected.case_death==1}">
-					<span class="btn small"
+					<span th:class="${fetactive} + ' btn small'"
 						th:classappend="${selected.fetalheart}?(${selected.fetalheart.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Fetal
 						Heart</span>
 				</a>
 				<a th:href="@{/registry/edit/{id}?page=8(id=${selected.case_uuid})}" th:if="${selected.case_death==2}">
-					<span class="btn small"
+					<span th:class="${babactive} + ' btn small'"
 						th:classappend="${selected.babydeath}?(${selected.babydeath.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Baby's
 						Death</span>
 				</a>
 				<a th:href="@{/registry/edit/{id}?page=9(id=${selected.case_uuid})}">
-					<span class="btn small" th:classappend="${selected.notes}?'btn-success':'btn-danger'">Notes</span>
+					<span th:class="${notactive} + ' btn small'"
+						th:classappend="${selected.notes}?'btn-success':'btn-danger'">Notes</span>
 				</a>
 				<a th:href="@{/registry/submit/{id}(id=${selected.case_uuid}, pg=${page})}" class="btn btn-danger"
 					th:utext="#{submit.audit.button}" th:if="${completed}"></a>
@@ -147,48 +148,50 @@
 			var rfac = document.getElementById("referral_facility");
 
 			if (objCombo.value != '0') {
-				rfac.value = "NA";
 				rfac.readOnly = true;
 			} else {
-				rfac.value = "";
-				rfac.readOnly = false;
-			}
-		}
-		function changeReferralView() {
-			var objCombo = document.getElementById("referral_case");
-
-			if (objCombo.value != '1') {
-				$('#referral_fieldset').hide();
-
-			} else {
-				$('#referral_fieldset').show();
-			}
-		}
-		changeReferralView();
-		changeReferralFacilityToNA();
-	</script>
-	<script>
-		function changeReferralFacilityToNA() {
-			var objCombo = document.getElementById("referral_source");
-			var rfac = document.getElementById("referral_facility");
-
-			if (objCombo.value != '0') {
-				rfac.value = "NA";
-				rfac.readOnly = true;
-			} else {
-				rfac.value = "";
 				rfac.readOnly = false;
 			}
 		}
 
-		function changeReferralOtherToNA(objCombo) {
+		function changeReferralDateTimeToREADONLY() {
+			var objCombo = document.getElementById("referral_datetime_notstated");
+			var rdate = document.getElementById("referral_date");
+			var rtime = document.getElementById("referral_time");
+
+			if (objCombo.checked) {
+				rdate.disabled = true;
+				rtime.disabled = true;
+			} else {
+				rdate.disabled = false;
+				rtime.disabled = false;
+			}
+		}
+
+		function changeReferralaDateTimeToREADONLY() {
+			var objCombo = document.getElementById("referral_adatetime_notstated");
+			var rdate = document.getElementById("referral_adate");
+			var rtime = document.getElementById("referral_atime");
+
+			if (objCombo.checked) {
+				rdate.disabled = true;
+				rtime.disabled = true;
+			} else {
+				rdate.disabled = false;
+				rtime.disabled = false;
+			}
+		}
+
+		function changeReferralStatus1(objCombo) {
 			var rpat = document.getElementById("referral_patient");
 			var rsrc = document.getElementById("referral_source");
 			var rfac = document.getElementById("referral_facility");
 			var rdate = document.getElementById("referral_date");
 			var rtime = document.getElementById("referral_time");
+			var rdt = document.getElementById("referral_datetime_notstated");
 			var radate = document.getElementById("referral_adate");
 			var ratime = document.getElementById("referral_atime");
+			var radt = document.getElementById("referral_adatetime_notstated");
 			var rtrans = document.getElementById("referral_transport");
 			var rfile = document.getElementById("referral_file");
 			var rnotes = document.getElementById("referral_notes");
@@ -196,38 +199,57 @@
 			if (objCombo.value != '1') {
 				rpat.value = '99';
 				rsrc.value = '99';
-				rfac.value = "NA";
-				rfac.readOnly = true;
-				rdate.value = "01/01/1970";
-				rtime.value = "00:00";
-				radate.value = "01/01/1970";
-				ratime.value = "00:00";
+				rdt.checked = true;
+				radt.checked = true;
 				rtrans.value = '99';
 				rfile.hidden = true;
 				rnotes.readOnly = true;
 
-				$('#referral_fieldset').hide('fade');
+				$('#referral_fieldset').hide();
 
 			} else {
-				$('#referral_fieldset').show('fade');
+				$('#referral_fieldset').show();
 
 				rpat.value = '';
 				rsrc.value = '';
-				rfac.value = "";
-				rfac.readOnly = false;
-				rdate.value = "";
-				rtime.value = "";
-				radate.value = "";
-				ratime.value = "";
+				rdt.checked = false;
+				radt.checked = false;
 				rtrans.value = '';
 				rfile.hidden = false;
 				rnotes.readOnly = false;
 			}
-			changeReferralFacilityToNA();
 		}
+
+		function changeReferralStatus() {
+
+			if (objCombo.value != '1') {
+
+				$('#referral_fieldset').hide();
+
+			} else {
+				$('#referral_fieldset').show();
+			}
+		}
+
+
+		changeReferralFacilityToNA();
+		changeReferralDateTimeToREADONLY();
+		changeReferralaDateTimeToREADONLY();
+		changeReferralStatus();
+
+		function changeReferralViewDynamic(objCombo) {
+
+			changeReferralStatus1(objCombo);
+
+			changeReferralFacilityToNA();
+			changeReferralDateTimeToREADONLY();
+			changeReferralaDateTimeToREADONLY();
+
+		}
+
 	</script>
 	<script>
-		function changeReferralFacilityToNA(objCombo) {
+		function changeReferralFacilityToNADynamic(objCombo) {
 			var rfac = document.getElementById("referral_facility");
 
 			if (objCombo.value != '0') {
@@ -236,6 +258,38 @@
 			} else {
 				rfac.value = "";
 				rfac.readOnly = false;
+			}
+		}
+
+		function changeReferralDateTimeToREADONLYDynamic(objCombo) {
+			var rdate = document.getElementById("referral_date");
+			var rtime = document.getElementById("referral_time");
+
+			rdate.value = "";
+			rtime.value = "";
+
+			if (objCombo.checked) {
+				rdate.readOnly = true;
+				rtime.readOnly = true;
+			} else {
+				rdate.readOnly = false;
+				rtime.readOnly = false;
+			}
+		}
+
+		function changeReferralaDateTimeToREADONLYDynamic(objCombo) {
+			var rdate = document.getElementById("referral_adate");
+			var rtime = document.getElementById("referral_atime");
+
+			rdate.value = "";
+			rtime.value = "";
+
+			if (objCombo.checked) {
+				rdate.readOnly = true;
+				rtime.readOnly = true;
+			} else {
+				rdate.readOnly = false;
+				rtime.readOnly = false;
 			}
 		}
 	</script>
@@ -467,6 +521,70 @@
 			}
 		}
 	</script>
+	<script>
+		function changeLabourSeeDateTimeToREADONLY() {
+			var objCombo = document.getElementById("labour_seedatetime_notstated");
+			var rdate = document.getElementById("labour_seedate");
+			var rtime = document.getElementById("labour_seetime");
+
+			if (objCombo.checked) {
+				rdate.disabled = true;
+				rtime.disabled = true;
+			} else {
+				rdate.disabled = false;
+				rtime.disabled = false;
+			}
+		}
+		changeLabourSeeDateTimeToREADONLY();
+		function changeLabourSeeDateTimeToREADONLYDynamic(objCombo) {
+			var rdate = document.getElementById("labour_seedate");
+			var rtime = document.getElementById("labour_seetime");
+
+			rdate.value = "";
+			rtime.value = "";
+
+			if (objCombo.checked) {
+				rdate.readOnly = true;
+				rtime.readOnly = true;
+			} else {
+				rdate.readOnly = false;
+				rtime.readOnly = false;
+			}
+		}
+
+	</script>
+	<script>
+		function changeDeliveryDateTimeToREADONLY() {
+			var objCombo = document.getElementById("delivery_datetime_notstated");
+			var rdate = document.getElementById("delivery_date");
+			var rtime = document.getElementById("delivery_time");
+
+			if (objCombo.checked) {
+				rdate.disabled = true;
+				rtime.disabled = true;
+			} else {
+				rdate.disabled = false;
+				rtime.disabled = false;
+			}
+		}
+		changeDeliveryDateTimeToREADONLY();
+		function changeDeliveryDateTimeToREADONLYDynamic(objCombo) {
+			var rdate = document.getElementById("delivery_date");
+			var rtime = document.getElementById("delivery_time");
+
+			rdate.value = "";
+			rtime.value = "";
+
+			if (objCombo.checked) {
+				rdate.readOnly = true;
+				rtime.readOnly = true;
+			} else {
+				rdate.readOnly = false;
+				rtime.readOnly = false;
+			}
+		}
+
+	</script>
 
 	<script>
 		function changeBirthBirthmodeView() {
@@ -488,13 +606,9 @@
 			var csdate = document.getElementById("birth_csproposedate");
 
 			if (objCombo.value != '1') {
-				cstime.value = '00:00';
-				csdate.value = '01/01/1970';
 				$('#insistnormal_div').hide();
 
 			} else {
-				//cstime.value = '';
-				//csdate.value = '';
 				$('#insistnormal_div').show();
 			}
 		}
@@ -505,12 +619,17 @@
 
 			if (objCombo.value != '0' && objCombo.value != '1') {
 				insist.value = '99';
+				cstime.value = '';
+				csdate.value = '';
+
 				changeBirthInsistnormalView();
 
 				$('#birth_mode_fieldset').hide('fade');
 
 			} else {
 				insist.value = '';
+				cstime.value = '';
+				csdate.value = '';
 				changeBirthInsistnormalView();
 
 				$('#birth_mode_fieldset').show('fade');
@@ -524,8 +643,8 @@
 			var csdate = document.getElementById("birth_csproposedate");
 
 			if (objCombo.value != '1') {
-				cstime.value = '00:00';
-				csdate.value = '01/01/1970';
+				cstime.value = '';
+				csdate.value = '';
 
 				$('#insistnormal_div').hide('fade');
 
@@ -653,11 +772,9 @@
 			var outcomesel = document.getElementById("birth_babyoutcome");
 
 			if (deathtype.value != '1') {
-				outcomesel.value = "99";
 				$('#birth_babyoutcome_div').hide();
 
 			} else {
-				outcomesel.value = "";
 				$('#birth_babyoutcome_div').show();
 			}
 		}
@@ -736,8 +853,38 @@
 			}
 		}
 	</script>
+	<script>
+		function changeBabydDateTimeToREADONLY() {
+			var objCombo = document.getElementById("labour_seedatetime_notstated");
+			var rdate = document.getElementById("baby_ddate");
+			var rtime = document.getElementById("baby_dtime");
 
+			if (objCombo.checked) {
+				rdate.disabled = true;
+				rtime.disabled = true;
+			} else {
+				rdate.disabled = false;
+				rtime.disabled = false;
+			}
+		}
+		changeBabydDateTimeToREADONLY();
+		function changeBabydDateTimeToREADONLYDynamic(objCombo) {
+			var rdate = document.getElementById("babu_ddate");
+			var rtime = document.getElementById("baby_dtime");
 
+			rdate.value = "";
+			rtime.value = "";
+
+			if (objCombo.checked) {
+				rdate.readOnly = true;
+				rtime.readOnly = true;
+			} else {
+				rdate.readOnly = false;
+				rtime.readOnly = false;
+			}
+		}
+
+	</script>
 
 	<script>
 		$(function () {

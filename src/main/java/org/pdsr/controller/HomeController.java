@@ -657,8 +657,7 @@ public class HomeController {
 
 		// SUMMARY STATISTICS
 //		System.out.println(bwmRepo.findFrontPageRates(COUNTRY_NAME, REGION_NAME, DISTRICT_NAME).size());
-		
-		
+
 		final String[] adata = bwmRepo.findFrontPageRates(COUNTRY_NAME, REGION_NAME, DISTRICT_NAME).get(0);
 
 		Integer totaldeliveries = (adata[0] == null) ? 0 : Integer.valueOf(adata[0]),
@@ -1162,17 +1161,17 @@ public class HomeController {
 		model.addAttribute("atotal_actions", brecRepo.count(COUNTRY_NAME, REGION_NAME));
 		model.addAttribute("acompleted_actions", brecRepo.countByCompleted(COUNTRY_NAME, REGION_NAME));
 		model.addAttribute("acompleted_actions_r",
-				brecRepo.count() == 0 ? 0
+				brecRepo.count(COUNTRY_NAME, REGION_NAME) == 0 ? 0
 						: 100 * brecRepo.countByCompleted(COUNTRY_NAME, REGION_NAME)
 								/ brecRepo.count(COUNTRY_NAME, REGION_NAME));
 		model.addAttribute("apending_actions", brecRepo.countByPending(date, COUNTRY_NAME, REGION_NAME));
 		model.addAttribute("apending_actions_r",
-				brecRepo.count() == 0 ? 0
+				brecRepo.count(COUNTRY_NAME, REGION_NAME) == 0 ? 0
 						: 100 * brecRepo.countByPending(date, COUNTRY_NAME, REGION_NAME)
 								/ brecRepo.count(COUNTRY_NAME, REGION_NAME));
 		model.addAttribute("aoverdue_actions", brecRepo.countByOverdue(date, COUNTRY_NAME, REGION_NAME));
 		model.addAttribute("aoverdue_actions_r",
-				brecRepo.count() == 0 ? 0
+				brecRepo.count(COUNTRY_NAME, REGION_NAME) == 0 ? 0
 						: 100 * brecRepo.countByOverdue(date, COUNTRY_NAME, REGION_NAME)
 								/ brecRepo.count(COUNTRY_NAME, REGION_NAME));
 
@@ -1328,7 +1327,10 @@ public class HomeController {
 								/ bcaseRepo.countByCase_statusAndType(2, 1, year, COUNTRY_NAME));
 
 		// SUMMARY STATISTICS
-		final String[] adata = bwmRepo.findFrontPageRates(COUNTRY_NAME).get(0);
+
+		final String[] adata = (bwmRepo.findFrontPageRates(COUNTRY_NAME) == null
+				|| bwmRepo.findFrontPageRates(COUNTRY_NAME).isEmpty()) ? new String[14]
+						: bwmRepo.findFrontPageRates(COUNTRY_NAME).get(0);
 
 		Integer totaldeliveries = (adata[0] == null) ? 0 : Integer.valueOf(adata[0]),
 				totaldelvaginal = (adata[1] == null) ? 0 : Integer.valueOf(adata[1]),
@@ -1410,7 +1412,9 @@ public class HomeController {
 
 		model.addAttribute("oavg", oindicators);
 		// SUMMARY STATISTICS - CURRENT YEAR
-		final String[] cdata = bwmRepo.findFrontPageRates(year, COUNTRY_NAME).get(0);
+		final String[] cdata = (bwmRepo.findFrontPageRates(year, COUNTRY_NAME) == null
+				|| bwmRepo.findFrontPageRates(year, COUNTRY_NAME).isEmpty()) ? new String[14]
+						: bwmRepo.findFrontPageRates(year, COUNTRY_NAME).get(0);
 
 		Integer ctotaldeliveries = Integer.valueOf(cdata[0] == null ? "0" : cdata[0]);
 		Integer ctotaldelvaginal = Integer.valueOf(cdata[1] == null ? "0" : cdata[1]);

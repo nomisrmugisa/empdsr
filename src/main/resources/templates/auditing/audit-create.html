@@ -112,13 +112,28 @@
 									<table class="table">
 										<thead>
 											<tr>
-												<th colspan="2" th:text="#{title.referral}"></th>
+												<th th:text="#{title.referral}"></th>
 											</tr>
 										</thead>
 										<tbody>
-											<tr th:each="item : ${casereferral}" th:if="${item.canreview}">
-												<td th:utext="${item.question}" class="text-secondary"></td>
-												<td th:utext="${item.answer}" style="width: 50%;"></td>
+											<tr>
+												<td>
+													<p th:each="item : ${casereferral}" th:if="${item.canreview}"
+														class="border-bottom">
+														<span class="text-secondary">
+															[[${item.question}]]
+														</span>
+														<strong
+															th:unless="${#strings.startsWith(item.answer,'XZYimageXZY')}"
+															th:utext="${item.answer}" style="width: 50%;"></strong>
+														<span th:if="${#strings.startsWith(item.answer,'XZYimageXZY')}"
+															style="width: 50%;">
+															<img id="itemphotoref"
+																th:src="'data:image/png;base64,'+${#strings.substringAfter(item.answer,'XZYimageXZY')}"
+																width="100%" />
+														</span>
+													</p>
+												</td>
 											</tr>
 										</tbody>
 									</table>
@@ -238,13 +253,31 @@
 									<table class="table">
 										<thead>
 											<tr>
-												<th colspan="2" th:text="#{title.notes}"></th>
+												<th th:text="#{title.notes}"></th>
 											</tr>
 										</thead>
 										<tbody>
-											<tr th:each="item : ${casenotes}" th:if="${item.canreview}">
-												<td th:utext="${item.question}" class="text-secondary"></td>
-												<td th:utext="${item.answer}" style="width: 50%;"></td>
+											<tr>
+												<td>
+													<p th:each="item : ${casenotes}" th:if="${item.canreview}"
+														class="border-bottom">
+														<span class="text-secondary">
+															[[${item.question}]]
+														</span>
+														<strong
+															th:unless="${#strings.startsWith(item.answer,'XZYimageXZY')}"
+															th:utext="${item.answer}" style="width: 50%;"></strong>
+														<span th:if="${#strings.startsWith(item.answer,'XZYimageXZY')}"
+															style="width: 50%;">
+															<img id="itemphotoref"
+																th:src="'data:image/png;base64,'+${#strings.substringAfter(item.answer,'XZYimageXZY')}"
+																width="100%" />
+
+														</span>
+
+													</p>
+
+												</td>
 											</tr>
 										</tbody>
 									</table>
@@ -320,7 +353,11 @@
 			headerTag: "h3",
 			bodyTag: "section",
 			transitionEffect: "slideLeft",
-			autoFocus: true
+			enableFinishButton: true,
+			enablePagination: true,
+			enableAllSteps: true,
+			titleTemplate: "#title#",
+			autoFocus: true,
 		});
 	</script>
 
@@ -432,6 +469,42 @@
 				});
 			});
 	</script>
+
+	<script>
+		function changeMCView() {
+			var objCombo = document.getElementById("maternal_condition");
+
+			if (objCombo.value != '1') {
+				$('#mc_fieldset').hide();
+
+			} else {
+				$('#mc_fieldset').show();
+			}
+		}
+		changeMCView();
+	</script>
+	<script>
+		function changeMCToNA(objCombo) {
+			var rskopt = document.getElementsByClassName("mcond_options");
+
+			if (objCombo.value != '1') {
+
+				for (var i = 0; i < rskopt.length; i++) {
+					if (rskopt[i].type == 'checkbox') {
+						rskopt[i].checked = false;
+					}
+				}
+
+				$('#mc_fieldset').hide('fade');
+
+			} else {
+				$('#mc_fieldset').show('fade');
+
+			}
+
+		}
+	</script>
+
 </scripts>
 
 </html>
