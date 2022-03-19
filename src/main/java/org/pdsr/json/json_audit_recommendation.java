@@ -1,7 +1,6 @@
 package org.pdsr.json;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -19,12 +18,12 @@ public class json_audit_recommendation implements Serializable {
 	private String country;
 	private String region;
 	private String district;
-	private java.util.Date recommendation_date;
+	private String recommendation_date;
 	private String recommendation_title;
 	private String recommendation_task;
 	private String recommendation_leader;
 	private String recommendation_reporter;
-	private java.util.Date recommendation_deadline;
+	private String recommendation_deadline;
 	private String recommendation_resources;
 	private Integer recommendation_status;//0 not started 1 started 2 completed
 	private String recommendation_comments;
@@ -35,8 +34,8 @@ public class json_audit_recommendation implements Serializable {
 
 
 	public json_audit_recommendation(String id, String code, String country, String region, String district,
-			Date recommendation_date, String recommendation_title, String recommendation_task,
-			String recommendation_leader, String recommendation_reporter, Date recommendation_deadline,
+			String recommendation_date, String recommendation_title, String recommendation_task,
+			String recommendation_leader, String recommendation_reporter, String recommendation_deadline,
 			String recommendation_resources, Integer recommendation_status, String recommendation_comments) {
 		super();
 		this.id = id;
@@ -95,11 +94,11 @@ public class json_audit_recommendation implements Serializable {
 		this.district = district;
 	}
 
-	public java.util.Date getRecommendation_date() {
+	public String getRecommendation_date() {
 		return recommendation_date;
 	}
 
-	public void setRecommendation_date(java.util.Date recommendation_date) {
+	public void setRecommendation_date(String recommendation_date) {
 		this.recommendation_date = recommendation_date;
 	}
 
@@ -135,11 +134,11 @@ public class json_audit_recommendation implements Serializable {
 		this.recommendation_reporter = recommendation_reporter;
 	}
 
-	public java.util.Date getRecommendation_deadline() {
+	public String getRecommendation_deadline() {
 		return recommendation_deadline;
 	}
 
-	public void setRecommendation_deadline(java.util.Date recommendation_deadline) {
+	public void setRecommendation_deadline(String recommendation_deadline) {
 		this.recommendation_deadline = recommendation_deadline;
 	}
 

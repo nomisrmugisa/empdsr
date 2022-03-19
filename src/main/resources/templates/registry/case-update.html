@@ -221,6 +221,7 @@
 		}
 
 		function changeReferralStatus() {
+			var objCombo = document.getElementById("referral_case");
 
 			if (objCombo.value != '1') {
 
@@ -269,11 +270,11 @@
 			rtime.value = "";
 
 			if (objCombo.checked) {
-				rdate.readOnly = true;
-				rtime.readOnly = true;
+				rdate.disabled = true;
+				rtime.disabled = true;
 			} else {
-				rdate.readOnly = false;
-				rtime.readOnly = false;
+				rdate.disabled = false;
+				rtime.disabled = false;
 			}
 		}
 
@@ -285,11 +286,11 @@
 			rtime.value = "";
 
 			if (objCombo.checked) {
-				rdate.readOnly = true;
-				rtime.readOnly = true;
+				rdate.disabled = true;
+				rtime.disabled = true;
 			} else {
-				rdate.readOnly = false;
-				rtime.readOnly = false;
+				rdate.disabled = false;
+				rtime.disabled = false;
 			}
 		}
 	</script>
@@ -544,11 +545,11 @@
 			rtime.value = "";
 
 			if (objCombo.checked) {
-				rdate.readOnly = true;
-				rtime.readOnly = true;
+				rdate.disabled = true;
+				rtime.disabled = true;
 			} else {
-				rdate.readOnly = false;
-				rtime.readOnly = false;
+				rdate.disabled = false;
+				rtime.disabled = false;
 			}
 		}
 
@@ -576,29 +577,16 @@
 			rtime.value = "";
 
 			if (objCombo.checked) {
-				rdate.readOnly = true;
-				rtime.readOnly = true;
+				rdate.disabled = true;
+				rtime.disabled = true;
 			} else {
-				rdate.readOnly = false;
-				rtime.readOnly = false;
+				rdate.disabled = false;
+				rtime.disabled = false;
 			}
 		}
 
 	</script>
 
-	<script>
-		function changeBirthBirthmodeView() {
-			var objCombo = document.getElementById("birth_mode");
-
-			if (objCombo.value != '0' && objCombo.value != '1') {
-				$('#birth_mode_fieldset').hide();
-
-			} else {
-				$('#birth_mode_fieldset').show();
-			}
-		}
-		changeBirthBirthmodeView();
-	</script>
 	<script>
 		function changeBirthInsistnormalView() {
 			var objCombo = document.getElementById("birth_insistnormal");
@@ -614,23 +602,37 @@
 		}
 		changeBirthInsistnormalView();
 
+		function changeBirthBirthmodeView() {
+			var objCombo = document.getElementById("birth_mode");
+
+			if (objCombo.value != '0' && objCombo.value != '1') {
+				$('#birth_mode_fieldset').hide();
+
+			} else {
+				$('#birth_mode_fieldset').show();
+			}
+		}
+		changeBirthBirthmodeView();
+		
+	</script>
+	<script>
 		function changeBirthBirthModeOtherToNA(objCombo) {
 			var insist = document.getElementById("birth_insistnormal");
+			var cstime = document.getElementById("birth_csproposetime");
+			var csdate = document.getElementById("birth_csproposedate");
 
 			if (objCombo.value != '0' && objCombo.value != '1') {
 				insist.value = '99';
 				cstime.value = '';
 				csdate.value = '';
 
-				changeBirthInsistnormalView();
-
+				$('#insistnormal_div').hide();
 				$('#birth_mode_fieldset').hide('fade');
 
 			} else {
 				insist.value = '';
 				cstime.value = '';
 				csdate.value = '';
-				changeBirthInsistnormalView();
 
 				$('#birth_mode_fieldset').show('fade');
 
@@ -773,6 +775,7 @@
 
 			if (deathtype.value != '1') {
 				$('#birth_babyoutcome_div').hide();
+				outcomesel.value='99';
 
 			} else {
 				$('#birth_babyoutcome_div').show();
@@ -876,11 +879,11 @@
 			rtime.value = "";
 
 			if (objCombo.checked) {
-				rdate.readOnly = true;
-				rtime.readOnly = true;
+				rdate.disabled = true;
+				rtime.disabled = true;
 			} else {
-				rdate.readOnly = false;
-				rtime.readOnly = false;
+				rdate.disabled = false;
+				rtime.disabled = false;
 			}
 		}
 

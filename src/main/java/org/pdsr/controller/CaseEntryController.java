@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -216,6 +217,7 @@ public class CaseEntryController {
 		selected.setCase_uuid(UUID.randomUUID().toString());
 		selected.setCase_id("T" + selected.getCase_death() + "C" + (new java.util.Date().getTime()));
 		selected.setCase_status(0);
+		selected.setData_sent(0);
 		selected.setCase_sync(syncRepo.findById(CONSTANTS.FACILITY_ID).get().getSync_code());
 
 		caseRepo.save(selected);
@@ -260,7 +262,7 @@ public class CaseEntryController {
 
 		switch (page) {
 		case 1: {
-			model.addAttribute("bioactive", "active text-warning");
+			model.addAttribute("bioactive", "active");
 			if (selected.getBiodata() == null) {
 				case_biodata data = new case_biodata();
 				data.setBiodata_uuid(UUID.randomUUID().toString());
@@ -271,20 +273,20 @@ public class CaseEntryController {
 		}
 
 		case 2: {
-			model.addAttribute("refactive", "active text-warning");
+			model.addAttribute("refactive", "active");
 			if (selected.getReferral() == null) {
 				case_referral data = new case_referral();
 				data.setReferral_uuid(UUID.randomUUID().toString());
 				data.setCase_uuid(selected);
 				selected.setReferral(data);
 			}
-			final String encodedImage = CONSTANTS.convertBinImageToString(selected.getReferral().getReferral_file());
+			final String encodedImage = convertBinImageToString(selected.getReferral().getReferral_file());
 			selected.getReferral().setBase64image(encodedImage);
 			break;
 		}
 
 		case 3: {
-			model.addAttribute("preactive", "active text-warning");
+			model.addAttribute("preactive", "active");
 			if (selected.getPregnancy() == null) {
 				case_pregnancy data = new case_pregnancy();
 				data.setPregnancy_uuid(UUID.randomUUID().toString());
@@ -295,7 +297,7 @@ public class CaseEntryController {
 		}
 
 		case 4: {
-			model.addAttribute("antactive", "active text-warning");
+			model.addAttribute("antactive", "active");
 			if (selected.getAntenatal() == null) {
 				case_antenatal data = new case_antenatal();
 				data.setAntenatal_uuid(UUID.randomUUID().toString());
@@ -307,7 +309,7 @@ public class CaseEntryController {
 		}
 
 		case 5: {
-			model.addAttribute("labactive", "active text-warning");
+			model.addAttribute("labactive", "active");
 			if (selected.getLabour() == null) {
 				case_labour data = new case_labour();
 				data.setLabour_uuid(UUID.randomUUID().toString());
@@ -319,7 +321,7 @@ public class CaseEntryController {
 		}
 
 		case 6: {
-			model.addAttribute("delactive", "active text-warning");
+			model.addAttribute("delactive", "active");
 			if (selected.getDelivery() == null) {
 				case_delivery data = new case_delivery();
 				data.setDelivery_uuid(UUID.randomUUID().toString());
@@ -330,7 +332,7 @@ public class CaseEntryController {
 		}
 
 		case 7: {
-			model.addAttribute("biractive", "active text-warning");
+			model.addAttribute("biractive", "active");
 			if (selected.getBirth() == null) {
 				case_birth data = new case_birth();
 				data.setBirth_uuid(UUID.randomUUID().toString());
@@ -345,7 +347,7 @@ public class CaseEntryController {
 
 		case 8: {
 			if (selected.getCase_death() == 1) {
-				model.addAttribute("fetactive", "active text-warning");
+				model.addAttribute("fetactive", "active");
 				if (selected.getFetalheart() == null) {
 					case_fetalheart data = new case_fetalheart();
 					data.setFetalheart_uuid(UUID.randomUUID().toString());
@@ -355,7 +357,7 @@ public class CaseEntryController {
 				}
 			} else if (selected.getCase_death() == 2) {
 
-				model.addAttribute("babactive", "active text-warning");
+				model.addAttribute("babactive", "active");
 				if (selected.getBabydeath() == null) {
 					case_babydeath data = new case_babydeath();
 					data.setBaby_uuid(UUID.randomUUID().toString());
@@ -369,7 +371,7 @@ public class CaseEntryController {
 		}
 
 		case 9: {
-			model.addAttribute("notactive", "active text-warning");
+			model.addAttribute("notactive", "active");
 			if (selected.getNotes() == null) {
 				case_notes data = new case_notes();
 				data.setNotes_uuid(UUID.randomUUID().toString());
@@ -377,7 +379,7 @@ public class CaseEntryController {
 				selected.setNotes(data);
 			}
 
-			final String encodedImage = CONSTANTS.convertBinImageToString(selected.getNotes().getNotes_file());
+			final String encodedImage = convertBinImageToString(selected.getNotes().getNotes_file());
 			selected.getNotes().setBase64image(encodedImage);
 
 			break;
@@ -448,6 +450,7 @@ public class CaseEntryController {
 				}
 
 				MultipartFile file = selected.getReferral().getFile();
+				selected.getReferral().setBase64image(null);
 
 				try {
 					if (file != null && file.getBytes() != null && file.getBytes().length > 0) {
@@ -458,7 +461,8 @@ public class CaseEntryController {
 					e.printStackTrace();
 				}
 
-				if (selected.getReferral().getReferral_case() == 1) {
+				if (selected.getReferral().getReferral_case() != null
+						&& selected.getReferral().getReferral_case() == 1) {
 
 					validateTheTimesOnReferralPage(model, results, selected, existing);
 
@@ -735,14 +739,25 @@ public class CaseEntryController {
 				}
 
 				case_birth o = selected.getBirth();
+
+				boolean insistnormal_notselected = (o.getBirth_mode() != null
+						&& (o.getBirth_mode() == 0 || o.getBirth_mode() == 1)) && o.getBirth_insistnormal() == null;
+
+				boolean insistnormal_selected_but_any_cs_datetime_missing = (o.getBirth_mode() != null
+						&& (o.getBirth_mode() == 0 || o.getBirth_mode() == 1)) && o.getBirth_insistnormal() != null
+						&& o.getBirth_insistnormal() == 1
+						&& (o.getBirth_csproposehour() == null || o.getBirth_csproposedate() == null
+								|| o.getBirth_csproposeminute() == null || o.getBirth_csproposetime() == null);
+
 				if (o.getBirth_abnormalities() == null || o.getBirth_babyoutcome() == null
-						|| o.getBirth_cordfaults() == null || o.getBirth_csproposehour() == null
-						|| o.getBirth_csproposedate() == null || o.getBirth_csproposeminute() == null
-						|| o.getBirth_csproposetime() == null || o.getBirth_facility() == null
+						|| o.getBirth_cordfaults() == null || o.getBirth_mode() == null || insistnormal_notselected
+						|| insistnormal_selected_but_any_cs_datetime_missing || o.getBirth_facility() == null
 						|| o.getBirth_insistnormal() == null || o.getBirth_liqourcolor() == null
 						|| o.getBirth_liqourodour() == null || o.getBirth_liqourvolume() == null
-						|| o.getBirth_mode() == null || o.getBirth_motheroutcome() == null
-						|| o.getBirth_placentachecks() == null || o.getBirth_provider() == null) {
+						|| o.getBirth_motheroutcome() == null || o.getBirth_placentachecks() == null
+						|| o.getBirth_provider() == null) {
+
+					System.out.println();
 					o.setData_complete(0);
 				} else {
 					o.setData_complete(1);
@@ -796,9 +811,6 @@ public class CaseEntryController {
 
 					}
 
-					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getBabydeath()));
-					selected.getBabydeath().setBaby_json(arrayToJson);
-
 					case_babydeath o = selected.getBabydeath();
 					boolean baby_ddatetime_expected = (o.getBaby_ddatetime_notstated() == null
 							|| o.getBaby_ddatetime_notstated() == 0);
@@ -816,6 +828,9 @@ public class CaseEntryController {
 						o.setData_complete(0);
 					} else {
 						o.setData_complete(1);
+						final String arrayToJson = objectMapper
+								.writeValueAsString(processListOf(selected.getBabydeath()));
+						selected.getBabydeath().setBaby_json(arrayToJson);
 					}
 
 					babyRepo.save(selected.getBabydeath());
@@ -829,6 +844,7 @@ public class CaseEntryController {
 		case 9: {
 			try {
 				MultipartFile file = selected.getNotes().getFile();
+				selected.getNotes().setBase64image(null);
 
 				try {
 					if (file != null && file.getBytes() != null && file.getBytes().length > 0) {
@@ -1583,7 +1599,7 @@ public class CaseEntryController {
 						getAnswer("trans_options", o.getReferral_transport()), isreferral),
 				new json_data(getQuestion("label.referral_notes"), o.getReferral_notes(), isreferral),
 				new json_data(getQuestion("label.referral_file"),
-						CONSTANTS.IMAGE_TAG + CONSTANTS.convertBinImageToString(o.getReferral_file()), isreferral)
+						CONSTANTS.IMAGE_TAG + convertBinImageToString(o.getReferral_file()), isreferral)
 
 		).collect(Collectors.toList());
 
@@ -1610,9 +1626,13 @@ public class CaseEntryController {
 		boolean hasrisks = o.getAntenatal_risks() == 1;
 		boolean hasfolic = o.getAntenatal_folicacid() == 1;
 		String items = "";
-		for (risk_table elem : o.getRisks()) {
-			items += elem.getRisk_name() + "<br/>";
-		}
+		if (o.getRisks() != null && !o.getRisks().isEmpty())
+			for (risk_table elem : o.getRisks()) {
+				items += elem.getRisk_name() + "<br/>";
+			}
+		if (o.getNew_risks() != null && o.getNew_risks().trim() != "")
+			items += o.getNew_risks();
+
 		List<json_data> list = Stream.of(
 				new json_data(getQuestion("label.antenatal_gravida"), "" + o.getAntenatal_gravida(), true),
 				new json_data(getQuestion("label.antenatal_para"), "" + o.getAntenatal_para(), true),
@@ -1652,9 +1672,12 @@ public class CaseEntryController {
 		boolean hascomplications = o.getLabour_complications() == 1;
 
 		String items = "";
-		for (complication_table elem : o.getComplications()) {
-			items += elem.getComplication_name() + "<br/>";
-		}
+		if (o.getComplications() != null && !o.getComplications().isEmpty())
+			for (complication_table elem : o.getComplications()) {
+				items += elem.getComplication_name() + "<br/>";
+			}
+		if (o.getNew_complications() != null && o.getNew_complications().trim() != "")
+			items += o.getNew_complications();
 
 		List<json_data> list = Stream
 				.of(new json_data(getQuestion("label.labour_datetime"),
@@ -1694,27 +1717,35 @@ public class CaseEntryController {
 		boolean hasplacentack = o.getBirth_placentachecks() == 1;
 
 		String items = "", items1 = "", items2 = "";
-		for (abnormality_table elem : o.getAbnormalities()) {
-			items += elem.getAbnormal_name() + "<br/>";
-		}
-		items += o.getNew_abnormalities();
+		if (o.getAbnormalities() != null && !o.getAbnormalities().isEmpty())
+			for (abnormality_table elem : o.getAbnormalities()) {
+				items += elem.getAbnormal_name() + "<br/>";
+			}
+		if (o.getNew_abnormalities() != null && o.getNew_abnormalities().trim() != "")
+			items += o.getNew_abnormalities();
 
-		for (cordfault_table elem : o.getCordfaults()) {
-			items1 += elem.getCordfault_name() + "<br/>";
-		}
-		items1 += o.getNew_cordfaults();
+		if (o.getCordfaults() != null && !o.getCordfaults().isEmpty())
+			for (cordfault_table elem : o.getCordfaults()) {
+				items1 += elem.getCordfault_name() + "<br/>";
+			}
+		if (o.getNew_cordfaults() != null && o.getNew_cordfaults().trim() != "")
+			items1 += o.getNew_cordfaults();
 
-		for (placentacheck_table elem : o.getPlacentachecks()) {
-			items2 += elem.getPlacentacheck_name() + "<br/>";
-		}
-		items2 += o.getNew_placentachecks();
+		if (o.getPlacentachecks() != null && !o.getPlacentachecks().isEmpty())
+			for (placentacheck_table elem : o.getPlacentachecks()) {
+				items2 += elem.getPlacentacheck_name() + "<br/>";
+			}
+		if (o.getNew_placentachecks() != null && o.getNew_placentachecks().trim() != "")
+			items2 += o.getNew_placentachecks();
 
 		List<json_data> list = Stream
 				.of(new json_data(getQuestion("label.birth_mode"), getAnswer("mode_options", o.getBirth_mode()), true),
 						new json_data(getQuestion("label.birth_insistnormal"),
 								getAnswer("yesnodkna_options", o.getBirth_insistnormal()), true),
 						new json_data(getQuestion("label.birth_csproposedatetime"),
-								new SimpleDateFormat("HH:mm a").format(o.getBirth_csproposetime()), forcenormal),
+								(o.getBirth_csproposetime() == null) ? "Not stated"
+										: new SimpleDateFormat("HH:mm a").format(o.getBirth_csproposetime()),
+								forcenormal),
 						new json_data(getQuestion("label.birth_provider"),
 								getAnswer("provider_options", o.getBirth_provider()), true),
 						new json_data(getQuestion("label.birth_facility"),
@@ -1761,15 +1792,19 @@ public class CaseEntryController {
 		boolean isadmit = o.getBaby_admitted() != null && o.getBaby_admitted() == 1;
 
 		String items = "", items1 = "";
-		for (resuscitation_table elem : o.getResuscitations()) {
-			items += elem.getResuscitation_name() + "<br/>";
-		}
-		items += o.getNew_resuscitation();
+		if (o.getResuscitations() != null && !o.getResuscitations().isEmpty())
+			for (resuscitation_table elem : o.getResuscitations()) {
+				items += elem.getResuscitation_name() + "<br/>";
+			}
+		if (o.getNew_resuscitation() != null && o.getNew_resuscitation().trim() != "")
+			items += o.getNew_resuscitation();
 
-		for (diagnoses_table elem : o.getDiagnoses()) {
-			items += elem.getDiagnosis_name() + "<br/>";
-		}
-		items += o.getNew_diagnoses();
+		if (o.getDiagnoses() != null && !o.getDiagnoses().isEmpty())
+			for (diagnoses_table elem : o.getDiagnoses()) {
+				items1 += elem.getDiagnosis_name() + "<br/>";
+			}
+		if (o.getNew_diagnoses() != null && o.getNew_diagnoses().trim() != "")
+			items1 += o.getNew_diagnoses();
 
 		List<json_data> list = Stream
 				.of(new json_data(getQuestion("label.baby_cry"), getAnswer("yesnodk_options", o.getBaby_cry()), true),
@@ -1796,7 +1831,7 @@ public class CaseEntryController {
 	private List<json_data> processListOf(case_notes o) {
 		List<json_data> list = Stream.of(new json_data(getQuestion("label.notes_text"), o.getNotes_text(), true),
 				new json_data(getQuestion("label.notes_file"),
-						CONSTANTS.IMAGE_TAG + CONSTANTS.convertBinImageToString(o.getNotes_file()), true)
+						CONSTANTS.IMAGE_TAG + convertBinImageToString(o.getNotes_file()), true)
 
 		).collect(Collectors.toList());
 
@@ -1837,6 +1872,13 @@ public class CaseEntryController {
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	private String convertBinImageToString(byte[] binImage) {
+		if (binImage != null && binImage.length > 0) {
+			return Base64.getEncoder().encodeToString(binImage);
+		} else
+			return "";
 	}
 
 }// end class

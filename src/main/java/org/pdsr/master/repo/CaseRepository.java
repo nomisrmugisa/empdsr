@@ -16,7 +16,7 @@ public interface CaseRepository extends JpaRepository<case_identifiers, String> 
 	@Query("select c from case_identifiers c where c.case_status = 1")
 	List<case_identifiers> findBySubmittedCases();
 
-	@Query("select c from case_identifiers c where c.data_sent IS NULL")
+	@Query("select c from case_identifiers c where c.data_sent = 0 or c.data_sent is null")
 	List<case_identifiers> findBySubmittedToPush();
 
 	@Query("select c from case_identifiers c LEFT JOIN audit_case a ON(c.case_uuid=a.audit_uuid) WHERE a.audit_uuid IS NULL AND c.case_status=?1")

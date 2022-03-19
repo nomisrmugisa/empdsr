@@ -59,7 +59,10 @@ public class case_labour implements Serializable {
 	@DateTimeFormat(pattern = "HH:mm")
 	private java.util.Date labour_seetime;
 
-	
+	@Column
+	private Integer labour_seedatetime_notstated;
+
+
 	@Column
 	private Integer labour_seeperiod;
 	
@@ -260,6 +263,14 @@ public class case_labour implements Serializable {
 
 	public void setNew_complications(String new_complications) {
 		this.new_complications = new_complications;
+	}
+
+	public Integer getLabour_seedatetime_notstated() {
+		return labour_seedatetime_notstated;
+	}
+
+	public void setLabour_seedatetime_notstated(Integer labour_seedatetime_notstated) {
+		this.labour_seedatetime_notstated = labour_seedatetime_notstated;
 	}
 
 	@Override

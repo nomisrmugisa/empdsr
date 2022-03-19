@@ -2,8 +2,6 @@ package org.pdsr.json;
 
 import java.io.Serializable;
 
-import org.pdsr.CONSTANTS;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)

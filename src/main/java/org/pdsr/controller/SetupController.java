@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.security.Principal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -1345,7 +1347,6 @@ public class SetupController {
 						list6.add(item);
 					}
 					mcase.setMaternal_conditions(list6);
-					
 
 					mcase.setData_sent(s.getData_sent());
 
@@ -1402,17 +1403,18 @@ public class SetupController {
 		List<case_identifiers> cases = caseRepo.findBySubmittedToPush();
 		List<case_identifiers> sent = new ArrayList<>();
 		List<json_case_identifiers> jsons = new ArrayList<>();
+		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
 		for (case_identifiers elem : cases) {
 
 			json_case_identifiers json = new json_case_identifiers();
-			json.setId(elem.getCase_uuid() + country + code.toUpperCase());
+			json.setId(elem.getCase_uuid() + elem.getCase_id().toLowerCase());
 			json.setCode(code);
 			json.setDistrict(district);
 			json.setRegion(region);
 			json.setCountry(country);
 
+			json.setCase_date(f.format(elem.getCase_date()));
 			json.setCase_death(elem.getCase_death());
-			json.setCase_date(elem.getCase_date());
 			json.setCase_status(elem.getCase_status());
 
 			jsons.add(json);
@@ -1433,6 +1435,7 @@ public class SetupController {
 	private void pullCaseData() {
 		List<json_case_identifiers> jsons = api.findAllCases();
 		List<big_case_identifiers> received = new ArrayList<>();
+		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
 		for (json_case_identifiers elem : jsons) {
 
 			big_case_identifiers json = new big_case_identifiers();
@@ -1442,7 +1445,12 @@ public class SetupController {
 			json.setSummaryPk(pk);
 
 			json.setCase_death(elem.getCase_death());
-			json.setCase_date(elem.getCase_date());
+			try {
+				json.setCase_date(f.parse(elem.getCase_date()));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			json.setCase_status(elem.getCase_status());
 
 			received.add(json);
@@ -1455,6 +1463,7 @@ public class SetupController {
 		List<audit_audit> cases = aaudRepo.findByAuditsToPush();
 		List<audit_audit> sent = new ArrayList<>();
 		List<json_audit_audit> jsons = new ArrayList<>();
+		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
 		for (audit_audit elem : cases) {
 
 			json_audit_audit json = new json_audit_audit();
@@ -1464,7 +1473,7 @@ public class SetupController {
 			json.setRegion(region);
 			json.setCountry(country);
 			json.setRec_complete(elem.getRec_complete());
-			json.setAudit_cdate(elem.getAudit_cdate());
+			json.setAudit_cdate(f.format(elem.getAudit_cdate()));
 			json.setAudit_csc(elem.getAudit_csc());
 			json.setAudit_death(elem.getAudit_death());
 			json.setAudit_delay1(elem.getAudit_delay1());
@@ -1498,7 +1507,7 @@ public class SetupController {
 	private void pullAuditData() {
 		List<json_audit_audit> jsons = api.findAllAudits();
 		List<big_audit_audit> received = new ArrayList<>();
-
+		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
 		for (json_audit_audit elem : jsons) {
 
 			big_audit_audit json = new big_audit_audit();
@@ -1508,7 +1517,10 @@ public class SetupController {
 			json.setSummaryPk(pk);
 
 			json.setRec_complete(elem.getRec_complete());
-			json.setAudit_cdate(elem.getAudit_cdate());
+			try {
+				json.setAudit_cdate(f.parse(elem.getAudit_cdate()));
+			} catch (ParseException e) {
+			}
 			json.setAudit_csc(elem.getAudit_csc());
 			json.setAudit_death(elem.getAudit_death());
 			json.setAudit_delay1(elem.getAudit_delay1());
@@ -1535,17 +1547,18 @@ public class SetupController {
 		List<audit_recommendation> cases = recRepo.findActionsToPush();
 		List<audit_recommendation> sent = new ArrayList<>();
 		List<json_audit_recommendation> jsons = new ArrayList<>();
+		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
 		for (audit_recommendation elem : cases) {
 
 			json_audit_recommendation json = new json_audit_recommendation();
-			json.setId(elem.getAudit_uuid() + country + code.toUpperCase());
+			json.setId(elem.getRecommendation_uuid() + country + code.toUpperCase());
 			json.setCode(code);
 			json.setDistrict(district);
 			json.setRegion(region);
 			json.setCountry(country);
 			json.setRecommendation_comments(elem.getRecommendation_comments());
-			json.setRecommendation_date(elem.getRecommendation_date());
-			json.setRecommendation_deadline(elem.getRecommendation_deadline());
+			json.setRecommendation_date(f.format(elem.getRecommendation_date()));
+			json.setRecommendation_deadline(f.format(elem.getRecommendation_deadline()));
 			json.setRecommendation_leader(elem.getRecommendation_leader());
 			json.setRecommendation_reporter(elem.getRecommendation_reporter());
 			json.setRecommendation_resources(elem.getRecommendation_resources());
@@ -1572,7 +1585,7 @@ public class SetupController {
 	private void pullRecommendationData() {
 		List<json_audit_recommendation> jsons = api.findAllRecommendations();
 		List<big_audit_recommendation> received = new ArrayList<>();
-
+		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
 		for (json_audit_recommendation elem : jsons) {
 
 			big_audit_recommendation json = new big_audit_recommendation();
@@ -1582,8 +1595,14 @@ public class SetupController {
 			json.setSummaryPk(pk);
 
 			json.setRecommendation_comments(elem.getRecommendation_comments());
-			json.setRecommendation_date(elem.getRecommendation_date());
-			json.setRecommendation_deadline(elem.getRecommendation_deadline());
+			try {
+				json.setRecommendation_date(f.parse(elem.getRecommendation_date()));
+			} catch (ParseException e) {
+			}
+			try {
+				json.setRecommendation_deadline(f.parse(elem.getRecommendation_deadline()));
+			} catch (ParseException e) {
+			}
 			json.setRecommendation_leader(elem.getRecommendation_leader());
 			json.setRecommendation_reporter(elem.getRecommendation_reporter());
 			json.setRecommendation_resources(elem.getRecommendation_resources());

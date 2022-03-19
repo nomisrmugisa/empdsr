@@ -6,7 +6,6 @@ import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttribute;
-import java.util.Base64;
 
 public class CONSTANTS {
 
@@ -54,12 +53,6 @@ public class CONSTANTS {
 
     private static final String OS = System.getProperty("os.name").toLowerCase();
     
-	public static String convertBinImageToString(byte[] binImage) {
-		if (binImage != null && binImage.length > 0) {
-			return Base64.getEncoder().encodeToString(binImage);
-		} else
-			return "";
-	}
 
     
 }

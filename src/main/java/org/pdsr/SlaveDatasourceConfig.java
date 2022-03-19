@@ -28,11 +28,6 @@ public class SlaveDatasourceConfig {
 		return DataSourceBuilder.create().build();
 	}
 
-	@Bean(name = "jdbcTemplate")
-	public JdbcTemplate jdbcTemplate(@Qualifier("dbslave") DataSource ds) {
-		return new JdbcTemplate(ds);
-	}
-
 	@Bean(name = "secondaryEntityManagerFactory")
 	public LocalContainerEntityManagerFactoryBean secondaryEntityManagerFactory(EntityManagerFactoryBuilder builder,
 			@Qualifier("dbslave") DataSource secondaryDataSource) {

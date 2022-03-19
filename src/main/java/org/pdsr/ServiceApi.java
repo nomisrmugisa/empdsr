@@ -38,26 +38,6 @@ public class ServiceApi {
 	}
 
 	/////////////// CASE IDENTIFIERS////////////////////////////////
-	public String save(DecryptedCaseIdentifiers data) {
-
-		final String URL = BASE_URL.concat("/savecase.php");
-		EncryptedMessage json = new EncryptedMessage();
-
-		json.setError(false);
-		json.setMessage("Encrypted");
-		json.setJwt(data.encrypt(json.getKEY(), json.getISS(), json.getAUD()));
-
-		try {
-
-			return restTemplate.postForObject(URL, json, EncryptedMessage.class).getMessage();
-
-		} catch (Exception ex) {
-
-			return new EncryptedMessage(Boolean.TRUE, ex.getLocalizedMessage()).getMessage();
-		}
-
-	}
-
 	public String saveAll(DecryptedCaseIdentifiers data) {
 
 		final String URL = BASE_URL.concat("/savecases.php");

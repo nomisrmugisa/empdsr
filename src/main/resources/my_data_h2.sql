@@ -1,3 +1,5 @@
+
+
     MERGE INTO user_table(username, enabled, password, usercontact, useremail, userfullname, alerted) KEY(username) 
     VALUES (
 	    'webadmin'

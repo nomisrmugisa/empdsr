@@ -1,7 +1,6 @@
 package org.pdsr.json;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -20,7 +19,7 @@ public class json_audit_audit implements Serializable {
 	private String country;
 	private String region;
 	private String district;
-	private java.util.Date audit_cdate;
+	private String audit_cdate;
 	private Integer audit_death;
 	private String audit_icd10;
 	private String audit_icdpm;
@@ -41,7 +40,7 @@ public class json_audit_audit implements Serializable {
 	public json_audit_audit() {
 		super();
 	}
-	public json_audit_audit(String id, String code, String country, String region, String district, Date audit_cdate,
+	public json_audit_audit(String id, String code, String country, String region, String district, String audit_cdate,
 			Integer audit_death, String audit_icd10, String audit_icdpm, String audit_csc, Integer audit_delay1,
 			Integer audit_delay2, Integer audit_delay3a, Integer audit_delay3b, Integer audit_delay3c,
 			String audit_ifcmfs, String audit_sysmfs, String audit_facmfs, String audit_hwkmfs) {
@@ -177,10 +176,10 @@ public class json_audit_audit implements Serializable {
 		this.audit_hwkmfs = audit_hwkmfs;
 	}
 	
-	public java.util.Date getAudit_cdate() {
+	public String getAudit_cdate() {
 		return audit_cdate;
 	}
-	public void setAudit_cdate(java.util.Date audit_cdate) {
+	public void setAudit_cdate(String audit_cdate) {
 		this.audit_cdate = audit_cdate;
 	}
 	public Integer getRec_complete() {

@@ -1,7 +1,6 @@
 package org.pdsr.json;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -18,7 +17,7 @@ public class json_case_identifiers implements Serializable {
 	private String country;
 	private String region;
 	private String district;
-	private java.util.Date case_date;
+	private String case_date;
 	private Integer case_death;//1 stillbirth or 2 early neonatal
 	private Integer case_status;//0 entry, 1 submitted, 2 selected, 3 reviewed
 	
@@ -26,7 +25,7 @@ public class json_case_identifiers implements Serializable {
 		super();
 	}
 
-	public json_case_identifiers(String id, String code, String country, String region, String district, Date case_date,
+	public json_case_identifiers(String id, String code, String country, String region, String district, String case_date,
 			Integer case_death, Integer case_status) {
 		super();
 		this.id = id;
@@ -79,11 +78,11 @@ public class json_case_identifiers implements Serializable {
 		this.district = district;
 	}
 
-	public java.util.Date getCase_date() {
+	public String getCase_date() {
 		return case_date;
 	}
 
-	public void setCase_date(java.util.Date case_date) {
+	public void setCase_date(String case_date) {
 		this.case_date = case_date;
 	}
 

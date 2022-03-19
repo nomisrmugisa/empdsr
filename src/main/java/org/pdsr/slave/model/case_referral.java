@@ -73,7 +73,10 @@ public class case_referral implements Serializable {
 	@DateTimeFormat(pattern = "HH:mm")
 	private java.util.Date referral_time;
 
-	
+	@Column
+	private Integer referral_datetime_notstated;
+
+
 	@Column
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
@@ -93,7 +96,9 @@ public class case_referral implements Serializable {
 	@DateTimeFormat(pattern = "HH:mm")
 	private java.util.Date referral_atime;
 
-	
+	@Column
+	private Integer referral_adatetime_notstated;
+
 	@Column
 	private Integer referral_transport;
 
@@ -287,6 +292,22 @@ public class case_referral implements Serializable {
 
 	public void setReferral_json(String referral_json) {
 		this.referral_json = referral_json;
+	}
+
+	public Integer getReferral_datetime_notstated() {
+		return referral_datetime_notstated;
+	}
+
+	public void setReferral_datetime_notstated(Integer referral_datetime_notstated) {
+		this.referral_datetime_notstated = referral_datetime_notstated;
+	}
+
+	public Integer getReferral_adatetime_notstated() {
+		return referral_adatetime_notstated;
+	}
+
+	public void setReferral_adatetime_notstated(Integer referral_adatetime_notstated) {
+		this.referral_adatetime_notstated = referral_adatetime_notstated;
 	}
 
 	@Override
