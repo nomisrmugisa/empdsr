@@ -512,13 +512,15 @@ public class SetupController {
 			}
 
 		}
-
-		if (selected.isMerge_location()) {
-			mergeCountry();
-			mergeRegion();
-			mergeDistrict();
-			mergeFacility();
-		}
+		
+		
+//THIS CODE SHOULD NOT BE USED SINCE WE MERGE AT THE SAME FACILITY
+//		if (selected.isMerge_location()) {
+//			mergeCountry();
+//			mergeRegion();
+//			mergeDistrict();
+//			mergeFacility();
+//		}
 
 		// merge weekly reports from slave to master (overrides if exists)
 		if (selected.isMerge_weekly()) {
@@ -527,9 +529,11 @@ public class SetupController {
 
 		}
 
+		sync_table object = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		facility_table facility = facilityRepo.findByFacility_code(object.getSync_code()).get();
 		// merge case entries from slave to master (overrides if exists)
 		if (selected.isMerge_cases()) {
-			mergeCaseIdentifier();
+			mergeCaseIdentifier(facility);
 		}
 
 		// merge case audits from slave to master (overrides if exists)
@@ -743,28 +747,26 @@ public class SetupController {
 		}
 	}
 
-	private void mergeCaseIdentifier() {
+	private void mergeCaseIdentifier(facility_table facility) {
 		List<org.pdsr.slave.model.case_identifiers> sdeaths = scaseRepo.findAll();
 		if (sdeaths != null && sdeaths.size() > 0) {
 			List<case_identifiers> deaths = new ArrayList<case_identifiers>();
 			for (org.pdsr.slave.model.case_identifiers s : sdeaths) {
-				Optional<facility_table> facility = facilityRepo.findById(s.getFacility().getFacility_uuid());
-				if (facility.isPresent()) {
-					case_identifiers death = new case_identifiers();
-					death.setCase_uuid(s.getCase_uuid());
-					death.setCase_id(s.getCase_id());
-					death.setCase_date(s.getCase_date());
-					death.setCase_mid(s.getCase_mid());
-					death.setCase_mname(s.getCase_mname());
-					death.setCase_status(s.getCase_status());
-					death.setCase_death(s.getCase_death());
-					death.setCase_sync(s.getCase_sync());
-					death.setData_sent(s.getData_sent());
+				case_identifiers death = new case_identifiers();
+				death.setCase_uuid(s.getCase_uuid());
+				death.setCase_id(s.getCase_id());
+				death.setCase_date(s.getCase_date());
+				death.setCase_mid(s.getCase_mid());
+				death.setCase_mname(s.getCase_mname());
+				death.setCase_status(s.getCase_status());
+				death.setCase_death(s.getCase_death());
+				death.setCase_sync(s.getCase_sync());
+				death.setData_sent(s.getData_sent());
 
-					death.setFacility(facility.get());
+				death.setFacility(facility);
 
-					deaths.add(death);
-				}
+				deaths.add(death);
+
 			}
 
 			caseRepo.saveAll(deaths);
@@ -1474,6 +1476,7 @@ public class SetupController {
 			json.setCountry(country);
 			json.setRec_complete(elem.getRec_complete());
 			json.setAudit_cdate(f.format(elem.getAudit_cdate()));
+			// System.out.println(json.getAudit_cdate());//console
 			json.setAudit_csc(elem.getAudit_csc());
 			json.setAudit_death(elem.getAudit_death());
 			json.setAudit_delay1(elem.getAudit_delay1());

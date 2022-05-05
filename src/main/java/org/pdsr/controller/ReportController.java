@@ -220,6 +220,7 @@ public class ReportController {
 			wm.setWm_values(0);
 			wm.setWm_subval(0);// don't worry about this, when the data is being opened, the subval
 			// calculations will be triggered
+			wm.setData_sent(0);//reset the data sending indicator when any record is edited
 
 			wm.setWm_grids(w);// link it to the weeks
 			wm.setWm_indices(m);// link it to the statistic indicator being monitored
@@ -301,6 +302,7 @@ public class ReportController {
 								&& (sube.getWm_indices().getMindex() % head.getWm_indices().getGindex()) != 0
 								&& (sube.getWm_indices().getMindex() % head.getWm_indices().getGindex()) <= 5) {
 
+							sube.setData_sent(0);//reset the data sending indicator when any record is edited
 							sube.setWm_subval(head.getWm_subval());
 						}
 
@@ -324,6 +326,7 @@ public class ReportController {
 						if (head.getWm_indices().getGindex() == sube.getWm_indices().getGindex()
 								&& (sube.getWm_indices().getMindex() % head.getWm_indices().getGindex()) > 5) {
 
+							sube.setData_sent(0);//reset the data sending indicator when any record is edited
 							sube.setWm_subval(head.getWm_subval());
 						}
 
@@ -373,6 +376,7 @@ public class ReportController {
 					wm.setWm_grids(week);
 					wm.setWm_values(0);
 					wm.setWm_subval(0);
+					wm.setData_sent(0);//reset the data sending indicator when any record is edited
 
 					weekbuider.add(wm);
 

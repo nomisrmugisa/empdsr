@@ -821,17 +821,17 @@ public class HomeController {
 		model.addAttribute("atotal_actions", brecRepo.count(COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 		model.addAttribute("acompleted_actions", brecRepo.countByCompleted(COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 		model.addAttribute("acompleted_actions_r",
-				brecRepo.count() == 0 ? 0
+				brecRepo.count(COUNTRY_NAME, REGION_NAME, DISTRICT_NAME) == 0 ? 0
 						: 100 * brecRepo.countByCompleted(COUNTRY_NAME, REGION_NAME, DISTRICT_NAME)
 								/ brecRepo.count(COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 		model.addAttribute("apending_actions", brecRepo.countByPending(date, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 		model.addAttribute("apending_actions_r",
-				brecRepo.count() == 0 ? 0
+				brecRepo.count(COUNTRY_NAME, REGION_NAME, DISTRICT_NAME) == 0 ? 0
 						: 100 * brecRepo.countByPending(date, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME)
 								/ brecRepo.count(COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 		model.addAttribute("aoverdue_actions", brecRepo.countByOverdue(date, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 		model.addAttribute("aoverdue_actions_r",
-				brecRepo.count() == 0 ? 0
+				brecRepo.count(COUNTRY_NAME, REGION_NAME, DISTRICT_NAME) == 0 ? 0
 						: 100 * brecRepo.countByOverdue(date, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME)
 								/ brecRepo.count(COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 
@@ -916,6 +916,7 @@ public class HomeController {
 
 			cstillbirth.add(stillbirth);
 		}
+		
 		model.addAttribute("top_cstillbirth", cstillbirth);
 
 	}
@@ -1494,13 +1495,13 @@ public class HomeController {
 		// overall
 		model.addAttribute("atotal_actions", brecRepo.count(COUNTRY_NAME));
 		model.addAttribute("acompleted_actions", brecRepo.countByCompleted(COUNTRY_NAME));
-		model.addAttribute("acompleted_actions_r", brecRepo.count() == 0 ? 0
+		model.addAttribute("acompleted_actions_r", brecRepo.count(COUNTRY_NAME) == 0 ? 0
 				: 100 * brecRepo.countByCompleted(COUNTRY_NAME) / brecRepo.count(COUNTRY_NAME));
 		model.addAttribute("apending_actions", brecRepo.countByPending(date, COUNTRY_NAME));
-		model.addAttribute("apending_actions_r", brecRepo.count() == 0 ? 0
+		model.addAttribute("apending_actions_r", brecRepo.count(COUNTRY_NAME) == 0 ? 0
 				: 100 * brecRepo.countByPending(date, COUNTRY_NAME) / brecRepo.count(COUNTRY_NAME));
 		model.addAttribute("aoverdue_actions", brecRepo.countByOverdue(date, COUNTRY_NAME));
-		model.addAttribute("aoverdue_actions_r", brecRepo.count() == 0 ? 0
+		model.addAttribute("aoverdue_actions_r", brecRepo.count(COUNTRY_NAME) == 0 ? 0
 				: 100 * brecRepo.countByOverdue(date, COUNTRY_NAME) / brecRepo.count(COUNTRY_NAME));
 
 		/// current year

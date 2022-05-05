@@ -27,8 +27,8 @@ public class ServiceApi {
 //	private SyncTableRepository syncRepo;
 	
 	private final RestTemplate restTemplate;
-	//private final String BASE_URL = "https://olincgroup.com/pdsr/ghana";
-	private final String BASE_URL = "https://olincgroup.com/pdsr/namibia";
+	private final String BASE_URL = "https://olincgroup.com/pdsr/ghana";
+	//private final String BASE_URL = "https://olincgroup.com/pdsr/namibia";
 	//private final String BASE_URL = "https://olincgroup.com/pdsr/sierraleone";
 
 	public ServiceApi(final RestTemplateBuilder restTemplateBuilder) {

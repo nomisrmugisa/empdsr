@@ -53,6 +53,7 @@ import org.pdsr.master.repo.McgroupRepository;
 import org.pdsr.master.repo.MconditionsRepository;
 import org.pdsr.master.repo.SyncTableRepository;
 import org.pdsr.master.repo.UserTableRepository;
+import org.pdsr.pojos.CaseWrapper;
 import org.pdsr.pojos.icdpm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -263,6 +264,191 @@ public class CaseAuditController {
 		return "redirect:/auditing";
 	}
 
+	@GetMapping("/mycases")
+	public String manualSelectCases(Principal principal, Model model) {
+		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+			return "home";
+		}
+
+		
+		CaseWrapper selected = new CaseWrapper();
+		selected.setId("casewrapper");
+		model.addAttribute("selected", selected);
+		model.addAttribute("active_cases", caseRepo.findByPendingCase_status(1));
+
+		return "auditing/audit-list";
+	}
+
+	@PostMapping("/mycases")
+	public String manualSelectCases(Principal principal, @ModelAttribute("selected") CaseWrapper selected) {
+		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+			return "home";
+		}
+
+		// prepare a mapping reference type for converting the JSON strings to objects
+		ObjectMapper objectMapper = new ObjectMapper();
+		// objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+		objectMapper.configure(Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+		objectMapper.configure(Feature.ALLOW_SINGLE_QUOTES, true);
+		TypeReference<List<json_data>> mapType = new TypeReference<List<json_data>>() {
+		};
+//		TypeReference<json_algorithm> mapType1 = new TypeReference<json_algorithm>() {
+//		};
+
+		// create a bucket for the selected cases for auditing
+		List<case_identifiers> pendingAudit = selected.getRcases();
+//		System.out.println("Id : " + selected.getId());
+//		System.out.println("cases size: " + selected.getRcases().size());
+//		System.out.println("cases: " + selected.getRcases().get(0));
+
+		List<audit_case> selectedForAuditing = new ArrayList<>();
+
+		for (case_identifiers scase : pendingAudit) {
+			
+//			System.out.print("case is: " + scase.getCase_id());
+			scase.setCase_status(2);
+			caseRepo.save(scase);
+
+			// create a new audit for the case
+			audit_case acase = new audit_case();
+			acase.setAudit_date(new java.util.Date());
+			acase.setAudit_uuid(scase.getCase_uuid());
+			acase.setCase_death(scase.getCase_death());
+
+			// extract the json array from the case into a one big list object
+			json_list fulldata = new json_list();
+
+			List<json_data> biodata;
+			try {
+				biodata = objectMapper.readValue(scase.getBiodata().getBiodata_json(), mapType);
+				fulldata.setBiodata(biodata);
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			List<json_data> pregdata;
+			try {
+				pregdata = objectMapper.readValue(scase.getPregnancy().getPregnancy_json(), mapType);
+				fulldata.setPregnancy(pregdata);
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			List<json_data> refdata;
+			try {
+				refdata = objectMapper.readValue(scase.getReferral().getReferral_json(), mapType);
+				fulldata.setReferral(refdata);
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			List<json_data> deldata;
+			try {
+				deldata = objectMapper.readValue(scase.getDelivery().getDelivery_json(), mapType);
+				fulldata.setDelivery(deldata);
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			List<json_data> antedata;
+			try {
+				antedata = objectMapper.readValue(scase.getAntenatal().getAntenatal_json(), mapType);
+				fulldata.setAntenatal(antedata);
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			List<json_data> labdata;
+			try {
+				labdata = objectMapper.readValue(scase.getLabour().getLabour_json(), mapType);
+				fulldata.setLabour(labdata);
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			List<json_data> birdata;
+			try {
+				birdata = objectMapper.readValue(scase.getBirth().getBirth_json(), mapType);
+				fulldata.setBirth(birdata);
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			if (scase.getCase_death() == 1 && scase.getFetalheart() != null) {
+				List<json_data> fetdata;
+				try {
+					fetdata = objectMapper.readValue(scase.getFetalheart().getFetalheart_json(), mapType);
+					fulldata.setFetalheart(fetdata);
+				} catch (JsonProcessingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+			if (scase.getCase_death() == 2 && scase.getBabydeath() != null) {
+				List<json_data> bdtdata;
+				try {
+					bdtdata = objectMapper.readValue(scase.getBabydeath().getBaby_json(), mapType);
+					fulldata.setBabydeath(bdtdata);
+				} catch (JsonProcessingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+			List<json_data> notedata;
+			try {
+				notedata = objectMapper.readValue(scase.getNotes().getNotes_json(), mapType);
+				fulldata.setNotes(notedata);
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			// convert the big list back to JSON data String
+			String arrayToJson;
+			try {
+				arrayToJson = objectMapper.writeValueAsString(fulldata);
+				// add the combined JSON data to the new audit for the case
+				acase.setAudit_data(arrayToJson);
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			// add the new audit for case into the bucket of selected cases for auditing
+			selectedForAuditing.add(acase);
+
+		}
+
+		if (selectedForAuditing.size() > 0) {
+			try {
+				if (InternetAvailabilityChecker.isInternetAvailable()) {
+
+					sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+					emailService.sendSimpleMessage(getRecipients(), "TEST MESSAGE - PDSR NEW REVIEWS NOTIFICATION!",
+							"Hello Reviewers,\n" + "\nThere are " + selectedForAuditing.size()
+									+ " deaths ready to be reviewed this week" + "\nHealth Facility: "
+									+ sync.getSync_name() + " - " + sync.getSync_code()
+									+ "\nThis is a PILOT IMPLEMENTATION of the Enhanced Automated PDSR tool developed by Alex and Eliezer");
+				}
+			} catch (IOException e) {
+			}
+
+			acaseRepo.saveAll(selectedForAuditing);
+		}
+
+		return "redirect:/auditing";
+
+	}
+
 	// select cases for review
 	@Scheduled(cron = "0 0 9 * * 0") // once a week on mondays at 9am
 	public void autoSelectCases() {
@@ -353,6 +539,10 @@ public class CaseAuditController {
 					if (nextPriority != medicalcode) {
 						continue a;
 					}
+
+					// mark as selected case for review
+					scase.setCase_status(2);
+					caseRepo.save(scase);
 
 					// create a new audit for the case
 					audit_case acase = new audit_case();
@@ -493,6 +683,11 @@ public class CaseAuditController {
 				}
 
 				if (scase != null) {
+
+					// mark as selected case for review
+					scase.setCase_status(2);
+					caseRepo.save(scase);
+
 					// create a new audit for the case
 					audit_case acase = new audit_case();
 					acase.setAudit_date(new java.util.Date());
@@ -698,6 +893,7 @@ public class CaseAuditController {
 		return "auditing/audit-create";
 	}
 
+	@Transactional
 	@PostMapping("/edit/{id}")
 	public String submit(Principal principal, @ModelAttribute("selected") audit_audit selected,
 			@PathVariable("id") String case_uuid) {
@@ -710,11 +906,17 @@ public class CaseAuditController {
 			selected.setAudit_cdate(new java.util.Date());
 			selected.setAudit_case(acaseRepo.findById(case_uuid).get());
 			selected.setAudit_csc("None");
+			selected.setData_sent(0);
 
 			String arrayToJson;
 			arrayToJson = objectMapper.writeValueAsString(processListOf(selected));
 			selected.setAudit_json(arrayToJson);
 			tcaseRepo.save(selected);
+
+			// mark as reviewed case for data transfer purposes
+			case_identifiers c = caseRepo.findById(case_uuid).get();
+			c.setCase_status(3);
+			caseRepo.save(c);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 			return "auditing/audit-create";
@@ -804,6 +1006,7 @@ public class CaseAuditController {
 		selected.setRecommendation_uuid(UUID.randomUUID().toString());
 		selected.setRecommendation_date(new java.util.Date());
 		selected.setRecommendation_status(0);
+		selected.setData_sent(0);
 		selected.setRecommendation_comments("comments");
 		selected.setAudit_uuid(audit);
 
@@ -863,6 +1066,7 @@ public class CaseAuditController {
 		audit_recommendation recommend = rcaseRepo.findById(recommendation_uuid).get();
 		recommend.setRecommendation_status(selected.getRecommendation_status());
 		recommend.setRecommendation_comments(selected.getRecommendation_comments());
+		selected.setData_sent(0);
 
 		rcaseRepo.save(recommend);
 

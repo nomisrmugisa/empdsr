@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface WeeklyMonitoringTableRepository extends JpaRepository<weekly_monitoring, wmPK> {
 	
-	@Query("select w FROM weekly_monitoring w WHERE w.data_sent IS NULL")
+	@Query("select w FROM weekly_monitoring w WHERE w.data_sent=0 OR w.data_sent IS NULL")
 	List<weekly_monitoring> findMonitoringToPush();
 	
 	@Query("SELECT w.wm_grids.weekly_year, w.wm_grids.weekly_month, w.wm_grids.weekly_mdesc, "

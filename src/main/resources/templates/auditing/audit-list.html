@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/auditing :: layout(_,~{},~{},~{::content},~{::subnav})}">
+<subnav>
+	<div class="m-1 small"></div>
+</subnav>
+
+<content>
+	<hr />
+	<form action="#" th:action="@{/auditing/mycases}" th:object="${selected}" method="POST" novalidate>
+		<input type="hidden" th:field="*{id}" />
+		<table class="table table-hover table-bordered table-sm table-responsive-sm small">
+			<thead>
+				<tr class="table-dark">
+					<th th:text="#{th.case.select}"></th>
+					<th th:text="#{th.date.entered}"></th>
+					<th th:text="#{th.case.type}"></th>
+					<th th:text="#{th.date.death}"></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="option : ${active_cases}" th:class="'table-danger'">
+					<th>
+						<input type="checkbox" th:field="*{rcases}" th:value="${option.case_uuid}" />
+					</th>
+					<td th:text="${option.case_date}"></td>
+					<td th:text="${option.case_death == 1}?#{label.still.birth}:#{label.neonatal.death}"></td>
+					<td
+						th:text="${option.case_death == 1}?${option.delivery.delivery_date}:${option.babydeath.baby_ddate}">
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="text-center">
+			<button class="btn btn-primary" type="submit" th:utext="#{submit.audit.button}"></button>
+		</div>
+	</form>
+</content>
+
+</html>

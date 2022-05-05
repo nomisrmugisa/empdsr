@@ -31,7 +31,7 @@
     MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_REGIONAL');
     MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_DISTRICT');
 
-    MERGE INTO country_table KEY(country_uuid) values('2','Namibia');
+    MERGE INTO country_table KEY(country_uuid) values('1','Ghana');
 
     MERGE INTO risk_table KEY(risk_name) values('Cervical / uterine surgery','none');
     MERGE INTO risk_table KEY(risk_name) values('Last delivery > 10 years','none');
@@ -101,7 +101,7 @@
 	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Septicaemia','Infection');
 	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Respiratory Distress Syndrome (RDS)','none');
 	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Cardiac Abnormalities','none');
-	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Asphyxia (Hypoxic Ischaemic Encephalopathy, HIE)','none');
+	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Asphyxia (HIE)','none');
 	MERGE INTO diagnoses_table KEY(diagnosis_name) values('Big baby (Macrosomia)','Infection');
 	
     MERGE INTO mcgroup_table(icdmgroup,icdmgroup_name) KEY(icdmgroup) values('M1','Complications of placenta, cord and membranes');

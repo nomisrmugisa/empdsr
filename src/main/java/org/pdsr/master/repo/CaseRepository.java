@@ -13,7 +13,7 @@ public interface CaseRepository extends JpaRepository<case_identifiers, String> 
 	@Query("select c from case_identifiers c where c.case_status = 0")
 	List<case_identifiers> findByDraftCases();
 
-	@Query("select c from case_identifiers c where c.case_status = 1")
+	@Query("select c from case_identifiers c where c.case_status >= 1")
 	List<case_identifiers> findBySubmittedCases();
 
 	@Query("select c from case_identifiers c where c.data_sent = 0 or c.data_sent is null")
@@ -30,10 +30,10 @@ public interface CaseRepository extends JpaRepository<case_identifiers, String> 
 	Integer countByCase_death(Integer case_death, Integer year);
 
 
-	@Query("select COUNT(c) from case_identifiers c where c.case_status = 1 AND c.case_death=?1")
+	@Query("select COUNT(c) from case_identifiers c where c.case_status >= 1 AND c.case_death=?1")
 	Integer countBySubmittedAndType(Integer case_death);
 
-	@Query("select COUNT(c) from case_identifiers c where c.case_status = 1 AND c.case_death=?1 and year(c.case_date)=?2")
+	@Query("select COUNT(c) from case_identifiers c where c.case_status >= 1 AND c.case_death=?1 and year(c.case_date)=?2")
 	Integer countBySubmittedAndType(Integer case_death, Integer year);
 
 

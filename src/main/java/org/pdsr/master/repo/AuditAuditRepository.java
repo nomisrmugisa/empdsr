@@ -15,7 +15,7 @@ public interface AuditAuditRepository extends JpaRepository<audit_audit, String>
 	@Query("select t FROM audit_audit t WHERE t.rec_complete IS NULL")
 	List<audit_audit> findByPendingRecommendation();
 
-	@Query("select t FROM audit_audit t WHERE t.data_sent IS NULL")
+	@Query("select t FROM audit_audit t WHERE t.data_sent=0 OR t.data_sent IS NULL")
 	List<audit_audit> findByAuditsToPush();
 
 	@Query("select t.audit_icdpm, count(t.audit_icdpm) FROM audit_audit t WHERE t.audit_death=1 "
