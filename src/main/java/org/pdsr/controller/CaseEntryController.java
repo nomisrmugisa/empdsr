@@ -413,7 +413,7 @@ public class CaseEntryController {
 		}
 
 		case_identifiers existing = caseRepo.findById(selected.getCase_uuid()).get();
-		selected.setData_sent(0);//reset the data sending indicator when any record is edited
+		selected.setData_sent(0);// reset the data sending indicator when any record is edited
 
 		switch (page) {
 		case 1: {

@@ -48,10 +48,15 @@ public class ReportExcelExporter {
 		headerStyle.setFont(font);
 
 		int colIndex = 0;
+		// serial numbers on the first column
+		createCell(headerRow, colIndex++, "SN", headerStyle);
+
+		// indicators on the second column
 		createCell(headerRow, colIndex++, "Indicators -" + yearmonth, headerStyle);
 
-		for (; colIndex <= report.size(); colIndex++) {
-			createCell(headerRow, colIndex, "Week " + colIndex, headerStyle);
+		// week indices for the subsequent columns
+		for (; colIndex <= report.size() + 1; colIndex++) {
+			createCell(headerRow, colIndex, "Week " + (colIndex - 1), headerStyle);
 		}
 
 	}
@@ -95,7 +100,11 @@ public class ReportExcelExporter {
 
 		weekly_table week1 = report.get(0);
 		int rowIndex = 1;
-		int colIndex = 0;
+
+		final int snColIndex = 0;// column for the serial numbers
+		final int lbColIndex = 1;// column for the indicator labels
+
+		int snIndexer = 1;// initialize the serial numbering process
 
 		for (weekly_monitoring wm : week1.getStatistics()) {
 
@@ -104,25 +113,28 @@ public class ReportExcelExporter {
 			boolean hashtml = wm.getWm_indices().getMindex() % 130 == 3 || wm.getWm_indices().getMindex() % 130 == 8
 					|| wm.getWm_indices().getMindex() % 130 == 9;
 
+			// insert the serial numbers at column 0
+			createCell(row, snColIndex, snIndexer++, tstyle);
+
+			// insert the indicator labels at column 1
 			final String label;
 
 			if (istotal) {
 				label = wm.getWm_indices().getMlabel() + " (" + wm.getWm_indices().getMdesc() + ")";
-				createCell(row, colIndex, label, tstyle);
+				createCell(row, lbColIndex, label, tstyle);
 			} else if (hashtml) {
 				label = wm.getWm_indices().getMdesc();
-				createCell(row, colIndex, label, style);
+				createCell(row, lbColIndex, label, style);
 
 			} else {
 				label = wm.getWm_indices().getMlabel();
-				createCell(row, colIndex, label, style);
+				createCell(row, lbColIndex, label, style);
 
 			}
-			
 
 		}
 
-		colIndex = 1;
+		int wkColIndex = 2;// starting column for the data
 		for (weekly_table week : report) {
 			rowIndex = 1;
 			for (weekly_monitoring wm : week.getStatistics()) {
@@ -132,18 +144,18 @@ public class ReportExcelExporter {
 						|| wm.getWm_indices().getMindex() % 130 == 9;
 
 				if (istotal) {
-					createCell(row, colIndex, wm.getWm_values(), tstyle);
+					createCell(row, wkColIndex, wm.getWm_values(), tstyle);
 				} else if (hashtml) {
-					createCell(row, colIndex, wm.getWm_values(), style);
+					createCell(row, wkColIndex, wm.getWm_values(), style);
 
 				} else {
-					createCell(row, colIndex, wm.getWm_values(), style);
+					createCell(row, wkColIndex, wm.getWm_values(), style);
 
 				}
 				rowIndex++;
 			}
 
-			colIndex++;
+			wkColIndex++;
 		}
 
 	}
