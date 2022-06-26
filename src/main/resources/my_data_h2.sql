@@ -31,7 +31,7 @@
     MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_REGIONAL');
     MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_DISTRICT');
 
-    MERGE INTO country_table KEY(country_uuid) values('2','Namibia');
+    MERGE INTO country_table KEY(country_uuid) values('3','Sierra Leone');
 
     MERGE INTO risk_table KEY(risk_name) values('Cervical / uterine surgery','none');
     MERGE INTO risk_table KEY(risk_name) values('Last delivery > 10 years','none');

@@ -507,7 +507,10 @@ public class HomeController {
 
 			icdpm neonatal = new icdpm();
 			neonatal.setPm_code(elem[0]);
-			neonatal.setPm_desc(icdRepo.findDescriptionOfICDPMNeonatal(elem[0]).get());
+			final String pm_desc = icdRepo.findDescriptionOfICDPMNeonatal(elem[0]).isPresent()
+					? icdRepo.findDescriptionOfICDPMNeonatal(elem[0]).get()
+					: icdRepo.findDescriptionOfICDPMNeonatal(elem[0]).get();
+			neonatal.setPm_desc(pm_desc);
 			neonatal.setPm_tsum(elem[1]);
 
 			oneonatal.add(neonatal);
@@ -520,7 +523,10 @@ public class HomeController {
 
 			icdpm neonatal = new icdpm();
 			neonatal.setPm_code(elem[0]);
-			neonatal.setPm_desc(icdRepo.findDescriptionOfICDPMNeonatal(elem[0]).get());
+			final String pm_desc = icdRepo.findDescriptionOfICDPMNeonatal(elem[0]).isPresent()
+					? icdRepo.findDescriptionOfICDPMNeonatal(elem[0]).get()
+					: icdRepo.findDescriptionOfICDPMNeonatal(elem[0]).get();
+			neonatal.setPm_desc(pm_desc);
 			neonatal.setPm_tsum(elem[1]);
 
 			cneonatal.add(neonatal);
@@ -916,7 +922,7 @@ public class HomeController {
 
 			cstillbirth.add(stillbirth);
 		}
-		
+
 		model.addAttribute("top_cstillbirth", cstillbirth);
 
 	}
