@@ -29,7 +29,8 @@ public class ServiceApi {
 	private final RestTemplate restTemplate;
 	//private final String BASE_URL = "https://olincgroup.com/pdsr/ghana";
 	//private final String BASE_URL = "https://olincgroup.com/pdsr/namibia";
-	private final String BASE_URL = "https://olincgroup.com/pdsr/sierraleone";
+//	private final String BASE_URL = "https://olincgroup.com/pdsr/sierraleone";
+	private final String BASE_URL = "https://olincgroup.com/pdsr/mytest";
 
 	public ServiceApi(final RestTemplateBuilder restTemplateBuilder) {
 		this.restTemplate = restTemplateBuilder.build();

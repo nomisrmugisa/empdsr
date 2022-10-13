@@ -151,26 +151,26 @@ public class SetupController {
 	@Autowired
 	private FacilityTableRepository facilityRepo;
 
-	@Autowired
-	private SlaveFacilityTableRepository sfacilityRepo;
+//	@Autowired
+//	private SlaveFacilityTableRepository sfacilityRepo;
 
 	@Autowired
 	private DistrictTableRepository districtRepo;
 
-	@Autowired
-	private SlaveDistrictTableRepository sdistrictRepo;
+//	@Autowired
+//	private SlaveDistrictTableRepository sdistrictRepo;
 
 	@Autowired
 	private RegionTableRepository regionRepo;
 
-	@Autowired
-	private SlaveRegionTableRepository sregionRepo;
+//	@Autowired
+//	private SlaveRegionTableRepository sregionRepo;
 
 	@Autowired
 	private CountryTableRepository countryRepo;
 
-	@Autowired
-	private SlaveCountryTableRepository scounrtyRepo;
+//	@Autowired
+//	private SlaveCountryTableRepository scounrtyRepo;
 
 	@Autowired
 	private WeeklyTableRepository weeklyRepo;
@@ -512,8 +512,7 @@ public class SetupController {
 			}
 
 		}
-		
-		
+
 //THIS CODE SHOULD NOT BE USED SINCE WE MERGE AT THE SAME FACILITY
 //		if (selected.isMerge_location()) {
 //			mergeCountry();
@@ -626,80 +625,80 @@ public class SetupController {
 
 	}
 
-	private void mergeCountry() {
-		List<org.pdsr.slave.model.country_table> scountries = scounrtyRepo.findAll();
-		if (scountries != null && scountries.size() > 0) {
-			List<country_table> countries = new ArrayList<country_table>();
-			for (org.pdsr.slave.model.country_table s : scountries) {
-				country_table country = new country_table();
-				country.setCountry_uuid(s.getCountry_uuid());
-				country.setCountry_name(s.getCountry_name());
-				countries.add(country);
-			}
-			countryRepo.saveAll(countries);
-		}
-	}
-
-	private void mergeRegion() {
-		List<org.pdsr.slave.model.region_table> sregions = sregionRepo.findAll();
-		if (sregions != null && sregions.size() > 0) {
-			List<region_table> regions = new ArrayList<region_table>();
-			for (org.pdsr.slave.model.region_table s : sregions) {
-				Optional<country_table> country = countryRepo.findById(s.getCountry().getCountry_uuid());
-				if (country.isPresent()) {
-					region_table region = new region_table();
-					region.setRegion_uuid(s.getRegion_uuid());
-					region.setRegion_name(s.getRegion_name());
-					region.setCountry(country.get());
-
-					regions.add(region);
-				}
-			}
-			regionRepo.saveAll(regions);
-		}
-	}
-
-	private void mergeDistrict() {
-		List<org.pdsr.slave.model.district_table> sdistricts = sdistrictRepo.findAll();
-		if (sdistricts != null && sdistricts.size() > 0) {
-			List<district_table> districts = new ArrayList<district_table>();
-			for (org.pdsr.slave.model.district_table s : sdistricts) {
-				Optional<region_table> region = regionRepo.findById(s.getRegion().getRegion_uuid());
-				if (region.isPresent()) {
-					district_table district = new district_table();
-					district.setDistrict_uuid(s.getDistrict_uuid());
-					district.setDistrict_name(s.getDistrict_name());
-					district.setRegion(region.get());
-
-					districts.add(district);
-				}
-			}
-
-			districtRepo.saveAll(districts);
-		}
-
-	}
-
-	private void mergeFacility() {
-		List<org.pdsr.slave.model.facility_table> sfacilities = sfacilityRepo.findAll();
-		if (sfacilities != null && sfacilities.size() > 0) {
-			List<facility_table> facilities = new ArrayList<facility_table>();
-			for (org.pdsr.slave.model.facility_table s : sfacilities) {
-				Optional<district_table> district = districtRepo.findById(s.getDistrict().getDistrict_uuid());
-				if (district.isPresent()) {
-					facility_table facility = new facility_table();
-					facility.setFacility_uuid(s.getFacility_uuid());
-					facility.setFacility_code(s.getFacility_code());
-					facility.setFacility_name(s.getFacility_name());
-					facility.setDistrict(district.get());
-
-					facilities.add(facility);
-				}
-			}
-
-			facilityRepo.saveAll(facilities);
-		}
-	}
+//	private void mergeCountry() {
+//		List<org.pdsr.slave.model.country_table> scountries = scounrtyRepo.findAll();
+//		if (scountries != null && scountries.size() > 0) {
+//			List<country_table> countries = new ArrayList<country_table>();
+//			for (org.pdsr.slave.model.country_table s : scountries) {
+//				country_table country = new country_table();
+//				country.setCountry_uuid(s.getCountry_uuid());
+//				country.setCountry_name(s.getCountry_name());
+//				countries.add(country);
+//			}
+//			countryRepo.saveAll(countries);
+//		}
+//	}
+//
+//	private void mergeRegion() {
+//		List<org.pdsr.slave.model.region_table> sregions = sregionRepo.findAll();
+//		if (sregions != null && sregions.size() > 0) {
+//			List<region_table> regions = new ArrayList<region_table>();
+//			for (org.pdsr.slave.model.region_table s : sregions) {
+//				Optional<country_table> country = countryRepo.findById(s.getCountry().getCountry_uuid());
+//				if (country.isPresent()) {
+//					region_table region = new region_table();
+//					region.setRegion_uuid(s.getRegion_uuid());
+//					region.setRegion_name(s.getRegion_name());
+//					region.setCountry(country.get());
+//
+//					regions.add(region);
+//				}
+//			}
+//			regionRepo.saveAll(regions);
+//		}
+//	}
+//
+//	private void mergeDistrict() {
+//		List<org.pdsr.slave.model.district_table> sdistricts = sdistrictRepo.findAll();
+//		if (sdistricts != null && sdistricts.size() > 0) {
+//			List<district_table> districts = new ArrayList<district_table>();
+//			for (org.pdsr.slave.model.district_table s : sdistricts) {
+//				Optional<region_table> region = regionRepo.findById(s.getRegion().getRegion_uuid());
+//				if (region.isPresent()) {
+//					district_table district = new district_table();
+//					district.setDistrict_uuid(s.getDistrict_uuid());
+//					district.setDistrict_name(s.getDistrict_name());
+//					district.setRegion(region.get());
+//
+//					districts.add(district);
+//				}
+//			}
+//
+//			districtRepo.saveAll(districts);
+//		}
+//
+//	}
+//
+//	private void mergeFacility() {
+//		List<org.pdsr.slave.model.facility_table> sfacilities = sfacilityRepo.findAll();
+//		if (sfacilities != null && sfacilities.size() > 0) {
+//			List<facility_table> facilities = new ArrayList<facility_table>();
+//			for (org.pdsr.slave.model.facility_table s : sfacilities) {
+//				Optional<district_table> district = districtRepo.findById(s.getDistrict().getDistrict_uuid());
+//				if (district.isPresent()) {
+//					facility_table facility = new facility_table();
+//					facility.setFacility_uuid(s.getFacility_uuid());
+//					facility.setFacility_code(s.getFacility_code());
+//					facility.setFacility_name(s.getFacility_name());
+//					facility.setDistrict(district.get());
+//
+//					facilities.add(facility);
+//				}
+//			}
+//
+//			facilityRepo.saveAll(facilities);
+//		}
+//	}
 
 	private void mergeWeeklyTable() {
 		List<org.pdsr.slave.model.weekly_table> sweeklys = sweeklyRepo.findAll();
@@ -1426,6 +1425,7 @@ public class SetupController {
 			sent.add(elem);
 
 		}
+		
 		DecryptedCaseIdentifiers d = new DecryptedCaseIdentifiers();
 		d.setData(jsons);
 		final String msg = api.saveAll(d);
@@ -1450,7 +1450,6 @@ public class SetupController {
 			try {
 				json.setCase_date(f.parse(elem.getCase_date()));
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			json.setCase_status(elem.getCase_status());
@@ -1476,7 +1475,7 @@ public class SetupController {
 			json.setCountry(country);
 			json.setRec_complete(elem.getRec_complete());
 			json.setAudit_cdate(f.format(elem.getAudit_cdate()));
-			// System.out.println(json.getAudit_cdate());//console
+
 			json.setAudit_csc(elem.getAudit_csc());
 			json.setAudit_death(elem.getAudit_death());
 			json.setAudit_delay1(elem.getAudit_delay1());
@@ -1490,6 +1489,12 @@ public class SetupController {
 			json.setAudit_ifcmfs(elem.getAudit_ifcmfs());
 			json.setAudit_sysmfs(elem.getAudit_sysmfs());
 			json.setAudit_hwkmfs(elem.getAudit_hwkmfs());
+
+			// data about the case
+			json.setCase_data(elem.getAudit_case().getAudit_data());
+
+			// data about the audit
+			json.setAudit_data(elem.getAudit_json());
 
 			jsons.add(json);
 
@@ -1555,7 +1560,7 @@ public class SetupController {
 
 			json_audit_recommendation json = new json_audit_recommendation();
 			json.setId(elem.getRecommendation_uuid() + country + code.toUpperCase());
-			json.setCode(code);
+			json.setAudit_uuid(elem.getAudit_uuid().getAudit_uuid() + country + code.toUpperCase());
 			json.setDistrict(district);
 			json.setRegion(region);
 			json.setCountry(country);
@@ -1596,6 +1601,8 @@ public class SetupController {
 			SummaryPK pk = new SummaryPK(elem.getId(), elem.getCode(), elem.getCountry(), elem.getRegion(),
 					elem.getDistrict());
 			json.setSummaryPk(pk);
+			
+			json.setAudit_uuid(elem.getAudit_uuid());
 
 			json.setRecommendation_comments(elem.getRecommendation_comments());
 			try {

@@ -14,6 +14,7 @@ public class json_audit_recommendation implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private String id;
+	private String audit_uuid;
 	private String code;
 	private String country;
 	private String region;
@@ -33,12 +34,13 @@ public class json_audit_recommendation implements Serializable {
 	}
 
 
-	public json_audit_recommendation(String id, String code, String country, String region, String district,
+	public json_audit_recommendation(String id, String audit_uuid, String code, String country, String region, String district,
 			String recommendation_date, String recommendation_title, String recommendation_task,
 			String recommendation_leader, String recommendation_reporter, String recommendation_deadline,
 			String recommendation_resources, Integer recommendation_status, String recommendation_comments) {
 		super();
 		this.id = id;
+		this.audit_uuid = audit_uuid;
 		this.code = code;
 		this.country = country;
 		this.region = region;
@@ -164,6 +166,16 @@ public class json_audit_recommendation implements Serializable {
 
 	public void setRecommendation_comments(String recommendation_comments) {
 		this.recommendation_comments = recommendation_comments;
+	}
+
+
+	public String getAudit_uuid() {
+		return audit_uuid;
+	}
+
+
+	public void setAudit_uuid(String audit_uuid) {
+		this.audit_uuid = audit_uuid;
 	}
 
 }

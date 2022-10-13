@@ -34,6 +34,10 @@ public class json_audit_audit implements Serializable {
 	private String audit_facmfs;
 	private String audit_hwkmfs;
 	private Integer rec_complete;
+	
+	//json data for generating a report about the case
+	private String case_data;
+	private String audit_data;
 
 
 
@@ -43,7 +47,7 @@ public class json_audit_audit implements Serializable {
 	public json_audit_audit(String id, String code, String country, String region, String district, String audit_cdate,
 			Integer audit_death, String audit_icd10, String audit_icdpm, String audit_csc, Integer audit_delay1,
 			Integer audit_delay2, Integer audit_delay3a, Integer audit_delay3b, Integer audit_delay3c,
-			String audit_ifcmfs, String audit_sysmfs, String audit_facmfs, String audit_hwkmfs) {
+			String audit_ifcmfs, String audit_sysmfs, String audit_facmfs, String audit_hwkmfs, String case_data, String audit_data) {
 		super();
 		this.id = id;
 		this.code = code;
@@ -64,6 +68,8 @@ public class json_audit_audit implements Serializable {
 		this.audit_sysmfs = audit_sysmfs;
 		this.audit_facmfs = audit_facmfs;
 		this.audit_hwkmfs = audit_hwkmfs;
+		this.case_data = case_data;
+		this.audit_data = audit_data;
 	}
 	public String getId() {
 		return id;
@@ -187,6 +193,20 @@ public class json_audit_audit implements Serializable {
 	}
 	public void setRec_complete(Integer rec_complete) {
 		this.rec_complete = rec_complete;
+	}
+	
+	
+	public String getCase_data() {
+		return case_data;
+	}
+	public void setCase_data(String case_data) {
+		this.case_data = case_data;
+	}
+	public String getAudit_data() {
+		return audit_data;
+	}
+	public void setAudit_data(String audit_data) {
+		this.audit_data = audit_data;
 	}
 			
 	
