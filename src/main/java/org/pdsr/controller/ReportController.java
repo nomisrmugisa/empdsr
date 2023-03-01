@@ -81,6 +81,9 @@ public class ReportController {
 
 		}
 
+		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		model.addAttribute("myf", synctable.getSync_name());
+
 		List<Object[]> weeklist = weekRepo.findAllWeeklyYearAndMonth();
 
 		List<weekly_table> curweek = weekRepo.findByWeeklyYearAndMonth(Calendar.getInstance().get(Calendar.YEAR),
@@ -115,6 +118,8 @@ public class ReportController {
 		}
 
 		final sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		model.addAttribute("myf", sync.getSync_name());
+
 		Calendar cal = Calendar.getInstance();
 		cal.set(selected.getDatayear(), selected.getDatamonth(), 1);
 

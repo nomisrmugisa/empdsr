@@ -190,6 +190,9 @@ public class CaseAuditController {
 			return "home";
 		}
 
+		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		model.addAttribute("myf", synctable.getSync_name());
+
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DAY_OF_MONTH, -7);
 		model.addAttribute("items", acaseRepo.findActivePendingAudit(cal.getTime()));//// pick data selected at least
@@ -229,7 +232,6 @@ public class CaseAuditController {
 		objectMapper.configure(Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
 		TypeReference<json_algorithm> mapType1 = new TypeReference<json_algorithm>() {
 		};
-		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
 		json_algorithm algorithm = new json_algorithm();
 
 		if (synctable.getSync_json() != null && synctable.getSync_json().trim() != "") {
@@ -259,6 +261,9 @@ public class CaseAuditController {
 			return "home";
 		}
 
+		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		model.addAttribute("myf", synctable.getSync_name());
+		
 		autoSelectCases();
 
 		return "redirect:/auditing";
@@ -270,6 +275,8 @@ public class CaseAuditController {
 			return "home";
 		}
 
+		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		model.addAttribute("myf", synctable.getSync_name());
 		
 		CaseWrapper selected = new CaseWrapper();
 		selected.setId("casewrapper");
@@ -797,6 +804,9 @@ public class CaseAuditController {
 			return "home";
 		}
 
+		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		model.addAttribute("myf", synctable.getSync_name());
+
 		if (success != null) {
 			model.addAttribute("success", "Saved Successfully");
 		} else if (error != null) {
@@ -939,6 +949,9 @@ public class CaseAuditController {
 			return "home";
 		}
 
+		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		model.addAttribute("myf", synctable.getSync_name());
+
 		if (success != null) {
 			model.addAttribute("success", "Saved Successfully");
 		}
@@ -1031,6 +1044,14 @@ public class CaseAuditController {
 	@GetMapping("/cstatus/{id}")
 	public String recommendStarted(Principal principal, Model model, @PathVariable("id") String recommendation_uuid,
 			@RequestParam(name = "success", required = false) String success) {
+
+		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+			model.addAttribute("activated", "0");
+			return "home";
+		}
+
+		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		model.addAttribute("myf", synctable.getSync_name());
 
 		audit_recommendation selected = rcaseRepo.findById(recommendation_uuid).get();
 		if (selected.getRecommendation_status() == 2) {

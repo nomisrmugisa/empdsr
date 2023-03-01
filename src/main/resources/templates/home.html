@@ -4,7 +4,7 @@
 
 <head>
 
-	<title>PDRSv2</title>
+	<title th:text="#{pdsr.title}">PDRSv2</title>
 	<base href="/">
 	<!-- common links -->
 	<link rel="stylesheet" href="css/fontawesome-free/css/all.min.css" />
@@ -141,7 +141,7 @@
 					</div>
 					<div class="col-md-6">
 						<div class="card text-white" style="background-color: rgb(49, 92, 128);">
-							<div class="card-header border-bottom">[[#{fp.current}+' - '+${cyear}]]</div>
+							<div class="card-header border-bottom">[[#{fp.current}+' '+${cyear}]]</div>
 							<div class="card-body">
 								<table class="table table-sm table-responsive text-end text-white">
 									<thead class="small">
@@ -358,17 +358,17 @@
 
 							<tr>
 								<td th:text="#{fp.cases.selected}"></td>
-								<td class="fw-bold">[[${selected_sb}]]</td>
-								<td class="fw-bold">[[${selected_nd}]]</td>
+								<td class="fw-bold">[[${c_selected_sb}]]</td>
+								<td class="fw-bold">[[${c_selected_nd}]]</td>
 							</tr>
 							<tr>
 								<td th:text="#{fp.cases.reviewed}"></td>
-								<td class="fw-bold">[[${reviewed_sbn}]]&nbsp;<span
+								<td class="fw-bold">[[${c_reviewed_sbn}]]&nbsp;<span
 										class="text-warning small fw-normal">([[${#numbers.formatDecimal(reviewed_sbp,
 										1,
 										'COMMA', 1,
 										'POINT')}]]%)</span></td>
-								<td class="fw-bold">[[${reviewed_ndn}]]&nbsp;<span
+								<td class="fw-bold">[[${c_reviewed_ndn}]]&nbsp;<span
 										class="text-warning small fw-normal">([[${#numbers.formatDecimal(reviewed_ndp,
 										1,
 										'COMMA', 1,

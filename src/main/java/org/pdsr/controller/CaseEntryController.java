@@ -178,6 +178,9 @@ public class CaseEntryController {
 			return "home";
 		}
 
+		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		model.addAttribute("myf", synctable.getSync_name());
+
 		model.addAttribute("items", caseRepo.findByDraftCases());
 		model.addAttribute("back", "back");
 
@@ -191,6 +194,9 @@ public class CaseEntryController {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
+
+		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		model.addAttribute("myf", synctable.getSync_name());
 
 		case_identifiers selected = new case_identifiers();
 		selected.setCase_date(new java.util.Date());
@@ -214,6 +220,9 @@ public class CaseEntryController {
 			return "home";
 		}
 
+		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		model.addAttribute("myf", synctable.getSync_name());
+
 		selected.setCase_uuid(UUID.randomUUID().toString());
 		selected.setCase_id("T" + selected.getCase_death() + "C" + (new java.util.Date().getTime()));
 		selected.setCase_status(0);
@@ -234,6 +243,9 @@ public class CaseEntryController {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
+
+		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		model.addAttribute("myf", synctable.getSync_name());
 
 		case_identifiers selected = caseRepo.findById(case_uuid).get();
 
@@ -411,6 +423,9 @@ public class CaseEntryController {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
+
+		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		model.addAttribute("myf", synctable.getSync_name());
 
 		case_identifiers existing = caseRepo.findById(selected.getCase_uuid()).get();
 		selected.setData_sent(0);// reset the data sending indicator when any record is edited
@@ -883,6 +898,9 @@ public class CaseEntryController {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
+
+		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		model.addAttribute("myf", synctable.getSync_name());
 
 		case_identifiers selected = caseRepo.findById(case_uuid).get();
 

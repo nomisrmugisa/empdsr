@@ -81,6 +81,7 @@ public class HomeController {
 		}
 
 		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		model.addAttribute("myf", sync.getSync_name());
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		facilityLevel(model, facility);
 		return "home";
@@ -94,6 +95,7 @@ public class HomeController {
 		}
 
 		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		model.addAttribute("myf", sync.getSync_name());
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		districtLevel(model, facility);
 		return "home";
@@ -108,6 +110,7 @@ public class HomeController {
 		}
 
 		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		model.addAttribute("myf", sync.getSync_name());
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		model.addAttribute("district", "active");
 		model.addAttribute("page", "active");
@@ -127,6 +130,7 @@ public class HomeController {
 		}
 
 		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		model.addAttribute("myf", sync.getSync_name());
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		districtIndicators(model, search, facility);
 
@@ -143,6 +147,7 @@ public class HomeController {
 		}
 
 		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		model.addAttribute("myf", sync.getSync_name());
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		regionalLevel(model, facility);
 		return "home";
@@ -156,6 +161,7 @@ public class HomeController {
 		}
 
 		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		model.addAttribute("myf", sync.getSync_name());
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		model.addAttribute("country_name", facility.getDistrict().getRegion().getCountry().getCountry_name());
 		model.addAttribute("regional", "active");
@@ -174,6 +180,7 @@ public class HomeController {
 		}
 
 		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		model.addAttribute("myf", sync.getSync_name());
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		regionalIndicators(model, search, facility, null);
 
@@ -188,6 +195,7 @@ public class HomeController {
 		}
 
 		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		model.addAttribute("myf", sync.getSync_name());
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		nationalLevel(model, facility);
 
@@ -202,6 +210,7 @@ public class HomeController {
 		}
 
 		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		model.addAttribute("myf", sync.getSync_name());
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		model.addAttribute("national", "active");
 		model.addAttribute("national_level", facility.getDistrict().getRegion().getCountry().getCountry_name());
@@ -221,6 +230,7 @@ public class HomeController {
 		}
 
 		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		model.addAttribute("myf", sync.getSync_name());
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		nationalIndicators(model, search, facility);
 
@@ -235,6 +245,7 @@ public class HomeController {
 		}
 
 		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		model.addAttribute("myf", sync.getSync_name());
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		model.addAttribute("national", "active");
 		model.addAttribute("national_regional", region_name);
@@ -256,6 +267,7 @@ public class HomeController {
 		}
 
 		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		model.addAttribute("myf", sync.getSync_name());
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		regionalIndicators(model, search, facility, region_name);
 
@@ -268,54 +280,62 @@ public class HomeController {
 		final java.util.Date date = new Date();
 
 		model.addAttribute("cyear", year);
+		
+		final Integer entered_nd = caseRepo.countByCase_death(2);
+		final Integer entered_sb = caseRepo.countByCase_death(1);
+		model.addAttribute("entered_nd", entered_nd);
+		model.addAttribute("entered_sb", entered_sb);
 
-		model.addAttribute("entered_nd", caseRepo.countByCase_death(2));
-		model.addAttribute("entered_sb", caseRepo.countByCase_death(1));
+		final Integer c_entered_nd = caseRepo.countByCase_death(2, year);
+		final Integer c_entered_sb = caseRepo.countByCase_death(1, year);
+		model.addAttribute("c_entered_nd", c_entered_nd);
+		model.addAttribute("c_entered_sb", c_entered_sb);
 
-		model.addAttribute("c_entered_nd", caseRepo.countByCase_death(2, year));
-		model.addAttribute("c_entered_sb", caseRepo.countByCase_death(1, year));
+		final Integer submitted_ndn = caseRepo.countBySubmittedAndType(2);
+		final Integer submitted_sbn = caseRepo.countBySubmittedAndType(1);
+		model.addAttribute("submitted_ndn", submitted_ndn);
+		model.addAttribute("submitted_sbn", submitted_sbn);
+		
+		final Integer c_submitted_ndn = caseRepo.countBySubmittedAndType(2, year);
+		final Integer c_submitted_sbn = caseRepo.countBySubmittedAndType(1, year);
+		model.addAttribute("c_submitted_ndn", c_submitted_ndn);
+		model.addAttribute("c_submitted_sbn", c_submitted_sbn);
+		
+		model.addAttribute("submitted_ndp", entered_nd == 0 ? 0 : 100 * submitted_ndn / entered_nd);
+		model.addAttribute("submitted_sbp", entered_sb == 0 ? 0 : 100 * submitted_sbn / entered_sb);
 
-		model.addAttribute("submitted_ndn", caseRepo.countBySubmittedAndType(2));
-		model.addAttribute("submitted_sbn", caseRepo.countBySubmittedAndType(1));
+		model.addAttribute("c_submitted_ndp", c_entered_nd == 0 ? 0 : 100 * c_submitted_ndn / c_entered_nd);
+		model.addAttribute("c_submitted_sbp", c_entered_sb == 0 ? 0 : 100 * c_submitted_sbn / c_entered_sb);
 
-		model.addAttribute("c_submitted_ndn", caseRepo.countBySubmittedAndType(2, year));
-		model.addAttribute("c_submitted_sbn", caseRepo.countBySubmittedAndType(1, year));
+		
+		final Integer selected_nd = caseRepo.countSelectedCasesByCase_death(2);
+		final Integer selected_sb = caseRepo.countSelectedCasesByCase_death(1);
+		model.addAttribute("selected_nd", selected_nd);
+		model.addAttribute("selected_sb", selected_sb);
+		
+		
+		final Integer c_selected_nd = caseRepo.countSelectedCasesByCase_death(2, year);
+		final Integer c_selected_sb = caseRepo.countSelectedCasesByCase_death(1, year);
+		model.addAttribute("c_selected_nd", c_selected_nd);
+		model.addAttribute("c_selected_sb", c_selected_sb);
+		
 
-		model.addAttribute("submitted_ndp", caseRepo.countByCase_death(2) == 0 ? 0
-				: 100 * caseRepo.countBySubmittedAndType(2) / caseRepo.countByCase_death(2));
-		model.addAttribute("submitted_sbp", caseRepo.countByCase_death(1) == 0 ? 0
-				: 100 * caseRepo.countBySubmittedAndType(1) / caseRepo.countByCase_death(1));
+		final Integer reviewed_ndn = caseRepo.countReviewedCasesByCase_death(2);
+		final Integer reviewed_sbn = caseRepo.countReviewedCasesByCase_death(1);
+		model.addAttribute("reviewed_ndn", reviewed_ndn);
+		model.addAttribute("reviewed_sbn", reviewed_sbn);
 
-		model.addAttribute("c_submitted_ndp", caseRepo.countByCase_death(2, year) == 0 ? 0
-				: 100 * caseRepo.countBySubmittedAndType(2, year) / caseRepo.countByCase_death(2, year));
-		model.addAttribute("c_submitted_sbp", caseRepo.countByCase_death(1, year) == 0 ? 0
-				: 100 * caseRepo.countBySubmittedAndType(1, year) / caseRepo.countByCase_death(1, year));
+		final Integer c_reviewed_ndn = caseRepo.countReviewedCasesByCase_death(2, year);
+		final Integer c_reviewed_sbn = caseRepo.countReviewedCasesByCase_death(1, year);
+		model.addAttribute("c_reviewed_ndn", c_reviewed_ndn);
+		model.addAttribute("c_reviewed_sbn", c_reviewed_sbn);
 
-		model.addAttribute("selected_nd", caseRepo.countSelectedCasesByCase_death(2));
-		model.addAttribute("selected_sb", caseRepo.countSelectedCasesByCase_death(1));
+		model.addAttribute("reviewed_ndp", selected_nd == 0 ? 0 : 100 * reviewed_ndn / selected_nd);
+		model.addAttribute("reviewed_sbp", selected_sb == 0 ? 0 : 100 * reviewed_sbn / selected_sb);
 
-		model.addAttribute("c_selected_nd", caseRepo.countSelectedCasesByCase_death(2, year));
-		model.addAttribute("c_selected_sb", caseRepo.countSelectedCasesByCase_death(1, year));
+		model.addAttribute("c_reviewed_ndp", c_selected_nd == 0 ? 0 : 100 * c_reviewed_ndn / c_selected_nd);
+		model.addAttribute("c_reviewed_sbp", c_selected_sb == 0 ? 0 : 100 * c_reviewed_sbn / c_selected_sb);
 
-		model.addAttribute("reviewed_ndn", caseRepo.countReviewedCasesByCase_death(2));
-		model.addAttribute("reviewed_sbn", caseRepo.countReviewedCasesByCase_death(1));
-
-		model.addAttribute("c_reviewed_ndn", caseRepo.countReviewedCasesByCase_death(2, year));
-		model.addAttribute("c_reviewed_sbn", caseRepo.countReviewedCasesByCase_death(1, year));
-
-		model.addAttribute("reviewed_ndp", caseRepo.countSelectedCasesByCase_death(2) == 0 ? 0
-				: 100 * caseRepo.countReviewedCasesByCase_death(2) / caseRepo.countSelectedCasesByCase_death(2));
-		model.addAttribute("reviewed_sbp", caseRepo.countSelectedCasesByCase_death(1) == 0 ? 0
-				: 100 * caseRepo.countReviewedCasesByCase_death(1) / caseRepo.countSelectedCasesByCase_death(1));
-
-		model.addAttribute("reviewed_ndp",
-				caseRepo.countSelectedCasesByCase_death(2, year) == 0 ? 0
-						: 100 * caseRepo.countReviewedCasesByCase_death(2, year)
-								/ caseRepo.countSelectedCasesByCase_death(2, year));
-		model.addAttribute("reviewed_sbp",
-				caseRepo.countSelectedCasesByCase_death(1, year) == 0 ? 0
-						: 100 * caseRepo.countReviewedCasesByCase_death(1, year)
-								/ caseRepo.countSelectedCasesByCase_death(1, year));
 
 		// SUMMARY STATISTICS
 		final String[] adata = wmRepo.findFrontPageRates().get(0);
