@@ -84,6 +84,7 @@ import org.pdsr.master.repo.RegionTableRepository;
 import org.pdsr.master.repo.SyncTableRepository;
 import org.pdsr.master.repo.WeeklyMonitoringTableRepository;
 import org.pdsr.master.repo.WeeklyTableRepository;
+import org.pdsr.pojos.casedeleter;
 import org.pdsr.pojos.datamerger;
 import org.pdsr.slave.repo.SlaveAuditAuditRepository;
 import org.pdsr.slave.repo.SlaveAuditCaseRepository;
@@ -618,6 +619,110 @@ public class SetupController {
 		} catch (IOException e) {
 			return "redirect:/controls/downloadmerge?failure=1";
 		}
+
+	}
+
+	@GetMapping("/deletecase")
+	public String deletecase(Principal principal, Model model,
+			@RequestParam(name = "success", required = false) String success) {
+
+		model.addAttribute("selected", new casedeleter());
+
+		if (success != null) {
+			if ("1".equals(success)) {
+				model.addAttribute("success", "Deleted Successfully!");
+			} else if ("0".equals(success)) {
+				model.addAttribute("success", "No internet connection detected!");
+			}
+		}
+
+		return "controls/delete-case";
+	}
+
+//	@Transactional
+	@PostMapping("/deletecase")
+	public String deletecase(Principal principal, Model model, @ModelAttribute("selected") casedeleter selected) {
+
+		// if confirmation is given and object is found
+		if (selected.isClear_uploaded()) {
+
+			// if remote data should be deleted
+			if (selected.isDelete_remotely()) {
+
+				try {
+
+					if (InternetAvailabilityChecker.isInternetAvailable()) {
+
+						// TODO delete cloud data
+
+					} else {
+
+						model.addAttribute("failure", "Could not connect to the Internet");
+						return "controls/delete-case";
+
+					}
+
+				} catch (IOException e) {
+
+					model.addAttribute("failure", "Something went wrong with the internet connection");
+					return "controls/delete-case";
+
+				}
+			}
+
+			// if summary data should be deleted
+			if (selected.isClear_summeries()) {
+
+				// delete locally cached data summaries related to case data from 3 databases
+
+				sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+
+				facility_table facility = facilityRepo.findByFacility_code(sync.getSync_code()).get();
+
+				final String country = facility.getDistrict().getRegion().getCountry().getCountry_name();
+				final String region = facility.getDistrict().getRegion().getRegion_name();
+				final String district = facility.getDistrict().getDistrict_name();
+				final String code = facility.getFacility_code();
+				final String id = selected.getCase_identifiers().getCase_uuid()
+						+ selected.getCase_identifiers().getCase_id().toLowerCase();
+
+				SummaryPK summaryPK = new SummaryPK(id, code, country, region, district);
+
+				if (bcaseRepo.findById(summaryPK).isPresent())
+					bcaseRepo.deleteById(summaryPK);
+				if (brecRepo.findById(summaryPK).isPresent())
+					brecRepo.deleteById(summaryPK);
+				if (baaudRepo.findById(summaryPK).isPresent())
+					baaudRepo.deleteById(summaryPK);
+
+			}
+
+			// then finally delete locally stored case data from 3 databases
+			final String case_uuid = selected.getCase_identifiers().getCase_uuid();
+			if (caseRepo.findById(case_uuid).isPresent())
+				caseRepo.deleteById(case_uuid);
+			if (recRepo.findById(case_uuid).isPresent())
+				recRepo.deleteById(case_uuid);
+			if (aaudRepo.findById(case_uuid).isPresent())
+				aaudRepo.deleteById(case_uuid);
+
+			return "redirect:/controls/deletecase?success=1";
+
+		}
+
+		// find the case and confirm delete action
+		List<case_identifiers> cid = caseRepo.findByCaseID(selected.getCase_id());
+
+		if (cid == null || cid.isEmpty()) {
+
+			model.addAttribute("failure", "Record not found");
+			return "controls/delete-case";
+		}
+
+		selected.setCase_identifiers(cid.get(0));
+		selected.setClear_uploaded(true);
+
+		return "controls/delete-case";
 
 	}
 
@@ -1421,7 +1526,7 @@ public class SetupController {
 			sent.add(elem);
 
 		}
-		
+
 		DecryptedCaseIdentifiers d = new DecryptedCaseIdentifiers();
 		d.setData(jsons);
 		final String msg = api.saveAll(d);
@@ -1597,7 +1702,7 @@ public class SetupController {
 			SummaryPK pk = new SummaryPK(elem.getId(), elem.getCode(), elem.getCountry(), elem.getRegion(),
 					elem.getDistrict());
 			json.setSummaryPk(pk);
-			
+
 			json.setAudit_uuid(elem.getAudit_uuid());
 
 			json.setRecommendation_comments(elem.getRecommendation_comments());

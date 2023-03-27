@@ -16,8 +16,6 @@ import javax.validation.constraints.Size;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-
-
 @Entity
 public class case_identifiers implements Serializable {
 
@@ -25,8 +23,7 @@ public class case_identifiers implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	
+
 	@Id
 	@NotNull
 	@Size(min = 1, max = 80)
@@ -40,76 +37,76 @@ public class case_identifiers implements Serializable {
 
 	@NotNull
 	@Column
-	@Size(min=1, max = 80)
+	@Size(min = 1, max = 80)
 	private String case_sync;
-	
+
 	@NotNull
 	@Column
-	@Size(min=1, max = 80)
+	@Size(min = 1, max = 80)
 	private String case_id;
-	
+
 	@NotNull
 	@Column
-	@Size(min=1, max = 80)
+	@Size(min = 1, max = 80)
 	private String case_mid;
-	
+
 	@NotNull
 	@Column
-	@Size(min=1, max = 80)
+	@Size(min = 1, max = 80)
 	private String case_mname;
-    
+
 	@NotNull
 	@Column
-	private Integer case_death;//1 stillbirth or 2 early neonatal
-	
+	private Integer case_death;// 1 stillbirth or 2 early neonatal
+
 	@Column
-	private Integer case_status;//0 entry, 1 auditing new submissions, 2 auditing started auditing, 3 process complete
-    	
+	private Integer case_status;// 0 entry, 1 auditing new submissions, 2 auditing started auditing, 3 process
+								// complete
+
 	@Column
 	private Integer data_sent;
-	
+
 	public Integer getData_sent() {
 		return data_sent;
 	}
 
 	public void setData_sent(Integer data_sent) {
 		this.data_sent = data_sent;
-	}	
+	}
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "facility", referencedColumnName = "facility_uuid", insertable = true, updatable = true)
 	private facility_table facility;
-    
-	@OneToOne(cascade = CascadeType.PERSIST, mappedBy = "case_uuid")
+
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_biodata biodata;
 
-	@OneToOne(cascade = CascadeType.PERSIST, mappedBy = "case_uuid")
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_pregnancy pregnancy;
 
-	@OneToOne(cascade = CascadeType.PERSIST, mappedBy = "case_uuid")
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_delivery delivery;
 
-	@OneToOne(cascade = CascadeType.PERSIST, mappedBy = "case_uuid")
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_referral referral;
 
-	@OneToOne(cascade = CascadeType.PERSIST, mappedBy = "case_uuid")
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_antenatal antenatal;
 
-	@OneToOne(cascade = CascadeType.PERSIST, mappedBy = "case_uuid")
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_labour labour;
 
-	@OneToOne(cascade = CascadeType.PERSIST, mappedBy = "case_uuid")
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_fetalheart fetalheart;
 
-	@OneToOne(cascade = CascadeType.PERSIST, mappedBy = "case_uuid")
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_birth birth;
-	
-	@OneToOne(cascade = CascadeType.PERSIST, mappedBy = "case_uuid")
+
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_babydeath babydeath;
 
-	@OneToOne(cascade = CascadeType.PERSIST, mappedBy = "case_uuid")
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_notes notes;
-
 
 	public String getCase_uuid() {
 		return case_uuid;
@@ -287,6 +284,5 @@ public class case_identifiers implements Serializable {
 			return false;
 		return true;
 	}
-	
-		
+
 }

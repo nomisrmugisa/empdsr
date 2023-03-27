@@ -10,6 +10,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CaseRepository extends JpaRepository<case_identifiers, String> {
 
+	@Query("select c from case_identifiers c where c.case_id = ?1")
+	List<case_identifiers> findByCaseID(String case_id);
+
 	@Query("select c from case_identifiers c where c.case_status = 0")
 	List<case_identifiers> findByDraftCases();
 

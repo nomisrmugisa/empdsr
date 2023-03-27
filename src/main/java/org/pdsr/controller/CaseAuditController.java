@@ -330,7 +330,7 @@ public class CaseAuditController {
 				biodata = objectMapper.readValue(scase.getBiodata().getBiodata_json(), mapType);
 				fulldata.setBiodata(biodata);
 			} catch (JsonProcessingException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 
@@ -339,7 +339,7 @@ public class CaseAuditController {
 				pregdata = objectMapper.readValue(scase.getPregnancy().getPregnancy_json(), mapType);
 				fulldata.setPregnancy(pregdata);
 			} catch (JsonProcessingException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 
@@ -348,7 +348,7 @@ public class CaseAuditController {
 				refdata = objectMapper.readValue(scase.getReferral().getReferral_json(), mapType);
 				fulldata.setReferral(refdata);
 			} catch (JsonProcessingException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 
@@ -357,7 +357,7 @@ public class CaseAuditController {
 				deldata = objectMapper.readValue(scase.getDelivery().getDelivery_json(), mapType);
 				fulldata.setDelivery(deldata);
 			} catch (JsonProcessingException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 
@@ -366,7 +366,7 @@ public class CaseAuditController {
 				antedata = objectMapper.readValue(scase.getAntenatal().getAntenatal_json(), mapType);
 				fulldata.setAntenatal(antedata);
 			} catch (JsonProcessingException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 
@@ -375,7 +375,7 @@ public class CaseAuditController {
 				labdata = objectMapper.readValue(scase.getLabour().getLabour_json(), mapType);
 				fulldata.setLabour(labdata);
 			} catch (JsonProcessingException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 
@@ -384,7 +384,7 @@ public class CaseAuditController {
 				birdata = objectMapper.readValue(scase.getBirth().getBirth_json(), mapType);
 				fulldata.setBirth(birdata);
 			} catch (JsonProcessingException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 
@@ -394,7 +394,7 @@ public class CaseAuditController {
 					fetdata = objectMapper.readValue(scase.getFetalheart().getFetalheart_json(), mapType);
 					fulldata.setFetalheart(fetdata);
 				} catch (JsonProcessingException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 			}
@@ -405,7 +405,7 @@ public class CaseAuditController {
 					bdtdata = objectMapper.readValue(scase.getBabydeath().getBaby_json(), mapType);
 					fulldata.setBabydeath(bdtdata);
 				} catch (JsonProcessingException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 			}
@@ -415,7 +415,7 @@ public class CaseAuditController {
 				notedata = objectMapper.readValue(scase.getNotes().getNotes_json(), mapType);
 				fulldata.setNotes(notedata);
 			} catch (JsonProcessingException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 
@@ -426,7 +426,7 @@ public class CaseAuditController {
 				// add the combined JSON data to the new audit for the case
 				acase.setAudit_data(arrayToJson);
 			} catch (JsonProcessingException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 

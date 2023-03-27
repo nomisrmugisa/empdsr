@@ -47,7 +47,7 @@ public class case_babydeath implements Serializable {
 	@Column
 	private Integer baby_resuscitation;
 
-	@ManyToMany(cascade = CascadeType.PERSIST)
+	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "baby_resuscitation", joinColumns = @JoinColumn(name = "resuscitation_uuid"), inverseJoinColumns = @JoinColumn(name = "resuscitation_name"))
 	private List<resuscitation_table> resuscitations;
 
@@ -67,7 +67,7 @@ public class case_babydeath implements Serializable {
 	@Column
 	private Integer baby_admitted;
 
-	@ManyToMany(cascade = CascadeType.PERSIST)
+	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "baby_diagnoses", joinColumns = @JoinColumn(name = "diagnosis_uuid"), inverseJoinColumns = @JoinColumn(name = "diagnosis_name"))
 	private List<diagnoses_table> diagnoses;
 
@@ -75,7 +75,7 @@ public class case_babydeath implements Serializable {
 	@Column
 	private String new_diagnoses;
 	
-	@ManyToMany(cascade = CascadeType.PERSIST)
+	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "baby_icd", joinColumns = @JoinColumn(name = "icd_uuid"), inverseJoinColumns = @JoinColumn(name = "icd_code"))
 	private List<icd_diagnoses> icd_diagnoses;
 	

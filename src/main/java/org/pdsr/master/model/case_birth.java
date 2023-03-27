@@ -78,7 +78,7 @@ public class case_birth implements Serializable {
 	@Column
 	private Integer birth_abnormalities;
 	
-	@ManyToMany(cascade = CascadeType.PERSIST)
+	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "birth_abnormalities", joinColumns = @JoinColumn(name = "abnormal_uuid"), inverseJoinColumns = @JoinColumn(name = "abnormal_name"))
 	private List<abnormality_table> abnormalities;
 
@@ -90,7 +90,7 @@ public class case_birth implements Serializable {
 	@Column
 	private Integer birth_cordfaults;
 	
-	@ManyToMany(cascade = CascadeType.PERSIST)
+	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "birth_cordfaults", joinColumns = @JoinColumn(name = "cordfault_uuid"), inverseJoinColumns = @JoinColumn(name = "cordfault_name"))
 	private List<cordfault_table> cordfaults = new ArrayList<>();
 
@@ -102,7 +102,7 @@ public class case_birth implements Serializable {
 	@Column
 	private Integer birth_placentachecks;
 	
-	@ManyToMany(cascade = CascadeType.PERSIST)
+	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "birth_pacentachecks", joinColumns = @JoinColumn(name = "placentacheck_uuid"), inverseJoinColumns = @JoinColumn(name = "placentacheck_name"))
 	private List<placentacheck_table> placentachecks = new ArrayList<>();
 

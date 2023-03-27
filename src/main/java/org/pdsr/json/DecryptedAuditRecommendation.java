@@ -76,7 +76,7 @@ public class DecryptedAuditRecommendation implements Serializable {
 		try {
 			hmacKey = new SecretKeySpec(KEY.getBytes("UTF-8"), SignatureAlgorithm.HS256.getJcaName());
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
+			
 			hmacKey = null;
 			e.printStackTrace();
 		}
@@ -108,7 +108,7 @@ public class DecryptedAuditRecommendation implements Serializable {
 		try {
 			hmacKey = new SecretKeySpec(KEY.getBytes("UTF-8"), SignatureAlgorithm.HS256.getJcaName());
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
+			
 			hmacKey = null;
 			e.printStackTrace();
 		}

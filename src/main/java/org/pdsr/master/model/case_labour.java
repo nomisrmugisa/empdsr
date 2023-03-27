@@ -98,7 +98,7 @@ public class case_labour implements Serializable {
 	@Column
 	private Integer labour_complications;
 	
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "labour_complications", joinColumns = @JoinColumn(name = "complication_uuid"), inverseJoinColumns = @JoinColumn(name = "complication_name"))
 	private List<complication_table> complications = new ArrayList<>();
 

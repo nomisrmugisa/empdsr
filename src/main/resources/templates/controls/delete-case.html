@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/controls :: layout(_,~{},~{::scripts},~{::content},~{})}">
+
+
+<content>
+	<div class="jumbotron mt-4">
+		<h1 class="display-4 text-danger" th:utext="#{delete.case.title}"></h1>
+		<p class="lead" th:utext="#{delete.case.note}"></p>
+
+		<hr class="my-4">
+
+		<form action="#" th:action="@{/controls/deletecase}" th:object="${selected}" method="POST"
+			class="needs-validation" novalidate>
+
+			<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+			<div th:if="${failure}" class="alert alert-danger" th:text="${failure}"></div>
+
+			<div th:unless="${selected.clear_uploaded}">
+
+				<label class="control-label fw-bold text-danger" th:text="#{delete.warning}"></label>
+
+				<div class="mb-3 col-md-4">
+					<label class="control-label fw-bold" th:text="#{label.case_id}"></label>
+					<input type="text" class="form-control bg-warning fw-bold" th:field="*{case_id}" />
+				</div>
+				<div class="col-md-12">
+					<label class="form-label fw-bold"> <input type="checkbox" th:field="*{delete_remotely}"
+							th:value="${selected.delete_remotely}" />
+						[[#{delete.case.remote}]]
+					</label>
+				</div>
+				<div class="col-md-12">
+					<label class="form-label fw-bold"> <input type="checkbox" th:field="*{clear_summeries}"
+							th:value="${selected.clear_summeries}" />
+						[[#{delete.case.summaries}]]
+					</label>
+				</div>
+			</div>
+
+			<div class="col-md-12">
+				<input type="hidden" th:field="*{clear_uploaded}" />
+				<input hidden th:field="*{case_identifiers}" />
+			</div>
+
+
+			<div th:if="${selected.clear_uploaded}">
+				<label class="control-label fw-bold text-danger" th:text="#{delete.case.confirm}"></label>
+
+				<hr />
+				<div class="row">
+					<div class="col-md-2">
+						<label class="control-label" th:text="#{label.case_date}"></label>&nbsp;
+						<div class="control-label fw-bold" th:text="${selected.case_identifiers.case_date}"></div>
+					</div>
+					<div class="col-md-3">
+						<label class="control-label" th:text="#{label.case_id}"></label>&nbsp;
+						<div class="control-label fw-bold" th:text="${selected.case_identifiers.case_id}"></div>
+					</div>
+					<div class="col-md-3">
+						<label class="control-label" th:text="#{label.case_mname}"></label>&nbsp;
+						<div class="control-label fw-bold" th:text="${selected.case_identifiers.case_mname}"></div>
+					</div>
+					<div class="col-md-2">
+						<label class="control-label" th:text="#{label.case_death}"></label>&nbsp;
+						<div class="control-label fw-bold"
+							th:text="${selected.case_identifiers.case_death==1}?'Stillbirth':'Early Neonatal Death'">
+						</div>
+					</div>
+					<div class="col-md-2">
+						<label class="control-label">&nbsp;</label>
+						<button th:if="${selected.clear_uploaded}" class="btn btn-danger" type="submit"
+							th:utext="#{delete.case.button}"></button>
+					</div>
+				</div>
+				<div class="col-md-12" th:if="${selected.delete_remotely}">
+					<label class="control-label text-danger" th:text="#{delete.case.remote}"></label>
+				</div>
+				<div class="col-md-12" th:if="${selected.clear_summeries}">
+					<label class="control-label text-danger" th:text="#{delete.case.summaries}"></label>
+				</div>
+				<hr />
+				<label class="control-label fw-bold text-danger" th:text="#{delete.warning}"></label>
+			</div>
+
+			<hr />
+			<button th:unless="${selected.clear_uploaded}" class="btn btn-danger" type="submit"
+				th:utext="#{delete.case.button}"></button>
+			<a th:if="${selected.clear_uploaded}" th:href="@{/controls/deletecase}" class="btn btn-outline-primary"
+				type="submit" th:utext="#{delete.case.cancel}"></a>
+		</form>
+	</div>
+</content>
+
+<scripts>
+	<script>
+		(function () {
+			'use strict';
+			window.addEventListener('load', function () {
+				// Fetch all the forms we want to apply custom Bootstrap validation styles to
+				var forms = document.getElementsByClassName('needs-validation');
+
+				// Loop over them and prevent submission
+				var validation = Array.prototype.filter.call(forms, function (form) {
+					form.addEventListener('submit', function (event) {
+						if (form.checkValidity() === false) {
+							event.preventDefault();
+							event.stopPropagation();
+						}
+						form.classList.add('was-validated');
+
+					}, false);
+				});
+			}, false);
+		})();
+	</script>
+</scripts>
+
+</html>
