@@ -29,24 +29,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-        
+
 //        .requiresChannel().anyRequest().requiresSecure()//ssl
 //        .and()//ssl
 //        .csrf().disable()//ssl
         
-        .authorizeRequests()
-		//.antMatchers( "/img/**", "/webjars/**").permitAll()
-		.antMatchers("/controls/**").hasRole("SETUP")//can only setup controls
-		.antMatchers("/registry/**").hasRole("ENTRY")//can only enter data
-		.antMatchers("/auditing").hasAnyRole("AUDIT", "TASKS")//can view audits
-		.antMatchers("/auditing/cstatus/**").hasRole("TASKS")//changing of status
-		.antMatchers("/auditing/**").hasRole("AUDIT")//can audit and change status
-        .anyRequest().authenticated()
-        .and().formLogin()
-        .loginPage("/login")
-        .failureUrl("/login?error")
-        .permitAll()
-        .and().logout().permitAll();
+                .authorizeRequests(requests -> requests
+                        //.antMatchers( "/img/**", "/webjars/**").permitAll()
+                        .antMatchers("/controls/**").hasRole("SETUP")//can only setup controls
+                        .antMatchers("/registry/**").hasRole("ENTRY")//can only enter data
+                        .antMatchers("/auditing").hasAnyRole("AUDIT", "TASKS")//can view audits
+                        .antMatchers("/auditing/cstatus/**").hasRole("TASKS")//changing of status
+                        .antMatchers("/auditing/**").hasRole("AUDIT")//can audit and change status
+                        .anyRequest().authenticated()).formLogin(login -> login
+                .loginPage("/login")
+                .failureUrl("/login?error")
+                .permitAll()).logout(logout -> logout.permitAll());
 
         http.csrf().disable();//for h2-console
         http.headers().frameOptions().disable();
