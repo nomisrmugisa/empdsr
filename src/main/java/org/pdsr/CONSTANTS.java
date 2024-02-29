@@ -13,6 +13,8 @@ public class CONSTANTS {
     public static final String ROOT_LOCATION ="attachments";
     public static final String IMAGE_TAG = "XZYimageXZY";
     
+    public static final Integer ARCHIVED_CASE = 9;
+    
     public static final void writeToDisk(final String USER, final String MEMO, String filename, byte bytes[])
             throws IOException {
         Path path = Paths.get(ROOT_LOCATION, new String[0]).resolve(USER).resolve(MEMO).resolve(filename);

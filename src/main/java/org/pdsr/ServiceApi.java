@@ -6,11 +6,13 @@ import java.util.List;
 import org.pdsr.json.DecryptedAuditAudit;
 import org.pdsr.json.DecryptedAuditRecommendation;
 import org.pdsr.json.DecryptedCaseIdentifiers;
+import org.pdsr.json.DecryptedUserTable;
 import org.pdsr.json.DecryptedWeeklyMonitoring;
 import org.pdsr.json.EncryptedMessage;
 import org.pdsr.json.json_audit_audit;
 import org.pdsr.json.json_audit_recommendation;
 import org.pdsr.json.json_case_identifiers;
+import org.pdsr.json.json_user_table;
 import org.pdsr.json.json_weekly_monitoring;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
@@ -37,6 +39,57 @@ public class ServiceApi {
 		
 		//BASE_URL = syncRepo.findById(CONSTANTS.FACILITY_ID).get().getSync_url();
 	}
+
+	/////////////// USER TABLE////////////////////////////////
+	public String saveAll(DecryptedUserTable data) {
+
+		final String URL = BASE_URL.concat("/saveusers.php");
+		EncryptedMessage json = new EncryptedMessage();
+
+		json.setError(false);
+		json.setMessage("Encrypted");
+		json.setJwt(data.encryptList(json.getKEY(), json.getISS(), json.getAUD()));
+
+		try {
+
+			return restTemplate.postForObject(URL, json, EncryptedMessage.class).getMessage();
+
+		} catch (Exception ex) {
+
+			return new EncryptedMessage(Boolean.TRUE, ex.getLocalizedMessage()).getMessage();
+		}
+
+	}
+
+	public List<json_user_table> findAllUsers() {
+
+		EncryptedMessage json = null;
+
+		final String URL = BASE_URL.concat("/findusers.php");
+
+		try {
+			json = restTemplate.getForObject(URL, EncryptedMessage.class);
+
+		} catch (RestClientException ex) {
+			json = new EncryptedMessage(Boolean.TRUE, ex.getLocalizedMessage());
+		}
+
+		if (json.isError()) {
+			return new ArrayList<json_user_table>();
+		}
+
+		if (json.equals(null)) {
+
+			return new ArrayList<json_user_table>();
+		}
+
+		ObjectMapper mapper = new ObjectMapper();
+		DecryptedUserTable data = mapper.convertValue(json.decrypt(), DecryptedUserTable.class);
+
+		return data.getData();
+	}
+
+	
 
 	/////////////// CASE IDENTIFIERS////////////////////////////////
 	public String saveAll(DecryptedCaseIdentifiers data) {

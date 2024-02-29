@@ -57,7 +57,7 @@ public class case_identifiers implements Serializable {
 
 	@NotNull
 	@Column
-	private Integer case_death;// 1 stillbirth or 2 early neonatal
+	private Integer case_death;// 1 stillbirth or 2 early neonatal or 3 maternal
 
 	@Column
 	private Integer case_status;// 0 entry, 1 auditing new submissions, 2 auditing started auditing, 3 process

@@ -11,6 +11,10 @@
 
 			<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
 
+			<label>
+				<input type="checkbox" value="1" id="all" name="all"/>
+				[[#{merger.central.all.data}]]
+			</label>
 			<button class="btn btn-sm btn-danger" type="submit" th:utext="#{merger.central.button}"></button>
 			<span class="mb-3">
 				<a th:href="@{/controls/downloadmerge}" class="btn btn-outline-primary btn-sm"

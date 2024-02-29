@@ -180,8 +180,11 @@ public class CaseEntryController {
 
 		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
 		model.addAttribute("myf", synctable.getSync_name());
+		
+		List<case_identifiers> entered_cases = caseRepo.findByDraftCases();//find cases not yet submitted
+		entered_cases.addAll(caseRepo.findByPendingCase_status(1));//find cases just entered and pending review
 
-		model.addAttribute("items", caseRepo.findByDraftCases());
+		model.addAttribute("items", entered_cases);
 		model.addAttribute("back", "back");
 
 		return "registry/case-retrieve";
@@ -429,6 +432,7 @@ public class CaseEntryController {
 
 		case_identifiers existing = caseRepo.findById(selected.getCase_uuid()).get();
 		selected.setData_sent(0);// reset the data sending indicator when any record is edited
+		selected.setCase_status(0);// reset the submission status to not submitted (incomplete)
 
 		switch (page) {
 		case 1: {

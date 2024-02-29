@@ -281,7 +281,11 @@ public class CaseAuditController {
 		CaseWrapper selected = new CaseWrapper();
 		selected.setId("casewrapper");
 		model.addAttribute("selected", selected);
-		model.addAttribute("active_cases", caseRepo.findByPendingCase_status(1));
+		
+		List<case_identifiers> active_cases = caseRepo.findByPendingCase_status(1);//find cases pending review
+		active_cases.addAll(caseRepo.findByPendingCase_status(9));//add archived cases that were not reviewed
+		
+		model.addAttribute("active_cases", active_cases);
 
 		return "auditing/audit-list";
 	}
@@ -470,7 +474,8 @@ public class CaseAuditController {
 		TypeReference<json_algorithm> mapType1 = new TypeReference<json_algorithm>() {
 		};
 
-		List<case_identifiers> pendingAudit = caseRepo.findByPendingCase_status(1);// find all submitted cases but not
+		// find all submitted cases but not audited
+		List<case_identifiers> pendingAudit = caseRepo.findByPendingCase_status(1);
 
 		// audited
 		// Randomly shuffle the list to be selected from to ensure that each pending
@@ -787,7 +792,15 @@ public class CaseAuditController {
 				acaseRepo.saveAll(selectedForAuditing);
 			}
 
-			// save them to the audit_case
+			// mark all unselected cases for archiving
+			if(pendingAudit!=null && !pendingAudit.isEmpty()) {
+				pendingAudit.forEach(v->{
+					v.setCase_status(CONSTANTS.ARCHIVED_CASE);
+				});
+				
+				caseRepo.saveAll(pendingAudit);
+			}
+			
 
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
