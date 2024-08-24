@@ -2,12 +2,15 @@ package org.pdsr.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -22,10 +25,25 @@ import java.util.stream.Stream;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.pdsr.Antenatal;
+import org.pdsr.Biodata;
+import org.pdsr.Birth;
 import org.pdsr.CONSTANTS;
+import org.pdsr.Caseid;
+import org.pdsr.Delivery;
 import org.pdsr.EmailService;
+import org.pdsr.FetalHeart;
 import org.pdsr.InternetAvailabilityChecker;
+import org.pdsr.Labour;
+import org.pdsr.Pregnancy;
+import org.pdsr.Referral;
 import org.pdsr.json.json_data;
 import org.pdsr.master.model.abnormality_table;
 import org.pdsr.master.model.case_antenatal;
@@ -73,9 +91,15 @@ import org.pdsr.master.repo.ResuscitationTableRepository;
 import org.pdsr.master.repo.RiskTableRepository;
 import org.pdsr.master.repo.SyncTableRepository;
 import org.pdsr.master.repo.UserTableRepository;
+import org.pdsr.pojos.EntityMappings;
+import org.pdsr.pojos.SheetSections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -180,14 +204,153 @@ public class CaseEntryController {
 
 		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
 		model.addAttribute("myf", synctable.getSync_name());
-		
-		List<case_identifiers> entered_cases = caseRepo.findByDraftCases();//find cases not yet submitted
-		entered_cases.addAll(caseRepo.findByPendingCase_status(1));//find cases just entered and pending review
+
+		List<case_identifiers> entered_cases = caseRepo.findByDraftCases();// find cases not yet submitted
+		entered_cases.addAll(caseRepo.findByPendingCase_status(1));// find cases just entered and pending review
 
 		model.addAttribute("items", entered_cases);
 		model.addAttribute("back", "back");
 
 		return "registry/case-retrieve";
+	}
+
+	@GetMapping("/file")
+	public ResponseEntity<Resource> downloadFile() {
+		Resource resource = new ClassPathResource("static/PDSR_DEATH_CASE_ENTRY.xlsx");
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=pdsr-sample.xlsx");
+
+		return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+	}
+
+	@PostMapping("")
+	public String uploadData(MultipartFile file) {
+		try {
+			// Read the input stream into a byte array
+			byte[] bytes = file.getBytes();
+			InputStream inputStream = new ByteArrayInputStream(bytes);
+
+			List<case_identifiers> caseids = ExcelHelper.returnCaseIds(inputStream);
+			caseRepo.saveAll(caseids);
+
+			inputStream.reset();
+			List<case_biodata> biodata = ExcelHelper.returnBiodata(inputStream);
+
+			// Link Caseid and Biodata
+			for (Biodata bio : biodata) {
+				Caseid caseid = caseidrepository.findByMothersIdNo(bio.getMothersIdNo());
+				if (caseid != null) {
+					bio.setCaseid(caseid);
+					caseid.setBiodata(bio);
+				}
+			}
+
+			biodataRepository.saveAll(biodata);
+
+			// Reset the input stream for reading referrals
+			inputStream.reset();
+			List<Referral> referrals = ExcelHelper.returnReferral(inputStream);
+
+			// Link Caseid and Referral
+			for (Referral referral : referrals) {
+				Caseid caseid = caseidrepository.findByMothersIdNo(referral.getMothersIdNo());
+				if (caseid != null) {
+					referral.setCaseid(caseid);
+					caseid.setReferral(referral);
+				}
+			}
+
+			referralRepository.saveAll(referrals);
+
+			// reset the input stream for reading pregnancies
+			inputStream.reset();
+			List<Pregnancy> pregnancies = ExcelHelper.returnPregnancy(inputStream);
+
+			// Link Caseid and Pregnancy
+			for (Pregnancy pregnancy : pregnancies) {
+				Caseid caseid = caseidrepository.findByMothersIdNo(pregnancy.getMothersIdNo());
+				if (caseid != null) {
+					pregnancy.setCaseid(caseid);
+					caseid.setPregnancy(pregnancy);
+				}
+			}
+
+			pregnancyRepository.saveAll(pregnancies);
+
+			// Reset the input stream for reading antenatals
+			inputStream.reset();
+			List<Antenatal> antenatals = ExcelHelper.returnAntenatals(inputStream);
+
+			// Link Caseid and Antenatal
+			for (Antenatal antenatal : antenatals) {
+				Caseid caseid = caseidrepository.findByMothersIdNo(antenatal.getMothersIdNo());
+				if (caseid != null) {
+					antenatal.setCaseid(caseid);
+					caseid.setAntenatal(antenatal);
+				}
+			}
+
+			antenatalRepository.saveAll(antenatals);
+
+			// Reset the input stream for reading labours
+			inputStream.reset();
+			List<Labour> labours = ExcelHelper.returnLabour(inputStream);
+
+			// Link Caseid and Labour
+			for (Labour labour : labours) {
+				Caseid caseid = caseidrepository.findByMothersIdNo(labour.getMothersIdNo());
+				if (caseid != null) {
+					labour.setCaseid(caseid);
+					caseid.setLabour(labour);
+				}
+			}
+			labourRepository.saveAll(labours);
+
+			// Reset the input stream for reading deliveries
+			inputStream.reset();
+			List<Delivery> deliveries = ExcelHelper.returnDelivery(inputStream);
+
+			// Link Caseid and Delivery
+			for (Delivery delivery : deliveries) {
+				Caseid caseid = caseidrepository.findByMothersIdNo(delivery.getMothersIdNo());
+				if (caseid != null) {
+					delivery.setCaseid(caseid);
+					caseid.setDelivery(delivery);
+				}
+			}
+			deliveryRepository.saveAll(deliveries);
+
+			// Reset the input stream for reading births
+			inputStream.reset();
+			List<Birth> births = ExcelHelper.returnBirth(inputStream);
+
+			// Link Caseid and Birth
+			for (Birth birth : births) {
+				Caseid caseid = caseidrepository.findByMothersIdNo(birth.getMothersIdNo());
+				if (caseid != null) {
+					birth.setCaseid(caseid);
+					caseid.setBirth(birth);
+				}
+			}
+			birthRepository.saveAll(births);
+
+			// Reset the input stream for reading fetal hearts
+			inputStream.reset();
+			List<FetalHeart> fetalHearts = ExcelHelper.returnFetalHearts(inputStream);
+
+			// Link Caseid and FetalHeart
+			for (FetalHeart fetalHeart : fetalHearts) {
+				Caseid caseid = caseidrepository.findByMothersIdNo(fetalHeart.getMothersIdNo());
+				if (caseid != null) {
+					fetalHeart.setCaseid(caseid);
+					caseid.setFetalHeart(fetalHeart);
+				}
+			}
+			fetalHeartRepository.saveAll(fetalHearts);
+		} catch (IOException e) {
+			throw new RuntimeException("fail to store excel data: " + e.getMessage());
+		}
 	}
 
 	@GetMapping("/add")
@@ -202,7 +365,7 @@ public class CaseEntryController {
 		model.addAttribute("myf", synctable.getSync_name());
 
 		case_identifiers selected = new case_identifiers();
-		selected.setCase_date(new java.util.Date());
+		selected.setCase_date(LocalDate.now());
 
 		Optional<sync_table> code = syncRepo.findById(CONSTANTS.FACILITY_ID);
 		if (code.isPresent()) {
@@ -1903,5 +2066,631 @@ public class CaseEntryController {
 		} else
 			return "";
 	}
+
+	public Map<String, case_identifiers> returnCaseIdentifiers(InputStream is) {
+		Map<String, case_identifiers> caseids = new HashMap<>();
+		try (Workbook workbook = new XSSFWorkbook(is)) {
+			Sheet sheet = workbook.getSheet(SheetSections.CASEIDSHEET.getDescription());
+			Iterator<Row> rows = sheet.iterator();
+			int rowNumber = 0;
+			while (rows.hasNext()) {
+				Row currentRow = rows.next();
+				if (rowNumber == 0) {
+					rowNumber++;
+					continue;
+				}
+
+				case_identifiers caseid = new case_identifiers();
+				caseid.setCase_uuid(UUID.randomUUID().toString());
+				Optional<sync_table> code = syncRepo.findById(CONSTANTS.FACILITY_ID);
+				if (code.isPresent()) {
+					Optional<facility_table> facility = facilityRepo.findById(code.get().getSync_uuid());
+					caseid.setFacility(facility.get());
+				}
+
+				Iterator<Cell> cellsInRow = currentRow.iterator();
+				int cellIdx = 0;
+				while (cellsInRow.hasNext()) {
+					Cell currentCell = cellsInRow.next();
+					switch (cellIdx) {
+					case 0:
+						if (currentCell.getCellType() == CellType.NUMERIC) {
+							caseid.setCase_date(currentCell.getLocalDateTimeCellValue().toLocalDate());
+						}
+						break;
+					case 1:
+						caseid.setCase_id(currentCell.toString());
+						break;
+					case 2:
+						caseid.setCase_death((int) (currentCell.getNumericCellValue()));
+						break;
+					case 3:
+						caseid.setCase_mid(currentCell.toString());
+						break;
+					case 4:
+						caseid.setCase_mname(currentCell.toString());
+						break;
+					default:
+						break;
+					}
+					cellIdx++;
+				}
+				caseids.put(caseid.getCase_id(), caseid);
+			}
+		} catch (IOException e) {
+			throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
+		}
+		return caseids;
+	}
+
+	public List<case_biodata> returnBiodata(InputStream is, Map<String, case_identifiers> caseMap) {
+		List<case_biodata> caseBiodata = new ArrayList<>();
+		try (Workbook workbook = new XSSFWorkbook(is)) {
+			Sheet sheet = workbook.getSheet(SheetSections.CASEBIODATASHEET.getDescription());
+			Iterator<Row> rows = sheet.iterator();
+			int rowNumber = 0;
+			while (rows.hasNext()) {
+				Row currentRow = rows.next();
+				if (rowNumber == 0) {
+					rowNumber++;
+					continue;
+				}
+				Iterator<Cell> cellsInRow = currentRow.iterator();
+				case_biodata biodata = new case_biodata();
+
+				int cellIdx = 0;
+				while (cellsInRow.hasNext()) {
+					Cell currentCell = cellsInRow.next();
+					switch (cellIdx) {
+					case 0:
+						final String case_id_num = (currentCell.toString());
+						biodata.setBiodata_uuid(caseMap.get(case_id_num).getCase_uuid());
+						break;
+					case 2:
+						final String childSex = currentCell.toString();
+						final int childSexCode = EntityMappings.BIODATA_CHILD_SEX.getOrDefault(childSex, null);
+						biodata.setBiodata_sex(childSexCode);
+						break;
+					case 3:
+						if (currentCell.getCellType() == CellType.NUMERIC) {
+							biodata.setBiodata_mage((int) currentCell.getNumericCellValue());
+						}
+						break;
+					case 4:
+						final String mothersEducation = currentCell.toString();
+						final int mothersEducationCode = EntityMappings.BIODATA_MOTHER_EDUCATION
+								.getOrDefault(mothersEducation, null);
+						biodata.setBiodata_medu(mothersEducationCode);
+						break;
+					default:
+						break;
+					}
+					cellIdx++;
+				}
+				caseBiodata.add(biodata);
+			}
+		} catch (IOException e) {
+			throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
+		}
+		return caseBiodata;
+	}
+
+	public static List<case_referral> returnReferral(InputStream is, Map<String, case_identifiers> caseMap) {
+		List<case_referral> caseReferrals = new ArrayList<>();
+		try (Workbook workbook = new XSSFWorkbook(is)) {
+			Sheet sheet = workbook.getSheet(SheetSections.REFERRALSHEET.getDescription());
+			Iterator<Row> rows = sheet.iterator();
+			int rowNumber = 0;
+			while (rows.hasNext()) {
+				Row currentRow = rows.next();
+				if (rowNumber == 0) {
+					rowNumber++;
+					continue;
+				}
+
+				Iterator<Cell> cellsInRow = currentRow.iterator();
+				case_referral referral = new case_referral();
+				int cellIdx = 0;
+				while (cellsInRow.hasNext()) {
+					Cell currentCell = cellsInRow.next();
+					switch (cellIdx) {
+					case 0:
+						final String case_id_num = (currentCell.toString());
+						referral.setReferral_uuid(caseMap.get(case_id_num).getCase_uuid());
+						break;
+					case 2:
+						final String wasReferred = currentCell.toString();
+						final int wasReferredCode = EntityMappings.REFERRAL_WAS_REFERRED.getOrDefault(wasReferred,
+								null);
+						referral.setReferral_case(wasReferredCode);
+						break;
+					default:
+						break;
+					}
+					cellIdx++;
+				}
+				caseReferrals.add(referral);
+			}
+		} catch (IOException e) {
+			throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
+		}
+		return caseReferrals;
+	}
+
+	public static List<Pregnancy> returnPregnancy(InputStream is) {
+		List<Pregnancy> casePregnancies = new ArrayList<>();
+		try (Workbook workbook = new XSSFWorkbook(is)) {
+			Sheet sheet = workbook.getSheet(PREGNANCYSHEET);
+			Iterator<Row> rows = sheet.iterator();
+			int rowNumber = 0;
+			while (rows.hasNext()) {
+				Row currentRow = rows.next();
+				if (rowNumber == 0) {
+					rowNumber++;
+					continue;
+				}
+				Iterator<Cell> cellsInRow = currentRow.iterator();
+				Pregnancy pregnancy = new Pregnancy();
+				int cellIdx = 0;
+				while (cellsInRow.hasNext()) {
+					Cell currentCell = cellsInRow.next();
+					switch (cellIdx) {
+					case 0:
+						pregnancy.setMothersIdNo(currentCell.toString());
+						break;
+					case 1:
+						pregnancy.setMothersName(currentCell.toString());
+						break;
+					case 2:
+						if (currentCell.getCellType() == CellType.NUMERIC) {
+							pregnancy.setPregnancyWeeks((int) currentCell.getNumericCellValue());
+						}
+						break;
+					case 3:
+						if (currentCell.getCellType() == CellType.NUMERIC) {
+							pregnancy.setPregnancyDays((int) currentCell.getNumericCellValue());
+						}
+						break;
+					case 4:
+						String pregnancyType = currentCell.toString();
+						int pregnancyTypeCode = EntityMappings.PREGNANCY_TYPE.getOrDefault(pregnancyType, null);
+						pregnancy.setPregnancyType(pregnancyTypeCode);
+						break;
+					default:
+						break;
+					}
+					cellIdx++;
+				}
+				casePregnancies.add(pregnancy);
+			}
+		} catch (IOException e) {
+			throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
+		}
+		return casePregnancies;
+	}
+
+	public static List<Antenatal> returnAntenatals(InputStream is) {
+		List<Antenatal> antenatals = new ArrayList<>();
+		try (Workbook workbook = new XSSFWorkbook(is)) {
+			Sheet sheet = workbook.getSheet(ANTENATALSHEET);
+			Iterator<Row> rows = sheet.iterator();
+			int rowNumber = 0;
+			while (rows.hasNext()) {
+				Row currentRow = rows.next();
+				if (rowNumber == 0) {
+					rowNumber++;
+					continue;
+				}
+				Iterator<Cell> cellsInRow = currentRow.iterator();
+				Antenatal antenatal = new Antenatal();
+				int cellIdx = 0;
+				while (cellsInRow.hasNext()) {
+					Cell currentCell = cellsInRow.next();
+					switch (cellIdx) {
+					case 0:
+						antenatal.setMothersIdNo(currentCell.toString());
+						break;
+					case 1:
+						antenatal.setMothersName(currentCell.toString());
+						break;
+					case 2:
+						if (currentCell.getCellType() == CellType.NUMERIC) {
+							antenatal.setAntenatalGravida((int) currentCell.getNumericCellValue());
+						}
+						break;
+					case 3:
+						if (currentCell.getCellType() == CellType.NUMERIC) {
+							antenatal.setAntenatalParity((int) currentCell.getNumericCellValue());
+						}
+						break;
+					case 4:
+						String antenatalAnc = currentCell.toString();
+						int antenatalAncCode = EntityMappings.ANTENATAL_ANC.getOrDefault(antenatalAnc, null);
+						antenatal.setAntenatalAnc(antenatalAncCode);
+						break;
+					case 5:
+						String antenatalRisk = currentCell.toString();
+						int antenatalRiskCode = EntityMappings.ANTENATAL_RISK.getOrDefault(antenatalRisk, null);
+						antenatal.setAntenatalRisk(antenatalRiskCode);
+						break;
+					case 6:
+						String antenatalMotherHiv = currentCell.toString();
+						int antenatalMotherHivCode = EntityMappings.ANTENATAL_MOTHER_HIV
+								.getOrDefault(antenatalMotherHiv, null);
+						antenatal.setAntenatalMotherHiv(antenatalMotherHivCode);
+						break;
+					case 7:
+						String antenatalUseOfAlcohol = currentCell.toString();
+						int antenatalUseOfAlcoholCode = EntityMappings.ANTENATAL_USE_OF_ALCOHOL
+								.getOrDefault(antenatalUseOfAlcohol, null);
+						antenatal.setAntenatalUseOfAlcohol(antenatalUseOfAlcoholCode);
+						break;
+					case 8:
+						String antenatalExposureCigarette = currentCell.toString();
+						int antenatalExposureCigaretteCode = EntityMappings.ANTENATAL_EXPOSURE_CIGARETTES
+								.getOrDefault(antenatalExposureCigarette, null);
+						antenatal.setAntenatalExposureCigarette(antenatalExposureCigaretteCode);
+						break;
+					case 9:
+						String antenatalUseOfHerbs = currentCell.toString();
+						int antenatalUseOfHerbsCode = EntityMappings.ANTENATAL_USE_OF_HERBS
+								.getOrDefault(antenatalUseOfHerbs, null);
+						antenatal.setAntenatalUseOfHerbs(antenatalUseOfHerbsCode);
+						break;
+					case 10:
+						String antenatalIntakeFolicAcid = currentCell.toString();
+						int antenatalIntakeFolicAcidCode = EntityMappings.ANTENATAL_USE_OF_HERBS
+								.getOrDefault(antenatalIntakeFolicAcid, null);
+						antenatal.setAntenatalIntakeFolicAcid(antenatalIntakeFolicAcidCode);
+						break;
+					case 11:
+						String antenatalTetanus = currentCell.toString();
+						int antenatalTetanusCode = EntityMappings.ANTENATAL_TETANUS.getOrDefault(antenatalTetanus,
+								null);
+						antenatal.setAntenatalTetanus(antenatalTetanusCode);
+						break;
+					case 12:
+						String antenatalMalaria = currentCell.toString();
+						int antenatalMalariaCode = EntityMappings.ANTENATAL_MALARIA.getOrDefault(antenatalMalaria,
+								null);
+						antenatal.setAntenatalMalaria(antenatalMalariaCode);
+						break;
+					default:
+						break;
+					}
+					cellIdx++;
+				}
+				antenatals.add(antenatal);
+			}
+		} catch (IOException e) {
+			throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
+		}
+		return antenatals;
+	}
+
+	public static List<Labour> returnLabour(InputStream is) {
+		List<Labour> caseLabours = new ArrayList<>();
+		try (Workbook workbook = new XSSFWorkbook(is)) {
+			Sheet sheet = workbook.getSheet(LABOURSHEET);
+			Iterator<Row> rows = sheet.iterator();
+			int rowNumber = 0;
+			while (rows.hasNext()) {
+				Row currentRow = rows.next();
+				if (rowNumber == 0) {
+					rowNumber++;
+					continue;
+				}
+				Iterator<Cell> cellsInRow = currentRow.iterator();
+				Labour labour = new Labour();
+				int cellIdx = 0;
+				while (cellsInRow.hasNext()) {
+					Cell currentCell = cellsInRow.next();
+					switch (cellIdx) {
+					case 0:
+						labour.setMothersIdNo(currentCell.toString());
+						break;
+					case 1:
+						labour.setMothersName(currentCell.toString());
+						break;
+					case 2:
+						if (currentCell.getCellType() == CellType.NUMERIC) {
+							labour.setLabourSeeDate(currentCell.getLocalDateTimeCellValue().toLocalDate());
+						}
+						break;
+					case 3:
+						if (currentCell.getCellType() == CellType.NUMERIC) {
+							labour.setLabourSeeTime(currentCell.getLocalDateTimeCellValue().toLocalTime());
+						}
+						break;
+					case 4:
+						String labourPeriod = currentCell.toString();
+						int labourPeriodCode = EntityMappings.LABOUR_STAFF_PERIOD.getOrDefault(labourPeriod, null);
+						labour.setLabourStaffPeriod(labourPeriodCode);
+						break;
+					case 5:
+						String motherHerbalSubstance = currentCell.toString();
+						int motherHerbalSubstanceCode = EntityMappings.MOTHER_HERBAL_SUBSTANCE
+								.getOrDefault(motherHerbalSubstance, null);
+						labour.setMotherHerbalSubstance(motherHerbalSubstanceCode);
+						break;
+					case 6:
+						String labourStart = currentCell.toString();
+						int labourStartCode = EntityMappings.LABOUR_START.getOrDefault(labourStart, null);
+						labour.setLabourStart(labourStartCode);
+						break;
+					case 7:
+						String labourComplications = currentCell.toString();
+						int labourComplicationsCode = EntityMappings.LABOUR_COMPLICATIONS
+								.getOrDefault(labourComplications, null);
+						labour.setLabourComplications(labourComplicationsCode);
+						break;
+					default:
+						break;
+					}
+					cellIdx++;
+				}
+				caseLabours.add(labour);
+			}
+		} catch (IOException e) {
+			throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
+		}
+		return caseLabours;
+	}
+
+	public static List<Delivery> returnDelivery(InputStream is) {
+		List<Delivery> deliveries = new ArrayList<>();
+		try (Workbook workbook = new XSSFWorkbook(is)) {
+			Sheet sheet = workbook.getSheet(DELIVERYSHEET);
+			Iterator<Row> rows = sheet.iterator();
+			int rowNumber = 0;
+			while (rows.hasNext()) {
+				Row currentRow = rows.next();
+				if (rowNumber == 0) {
+					rowNumber++;
+					continue;
+				}
+				Iterator<Cell> cellsInRow = currentRow.iterator();
+				Delivery delivery = new Delivery();
+				int cellIdx = 0;
+				while (cellsInRow.hasNext()) {
+					Cell currentCell = cellsInRow.next();
+					switch (cellIdx) {
+					case 0:
+						delivery.setMothersIdNo(currentCell.toString());
+						break;
+					case 1:
+						delivery.setMothersName(currentCell.toString());
+						break;
+					case 2:
+						if (currentCell.getCellType() == CellType.NUMERIC) {
+							delivery.setDeliveryDate(currentCell.getLocalDateTimeCellValue().toLocalDate());
+						}
+						break;
+					case 3:
+						if (currentCell.getCellType() == CellType.NUMERIC) {
+							delivery.setDeliveryTime(currentCell.getLocalDateTimeCellValue().toLocalTime());
+						}
+						break;
+					case 4:
+						String deliveryPeriod = currentCell.toString();
+						int deliveryPeriodCode = EntityMappings.DELIVERY_PERIOD.getOrDefault(deliveryPeriod, null);
+						delivery.setDeliveryPeriod(deliveryPeriodCode);
+						break;
+					case 5:
+						if (currentCell.getCellType() == CellType.NUMERIC) {
+							delivery.setBabyWeight(currentCell.getNumericCellValue());
+						}
+						break;
+					default:
+						break;
+					}
+					cellIdx++;
+				}
+				deliveries.add(delivery);
+			}
+		} catch (IOException e) {
+			throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
+		}
+		return deliveries;
+	}
+
+	public static List<Birth> returnBirth(InputStream is) {
+		List<Birth> births = new ArrayList<>();
+		try (Workbook workbook = new XSSFWorkbook(is)) {
+			Sheet sheet = workbook.getSheet(BIRTH_SHEET);
+			Iterator<Row> rows = sheet.iterator();
+			int rowNumber = 0;
+			while (rows.hasNext()) {
+				Row currentRow = rows.next();
+				if (rowNumber == 0) {
+					rowNumber++;
+					continue;
+				}
+				Iterator<Cell> cellsInRow = currentRow.iterator();
+				Birth birth = new Birth();
+				int cellIdx = 0;
+				while (cellsInRow.hasNext()) {
+					Cell currentCell = cellsInRow.next();
+					switch (cellIdx) {
+					case 0:
+						birth.setMothersIdNo(currentCell.toString());
+						break;
+					case 1:
+						birth.setMothersName(currentCell.toString());
+						break;
+					case 2:
+						String modeOfDelivery = currentCell.toString();
+						int modeOfDeliveryCode = EntityMappings.MODE_OF_DELIVERY.getOrDefault(modeOfDelivery, null);
+						birth.setModeOfDelivery(modeOfDeliveryCode);
+						break;
+					case 3:
+						String vaginalDeliveryOccur = currentCell.toString();
+						int vaginalDeliveryOccurCode = EntityMappings.VAGINAL_DELIVERY_OCCUR
+								.getOrDefault(vaginalDeliveryOccur, null);
+						birth.setVaginalDeliveryOccur(vaginalDeliveryOccurCode);
+						break;
+					case 4:
+						if (currentCell.getCellType() == CellType.NUMERIC) {
+							birth.setCsDate(currentCell.getLocalDateTimeCellValue().toLocalDate());
+						}
+						break;
+					case 5:
+						if (currentCell.getCellType() == CellType.NUMERIC) {
+							birth.setCsTime(currentCell.getLocalDateTimeCellValue().toLocalTime());
+						}
+						break;
+					case 6:
+						String deliveredBy = currentCell.toString();
+						int deliveredByCode = EntityMappings.DELIVERED_BY.getOrDefault(deliveredBy, null);
+						birth.setDeliveredBy(deliveredByCode);
+						break;
+					case 7:
+						String deliveredIn = currentCell.toString();
+						int deliveredInCode = EntityMappings.DELIVERED_IN.getOrDefault(deliveredIn, null);
+						birth.setDeliveredBy(deliveredInCode);
+						break;
+					case 8:
+						String babyAbnormalities = currentCell.toString();
+						int babyAbnormalitiesCode = EntityMappings.BABY_ABNORMALITIES.getOrDefault(babyAbnormalities,
+								null);
+						birth.setBabyAbnormalities(babyAbnormalitiesCode);
+						break;
+					case 9:
+						String cordProblems = currentCell.toString();
+						int cordProblemsCode = EntityMappings.CORD_PROBLEMS.getOrDefault(cordProblems, null);
+						birth.setBabyAbnormalities(cordProblemsCode);
+						break;
+					case 10:
+						String placentaProblems = currentCell.toString();
+						int placentaProblemsCode = EntityMappings.PLACENTA_PROBLEMS.getOrDefault(placentaProblems,
+								null);
+						birth.setPlacentaProblems(placentaProblemsCode);
+						break;
+					case 11:
+						String liquorVolume = currentCell.toString();
+						int liquorVolumeCode = EntityMappings.LIQUOR_VOLUME.getOrDefault(liquorVolume, null);
+						birth.setLiquorVolume(liquorVolumeCode);
+						break;
+					case 12:
+						String liquorColor = currentCell.toString();
+						int liquorColorCode = EntityMappings.LIQUOR_COLOR.getOrDefault(liquorColor, null);
+						birth.setLiquorColor(liquorColorCode);
+						break;
+					case 13:
+						String liquorOdour = currentCell.toString();
+						int liquorOdourCode = EntityMappings.LIQUOR_ODOUR.getOrDefault(liquorOdour, null);
+						birth.setLiquorOdour(liquorOdourCode);
+						break;
+					case 14:
+						String stateOfBaby = currentCell.toString();
+						int stateOfBabyCode = EntityMappings.STATE_OF_BABY.getOrDefault(stateOfBaby, null);
+						birth.setStateOfBaby(stateOfBabyCode);
+						break;
+					case 15:
+						String maternalOutcome = currentCell.toString();
+						int maternalOutcomeCode = EntityMappings.MATERNAL_OUTCOME.getOrDefault(maternalOutcome, null);
+						birth.setMaternalOutcome(maternalOutcomeCode);
+						break;
+					default:
+						break;
+					}
+					cellIdx++;
+				}
+				births.add(birth);
+			}
+		} catch (IOException e) {
+			throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
+		}
+		return births;
+	}
+
+	public static List<FetalHeart> returnFetalHearts(InputStream is) {
+		List<FetalHeart> fetalHearts = new ArrayList<>();
+		try (Workbook workbook = new XSSFWorkbook(is)) {
+			Sheet sheet = workbook.getSheet(FETALHEART_SHEET);
+			Iterator<Row> rows = sheet.iterator();
+			int rowNumber = 0;
+			while (rows.hasNext()) {
+				Row currentRow = rows.next();
+				if (rowNumber == 0) {
+					rowNumber++;
+					continue;
+				}
+				Iterator<Cell> cellsInRow = currentRow.iterator();
+				FetalHeart fetalHeart = new FetalHeart();
+				int cellIdx = 0;
+				while (cellsInRow.hasNext()) {
+					Cell currentCell = cellsInRow.next();
+					switch (cellIdx) {
+					case 0:
+						fetalHeart.setMothersIdNo(currentCell.toString());
+						break;
+					case 1:
+						fetalHeart.setMothersName(currentCell.toString());
+						break;
+					case 2:
+						String fetalSoundFacility = currentCell.toString();
+						int fetalSoundFacilityCode = EntityMappings.FETAL_SOUND_FACILITY
+								.getOrDefault(fetalSoundFacility, null);
+						fetalHeart.setFetalHeartSoundPresentFromReferringFacility(fetalSoundFacilityCode);
+						break;
+					case 3:
+						String fetalSoundArrival = currentCell.toString();
+						int fetalSoundArrivalCode = EntityMappings.FETAL_SOUND_ARRIVAL.getOrDefault(fetalSoundArrival,
+								null);
+						fetalHeart.setFetalHeartSoundPresentOnArrival(fetalSoundArrivalCode);
+						break;
+					case 4:
+						String fetalSoundPeriod = currentCell.toString();
+						int fetalSoundPeriodCode = EntityMappings.FETAL_SOUND_PERIOD.getOrDefault(fetalSoundPeriod,
+								null);
+						fetalHeart.setFetalHeartSoundPeriod(fetalSoundPeriodCode);
+						break;
+					default:
+						break;
+					}
+					cellIdx++;
+				}
+				fetalHearts.add(fetalHeart);
+			}
+		} catch (IOException e) {
+			throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
+		}
+		return fetalHearts;
+	}
+
+//    public static List<Notes> returnNotes(InputStream is) {
+//        List<Notes> notesList = new ArrayList<>();
+//        try (Workbook workbook = new XSSFWorkbook(is)) {
+//            Sheet sheet = workbook.getSheet(NOTES_SHEET);
+//            Iterator<Row> rows = sheet.iterator();
+//            int rowNumber = 0;
+//            while (rows.hasNext()) {
+//                Row currentRow = rows.next();
+//                if (rowNumber == 0) {
+//                    rowNumber++;
+//                    continue;
+//                }
+//                Iterator<Cell> cellsInRow = currentRow.iterator();
+//                Notes notes = new Notes();
+//                int cellIdx = 0;
+//                while (cellsInRow.hasNext()) {
+//                    Cell currentCell = cellsInRow.next();
+//                    switch (cellIdx) {
+//                        case 0:
+//                            notes.setAdditionalNotes(currentCell.toString());
+//                            break;
+//                        default:
+//                            break;
+//                    }
+//                    cellIdx++;
+//                }
+//                notesList.add(notes);
+//            }
+//        } catch (IOException e) {
+//            throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
+//        }
+//        return notesList;
+//    }
 
 }// end class
