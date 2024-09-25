@@ -1,6 +1,8 @@
 package org.pdsr.master.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +45,7 @@ public class case_labour implements Serializable {
 	@Column
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
-	private java.util.Date labour_seedate;
+	private LocalDate labour_seedate;
 
 	
 	@Column
@@ -57,7 +59,7 @@ public class case_labour implements Serializable {
 	@Column
 	@Temporal(TemporalType.TIME)
 	@DateTimeFormat(pattern = "HH:mm")
-	private java.util.Date labour_seetime;
+	private LocalTime labour_seetime;
 
 	
 	@Column
@@ -145,11 +147,11 @@ public class case_labour implements Serializable {
 		this.case_uuid = case_uuid;
 	}
 
-	public java.util.Date getLabour_seedate() {
+	public LocalDate getLabour_seedate() {
 		return labour_seedate;
 	}
 
-	public void setLabour_seedate(java.util.Date labour_seedate) {
+	public void setLabour_seedate(LocalDate labour_seedate) {
 		this.labour_seedate = labour_seedate;
 	}
 
@@ -233,11 +235,11 @@ public class case_labour implements Serializable {
 		this.labour_lastminute2 = labour_lastminute2;
 	}
 
-	public java.util.Date getLabour_seetime() {
+	public LocalTime getLabour_seetime() {
 		return labour_seetime;
 	}
 
-	public void setLabour_seetime(java.util.Date labour_seetime) {
+	public void setLabour_seetime(LocalTime labour_seetime) {
 		this.labour_seetime = labour_seetime;
 	}
 

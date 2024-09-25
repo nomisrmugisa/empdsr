@@ -1,6 +1,8 @@
 package org.pdsr.slave.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -57,7 +59,7 @@ public class case_referral implements Serializable {
 	@Column
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
-	private java.util.Date referral_date;
+	private LocalDate referral_date;
 
 	
 	@Column
@@ -71,7 +73,7 @@ public class case_referral implements Serializable {
 	@Column
 	@Temporal(TemporalType.TIME)
 	@DateTimeFormat(pattern = "HH:mm")
-	private java.util.Date referral_time;
+	private LocalTime referral_time;
 
 	@Column
 	private Integer referral_datetime_notstated;
@@ -80,7 +82,7 @@ public class case_referral implements Serializable {
 	@Column
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
-	private java.util.Date referral_adate;
+	private LocalDate referral_adate;
 
 	
 	@Column
@@ -94,7 +96,7 @@ public class case_referral implements Serializable {
 	@Column
 	@Temporal(TemporalType.TIME)
 	@DateTimeFormat(pattern = "HH:mm")
-	private java.util.Date referral_atime;
+	private LocalTime referral_atime;
 
 	@Column
 	private Integer referral_adatetime_notstated;
@@ -182,11 +184,11 @@ public class case_referral implements Serializable {
 		this.referral_facility = referral_facility;
 	}
 
-	public java.util.Date getReferral_date() {
+	public LocalDate getReferral_date() {
 		return referral_date;
 	}
 
-	public void setReferral_date(java.util.Date referral_date) {
+	public void setReferral_date(LocalDate referral_date) {
 		this.referral_date = referral_date;
 	}
 
@@ -206,11 +208,11 @@ public class case_referral implements Serializable {
 		this.referral_minute = referral_minute;
 	}
 
-	public java.util.Date getReferral_adate() {
+	public LocalDate getReferral_adate() {
 		return referral_adate;
 	}
 
-	public void setReferral_adate(java.util.Date referral_adate) {
+	public void setReferral_adate(LocalDate referral_adate) {
 		this.referral_adate = referral_adate;
 	}
 
@@ -262,19 +264,19 @@ public class case_referral implements Serializable {
 		this.file = file;
 	}
 
-	public java.util.Date getReferral_time() {
+	public LocalTime getReferral_time() {
 		return referral_time;
 	}
 
-	public void setReferral_time(java.util.Date referral_time) {
+	public void setReferral_time(LocalTime referral_time) {
 		this.referral_time = referral_time;
 	}
 
-	public java.util.Date getReferral_atime() {
+	public LocalTime getReferral_atime() {
 		return referral_atime;
 	}
 
-	public void setReferral_atime(java.util.Date referral_atime) {
+	public void setReferral_atime(LocalTime referral_atime) {
 		this.referral_atime = referral_atime;
 	}
 

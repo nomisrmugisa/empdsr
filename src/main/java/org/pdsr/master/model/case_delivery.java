@@ -1,6 +1,8 @@
 package org.pdsr.master.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -39,7 +41,7 @@ public class case_delivery implements Serializable {
 	@Column
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
-	private java.util.Date delivery_date;
+	private LocalDate delivery_date;
 
 	
 	@Column
@@ -56,7 +58,7 @@ public class case_delivery implements Serializable {
 	@Column
 	@Temporal(TemporalType.TIME)
 	@DateTimeFormat(pattern = "HH:mm")
-	private java.util.Date delivery_time;
+	private LocalTime delivery_time;
 
 	@Column
 	private Integer delivery_datetime_notstated;
@@ -96,11 +98,11 @@ public class case_delivery implements Serializable {
 		this.case_uuid = case_uuid;
 	}
 
-	public java.util.Date getDelivery_date() {
+	public LocalDate getDelivery_date() {
 		return delivery_date;
 	}
 
-	public void setDelivery_date(java.util.Date delivery_date) {
+	public void setDelivery_date(LocalDate delivery_date) {
 		this.delivery_date = delivery_date;
 	}
 
@@ -128,11 +130,11 @@ public class case_delivery implements Serializable {
 		this.delivery_period = delivery_period;
 	}
 
-	public java.util.Date getDelivery_time() {
+	public LocalTime getDelivery_time() {
 		return delivery_time;
 	}
 
-	public void setDelivery_time(java.util.Date delivery_time) {
+	public void setDelivery_time(LocalTime delivery_time) {
 		this.delivery_time = delivery_time;
 	}
 

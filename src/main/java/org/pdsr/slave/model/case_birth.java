@@ -1,6 +1,8 @@
 package org.pdsr.slave.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +52,7 @@ public class case_birth implements Serializable {
 	@Column
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
-	private java.util.Date birth_csproposedate;
+	private LocalDate birth_csproposedate;
 	
 	@Column
 	private Integer birth_csproposehour;
@@ -63,7 +65,7 @@ public class case_birth implements Serializable {
 	@Column
 	@Temporal(TemporalType.TIME)
 	@DateTimeFormat(pattern = "HH:mm")
-	private java.util.Date birth_csproposetime;
+	private LocalTime birth_csproposetime;
 
 
 	
@@ -185,11 +187,11 @@ public class case_birth implements Serializable {
 		this.birth_insistnormal = birth_insistnormal;
 	}
 
-	public java.util.Date getBirth_csproposedate() {
+	public LocalDate getBirth_csproposedate() {
 		return birth_csproposedate;
 	}
 
-	public void setBirth_csproposedate(java.util.Date birth_csproposedate) {
+	public void setBirth_csproposedate(LocalDate birth_csproposedate) {
 		this.birth_csproposedate = birth_csproposedate;
 	}
 
@@ -331,11 +333,11 @@ public class case_birth implements Serializable {
 		this.birth_motheroutcome = birth_motheroutcome;
 	}
 
-	public java.util.Date getBirth_csproposetime() {
+	public LocalTime getBirth_csproposetime() {
 		return birth_csproposetime;
 	}
 
-	public void setBirth_csproposetime(java.util.Date birth_csproposetime) {
+	public void setBirth_csproposetime(LocalTime birth_csproposetime) {
 		this.birth_csproposetime = birth_csproposetime;
 	}
 

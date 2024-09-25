@@ -6,9 +6,9 @@ import java.io.InputStream;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -32,18 +32,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
-import org.pdsr.Antenatal;
-import org.pdsr.Biodata;
-import org.pdsr.Birth;
 import org.pdsr.CONSTANTS;
-import org.pdsr.Caseid;
-import org.pdsr.Delivery;
 import org.pdsr.EmailService;
-import org.pdsr.FetalHeart;
 import org.pdsr.InternetAvailabilityChecker;
-import org.pdsr.Labour;
-import org.pdsr.Pregnancy;
-import org.pdsr.Referral;
 import org.pdsr.json.json_data;
 import org.pdsr.master.model.abnormality_table;
 import org.pdsr.master.model.case_antenatal;
@@ -91,7 +82,7 @@ import org.pdsr.master.repo.ResuscitationTableRepository;
 import org.pdsr.master.repo.RiskTableRepository;
 import org.pdsr.master.repo.SyncTableRepository;
 import org.pdsr.master.repo.UserTableRepository;
-import org.pdsr.pojos.EntityMappings;
+import org.pdsr.pojos.ExcelHelper;
 import org.pdsr.pojos.SheetSections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -226,131 +217,59 @@ public class CaseEntryController {
 
 	@PostMapping("")
 	public String uploadData(MultipartFile file) {
+		ExcelHelper ExcelHelper = new ExcelHelper();
 		try {
 			// Read the input stream into a byte array
 			byte[] bytes = file.getBytes();
 			InputStream inputStream = new ByteArrayInputStream(bytes);
 
-			List<case_identifiers> caseids = ExcelHelper.returnCaseIds(inputStream);
-			caseRepo.saveAll(caseids);
+			Map<String, case_identifiers> caseids = returnCaseIdentifiers(inputStream);
+			caseRepo.saveAll(caseids.values());
 
 			inputStream.reset();
-			List<case_biodata> biodata = ExcelHelper.returnBiodata(inputStream);
-
-			// Link Caseid and Biodata
-			for (Biodata bio : biodata) {
-				Caseid caseid = caseidrepository.findByMothersIdNo(bio.getMothersIdNo());
-				if (caseid != null) {
-					bio.setCaseid(caseid);
-					caseid.setBiodata(bio);
-				}
-			}
-
-			biodataRepository.saveAll(biodata);
+			List<case_biodata> biodata = ExcelHelper.returnBiodata(inputStream, caseids);
+			bioRepo.saveAll(biodata);
 
 			// Reset the input stream for reading referrals
 			inputStream.reset();
-			List<Referral> referrals = ExcelHelper.returnReferral(inputStream);
-
-			// Link Caseid and Referral
-			for (Referral referral : referrals) {
-				Caseid caseid = caseidrepository.findByMothersIdNo(referral.getMothersIdNo());
-				if (caseid != null) {
-					referral.setCaseid(caseid);
-					caseid.setReferral(referral);
-				}
-			}
-
-			referralRepository.saveAll(referrals);
+			List<case_referral> referrals = ExcelHelper.returnReferral(inputStream, caseids);
+			refRepo.saveAll(referrals);
 
 			// reset the input stream for reading pregnancies
 			inputStream.reset();
-			List<Pregnancy> pregnancies = ExcelHelper.returnPregnancy(inputStream);
-
-			// Link Caseid and Pregnancy
-			for (Pregnancy pregnancy : pregnancies) {
-				Caseid caseid = caseidrepository.findByMothersIdNo(pregnancy.getMothersIdNo());
-				if (caseid != null) {
-					pregnancy.setCaseid(caseid);
-					caseid.setPregnancy(pregnancy);
-				}
-			}
-
-			pregnancyRepository.saveAll(pregnancies);
+			List<case_pregnancy> pregnancies = ExcelHelper.returnPregnancy(inputStream, caseids);
+			preRepo.saveAll(pregnancies);
 
 			// Reset the input stream for reading antenatals
 			inputStream.reset();
-			List<Antenatal> antenatals = ExcelHelper.returnAntenatals(inputStream);
-
-			// Link Caseid and Antenatal
-			for (Antenatal antenatal : antenatals) {
-				Caseid caseid = caseidrepository.findByMothersIdNo(antenatal.getMothersIdNo());
-				if (caseid != null) {
-					antenatal.setCaseid(caseid);
-					caseid.setAntenatal(antenatal);
-				}
-			}
-
-			antenatalRepository.saveAll(antenatals);
+			List<case_antenatal> antenatals = ExcelHelper.returnAntenatals(inputStream, caseids);
+			antRepo.saveAll(antenatals);
 
 			// Reset the input stream for reading labours
 			inputStream.reset();
-			List<Labour> labours = ExcelHelper.returnLabour(inputStream);
-
-			// Link Caseid and Labour
-			for (Labour labour : labours) {
-				Caseid caseid = caseidrepository.findByMothersIdNo(labour.getMothersIdNo());
-				if (caseid != null) {
-					labour.setCaseid(caseid);
-					caseid.setLabour(labour);
-				}
-			}
-			labourRepository.saveAll(labours);
+			List<case_labour> labours = ExcelHelper.returnLabour(inputStream, caseids);
+			labRepo.saveAll(labours);
 
 			// Reset the input stream for reading deliveries
 			inputStream.reset();
-			List<Delivery> deliveries = ExcelHelper.returnDelivery(inputStream);
-
-			// Link Caseid and Delivery
-			for (Delivery delivery : deliveries) {
-				Caseid caseid = caseidrepository.findByMothersIdNo(delivery.getMothersIdNo());
-				if (caseid != null) {
-					delivery.setCaseid(caseid);
-					caseid.setDelivery(delivery);
-				}
-			}
-			deliveryRepository.saveAll(deliveries);
+			List<case_delivery> deliveries = ExcelHelper.returnDelivery(inputStream, caseids);
+			delRepo.saveAll(deliveries);
 
 			// Reset the input stream for reading births
 			inputStream.reset();
-			List<Birth> births = ExcelHelper.returnBirth(inputStream);
-
-			// Link Caseid and Birth
-			for (Birth birth : births) {
-				Caseid caseid = caseidrepository.findByMothersIdNo(birth.getMothersIdNo());
-				if (caseid != null) {
-					birth.setCaseid(caseid);
-					caseid.setBirth(birth);
-				}
-			}
-			birthRepository.saveAll(births);
+			List<case_birth> births = ExcelHelper.returnBirth(inputStream, caseids);
+			birRepo.saveAll(births);
 
 			// Reset the input stream for reading fetal hearts
 			inputStream.reset();
-			List<FetalHeart> fetalHearts = ExcelHelper.returnFetalHearts(inputStream);
+			List<case_fetalheart> fetalHearts = ExcelHelper.returnFetalHearts(inputStream, caseids);
+			fetRepo.saveAll(fetalHearts);
 
-			// Link Caseid and FetalHeart
-			for (FetalHeart fetalHeart : fetalHearts) {
-				Caseid caseid = caseidrepository.findByMothersIdNo(fetalHeart.getMothersIdNo());
-				if (caseid != null) {
-					fetalHeart.setCaseid(caseid);
-					caseid.setFetalHeart(fetalHeart);
-				}
-			}
-			fetalHeartRepository.saveAll(fetalHearts);
 		} catch (IOException e) {
 			throw new RuntimeException("fail to store excel data: " + e.getMessage());
 		}
+
+		return "redirect:/registry";
 	}
 
 	@GetMapping("/add")
@@ -575,12 +494,11 @@ public class CaseEntryController {
 		return "registry/case-update";
 	}
 
-	@SuppressWarnings("deprecation")
 	@Transactional
 	@PostMapping("/edit/{id}")
 	public String edit(Principal principal, Model model, @ModelAttribute("selected") case_identifiers selected,
-			@RequestParam(name = "page", required = true) Integer page,
-			@RequestParam(name = "go", required = false) Integer go, BindingResult results) {
+			@RequestParam(required = true) Integer page, @RequestParam(required = false) Integer go,
+			BindingResult results) {
 
 		ObjectMapper objectMapper = new ObjectMapper();
 		// objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -620,16 +538,16 @@ public class CaseEntryController {
 		case 2: {
 			try {
 
-				java.util.Date time = selected.getReferral().getReferral_time();
+				LocalTime time = selected.getReferral().getReferral_time();
 				if (time != null) {
-					selected.getReferral().setReferral_hour(time.getHours());
-					selected.getReferral().setReferral_minute(time.getMinutes());
+					selected.getReferral().setReferral_hour(time.getHour());
+					selected.getReferral().setReferral_minute(time.getMinute());
 				}
 
-				java.util.Date atime = selected.getReferral().getReferral_atime();
+				LocalTime atime = selected.getReferral().getReferral_atime();
 				if (atime != null) {
-					selected.getReferral().setReferral_ahour(atime.getHours());
-					selected.getReferral().setReferral_aminute(atime.getMinutes());
+					selected.getReferral().setReferral_ahour(atime.getHour());
+					selected.getReferral().setReferral_aminute(atime.getMinute());
 				}
 
 				MultipartFile file = selected.getReferral().getFile();
@@ -746,10 +664,10 @@ public class CaseEntryController {
 		case 5: {
 			try {
 
-				java.util.Date seetime = selected.getLabour().getLabour_seetime();
+				LocalTime seetime = selected.getLabour().getLabour_seetime();
 				if (seetime != null) {
-					selected.getLabour().setLabour_seehour(seetime.getHours());
-					selected.getLabour().setLabour_seeminute(seetime.getMinutes());
+					selected.getLabour().setLabour_seehour(seetime.getHour());
+					selected.getLabour().setLabour_seeminute(seetime.getMinute());
 				}
 
 				final Integer period = selected.getLabour().getLabour_seeperiod();
@@ -825,10 +743,10 @@ public class CaseEntryController {
 		case 6: {
 			try {
 
-				java.util.Date time = selected.getDelivery().getDelivery_time();
+				LocalTime time = selected.getDelivery().getDelivery_time();
 				if (time != null) {
-					selected.getDelivery().setDelivery_hour(time.getHours());
-					selected.getDelivery().setDelivery_minute(time.getMinutes());
+					selected.getDelivery().setDelivery_hour(time.getHour());
+					selected.getDelivery().setDelivery_minute(time.getMinute());
 				}
 				final Integer period = selected.getDelivery().getDelivery_period();
 				final Integer hour = selected.getDelivery().getDelivery_hour();
@@ -902,11 +820,11 @@ public class CaseEntryController {
 		}
 		case 7: {
 			try {
-				java.util.Date cstime = selected.getBirth().getBirth_csproposetime();
+				LocalTime cstime = selected.getBirth().getBirth_csproposetime();
 
 				if (cstime != null) {
-					selected.getBirth().setBirth_csproposehour(cstime.getHours());
-					selected.getBirth().setBirth_csproposeminute(cstime.getMinutes());
+					selected.getBirth().setBirth_csproposehour(cstime.getHour());
+					selected.getBirth().setBirth_csproposeminute(cstime.getMinute());
 				}
 
 				if (existing.getDelivery() != null) {
@@ -976,10 +894,10 @@ public class CaseEntryController {
 
 			} else if (selected.getCase_death() == 2) {
 				try {
-					java.util.Date time = selected.getBabydeath().getBaby_dtime();
+					LocalTime time = selected.getBabydeath().getBaby_dtime();
 					if (time != null) {
-						selected.getBabydeath().setBaby_dhour(time.getHours());
-						selected.getBabydeath().setBaby_dminute(time.getMinutes());
+						selected.getBabydeath().setBaby_dhour(time.getHour());
+						selected.getBabydeath().setBaby_dminute(time.getMinute());
 					}
 
 					if (existing.getDelivery() != null) {
@@ -1110,17 +1028,17 @@ public class CaseEntryController {
 	private Integer validateTheTimesOnReferralPage(Model model, BindingResult results, case_identifiers selected,
 			case_identifiers existing) {
 		// validate
-		final Date referralDate = selected.getReferral().getReferral_date();
-		final Date arrivalDate = selected.getReferral().getReferral_adate();
+		final LocalDate referralDate = selected.getReferral().getReferral_date();
+		final LocalDate arrivalDate = selected.getReferral().getReferral_adate();
 		if (referralDate != null && arrivalDate != null) {
 
-			if (arrivalDate.before(referralDate)) {
+			if (arrivalDate.isBefore(referralDate)) {
 				results.rejectValue("referral.referral_adate", "error.date.arrived.before.referral");
 				return 1;
 
 			} else if (arrivalDate.compareTo(referralDate) == 0) {
-				final Date referralTime = selected.getReferral().getReferral_date();
-				final Date arrivalTime = selected.getReferral().getReferral_adate();
+				final LocalTime referralTime = selected.getReferral().getReferral_time();
+				final LocalTime arrivalTime = selected.getReferral().getReferral_atime();
 
 				if (referralTime != null && arrivalTime != null) {
 					final Integer referralHour = selected.getReferral().getReferral_hour();
@@ -1139,16 +1057,16 @@ public class CaseEntryController {
 		}
 
 		if (existing.getLabour() != null) {
-			final Date seenDate = existing.getLabour().getLabour_seedate();
+			final LocalDate seenDate = existing.getLabour().getLabour_seedate();
 
 			if (arrivalDate != null && seenDate != null) {
 
-				if (seenDate.before(arrivalDate)) {
+				if (seenDate.isBefore(arrivalDate)) {
 					results.rejectValue("referral.referral_adate", "error.date.seen.before.arrival");
 					return 3;
 				} else if (arrivalDate.compareTo(seenDate) == 0) {
-					final Date arrivalTime = selected.getReferral().getReferral_date();
-					final Date seenTime = existing.getLabour().getLabour_seetime();
+					final LocalTime arrivalTime = selected.getReferral().getReferral_time();
+					final LocalTime seenTime = existing.getLabour().getLabour_seetime();
 
 					if (arrivalTime != null && seenTime != null) {
 						final Integer arrivalHour = selected.getReferral().getReferral_hour();
@@ -1174,17 +1092,17 @@ public class CaseEntryController {
 	private Integer validateTheTimesOnLabourPage(Model model, BindingResult results, case_identifiers selected,
 			case_identifiers existing) {
 		// validate
-		final Date arrivalDate = existing.getReferral().getReferral_adate();
-		final Date seenDate = selected.getLabour().getLabour_seedate();
+		final LocalDate arrivalDate = existing.getReferral().getReferral_adate();
+		final LocalDate seenDate = selected.getLabour().getLabour_seedate();
 
 		if (arrivalDate != null && seenDate != null) {
 
-			if (seenDate.before(arrivalDate)) {
+			if (seenDate.isBefore(arrivalDate)) {
 				results.rejectValue("labour.labour_seedate", "error.date.seen.before.arrival");
 				return 1;
 			} else if (seenDate.compareTo(arrivalDate) == 0) {
-				final Date arrivalTime = existing.getReferral().getReferral_date();
-				final Date seenTime = selected.getLabour().getLabour_seetime();
+				final LocalTime arrivalTime = existing.getReferral().getReferral_atime();
+				final LocalTime seenTime = selected.getLabour().getLabour_seetime();
 
 				if (arrivalTime != null && seenTime != null) {
 					final Integer arrivalHour = existing.getReferral().getReferral_ahour();
@@ -1209,17 +1127,17 @@ public class CaseEntryController {
 	private Integer validateTheTimesOnDeliveryPage(Model model, BindingResult results, case_identifiers selected,
 			case_identifiers existing) {
 		// validate
-		final Date csdecisionDate = existing.getBirth().getBirth_csproposedate();
-		final Date deliveryDate = selected.getDelivery().getDelivery_date();
+		final LocalDate csdecisionDate = existing.getBirth().getBirth_csproposedate();
+		final LocalDate deliveryDate = selected.getDelivery().getDelivery_date();
 
 		if (deliveryDate != null && csdecisionDate != null) {
 
-			if (deliveryDate.before(csdecisionDate)) {
+			if (deliveryDate.isBefore(csdecisionDate)) {
 				results.rejectValue("delivery.delivery_date", "error.date.delivery.before.csdecision");
 				return 1;
 			} else if (deliveryDate.compareTo(csdecisionDate) == 0) {
-				final Date csdecisionTime = existing.getBirth().getBirth_csproposedate();
-				final Date deliveryTime = selected.getDelivery().getDelivery_time();
+				final LocalTime csdecisionTime = existing.getBirth().getBirth_csproposetime();
+				final LocalTime deliveryTime = selected.getDelivery().getDelivery_time();
 
 				if (csdecisionTime != null && deliveryTime != null) {
 					final Integer csdecisionHour = existing.getBirth().getBirth_csproposehour();
@@ -1239,16 +1157,16 @@ public class CaseEntryController {
 
 		if (existing.getBabydeath() != null) {
 
-			final Date deathDate = existing.getBabydeath().getBaby_ddate();
+			final LocalDate deathDate = existing.getBabydeath().getBaby_ddate();
 
 			if (deathDate != null && deliveryDate != null) {
 
-				if (deathDate.before(deliveryDate)) {
+				if (deathDate.isBefore(deliveryDate)) {
 					results.rejectValue("delivery.delivery_date", "error.date.death.before.delivery");
 					return 3;
 				} else if (deathDate.compareTo(deliveryDate) == 0) {
-					final Date deliveryTime = selected.getDelivery().getDelivery_time();
-					final Date deathTime = existing.getBabydeath().getBaby_dtime();
+					final LocalTime deliveryTime = selected.getDelivery().getDelivery_time();
+					final LocalTime deathTime = existing.getBabydeath().getBaby_dtime();
 
 					if (deliveryTime != null && deathTime != null) {
 						final Integer deliveryHour = selected.getDelivery().getDelivery_hour();
@@ -1273,16 +1191,16 @@ public class CaseEntryController {
 	private Integer validateTheTimesOnBirthPage(Model model, BindingResult results, case_identifiers selected,
 			case_identifiers existing) {
 		// validate
-		final Date csdecisionDate = selected.getBirth().getBirth_csproposedate();
-		final Date deliveryDate = existing.getDelivery().getDelivery_date();
+		final LocalDate csdecisionDate = selected.getBirth().getBirth_csproposedate();
+		final LocalDate deliveryDate = existing.getDelivery().getDelivery_date();
 
 		if (deliveryDate != null && csdecisionDate != null) {
-			if (deliveryDate.before(csdecisionDate)) {
+			if (deliveryDate.isBefore(csdecisionDate)) {
 				results.rejectValue("birth.birth_csproposedate", "error.date.delivery.before.csdecision");
 				return 1;
 			} else if (deliveryDate.compareTo(csdecisionDate) == 0) {
-				final Date csdecisionTime = selected.getBirth().getBirth_csproposetime();
-				final Date deliveryTime = existing.getDelivery().getDelivery_time();
+				final LocalTime csdecisionTime = selected.getBirth().getBirth_csproposetime();
+				final LocalTime deliveryTime = existing.getDelivery().getDelivery_time();
 
 				if (csdecisionTime != null && deliveryTime != null) {
 					final Integer csdecisionHour = selected.getBirth().getBirth_csproposehour();
@@ -1307,17 +1225,17 @@ public class CaseEntryController {
 	private Integer validateTheTimesOnBabydeathPage(Model model, BindingResult results, case_identifiers selected,
 			case_identifiers existing) {
 		// validate
-		final Date deliveryDate = existing.getDelivery().getDelivery_date();
-		final Date deathDate = selected.getBabydeath().getBaby_ddate();
+		final LocalDate deliveryDate = existing.getDelivery().getDelivery_date();
+		final LocalDate deathDate = selected.getBabydeath().getBaby_ddate();
 
 		if (deathDate != null && deliveryDate != null) {
 
-			if (deathDate.before(deliveryDate)) {
+			if (deathDate.isBefore(deliveryDate)) {
 				results.rejectValue("babydeath.baby_ddate", "error.date.death.before.delivery");
 				return 1;
 			} else if (deathDate.compareTo(deliveryDate) == 0) {
-				final Date deliveryTime = existing.getDelivery().getDelivery_time();
-				final Date deathTime = selected.getBabydeath().getBaby_dtime();
+				final LocalTime deliveryTime = existing.getDelivery().getDelivery_time();
+				final LocalTime deathTime = selected.getBabydeath().getBaby_dtime();
 
 				if (deliveryTime != null && deathTime != null) {
 					final Integer deliveryHour = existing.getDelivery().getDelivery_hour();
@@ -2122,575 +2040,5 @@ public class CaseEntryController {
 		}
 		return caseids;
 	}
-
-	public List<case_biodata> returnBiodata(InputStream is, Map<String, case_identifiers> caseMap) {
-		List<case_biodata> caseBiodata = new ArrayList<>();
-		try (Workbook workbook = new XSSFWorkbook(is)) {
-			Sheet sheet = workbook.getSheet(SheetSections.CASEBIODATASHEET.getDescription());
-			Iterator<Row> rows = sheet.iterator();
-			int rowNumber = 0;
-			while (rows.hasNext()) {
-				Row currentRow = rows.next();
-				if (rowNumber == 0) {
-					rowNumber++;
-					continue;
-				}
-				Iterator<Cell> cellsInRow = currentRow.iterator();
-				case_biodata biodata = new case_biodata();
-
-				int cellIdx = 0;
-				while (cellsInRow.hasNext()) {
-					Cell currentCell = cellsInRow.next();
-					switch (cellIdx) {
-					case 0:
-						final String case_id_num = (currentCell.toString());
-						biodata.setBiodata_uuid(caseMap.get(case_id_num).getCase_uuid());
-						break;
-					case 2:
-						final String childSex = currentCell.toString();
-						final int childSexCode = EntityMappings.BIODATA_CHILD_SEX.getOrDefault(childSex, null);
-						biodata.setBiodata_sex(childSexCode);
-						break;
-					case 3:
-						if (currentCell.getCellType() == CellType.NUMERIC) {
-							biodata.setBiodata_mage((int) currentCell.getNumericCellValue());
-						}
-						break;
-					case 4:
-						final String mothersEducation = currentCell.toString();
-						final int mothersEducationCode = EntityMappings.BIODATA_MOTHER_EDUCATION
-								.getOrDefault(mothersEducation, null);
-						biodata.setBiodata_medu(mothersEducationCode);
-						break;
-					default:
-						break;
-					}
-					cellIdx++;
-				}
-				caseBiodata.add(biodata);
-			}
-		} catch (IOException e) {
-			throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
-		}
-		return caseBiodata;
-	}
-
-	public static List<case_referral> returnReferral(InputStream is, Map<String, case_identifiers> caseMap) {
-		List<case_referral> caseReferrals = new ArrayList<>();
-		try (Workbook workbook = new XSSFWorkbook(is)) {
-			Sheet sheet = workbook.getSheet(SheetSections.REFERRALSHEET.getDescription());
-			Iterator<Row> rows = sheet.iterator();
-			int rowNumber = 0;
-			while (rows.hasNext()) {
-				Row currentRow = rows.next();
-				if (rowNumber == 0) {
-					rowNumber++;
-					continue;
-				}
-
-				Iterator<Cell> cellsInRow = currentRow.iterator();
-				case_referral referral = new case_referral();
-				int cellIdx = 0;
-				while (cellsInRow.hasNext()) {
-					Cell currentCell = cellsInRow.next();
-					switch (cellIdx) {
-					case 0:
-						final String case_id_num = (currentCell.toString());
-						referral.setReferral_uuid(caseMap.get(case_id_num).getCase_uuid());
-						break;
-					case 2:
-						final String wasReferred = currentCell.toString();
-						final int wasReferredCode = EntityMappings.REFERRAL_WAS_REFERRED.getOrDefault(wasReferred,
-								null);
-						referral.setReferral_case(wasReferredCode);
-						break;
-					default:
-						break;
-					}
-					cellIdx++;
-				}
-				caseReferrals.add(referral);
-			}
-		} catch (IOException e) {
-			throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
-		}
-		return caseReferrals;
-	}
-
-	public static List<Pregnancy> returnPregnancy(InputStream is) {
-		List<Pregnancy> casePregnancies = new ArrayList<>();
-		try (Workbook workbook = new XSSFWorkbook(is)) {
-			Sheet sheet = workbook.getSheet(PREGNANCYSHEET);
-			Iterator<Row> rows = sheet.iterator();
-			int rowNumber = 0;
-			while (rows.hasNext()) {
-				Row currentRow = rows.next();
-				if (rowNumber == 0) {
-					rowNumber++;
-					continue;
-				}
-				Iterator<Cell> cellsInRow = currentRow.iterator();
-				Pregnancy pregnancy = new Pregnancy();
-				int cellIdx = 0;
-				while (cellsInRow.hasNext()) {
-					Cell currentCell = cellsInRow.next();
-					switch (cellIdx) {
-					case 0:
-						pregnancy.setMothersIdNo(currentCell.toString());
-						break;
-					case 1:
-						pregnancy.setMothersName(currentCell.toString());
-						break;
-					case 2:
-						if (currentCell.getCellType() == CellType.NUMERIC) {
-							pregnancy.setPregnancyWeeks((int) currentCell.getNumericCellValue());
-						}
-						break;
-					case 3:
-						if (currentCell.getCellType() == CellType.NUMERIC) {
-							pregnancy.setPregnancyDays((int) currentCell.getNumericCellValue());
-						}
-						break;
-					case 4:
-						String pregnancyType = currentCell.toString();
-						int pregnancyTypeCode = EntityMappings.PREGNANCY_TYPE.getOrDefault(pregnancyType, null);
-						pregnancy.setPregnancyType(pregnancyTypeCode);
-						break;
-					default:
-						break;
-					}
-					cellIdx++;
-				}
-				casePregnancies.add(pregnancy);
-			}
-		} catch (IOException e) {
-			throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
-		}
-		return casePregnancies;
-	}
-
-	public static List<Antenatal> returnAntenatals(InputStream is) {
-		List<Antenatal> antenatals = new ArrayList<>();
-		try (Workbook workbook = new XSSFWorkbook(is)) {
-			Sheet sheet = workbook.getSheet(ANTENATALSHEET);
-			Iterator<Row> rows = sheet.iterator();
-			int rowNumber = 0;
-			while (rows.hasNext()) {
-				Row currentRow = rows.next();
-				if (rowNumber == 0) {
-					rowNumber++;
-					continue;
-				}
-				Iterator<Cell> cellsInRow = currentRow.iterator();
-				Antenatal antenatal = new Antenatal();
-				int cellIdx = 0;
-				while (cellsInRow.hasNext()) {
-					Cell currentCell = cellsInRow.next();
-					switch (cellIdx) {
-					case 0:
-						antenatal.setMothersIdNo(currentCell.toString());
-						break;
-					case 1:
-						antenatal.setMothersName(currentCell.toString());
-						break;
-					case 2:
-						if (currentCell.getCellType() == CellType.NUMERIC) {
-							antenatal.setAntenatalGravida((int) currentCell.getNumericCellValue());
-						}
-						break;
-					case 3:
-						if (currentCell.getCellType() == CellType.NUMERIC) {
-							antenatal.setAntenatalParity((int) currentCell.getNumericCellValue());
-						}
-						break;
-					case 4:
-						String antenatalAnc = currentCell.toString();
-						int antenatalAncCode = EntityMappings.ANTENATAL_ANC.getOrDefault(antenatalAnc, null);
-						antenatal.setAntenatalAnc(antenatalAncCode);
-						break;
-					case 5:
-						String antenatalRisk = currentCell.toString();
-						int antenatalRiskCode = EntityMappings.ANTENATAL_RISK.getOrDefault(antenatalRisk, null);
-						antenatal.setAntenatalRisk(antenatalRiskCode);
-						break;
-					case 6:
-						String antenatalMotherHiv = currentCell.toString();
-						int antenatalMotherHivCode = EntityMappings.ANTENATAL_MOTHER_HIV
-								.getOrDefault(antenatalMotherHiv, null);
-						antenatal.setAntenatalMotherHiv(antenatalMotherHivCode);
-						break;
-					case 7:
-						String antenatalUseOfAlcohol = currentCell.toString();
-						int antenatalUseOfAlcoholCode = EntityMappings.ANTENATAL_USE_OF_ALCOHOL
-								.getOrDefault(antenatalUseOfAlcohol, null);
-						antenatal.setAntenatalUseOfAlcohol(antenatalUseOfAlcoholCode);
-						break;
-					case 8:
-						String antenatalExposureCigarette = currentCell.toString();
-						int antenatalExposureCigaretteCode = EntityMappings.ANTENATAL_EXPOSURE_CIGARETTES
-								.getOrDefault(antenatalExposureCigarette, null);
-						antenatal.setAntenatalExposureCigarette(antenatalExposureCigaretteCode);
-						break;
-					case 9:
-						String antenatalUseOfHerbs = currentCell.toString();
-						int antenatalUseOfHerbsCode = EntityMappings.ANTENATAL_USE_OF_HERBS
-								.getOrDefault(antenatalUseOfHerbs, null);
-						antenatal.setAntenatalUseOfHerbs(antenatalUseOfHerbsCode);
-						break;
-					case 10:
-						String antenatalIntakeFolicAcid = currentCell.toString();
-						int antenatalIntakeFolicAcidCode = EntityMappings.ANTENATAL_USE_OF_HERBS
-								.getOrDefault(antenatalIntakeFolicAcid, null);
-						antenatal.setAntenatalIntakeFolicAcid(antenatalIntakeFolicAcidCode);
-						break;
-					case 11:
-						String antenatalTetanus = currentCell.toString();
-						int antenatalTetanusCode = EntityMappings.ANTENATAL_TETANUS.getOrDefault(antenatalTetanus,
-								null);
-						antenatal.setAntenatalTetanus(antenatalTetanusCode);
-						break;
-					case 12:
-						String antenatalMalaria = currentCell.toString();
-						int antenatalMalariaCode = EntityMappings.ANTENATAL_MALARIA.getOrDefault(antenatalMalaria,
-								null);
-						antenatal.setAntenatalMalaria(antenatalMalariaCode);
-						break;
-					default:
-						break;
-					}
-					cellIdx++;
-				}
-				antenatals.add(antenatal);
-			}
-		} catch (IOException e) {
-			throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
-		}
-		return antenatals;
-	}
-
-	public static List<Labour> returnLabour(InputStream is) {
-		List<Labour> caseLabours = new ArrayList<>();
-		try (Workbook workbook = new XSSFWorkbook(is)) {
-			Sheet sheet = workbook.getSheet(LABOURSHEET);
-			Iterator<Row> rows = sheet.iterator();
-			int rowNumber = 0;
-			while (rows.hasNext()) {
-				Row currentRow = rows.next();
-				if (rowNumber == 0) {
-					rowNumber++;
-					continue;
-				}
-				Iterator<Cell> cellsInRow = currentRow.iterator();
-				Labour labour = new Labour();
-				int cellIdx = 0;
-				while (cellsInRow.hasNext()) {
-					Cell currentCell = cellsInRow.next();
-					switch (cellIdx) {
-					case 0:
-						labour.setMothersIdNo(currentCell.toString());
-						break;
-					case 1:
-						labour.setMothersName(currentCell.toString());
-						break;
-					case 2:
-						if (currentCell.getCellType() == CellType.NUMERIC) {
-							labour.setLabourSeeDate(currentCell.getLocalDateTimeCellValue().toLocalDate());
-						}
-						break;
-					case 3:
-						if (currentCell.getCellType() == CellType.NUMERIC) {
-							labour.setLabourSeeTime(currentCell.getLocalDateTimeCellValue().toLocalTime());
-						}
-						break;
-					case 4:
-						String labourPeriod = currentCell.toString();
-						int labourPeriodCode = EntityMappings.LABOUR_STAFF_PERIOD.getOrDefault(labourPeriod, null);
-						labour.setLabourStaffPeriod(labourPeriodCode);
-						break;
-					case 5:
-						String motherHerbalSubstance = currentCell.toString();
-						int motherHerbalSubstanceCode = EntityMappings.MOTHER_HERBAL_SUBSTANCE
-								.getOrDefault(motherHerbalSubstance, null);
-						labour.setMotherHerbalSubstance(motherHerbalSubstanceCode);
-						break;
-					case 6:
-						String labourStart = currentCell.toString();
-						int labourStartCode = EntityMappings.LABOUR_START.getOrDefault(labourStart, null);
-						labour.setLabourStart(labourStartCode);
-						break;
-					case 7:
-						String labourComplications = currentCell.toString();
-						int labourComplicationsCode = EntityMappings.LABOUR_COMPLICATIONS
-								.getOrDefault(labourComplications, null);
-						labour.setLabourComplications(labourComplicationsCode);
-						break;
-					default:
-						break;
-					}
-					cellIdx++;
-				}
-				caseLabours.add(labour);
-			}
-		} catch (IOException e) {
-			throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
-		}
-		return caseLabours;
-	}
-
-	public static List<Delivery> returnDelivery(InputStream is) {
-		List<Delivery> deliveries = new ArrayList<>();
-		try (Workbook workbook = new XSSFWorkbook(is)) {
-			Sheet sheet = workbook.getSheet(DELIVERYSHEET);
-			Iterator<Row> rows = sheet.iterator();
-			int rowNumber = 0;
-			while (rows.hasNext()) {
-				Row currentRow = rows.next();
-				if (rowNumber == 0) {
-					rowNumber++;
-					continue;
-				}
-				Iterator<Cell> cellsInRow = currentRow.iterator();
-				Delivery delivery = new Delivery();
-				int cellIdx = 0;
-				while (cellsInRow.hasNext()) {
-					Cell currentCell = cellsInRow.next();
-					switch (cellIdx) {
-					case 0:
-						delivery.setMothersIdNo(currentCell.toString());
-						break;
-					case 1:
-						delivery.setMothersName(currentCell.toString());
-						break;
-					case 2:
-						if (currentCell.getCellType() == CellType.NUMERIC) {
-							delivery.setDeliveryDate(currentCell.getLocalDateTimeCellValue().toLocalDate());
-						}
-						break;
-					case 3:
-						if (currentCell.getCellType() == CellType.NUMERIC) {
-							delivery.setDeliveryTime(currentCell.getLocalDateTimeCellValue().toLocalTime());
-						}
-						break;
-					case 4:
-						String deliveryPeriod = currentCell.toString();
-						int deliveryPeriodCode = EntityMappings.DELIVERY_PERIOD.getOrDefault(deliveryPeriod, null);
-						delivery.setDeliveryPeriod(deliveryPeriodCode);
-						break;
-					case 5:
-						if (currentCell.getCellType() == CellType.NUMERIC) {
-							delivery.setBabyWeight(currentCell.getNumericCellValue());
-						}
-						break;
-					default:
-						break;
-					}
-					cellIdx++;
-				}
-				deliveries.add(delivery);
-			}
-		} catch (IOException e) {
-			throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
-		}
-		return deliveries;
-	}
-
-	public static List<Birth> returnBirth(InputStream is) {
-		List<Birth> births = new ArrayList<>();
-		try (Workbook workbook = new XSSFWorkbook(is)) {
-			Sheet sheet = workbook.getSheet(BIRTH_SHEET);
-			Iterator<Row> rows = sheet.iterator();
-			int rowNumber = 0;
-			while (rows.hasNext()) {
-				Row currentRow = rows.next();
-				if (rowNumber == 0) {
-					rowNumber++;
-					continue;
-				}
-				Iterator<Cell> cellsInRow = currentRow.iterator();
-				Birth birth = new Birth();
-				int cellIdx = 0;
-				while (cellsInRow.hasNext()) {
-					Cell currentCell = cellsInRow.next();
-					switch (cellIdx) {
-					case 0:
-						birth.setMothersIdNo(currentCell.toString());
-						break;
-					case 1:
-						birth.setMothersName(currentCell.toString());
-						break;
-					case 2:
-						String modeOfDelivery = currentCell.toString();
-						int modeOfDeliveryCode = EntityMappings.MODE_OF_DELIVERY.getOrDefault(modeOfDelivery, null);
-						birth.setModeOfDelivery(modeOfDeliveryCode);
-						break;
-					case 3:
-						String vaginalDeliveryOccur = currentCell.toString();
-						int vaginalDeliveryOccurCode = EntityMappings.VAGINAL_DELIVERY_OCCUR
-								.getOrDefault(vaginalDeliveryOccur, null);
-						birth.setVaginalDeliveryOccur(vaginalDeliveryOccurCode);
-						break;
-					case 4:
-						if (currentCell.getCellType() == CellType.NUMERIC) {
-							birth.setCsDate(currentCell.getLocalDateTimeCellValue().toLocalDate());
-						}
-						break;
-					case 5:
-						if (currentCell.getCellType() == CellType.NUMERIC) {
-							birth.setCsTime(currentCell.getLocalDateTimeCellValue().toLocalTime());
-						}
-						break;
-					case 6:
-						String deliveredBy = currentCell.toString();
-						int deliveredByCode = EntityMappings.DELIVERED_BY.getOrDefault(deliveredBy, null);
-						birth.setDeliveredBy(deliveredByCode);
-						break;
-					case 7:
-						String deliveredIn = currentCell.toString();
-						int deliveredInCode = EntityMappings.DELIVERED_IN.getOrDefault(deliveredIn, null);
-						birth.setDeliveredBy(deliveredInCode);
-						break;
-					case 8:
-						String babyAbnormalities = currentCell.toString();
-						int babyAbnormalitiesCode = EntityMappings.BABY_ABNORMALITIES.getOrDefault(babyAbnormalities,
-								null);
-						birth.setBabyAbnormalities(babyAbnormalitiesCode);
-						break;
-					case 9:
-						String cordProblems = currentCell.toString();
-						int cordProblemsCode = EntityMappings.CORD_PROBLEMS.getOrDefault(cordProblems, null);
-						birth.setBabyAbnormalities(cordProblemsCode);
-						break;
-					case 10:
-						String placentaProblems = currentCell.toString();
-						int placentaProblemsCode = EntityMappings.PLACENTA_PROBLEMS.getOrDefault(placentaProblems,
-								null);
-						birth.setPlacentaProblems(placentaProblemsCode);
-						break;
-					case 11:
-						String liquorVolume = currentCell.toString();
-						int liquorVolumeCode = EntityMappings.LIQUOR_VOLUME.getOrDefault(liquorVolume, null);
-						birth.setLiquorVolume(liquorVolumeCode);
-						break;
-					case 12:
-						String liquorColor = currentCell.toString();
-						int liquorColorCode = EntityMappings.LIQUOR_COLOR.getOrDefault(liquorColor, null);
-						birth.setLiquorColor(liquorColorCode);
-						break;
-					case 13:
-						String liquorOdour = currentCell.toString();
-						int liquorOdourCode = EntityMappings.LIQUOR_ODOUR.getOrDefault(liquorOdour, null);
-						birth.setLiquorOdour(liquorOdourCode);
-						break;
-					case 14:
-						String stateOfBaby = currentCell.toString();
-						int stateOfBabyCode = EntityMappings.STATE_OF_BABY.getOrDefault(stateOfBaby, null);
-						birth.setStateOfBaby(stateOfBabyCode);
-						break;
-					case 15:
-						String maternalOutcome = currentCell.toString();
-						int maternalOutcomeCode = EntityMappings.MATERNAL_OUTCOME.getOrDefault(maternalOutcome, null);
-						birth.setMaternalOutcome(maternalOutcomeCode);
-						break;
-					default:
-						break;
-					}
-					cellIdx++;
-				}
-				births.add(birth);
-			}
-		} catch (IOException e) {
-			throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
-		}
-		return births;
-	}
-
-	public static List<FetalHeart> returnFetalHearts(InputStream is) {
-		List<FetalHeart> fetalHearts = new ArrayList<>();
-		try (Workbook workbook = new XSSFWorkbook(is)) {
-			Sheet sheet = workbook.getSheet(FETALHEART_SHEET);
-			Iterator<Row> rows = sheet.iterator();
-			int rowNumber = 0;
-			while (rows.hasNext()) {
-				Row currentRow = rows.next();
-				if (rowNumber == 0) {
-					rowNumber++;
-					continue;
-				}
-				Iterator<Cell> cellsInRow = currentRow.iterator();
-				FetalHeart fetalHeart = new FetalHeart();
-				int cellIdx = 0;
-				while (cellsInRow.hasNext()) {
-					Cell currentCell = cellsInRow.next();
-					switch (cellIdx) {
-					case 0:
-						fetalHeart.setMothersIdNo(currentCell.toString());
-						break;
-					case 1:
-						fetalHeart.setMothersName(currentCell.toString());
-						break;
-					case 2:
-						String fetalSoundFacility = currentCell.toString();
-						int fetalSoundFacilityCode = EntityMappings.FETAL_SOUND_FACILITY
-								.getOrDefault(fetalSoundFacility, null);
-						fetalHeart.setFetalHeartSoundPresentFromReferringFacility(fetalSoundFacilityCode);
-						break;
-					case 3:
-						String fetalSoundArrival = currentCell.toString();
-						int fetalSoundArrivalCode = EntityMappings.FETAL_SOUND_ARRIVAL.getOrDefault(fetalSoundArrival,
-								null);
-						fetalHeart.setFetalHeartSoundPresentOnArrival(fetalSoundArrivalCode);
-						break;
-					case 4:
-						String fetalSoundPeriod = currentCell.toString();
-						int fetalSoundPeriodCode = EntityMappings.FETAL_SOUND_PERIOD.getOrDefault(fetalSoundPeriod,
-								null);
-						fetalHeart.setFetalHeartSoundPeriod(fetalSoundPeriodCode);
-						break;
-					default:
-						break;
-					}
-					cellIdx++;
-				}
-				fetalHearts.add(fetalHeart);
-			}
-		} catch (IOException e) {
-			throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
-		}
-		return fetalHearts;
-	}
-
-//    public static List<Notes> returnNotes(InputStream is) {
-//        List<Notes> notesList = new ArrayList<>();
-//        try (Workbook workbook = new XSSFWorkbook(is)) {
-//            Sheet sheet = workbook.getSheet(NOTES_SHEET);
-//            Iterator<Row> rows = sheet.iterator();
-//            int rowNumber = 0;
-//            while (rows.hasNext()) {
-//                Row currentRow = rows.next();
-//                if (rowNumber == 0) {
-//                    rowNumber++;
-//                    continue;
-//                }
-//                Iterator<Cell> cellsInRow = currentRow.iterator();
-//                Notes notes = new Notes();
-//                int cellIdx = 0;
-//                while (cellsInRow.hasNext()) {
-//                    Cell currentCell = cellsInRow.next();
-//                    switch (cellIdx) {
-//                        case 0:
-//                            notes.setAdditionalNotes(currentCell.toString());
-//                            break;
-//                        default:
-//                            break;
-//                    }
-//                    cellIdx++;
-//                }
-//                notesList.add(notes);
-//            }
-//        } catch (IOException e) {
-//            throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
-//        }
-//        return notesList;
-//    }
 
 }// end class

@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -526,21 +527,21 @@ public class CaseAuditController {
 						continue a;
 					}
 
-					java.util.Date date = scase.getBabydeath().getBaby_ddate();
-					Calendar cal = Calendar.getInstance();
-					cal.setTime(date);
+					final LocalDate reviewDate = LocalDate.now();
+					final LocalDate deathDate = scase.getBabydeath().getBaby_ddate();
+
+//					final boolean isyear1 = Calendar.getInstance().get(Calendar.YEAR) == cal.get(Calendar.YEAR);
+//					final boolean isweek1 = (Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)
+//							- cal.get(Calendar.WEEK_OF_YEAR)) == 1;
+//
+//					final boolean isyear2 = Calendar.getInstance().get(Calendar.YEAR) - cal.get(Calendar.YEAR) == 1;
+//					final boolean isweek2 = cal.get(Calendar.WEEK_OF_YEAR)
+//							- (Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)) == 51;
 
 					// check whether the death is a recent one that falls within the previous week
 					// before the review
-					final boolean isyear1 = Calendar.getInstance().get(Calendar.YEAR) == cal.get(Calendar.YEAR);
-					final boolean isweek1 = (Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)
-							- cal.get(Calendar.WEEK_OF_YEAR)) == 1;
-
-					final boolean isyear2 = Calendar.getInstance().get(Calendar.YEAR) - cal.get(Calendar.YEAR) == 1;
-					final boolean isweek2 = cal.get(Calendar.WEEK_OF_YEAR)
-							- (Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)) == 51;
-
-					final boolean isvalid = (isyear1 && isweek1) || (isyear2 && isweek2);
+					final boolean isvalid = deathDate.isAfter(reviewDate.minusWeeks(2L)) && deathDate.isBefore(reviewDate.minusWeeks(1L));
+							// (isyear1 && isweek1) || (isyear2 && isweek2);
 
 					if (!isvalid) {
 						continue a;
@@ -656,21 +657,21 @@ public class CaseAuditController {
 						continue a;
 					}
 
-					java.util.Date date = tcase.getDelivery().getDelivery_date();
-					Calendar cal = Calendar.getInstance();
-					cal.setTime(date);
+					final LocalDate deathDate = tcase.getDelivery().getDelivery_date();
+					final LocalDate reviewDate = LocalDate.now();
 
 					// check whether the death is a recent one that falls within the previous week
 					// before the review
-					final boolean isyear1 = Calendar.getInstance().get(Calendar.YEAR) == cal.get(Calendar.YEAR);
-					final boolean isweek1 = (Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)
-							- cal.get(Calendar.WEEK_OF_YEAR)) == 1;
+//					final boolean isyear1 = Calendar.getInstance().get(Calendar.YEAR) == cal.get(Calendar.YEAR);
+//					final boolean isweek1 = (Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)
+//							- cal.get(Calendar.WEEK_OF_YEAR)) == 1;
+//
+//					final boolean isyear2 = Calendar.getInstance().get(Calendar.YEAR) - cal.get(Calendar.YEAR) == 1;
+//					final boolean isweek2 = cal.get(Calendar.WEEK_OF_YEAR)
+//							- (Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)) == 51;
 
-					final boolean isyear2 = Calendar.getInstance().get(Calendar.YEAR) - cal.get(Calendar.YEAR) == 1;
-					final boolean isweek2 = cal.get(Calendar.WEEK_OF_YEAR)
-							- (Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)) == 51;
-
-					final boolean isvalid = (isyear1 && isweek1) || (isyear2 && isweek2);
+					final boolean isvalid = deathDate.isAfter(reviewDate.minusWeeks(2L)) && deathDate.isBefore(reviewDate.minusWeeks(1L));
+							//(isyear1 && isweek1) || (isyear2 && isweek2);
 
 					if (!isvalid) {
 						continue a;

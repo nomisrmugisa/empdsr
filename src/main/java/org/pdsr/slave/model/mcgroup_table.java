@@ -8,8 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 
-import org.hibernate.annotations.Immutable;
-
 @Entity
 public class mcgroup_table implements Serializable {
 
