@@ -5,10 +5,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -82,8 +82,6 @@ import org.pdsr.master.repo.ResuscitationTableRepository;
 import org.pdsr.master.repo.RiskTableRepository;
 import org.pdsr.master.repo.SyncTableRepository;
 import org.pdsr.master.repo.UserTableRepository;
-import org.pdsr.pojos.ExcelHelper;
-import org.pdsr.pojos.SheetSections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ClassPathResource;
@@ -215,62 +213,6 @@ public class CaseEntryController {
 		return new ResponseEntity<>(resource, headers, HttpStatus.OK);
 	}
 
-	@PostMapping("")
-	public String uploadData(MultipartFile file) {
-		ExcelHelper ExcelHelper = new ExcelHelper();
-		try {
-			// Read the input stream into a byte array
-			byte[] bytes = file.getBytes();
-			InputStream inputStream = new ByteArrayInputStream(bytes);
-
-			Map<String, case_identifiers> caseids = returnCaseIdentifiers(inputStream);
-			caseRepo.saveAll(caseids.values());
-
-			inputStream.reset();
-			List<case_biodata> biodata = ExcelHelper.returnBiodata(inputStream, caseids);
-			bioRepo.saveAll(biodata);
-
-			// Reset the input stream for reading referrals
-			inputStream.reset();
-			List<case_referral> referrals = ExcelHelper.returnReferral(inputStream, caseids);
-			refRepo.saveAll(referrals);
-
-			// reset the input stream for reading pregnancies
-			inputStream.reset();
-			List<case_pregnancy> pregnancies = ExcelHelper.returnPregnancy(inputStream, caseids);
-			preRepo.saveAll(pregnancies);
-
-			// Reset the input stream for reading antenatals
-			inputStream.reset();
-			List<case_antenatal> antenatals = ExcelHelper.returnAntenatals(inputStream, caseids);
-			antRepo.saveAll(antenatals);
-
-			// Reset the input stream for reading labours
-			inputStream.reset();
-			List<case_labour> labours = ExcelHelper.returnLabour(inputStream, caseids);
-			labRepo.saveAll(labours);
-
-			// Reset the input stream for reading deliveries
-			inputStream.reset();
-			List<case_delivery> deliveries = ExcelHelper.returnDelivery(inputStream, caseids);
-			delRepo.saveAll(deliveries);
-
-			// Reset the input stream for reading births
-			inputStream.reset();
-			List<case_birth> births = ExcelHelper.returnBirth(inputStream, caseids);
-			birRepo.saveAll(births);
-
-			// Reset the input stream for reading fetal hearts
-			inputStream.reset();
-			List<case_fetalheart> fetalHearts = ExcelHelper.returnFetalHearts(inputStream, caseids);
-			fetRepo.saveAll(fetalHearts);
-
-		} catch (IOException e) {
-			throw new RuntimeException("fail to store excel data: " + e.getMessage());
-		}
-
-		return "redirect:/registry";
-	}
 
 	@GetMapping("/add")
 	public String add(Principal principal, Model model) {
@@ -284,7 +226,7 @@ public class CaseEntryController {
 		model.addAttribute("myf", synctable.getSync_name());
 
 		case_identifiers selected = new case_identifiers();
-		selected.setCase_date(LocalDate.now());
+		selected.setCase_date(new Date());
 
 		Optional<sync_table> code = syncRepo.findById(CONSTANTS.FACILITY_ID);
 		if (code.isPresent()) {
@@ -538,16 +480,20 @@ public class CaseEntryController {
 		case 2: {
 			try {
 
-				LocalTime time = selected.getReferral().getReferral_time();
+				Date time = selected.getReferral().getReferral_time();
 				if (time != null) {
-					selected.getReferral().setReferral_hour(time.getHour());
-					selected.getReferral().setReferral_minute(time.getMinute());
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(time);
+					selected.getReferral().setReferral_hour(cal.get(Calendar.HOUR_OF_DAY));
+					selected.getReferral().setReferral_minute(cal.get(Calendar.MINUTE));
 				}
 
-				LocalTime atime = selected.getReferral().getReferral_atime();
+				Date atime = selected.getReferral().getReferral_atime();
 				if (atime != null) {
-					selected.getReferral().setReferral_ahour(atime.getHour());
-					selected.getReferral().setReferral_aminute(atime.getMinute());
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(atime);
+					selected.getReferral().setReferral_ahour(cal.get(Calendar.HOUR_OF_DAY));
+					selected.getReferral().setReferral_aminute(cal.get(Calendar.MINUTE));
 				}
 
 				MultipartFile file = selected.getReferral().getFile();
@@ -664,10 +610,12 @@ public class CaseEntryController {
 		case 5: {
 			try {
 
-				LocalTime seetime = selected.getLabour().getLabour_seetime();
+				Date seetime = selected.getLabour().getLabour_seetime();
 				if (seetime != null) {
-					selected.getLabour().setLabour_seehour(seetime.getHour());
-					selected.getLabour().setLabour_seeminute(seetime.getMinute());
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(seetime);
+					selected.getLabour().setLabour_seehour(cal.get(Calendar.HOUR_OF_DAY));
+					selected.getLabour().setLabour_seeminute(cal.get(Calendar.MINUTE));
 				}
 
 				final Integer period = selected.getLabour().getLabour_seeperiod();
@@ -743,10 +691,12 @@ public class CaseEntryController {
 		case 6: {
 			try {
 
-				LocalTime time = selected.getDelivery().getDelivery_time();
+				Date time = selected.getDelivery().getDelivery_time();
 				if (time != null) {
-					selected.getDelivery().setDelivery_hour(time.getHour());
-					selected.getDelivery().setDelivery_minute(time.getMinute());
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(time);
+					selected.getDelivery().setDelivery_hour(cal.get(Calendar.HOUR_OF_DAY));
+					selected.getDelivery().setDelivery_minute(cal.get(Calendar.MINUTE));
 				}
 				final Integer period = selected.getDelivery().getDelivery_period();
 				final Integer hour = selected.getDelivery().getDelivery_hour();
@@ -820,11 +770,13 @@ public class CaseEntryController {
 		}
 		case 7: {
 			try {
-				LocalTime cstime = selected.getBirth().getBirth_csproposetime();
+				Date cstime = selected.getBirth().getBirth_csproposetime();
 
 				if (cstime != null) {
-					selected.getBirth().setBirth_csproposehour(cstime.getHour());
-					selected.getBirth().setBirth_csproposeminute(cstime.getMinute());
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(cstime);
+					selected.getBirth().setBirth_csproposehour(cal.get(Calendar.HOUR_OF_DAY));
+					selected.getBirth().setBirth_csproposeminute(cal.get(Calendar.MINUTE));
 				}
 
 				if (existing.getDelivery() != null) {
@@ -894,10 +846,12 @@ public class CaseEntryController {
 
 			} else if (selected.getCase_death() == 2) {
 				try {
-					LocalTime time = selected.getBabydeath().getBaby_dtime();
+					Date time = selected.getBabydeath().getBaby_dtime();
 					if (time != null) {
-						selected.getBabydeath().setBaby_dhour(time.getHour());
-						selected.getBabydeath().setBaby_dminute(time.getMinute());
+						Calendar cal = Calendar.getInstance();
+						cal.setTime(time);
+						selected.getBabydeath().setBaby_dhour(cal.get(Calendar.HOUR_OF_DAY));
+						selected.getBabydeath().setBaby_dminute(cal.get(Calendar.MINUTE));
 					}
 
 					if (existing.getDelivery() != null) {
@@ -1028,17 +982,17 @@ public class CaseEntryController {
 	private Integer validateTheTimesOnReferralPage(Model model, BindingResult results, case_identifiers selected,
 			case_identifiers existing) {
 		// validate
-		final LocalDate referralDate = selected.getReferral().getReferral_date();
-		final LocalDate arrivalDate = selected.getReferral().getReferral_adate();
+		final Date referralDate = selected.getReferral().getReferral_date();
+		final Date arrivalDate = selected.getReferral().getReferral_adate();
 		if (referralDate != null && arrivalDate != null) {
 
-			if (arrivalDate.isBefore(referralDate)) {
+			if (arrivalDate.before(referralDate)) {
 				results.rejectValue("referral.referral_adate", "error.date.arrived.before.referral");
 				return 1;
 
 			} else if (arrivalDate.compareTo(referralDate) == 0) {
-				final LocalTime referralTime = selected.getReferral().getReferral_time();
-				final LocalTime arrivalTime = selected.getReferral().getReferral_atime();
+				final Date referralTime = selected.getReferral().getReferral_time();
+				final Date arrivalTime = selected.getReferral().getReferral_atime();
 
 				if (referralTime != null && arrivalTime != null) {
 					final Integer referralHour = selected.getReferral().getReferral_hour();
@@ -1057,16 +1011,16 @@ public class CaseEntryController {
 		}
 
 		if (existing.getLabour() != null) {
-			final LocalDate seenDate = existing.getLabour().getLabour_seedate();
+			final Date seenDate = existing.getLabour().getLabour_seedate();
 
 			if (arrivalDate != null && seenDate != null) {
 
-				if (seenDate.isBefore(arrivalDate)) {
+				if (seenDate.before(arrivalDate)) {
 					results.rejectValue("referral.referral_adate", "error.date.seen.before.arrival");
 					return 3;
 				} else if (arrivalDate.compareTo(seenDate) == 0) {
-					final LocalTime arrivalTime = selected.getReferral().getReferral_time();
-					final LocalTime seenTime = existing.getLabour().getLabour_seetime();
+					final Date arrivalTime = selected.getReferral().getReferral_time();
+					final Date seenTime = existing.getLabour().getLabour_seetime();
 
 					if (arrivalTime != null && seenTime != null) {
 						final Integer arrivalHour = selected.getReferral().getReferral_hour();
@@ -1092,17 +1046,17 @@ public class CaseEntryController {
 	private Integer validateTheTimesOnLabourPage(Model model, BindingResult results, case_identifiers selected,
 			case_identifiers existing) {
 		// validate
-		final LocalDate arrivalDate = existing.getReferral().getReferral_adate();
-		final LocalDate seenDate = selected.getLabour().getLabour_seedate();
+		final Date arrivalDate = existing.getReferral().getReferral_adate();
+		final Date seenDate = selected.getLabour().getLabour_seedate();
 
 		if (arrivalDate != null && seenDate != null) {
 
-			if (seenDate.isBefore(arrivalDate)) {
+			if (seenDate.before(arrivalDate)) {
 				results.rejectValue("labour.labour_seedate", "error.date.seen.before.arrival");
 				return 1;
 			} else if (seenDate.compareTo(arrivalDate) == 0) {
-				final LocalTime arrivalTime = existing.getReferral().getReferral_atime();
-				final LocalTime seenTime = selected.getLabour().getLabour_seetime();
+				final Date arrivalTime = existing.getReferral().getReferral_atime();
+				final Date seenTime = selected.getLabour().getLabour_seetime();
 
 				if (arrivalTime != null && seenTime != null) {
 					final Integer arrivalHour = existing.getReferral().getReferral_ahour();
@@ -1127,17 +1081,17 @@ public class CaseEntryController {
 	private Integer validateTheTimesOnDeliveryPage(Model model, BindingResult results, case_identifiers selected,
 			case_identifiers existing) {
 		// validate
-		final LocalDate csdecisionDate = existing.getBirth().getBirth_csproposedate();
-		final LocalDate deliveryDate = selected.getDelivery().getDelivery_date();
+		final Date csdecisionDate = existing.getBirth().getBirth_csproposedate();
+		final Date deliveryDate = selected.getDelivery().getDelivery_date();
 
 		if (deliveryDate != null && csdecisionDate != null) {
 
-			if (deliveryDate.isBefore(csdecisionDate)) {
+			if (deliveryDate.before(csdecisionDate)) {
 				results.rejectValue("delivery.delivery_date", "error.date.delivery.before.csdecision");
 				return 1;
 			} else if (deliveryDate.compareTo(csdecisionDate) == 0) {
-				final LocalTime csdecisionTime = existing.getBirth().getBirth_csproposetime();
-				final LocalTime deliveryTime = selected.getDelivery().getDelivery_time();
+				final Date csdecisionTime = existing.getBirth().getBirth_csproposetime();
+				final Date deliveryTime = selected.getDelivery().getDelivery_time();
 
 				if (csdecisionTime != null && deliveryTime != null) {
 					final Integer csdecisionHour = existing.getBirth().getBirth_csproposehour();
@@ -1157,16 +1111,16 @@ public class CaseEntryController {
 
 		if (existing.getBabydeath() != null) {
 
-			final LocalDate deathDate = existing.getBabydeath().getBaby_ddate();
+			final Date deathDate = existing.getBabydeath().getBaby_ddate();
 
 			if (deathDate != null && deliveryDate != null) {
 
-				if (deathDate.isBefore(deliveryDate)) {
+				if (deathDate.before(deliveryDate)) {
 					results.rejectValue("delivery.delivery_date", "error.date.death.before.delivery");
 					return 3;
 				} else if (deathDate.compareTo(deliveryDate) == 0) {
-					final LocalTime deliveryTime = selected.getDelivery().getDelivery_time();
-					final LocalTime deathTime = existing.getBabydeath().getBaby_dtime();
+					final Date deliveryTime = selected.getDelivery().getDelivery_time();
+					final Date deathTime = existing.getBabydeath().getBaby_dtime();
 
 					if (deliveryTime != null && deathTime != null) {
 						final Integer deliveryHour = selected.getDelivery().getDelivery_hour();
@@ -1191,16 +1145,16 @@ public class CaseEntryController {
 	private Integer validateTheTimesOnBirthPage(Model model, BindingResult results, case_identifiers selected,
 			case_identifiers existing) {
 		// validate
-		final LocalDate csdecisionDate = selected.getBirth().getBirth_csproposedate();
-		final LocalDate deliveryDate = existing.getDelivery().getDelivery_date();
+		final Date csdecisionDate = selected.getBirth().getBirth_csproposedate();
+		final Date deliveryDate = existing.getDelivery().getDelivery_date();
 
 		if (deliveryDate != null && csdecisionDate != null) {
-			if (deliveryDate.isBefore(csdecisionDate)) {
+			if (deliveryDate.before(csdecisionDate)) {
 				results.rejectValue("birth.birth_csproposedate", "error.date.delivery.before.csdecision");
 				return 1;
 			} else if (deliveryDate.compareTo(csdecisionDate) == 0) {
-				final LocalTime csdecisionTime = selected.getBirth().getBirth_csproposetime();
-				final LocalTime deliveryTime = existing.getDelivery().getDelivery_time();
+				final Date csdecisionTime = selected.getBirth().getBirth_csproposetime();
+				final Date deliveryTime = existing.getDelivery().getDelivery_time();
 
 				if (csdecisionTime != null && deliveryTime != null) {
 					final Integer csdecisionHour = selected.getBirth().getBirth_csproposehour();
@@ -1225,17 +1179,17 @@ public class CaseEntryController {
 	private Integer validateTheTimesOnBabydeathPage(Model model, BindingResult results, case_identifiers selected,
 			case_identifiers existing) {
 		// validate
-		final LocalDate deliveryDate = existing.getDelivery().getDelivery_date();
-		final LocalDate deathDate = selected.getBabydeath().getBaby_ddate();
+		final Date deliveryDate = existing.getDelivery().getDelivery_date();
+		final Date deathDate = selected.getBabydeath().getBaby_ddate();
 
 		if (deathDate != null && deliveryDate != null) {
 
-			if (deathDate.isBefore(deliveryDate)) {
+			if (deathDate.before(deliveryDate)) {
 				results.rejectValue("babydeath.baby_ddate", "error.date.death.before.delivery");
 				return 1;
 			} else if (deathDate.compareTo(deliveryDate) == 0) {
-				final LocalTime deliveryTime = existing.getDelivery().getDelivery_time();
-				final LocalTime deathTime = selected.getBabydeath().getBaby_dtime();
+				final Date deliveryTime = existing.getDelivery().getDelivery_time();
+				final Date deathTime = selected.getBabydeath().getBaby_dtime();
 
 				if (deliveryTime != null && deathTime != null) {
 					final Integer deliveryHour = existing.getDelivery().getDelivery_hour();
@@ -1985,60 +1939,5 @@ public class CaseEntryController {
 			return "";
 	}
 
-	public Map<String, case_identifiers> returnCaseIdentifiers(InputStream is) {
-		Map<String, case_identifiers> caseids = new HashMap<>();
-		try (Workbook workbook = new XSSFWorkbook(is)) {
-			Sheet sheet = workbook.getSheet(SheetSections.CASEIDSHEET.getDescription());
-			Iterator<Row> rows = sheet.iterator();
-			int rowNumber = 0;
-			while (rows.hasNext()) {
-				Row currentRow = rows.next();
-				if (rowNumber == 0) {
-					rowNumber++;
-					continue;
-				}
-
-				case_identifiers caseid = new case_identifiers();
-				caseid.setCase_uuid(UUID.randomUUID().toString());
-				Optional<sync_table> code = syncRepo.findById(CONSTANTS.FACILITY_ID);
-				if (code.isPresent()) {
-					Optional<facility_table> facility = facilityRepo.findById(code.get().getSync_uuid());
-					caseid.setFacility(facility.get());
-				}
-
-				Iterator<Cell> cellsInRow = currentRow.iterator();
-				int cellIdx = 0;
-				while (cellsInRow.hasNext()) {
-					Cell currentCell = cellsInRow.next();
-					switch (cellIdx) {
-					case 0:
-						if (currentCell.getCellType() == CellType.NUMERIC) {
-							caseid.setCase_date(currentCell.getLocalDateTimeCellValue().toLocalDate());
-						}
-						break;
-					case 1:
-						caseid.setCase_id(currentCell.toString());
-						break;
-					case 2:
-						caseid.setCase_death((int) (currentCell.getNumericCellValue()));
-						break;
-					case 3:
-						caseid.setCase_mid(currentCell.toString());
-						break;
-					case 4:
-						caseid.setCase_mname(currentCell.toString());
-						break;
-					default:
-						break;
-					}
-					cellIdx++;
-				}
-				caseids.put(caseid.getCase_id(), caseid);
-			}
-		} catch (IOException e) {
-			throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
-		}
-		return caseids;
-	}
 
 }// end class

@@ -39,6 +39,10 @@ import org.pdsr.pojos.wmoindicators;
 import org.pdsr.pojos.wmsearch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -72,8 +76,7 @@ public class ReportController {
 	private MessageSource msg;
 
 	@GetMapping("")
-	public String list(Principal principal, Model model,
-			@RequestParam(name = "success", required = false) String success) {
+	public String list(Principal principal, Model model, @RequestParam(required = false) String success) {
 
 		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
 			model.addAttribute("activated", "0");
@@ -109,8 +112,9 @@ public class ReportController {
 		return "reporting/report-retrieve";
 	}
 
+	@org.springframework.transaction.annotation.Transactional
 	@PostMapping("")
-	public String list(Principal principal, @ModelAttribute("selected") upload selected, Model model) {
+	public String list(Principal principal, @ModelAttribute upload selected, Model model) {
 
 		if (selected.getFile() == null || selected.getFile().isEmpty()) {
 			model.addAttribute("fileerror1", "No csv file selected");
@@ -206,6 +210,7 @@ public class ReportController {
 		Row row = sheet.getRow(rowIndex);
 		monitoring_table m = monRepo.findById(statId).get();
 
+//		weekRepo.deleteByWeeklyYearAndMonth(selected.getDatayear(), selected.getDatamonth());
 		for (int week = 1; week < maxNumberOfWeeks; week++) {
 
 			weekly_table w = new weekly_table();
@@ -224,7 +229,7 @@ public class ReportController {
 			wm.setWm_values(0);
 			wm.setWm_subval(0);// don't worry about this, when the data is being opened, the subval
 			// calculations will be triggered
-			wm.setData_sent(0);//reset the data sending indicator when any record is edited
+			wm.setData_sent(0);// reset the data sending indicator when any record is edited
 
 			wm.setWm_grids(w);// link it to the weeks
 			wm.setWm_indices(m);// link it to the statistic indicator being monitored
@@ -236,7 +241,7 @@ public class ReportController {
 		int wsum = 0;
 		for (int cellIndex = 2; cellIndex <= 6; cellIndex++) {
 			// we will sum up all the weeks and place in the last week
-			wsum += (row.getCell(cellIndex).getCellType() == CellType.NUMERIC)
+			wsum += (row.getCell(cellIndex) != null && row.getCell(cellIndex).getCellType() == CellType.NUMERIC)
 					? (int) row.getCell(cellIndex).getNumericCellValue()
 					: 0;
 
@@ -270,8 +275,7 @@ public class ReportController {
 	}
 
 	@GetMapping("/edit/{yearid}/{monthid}")
-	public String add(Principal principal, Model model, @PathVariable("yearid") Integer yearid,
-			@PathVariable("monthid") Integer monthid) {
+	public String add(Principal principal, Model model, @PathVariable Integer yearid, @PathVariable Integer monthid) {
 
 		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
 			model.addAttribute("activated", "0");
@@ -306,7 +310,7 @@ public class ReportController {
 								&& (sube.getWm_indices().getMindex() % head.getWm_indices().getGindex()) != 0
 								&& (sube.getWm_indices().getMindex() % head.getWm_indices().getGindex()) <= 5) {
 
-							sube.setData_sent(0);//reset the data sending indicator when any record is edited
+							sube.setData_sent(0);// reset the data sending indicator when any record is edited
 							sube.setWm_subval(head.getWm_subval());
 						}
 
@@ -330,7 +334,7 @@ public class ReportController {
 						if (head.getWm_indices().getGindex() == sube.getWm_indices().getGindex()
 								&& (sube.getWm_indices().getMindex() % head.getWm_indices().getGindex()) > 5) {
 
-							sube.setData_sent(0);//reset the data sending indicator when any record is edited
+							sube.setData_sent(0);// reset the data sending indicator when any record is edited
 							sube.setWm_subval(head.getWm_subval());
 						}
 
@@ -380,7 +384,7 @@ public class ReportController {
 					wm.setWm_grids(week);
 					wm.setWm_values(0);
 					wm.setWm_subval(0);
-					wm.setData_sent(0);//reset the data sending indicator when any record is edited
+					wm.setData_sent(0);// reset the data sending indicator when any record is edited
 
 					weekbuider.add(wm);
 
@@ -427,8 +431,8 @@ public class ReportController {
 
 	@Transactional
 	@PostMapping("/edit/{yearid}/{monthid}")
-	public String add(Principal principal, Model model, @ModelAttribute("selected") weekgrid selected,
-			@PathVariable("yearid") Integer yearid, @PathVariable("monthid") Integer monthid) {
+	public String add(Principal principal, Model model, @ModelAttribute weekgrid selected, @PathVariable Integer yearid,
+			@PathVariable Integer monthid) {
 
 		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
 			model.addAttribute("activated", "0");
@@ -686,6 +690,19 @@ public class ReportController {
 
 			excelExporter.export(response);
 		}
+	}
+
+	@GetMapping("/download/template")
+	public ResponseEntity<Resource> downloadFile() {
+		Resource resource = new ClassPathResource("static/report_template.xlsx");
+
+		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+		final String currentDateTime = dateFormatter.format(new java.util.Date());
+		org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+		headers.add(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION,
+				"attachment; filename=report_template_" + currentDateTime + ".xlsx");
+
+		return new ResponseEntity<>(resource, headers, HttpStatus.OK);
 	}
 
 	@ModelAttribute("wmyear_options")

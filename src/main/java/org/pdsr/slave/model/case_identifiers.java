@@ -1,7 +1,7 @@
 package org.pdsr.slave.model;
 
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -36,7 +36,7 @@ public class case_identifiers implements Serializable {
 	@Column
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private LocalDate case_date;
+	private Date case_date;
 
 	@NotNull
 	@Column
@@ -119,11 +119,11 @@ public class case_identifiers implements Serializable {
 		this.case_uuid = case_uuid;
 	}
 
-	public LocalDate getCase_date() {
+	public Date getCase_date() {
 		return case_date;
 	}
 
-	public void setCase_date(LocalDate case_date) {
+	public void setCase_date(Date case_date) {
 		this.case_date = case_date;
 	}
 

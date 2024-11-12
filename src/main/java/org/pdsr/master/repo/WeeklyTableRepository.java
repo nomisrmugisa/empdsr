@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.pdsr.master.model.weekly_table;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -22,4 +23,8 @@ public interface WeeklyTableRepository extends JpaRepository<weekly_table, Integ
 
 	@Query("select DISTINCT w.weekly_month, w.weekly_mdesc FROM weekly_table w ORDER BY w.weekly_month")
 	List<Object[]> findMonths();
+	
+	@Modifying @Query("DELETE FROM weekly_table w WHERE w.weekly_year=?1 AND w.weekly_month=?2")
+	int deleteByWeeklyYearAndMonth(Integer yearid, Integer monthid);
+
 }

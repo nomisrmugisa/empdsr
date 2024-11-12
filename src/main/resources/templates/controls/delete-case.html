@@ -15,6 +15,11 @@
 			<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
 			<div th:if="${failure}" class="alert alert-danger" th:text="${failure}"></div>
 
+			<div class="col-md-12">
+				<input type="hidden" th:field="*{clear_uploaded}" />
+				<input hidden th:field="*{case_identifiers}" />
+			</div>
+
 			<div th:unless="${selected.clear_uploaded}">
 
 				<label class="control-label fw-bold text-danger" th:text="#{delete.warning}"></label>
@@ -37,10 +42,6 @@
 				</div>
 			</div>
 
-			<div class="col-md-12">
-				<input type="hidden" th:field="*{clear_uploaded}" />
-				<input hidden th:field="*{case_identifiers}" />
-			</div>
 
 
 			<div th:if="${selected.clear_uploaded}">

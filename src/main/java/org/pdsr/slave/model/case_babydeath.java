@@ -1,8 +1,7 @@
 package org.pdsr.slave.model;
 
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -84,7 +83,7 @@ public class case_babydeath implements Serializable {
 	@Column
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
-	private LocalDate baby_ddate;
+	private Date baby_ddate;
 
 	
 	@Column
@@ -98,7 +97,7 @@ public class case_babydeath implements Serializable {
 	@Column
 	@Temporal(TemporalType.TIME)
 	@DateTimeFormat(pattern = "HH:mm")
-	private LocalTime baby_dtime;
+	private Date baby_dtime;
 
 	@Column
 	private Integer baby_ddatetime_notstated;
@@ -218,11 +217,11 @@ public class case_babydeath implements Serializable {
 		this.icd_diagnoses = icd_diagnoses;
 	}
 
-	public LocalDate getBaby_ddate() {
+	public Date getBaby_ddate() {
 		return baby_ddate;
 	}
 
-	public void setBaby_ddate(LocalDate baby_ddate) {
+	public void setBaby_ddate(Date baby_ddate) {
 		this.baby_ddate = baby_ddate;
 	}
 
@@ -242,11 +241,11 @@ public class case_babydeath implements Serializable {
 		this.baby_dminute = baby_dminute;
 	}
 
-	public LocalTime getBaby_dtime() {
+	public Date getBaby_dtime() {
 		return baby_dtime;
 	}
 
-	public void setBaby_dtime(LocalTime baby_dtime) {
+	public void setBaby_dtime(Date baby_dtime) {
 		this.baby_dtime = baby_dtime;
 	}
 

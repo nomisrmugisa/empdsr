@@ -7,27 +7,27 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
-//import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig {
 
     @Qualifier("userDetailsServiceImpl")
     @Autowired
     private UserDetailsServiceImpl userDetailsServiceImpl;
 
     @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+    BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
 
 //        .requiresChannel().anyRequest().requiresSecure()//ssl
@@ -48,19 +48,30 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.csrf().disable();//for h2-console
         http.headers().frameOptions().disable();
+        return http.build();
 
     }
 
     //for h2 console
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/h2-console/**", "/img/**", "/webjars/**");
+    @Bean
+    WebSecurityCustomizer webSecurityCustomizer() throws Exception {
+        return (web) -> {
+            web.ignoring().antMatchers("/h2-console/**", "/img/**", "/webjars/**");
+        };
     }
 
-    @Bean
-    public AuthenticationManager customAuthenticationManager() throws Exception {
-        return authenticationManager();
-    }
+
+//    @Bean
+//    public AuthenticationManager customAuthenticationManager() throws Exception {
+//        return authenticationManager();
+//    }
+
+	@Bean
+	AuthenticationManager authenticationManager(HttpSecurity http, BCryptPasswordEncoder bCryptPasswordEncoder,
+			UserDetailsServiceImpl userDetailService) throws Exception {
+		return http.getSharedObject(AuthenticationManagerBuilder.class).userDetailsService(userDetailService)
+				.passwordEncoder(bCryptPasswordEncoder).and().build();
+	}
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {

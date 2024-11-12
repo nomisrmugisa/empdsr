@@ -285,8 +285,7 @@ public class SetupController {
 	private UserTableRepository userRepo;
 
 	@GetMapping("")
-	public String sync(Principal principal, Model model,
-			@RequestParam(name = "success", required = false) String success) {
+	public String sync(Principal principal, Model model, @RequestParam(required = false) String success) {
 
 		Optional<sync_table> object = syncRepo.findById(CONSTANTS.FACILITY_ID);
 		if (object.isPresent()) {
@@ -309,7 +308,7 @@ public class SetupController {
 	}
 
 	@PostMapping("")
-	public String sync(Principal principal, @ModelAttribute("selected") sync_table selected, BindingResult results) {
+	public String sync(Principal principal, @ModelAttribute sync_table selected, BindingResult results) {
 
 		// do the sync operations here
 		Optional<facility_table> object = facilityRepo.findByFacility_code(selected.getSync_code());
@@ -363,8 +362,7 @@ public class SetupController {
 
 	@GetMapping("/region/{id}")
 	public String region(Principal principal, Model model, @PathVariable("id") String uuid,
-			@RequestParam(name = "add", required = false) String add,
-			@RequestParam(name = "success", required = false) String success) {
+			@RequestParam(required = false) String add, @RequestParam(required = false) String success) {
 
 		country_table selected = countryRepo.findById(uuid).get();
 
@@ -401,8 +399,7 @@ public class SetupController {
 
 	@GetMapping("/district/{id}")
 	public String district(Principal principal, Model model, @PathVariable("id") String uuid,
-			@RequestParam(name = "add", required = false) String add,
-			@RequestParam(name = "success", required = false) String success) {
+			@RequestParam(required = false) String add, @RequestParam(required = false) String success) {
 
 		region_table selected = regionRepo.findById(uuid).get();
 
@@ -429,7 +426,7 @@ public class SetupController {
 
 	@Transactional
 	@PostMapping("/district/{id}")
-	public String district(Principal principal, Model model, @ModelAttribute("selected") region_table selected,
+	public String district(Principal principal, Model model, @ModelAttribute region_table selected,
 			@PathVariable("id") String uuid) {
 
 		regionRepo.save(selected);
@@ -441,8 +438,7 @@ public class SetupController {
 
 	@GetMapping("/facility/{id}")
 	public String facility(Principal principal, Model model, @PathVariable("id") String uuid,
-			@RequestParam(name = "add", required = false) String add,
-			@RequestParam(name = "success", required = false) String success) {
+			@RequestParam(required = false) String add, @RequestParam(required = false) String success) {
 
 		district_table selected = districtRepo.findById(uuid).get();
 
@@ -480,8 +476,7 @@ public class SetupController {
 	}
 
 	@GetMapping("/datamerge")
-	public String datamerge(Principal principal, Model model,
-			@RequestParam(name = "success", required = false) String success) {
+	public String datamerge(Principal principal, Model model, @RequestParam(required = false) String success) {
 
 		model.addAttribute("selected", new datamerger());
 
@@ -494,7 +489,7 @@ public class SetupController {
 
 	@Transactional
 	@PostMapping("/datamerge")
-	public String datamerge(Principal principal, @ModelAttribute("selected") datamerger selected) {
+	public String datamerge(Principal principal, @ModelAttribute datamerger selected) {
 
 		// merge location data from slave to master (overrides if exists)
 		if (icdRepo.count() == 0) {
@@ -548,8 +543,7 @@ public class SetupController {
 	}
 
 	@GetMapping("/centralmerge")
-	public String centralmerge(Principal principal, Model model,
-			@RequestParam(name = "success", required = false) String success) {
+	public String centralmerge(Principal principal, Model model, @RequestParam(required = false) String success) {
 
 		if (success != null) {
 			if ("0".equals(success)) {
@@ -607,8 +601,7 @@ public class SetupController {
 	}
 
 	@GetMapping("/downloadmerge")
-	public String downloadmerge(Principal principal, Model model,
-			@RequestParam(name = "success", required = false) String success) {
+	public String downloadmerge(Principal principal, Model model, @RequestParam(required = false) String success) {
 
 		if (success != null) {
 			if ("1".equals(success)) {
@@ -645,10 +638,11 @@ public class SetupController {
 	}
 
 	@GetMapping("/deletecase")
-	public String deletecase(Principal principal, Model model,
-			@RequestParam(name = "success", required = false) String success) {
+	public String deletecase(Principal principal, Model model, @RequestParam(required = false) String success,
+			@RequestParam(required = false) String case_uuid) {
 
-		model.addAttribute("selected", new casedeleter());
+		casedeleter selected = new casedeleter();
+		model.addAttribute("selected", selected);
 
 		if (success != null) {
 			if ("1".equals(success)) {
@@ -663,10 +657,10 @@ public class SetupController {
 
 //	@Transactional
 	@PostMapping("/deletecase")
-	public String deletecase(Principal principal, Model model, @ModelAttribute("selected") casedeleter selected) {
+	public String deletecaseconfirm(Principal principal, Model model, @ModelAttribute casedeleter selected) {
 
 		// if confirmation is given and object is found
-		if (selected.isClear_uploaded()) {
+		if (selected != null && selected.isClear_uploaded()) {
 
 			// if remote data should be deleted
 			if (selected.isDelete_remotely()) {
@@ -743,6 +737,7 @@ public class SetupController {
 
 		selected.setCase_identifiers(cid.get(0));
 		selected.setClear_uploaded(true);
+		model.addAttribute("selected", selected);
 
 		return "controls/delete-case";
 
@@ -1552,7 +1547,7 @@ public class SetupController {
 	}
 
 	private void pullUserData() {
-		
+
 		Optional<sync_table> object = syncRepo.findById(CONSTANTS.FACILITY_ID);
 
 		if (object.isPresent()) {
@@ -1561,17 +1556,16 @@ public class SetupController {
 			List<json_user_table> jsons = api.findAllUsers();
 			List<user_table> received = new ArrayList<>();
 			for (json_user_table elem : jsons) {
-				
 
 				if (elem.getCode().equals(s.getSync_code())) {
 
 					user_table user = new user_table();
 					Optional<user_table> usersearch = userRepo.findById(elem.getUsername());
-					
-					if(usersearch.isPresent()) {
+
+					if (usersearch.isPresent()) {
 						user = usersearch.get();
 					}
-					
+
 					user.setUsername(elem.getUsername());
 					user.setPassword(elem.getPassword());
 					user.setEnabled(elem.isEnabled());
@@ -1579,13 +1573,13 @@ public class SetupController {
 					user.setUserfullname(elem.getUserfullname());
 					user.setUsercontact(elem.getUsercontact());
 					user.setAlerted(elem.isAlerted());
-					
+
 					received.add(user);
 
 				}
 
 			}
-			
+
 			userRepo.saveAll(received);
 		}
 	}

@@ -4,11 +4,11 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -264,7 +264,7 @@ public class CaseAuditController {
 
 		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
 		model.addAttribute("myf", synctable.getSync_name());
-		
+
 		autoSelectCases();
 
 		return "redirect:/auditing";
@@ -278,14 +278,14 @@ public class CaseAuditController {
 
 		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
 		model.addAttribute("myf", synctable.getSync_name());
-		
+
 		CaseWrapper selected = new CaseWrapper();
 		selected.setId("casewrapper");
 		model.addAttribute("selected", selected);
-		
-		List<case_identifiers> active_cases = caseRepo.findByPendingCase_status(1);//find cases pending review
-		active_cases.addAll(caseRepo.findByPendingCase_status(9));//add archived cases that were not reviewed
-		
+
+		List<case_identifiers> active_cases = caseRepo.findByPendingCase_status(1);// find cases pending review
+		active_cases.addAll(caseRepo.findByPendingCase_status(9));// add archived cases that were not reviewed
+
 		model.addAttribute("active_cases", active_cases);
 
 		return "auditing/audit-list";
@@ -316,7 +316,7 @@ public class CaseAuditController {
 		List<audit_case> selectedForAuditing = new ArrayList<>();
 
 		for (case_identifiers scase : pendingAudit) {
-			
+
 //			System.out.print("case is: " + scase.getCase_id());
 			scase.setCase_status(2);
 			caseRepo.save(scase);
@@ -335,7 +335,7 @@ public class CaseAuditController {
 				biodata = objectMapper.readValue(scase.getBiodata().getBiodata_json(), mapType);
 				fulldata.setBiodata(biodata);
 			} catch (JsonProcessingException e) {
-				
+
 				e.printStackTrace();
 			}
 
@@ -344,7 +344,7 @@ public class CaseAuditController {
 				pregdata = objectMapper.readValue(scase.getPregnancy().getPregnancy_json(), mapType);
 				fulldata.setPregnancy(pregdata);
 			} catch (JsonProcessingException e) {
-				
+
 				e.printStackTrace();
 			}
 
@@ -353,7 +353,7 @@ public class CaseAuditController {
 				refdata = objectMapper.readValue(scase.getReferral().getReferral_json(), mapType);
 				fulldata.setReferral(refdata);
 			} catch (JsonProcessingException e) {
-				
+
 				e.printStackTrace();
 			}
 
@@ -362,7 +362,7 @@ public class CaseAuditController {
 				deldata = objectMapper.readValue(scase.getDelivery().getDelivery_json(), mapType);
 				fulldata.setDelivery(deldata);
 			} catch (JsonProcessingException e) {
-				
+
 				e.printStackTrace();
 			}
 
@@ -371,7 +371,7 @@ public class CaseAuditController {
 				antedata = objectMapper.readValue(scase.getAntenatal().getAntenatal_json(), mapType);
 				fulldata.setAntenatal(antedata);
 			} catch (JsonProcessingException e) {
-				
+
 				e.printStackTrace();
 			}
 
@@ -380,7 +380,7 @@ public class CaseAuditController {
 				labdata = objectMapper.readValue(scase.getLabour().getLabour_json(), mapType);
 				fulldata.setLabour(labdata);
 			} catch (JsonProcessingException e) {
-				
+
 				e.printStackTrace();
 			}
 
@@ -389,7 +389,7 @@ public class CaseAuditController {
 				birdata = objectMapper.readValue(scase.getBirth().getBirth_json(), mapType);
 				fulldata.setBirth(birdata);
 			} catch (JsonProcessingException e) {
-				
+
 				e.printStackTrace();
 			}
 
@@ -399,7 +399,7 @@ public class CaseAuditController {
 					fetdata = objectMapper.readValue(scase.getFetalheart().getFetalheart_json(), mapType);
 					fulldata.setFetalheart(fetdata);
 				} catch (JsonProcessingException e) {
-					
+
 					e.printStackTrace();
 				}
 			}
@@ -410,7 +410,7 @@ public class CaseAuditController {
 					bdtdata = objectMapper.readValue(scase.getBabydeath().getBaby_json(), mapType);
 					fulldata.setBabydeath(bdtdata);
 				} catch (JsonProcessingException e) {
-					
+
 					e.printStackTrace();
 				}
 			}
@@ -420,7 +420,7 @@ public class CaseAuditController {
 				notedata = objectMapper.readValue(scase.getNotes().getNotes_json(), mapType);
 				fulldata.setNotes(notedata);
 			} catch (JsonProcessingException e) {
-				
+
 				e.printStackTrace();
 			}
 
@@ -431,7 +431,7 @@ public class CaseAuditController {
 				// add the combined JSON data to the new audit for the case
 				acase.setAudit_data(arrayToJson);
 			} catch (JsonProcessingException e) {
-				
+
 				e.printStackTrace();
 			}
 
@@ -527,8 +527,10 @@ public class CaseAuditController {
 						continue a;
 					}
 
-					final LocalDate reviewDate = LocalDate.now();
-					final LocalDate deathDate = scase.getBabydeath().getBaby_ddate();
+					Calendar reviewDate = Calendar.getInstance();
+					final Date dth = scase.getBabydeath().getBaby_ddate();
+					Calendar deathDate = Calendar.getInstance();
+					deathDate.setTime(dth);
 
 //					final boolean isyear1 = Calendar.getInstance().get(Calendar.YEAR) == cal.get(Calendar.YEAR);
 //					final boolean isweek1 = (Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)
@@ -540,8 +542,13 @@ public class CaseAuditController {
 
 					// check whether the death is a recent one that falls within the previous week
 					// before the review
-					final boolean isvalid = deathDate.isAfter(reviewDate.minusWeeks(2L)) && deathDate.isBefore(reviewDate.minusWeeks(1L));
-							// (isyear1 && isweek1) || (isyear2 && isweek2);
+					Calendar minus2Weeks = (Calendar) reviewDate.clone();
+					minus2Weeks.add(Calendar.WEEK_OF_MONTH, -2);
+					Calendar minus1Weeks = (Calendar) reviewDate.clone();
+					minus1Weeks.add(Calendar.WEEK_OF_MONTH, -1);
+					final boolean isvalid = deathDate.after(minus2Weeks.getTime())
+							&& deathDate.before(minus1Weeks.getTime());
+					// (isyear1 && isweek1) || (isyear2 && isweek2);
 
 					if (!isvalid) {
 						continue a;
@@ -657,8 +664,10 @@ public class CaseAuditController {
 						continue a;
 					}
 
-					final LocalDate deathDate = tcase.getDelivery().getDelivery_date();
-					final LocalDate reviewDate = LocalDate.now();
+					Calendar reviewDate = Calendar.getInstance();
+					final Date dth = tcase.getDelivery().getDelivery_date();
+					Calendar deathDate = Calendar.getInstance();
+					deathDate.setTime(dth);
 
 					// check whether the death is a recent one that falls within the previous week
 					// before the review
@@ -669,9 +678,13 @@ public class CaseAuditController {
 //					final boolean isyear2 = Calendar.getInstance().get(Calendar.YEAR) - cal.get(Calendar.YEAR) == 1;
 //					final boolean isweek2 = cal.get(Calendar.WEEK_OF_YEAR)
 //							- (Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)) == 51;
-
-					final boolean isvalid = deathDate.isAfter(reviewDate.minusWeeks(2L)) && deathDate.isBefore(reviewDate.minusWeeks(1L));
-							//(isyear1 && isweek1) || (isyear2 && isweek2);
+					Calendar minus2Weeks = (Calendar) reviewDate.clone();
+					minus2Weeks.add(Calendar.WEEK_OF_MONTH, -2);
+					Calendar minus1Weeks = (Calendar) reviewDate.clone();
+					minus1Weeks.add(Calendar.WEEK_OF_MONTH, -1);
+					final boolean isvalid = deathDate.after(minus2Weeks.getTime())
+							&& deathDate.before(minus1Weeks.getTime());
+					// (isyear1 && isweek1) || (isyear2 && isweek2);
 
 					if (!isvalid) {
 						continue a;
@@ -794,14 +807,13 @@ public class CaseAuditController {
 			}
 
 			// mark all unselected cases for archiving
-			if(pendingAudit!=null && !pendingAudit.isEmpty()) {
-				pendingAudit.forEach(v->{
+			if (pendingAudit != null && !pendingAudit.isEmpty()) {
+				pendingAudit.forEach(v -> {
 					v.setCase_status(CONSTANTS.ARCHIVED_CASE);
 				});
-				
+
 				caseRepo.saveAll(pendingAudit);
 			}
-			
 
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
@@ -956,7 +968,7 @@ public class CaseAuditController {
 
 	@GetMapping("/recommend/{id}")
 	public String recommendation(Principal principal, Model model, @PathVariable("id") String case_uuid,
-			@RequestParam(name = "success", required = false) String success) {
+			@RequestParam(required = false) String success) {
 
 		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
 			model.addAttribute("activated", "0");
@@ -1282,11 +1294,50 @@ public class CaseAuditController {
 //	}
 
 	private List<json_data> processListOf(audit_audit o) {
+
+		final String[] patientFactors = new String[1];
+		patientFactors[0] = "";
+		o.getPatient_factors().forEach(v -> {
+			patientFactors[0] += (v.getCfactor_name() != null) ? (v.getCfactor_name() + "; ") : "";
+		});
+
+		final String[] maternalConditions = new String[1];
+		maternalConditions[0] = "";
+		o.getMaternal_conditions().forEach(v -> {
+			maternalConditions[0] += (v.getIcdm_name() != null) ? (v.getIcdm_name() + "; ") : "";
+		});
+
+		final String[] transportFactors = new String[1];
+		transportFactors[0] = "";
+		o.getTransport_factors().forEach(v -> {
+			transportFactors[0] += (v.getCfactor_name() != null) ? (v.getCfactor_name() + "; ") : "";
+		});
+
+		final String[] administrativeFactors = new String[1];
+		administrativeFactors[0] = "";
+		o.getAdministrative_factors().forEach(v -> {
+			administrativeFactors[0] += (v.getCfactor_name() != null) ? (v.getCfactor_name() + "; ") : "";
+		});
+
+		final String[] healthworkerFactors = new String[1];
+		healthworkerFactors[0] = "";
+		o.getHealthworker_factors().forEach(v -> {
+			healthworkerFactors[0] += (v.getCfactor_name() != null) ? (v.getCfactor_name() + "; ") : "";
+		});
+
+		final String[] documentFactors = new String[1];
+		documentFactors[0] = "";
+		o.getDocument_factors().forEach(v -> {
+			documentFactors[0] += (v.getCfactor_name() != null) ? (v.getCfactor_name() + "; ") : "";
+		});
+
+		SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
 		List<json_data> list = Stream.of(
 //				new json_data(getQuestion("label.audit_death"), getAnswer("adeath_options", o.getAudit_death())),
 //				new json_data(getQuestion("label.audit_icd10"), getIcdDesc(o.getAudit_icd10())),
 //				new json_data(getQuestion("label.audit_icdpm"), getPMDesc(o.getAudit_death(), o.getAudit_icdpm())),
 //				new json_data(getQuestion("label.audit_csc"), o.getAudit_csc()),
+//				new json_data(getQuestion("label.audit_maternal"), maternalConditions[0], true),
 				new json_data(getQuestion("label.audit_delay1"), getAnswer("yesnodk_options", o.getAudit_delay1()),
 						true),
 				new json_data(getQuestion("label.audit_delay2"), getAnswer("yesnodk_options", o.getAudit_delay2()),
@@ -1298,11 +1349,15 @@ public class CaseAuditController {
 				new json_data(getQuestion("label.audit_delay3b"), getAnswer("yesnodk_options", o.getAudit_delay3c()),
 						true),
 				new json_data(getQuestion("label.audit_ifcmfs"), o.getAudit_ifcmfs(), true),
+				new json_data(getQuestion("label.audit_patient"), patientFactors[0], true),
 				new json_data(getQuestion("label.audit_sysmfs"), o.getAudit_sysmfs(), true),
+				new json_data(getQuestion("label.audit_transport"), transportFactors[0], true),
 				new json_data(getQuestion("label.audit_facmfs"), o.getAudit_facmfs(), true),
+				new json_data(getQuestion("label.audit_administrative"), administrativeFactors[0], true),
 				new json_data(getQuestion("label.audit_hwkmfs"), o.getAudit_hwkmfs(), true),
-				new json_data(getQuestion("label.audit_cdate"),
-						new SimpleDateFormat("dd-MMM-yyyy").format(o.getAudit_cdate()), true))
+				new json_data(getQuestion("label.audit_healthworker"), healthworkerFactors[0], true),
+				new json_data(getQuestion("label.audit_document"), documentFactors[0], true),
+				new json_data(getQuestion("label.audit_cdate"), df.format(o.getAudit_cdate()), true))
 				.collect(Collectors.toList());
 
 		return list;
