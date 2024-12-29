@@ -880,6 +880,14 @@ public class CaseAuditController {
 				}
 				break;
 			}
+			//case 4 should be maternal death
+			case 4: {
+				if (!icdRepo.findMaternalMMByICDGroup(tcase.getAudit_icdpm()).isEmpty()) {
+					icd_codes icd = icdRepo.findMaternalMMByICDGroup(tcase.getAudit_icdpm()).get(0);
+					model.addAttribute("mmsel", new icdpm(icd.getIcd_mmg(), icd.getIcd_mmg_desc()));
+				}
+				break;
+			}
 			}
 
 		} else {
@@ -1135,6 +1143,10 @@ public class CaseAuditController {
 		} else if (audit_death == 3) {
 
 			return icdRepo.findNeonatalICD("xx");
+			
+		} else if (audit_death == 4) {
+
+			return icdRepo.findMaternalICD("xx");
 		}
 
 		return new ArrayList<>();
@@ -1174,6 +1186,16 @@ public class CaseAuditController {
 
 			return pmset;
 
+		} else if (audit_death == 4) {
+
+			Set<icdpm> pmset = new LinkedHashSet<>();
+
+			for (icd_codes elem : icdRepo.findMaternalICD("xx")) {
+				pmset.add(new icdpm(elem.getIcd_mmg(), elem.getIcd_mmg_desc()));
+			}
+
+			return pmset;
+
 		}
 
 		return new LinkedHashSet<icdpm>();
@@ -1184,7 +1206,7 @@ public class CaseAuditController {
 			@RequestParam(value = "audit_icd10", required = true) String audit_icd10) {
 
 		if (!"".equals(audit_icd10)) {
-			icd_codes icd = icdRepo.findPMByICD(audit_icd10).get();
+			icd_codes icd = icdRepo.findICDByICD(audit_icd10).get();
 
 			if (audit_death == 1) {
 				return new icdpm(icd.getIcd_pmi(), icd.getIcd_pmi_desc());
@@ -1194,6 +1216,9 @@ public class CaseAuditController {
 
 			} else if (audit_death == 3) {
 				return new icdpm(icd.getIcd_pmn(), icd.getIcd_pmn_desc());
+
+			} else if (audit_death == 4) {
+				return new icdpm(icd.getIcd_mmg(), icd.getIcd_mmg_desc());
 
 			}
 		}
@@ -1220,6 +1245,7 @@ public class CaseAuditController {
 		map.put(1, getQuestion("label.still.birth.intra"));
 		map.put(2, getQuestion("label.still.birth.antep"));
 		map.put(3, getQuestion("label.neonatal.death"));
+		map.put(4, getQuestion("label.maternal.death"));
 
 		return map;
 	}

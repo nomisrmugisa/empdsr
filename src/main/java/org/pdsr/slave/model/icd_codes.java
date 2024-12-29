@@ -53,6 +53,14 @@ public class icd_codes implements Serializable {
 	@Column
 	private String icd_pmn_desc;
 
+	@CsvBindByName
+	@Column
+	private String icd_mmg;
+	
+	@CsvBindByName
+	@Column
+	private String icd_mmg_desc;
+
 	public String getIcd_code() {
 		return icd_code;
 	}
@@ -115,6 +123,22 @@ public class icd_codes implements Serializable {
 
 	public void setIcd_pmn_desc(String icd_pmn_desc) {
 		this.icd_pmn_desc = icd_pmn_desc;
+	}
+
+	public String getIcd_mmg() {
+		return icd_mmg;
+	}
+
+	public void setIcd_mmg(String icd_mmg) {
+		this.icd_mmg = icd_mmg;
+	}
+
+	public String getIcd_mmg_desc() {
+		return icd_mmg_desc;
+	}
+
+	public void setIcd_mmg_desc(String icd_mmg_desc) {
+		this.icd_mmg_desc = icd_mmg_desc;
 	}
 
 	@Override
