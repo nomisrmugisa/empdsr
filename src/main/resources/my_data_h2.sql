@@ -1,5 +1,3 @@
-
-
     MERGE INTO user_table(username, enabled, password, usercontact, useremail, userfullname, alerted) KEY(username) 
     VALUES (
 	    'webadmin'
@@ -263,6 +261,7 @@
     MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('sex_options',3,'Indeterminate');
     MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('sex_options',77,'Unknown');
     MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('sex_options',88,'Not Stated');
+    MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('sex_options',99,'Not Applicable (maternal death)');
     
     	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',0,'to 11 years');
     	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',12,'years');
@@ -316,6 +315,38 @@
     MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('edu_options',6,'Tertiary');
     MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('edu_options',88,'Not Stated');
     
+    MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('work_options',0,'Unemployed');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('work_options',1,'House wife');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('work_options',2,'Farming');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('work_options',3,'Trading');	
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('work_options',4,'Artisan (hairdresser, seamstress, etc');	
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('work_options',5,'Civil/Public service');	
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('work_options',66,'Other work');	
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('work_options',88,'Not Stated');
+
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('marital_options',0,'Never married');	
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('marital_options',1,'Married');	
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('marital_options',2,'Living together');	
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('marital_options',3,'Divorced/Separated');	
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('marital_options',4,'Widowed');	
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('marital_options',88,'Not Stated');
+
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('religion_options',1,'Christian');	
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('religion_options',2,'Moslem');	
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('religion_options',3,'Traditionalist/Spiritualist');	
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('religion_options',4,'Other');	
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('religion_options',88,'Not Stated');
+
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('ethnic_options',1,'Akan');	
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('ethnic_options',2,'Ga/Dangme');	
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('ethnic_options',3,'Ewe');	
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('ethnic_options',4,'Guan');	
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('ethnic_options',5,'Mole/Dagbani');	
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('ethnic_options',6,'Grussi');	
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('ethnic_options',7,'Gruma');	
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('ethnic_options',8,'Other');	
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('ethnic_options',88,'Not Stated');	
+
     MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pweeks_options',4,'Weeks');
     MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pweeks_options',5,'Weeks');
     MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pweeks_options',6,'Weeks');
@@ -472,8 +503,13 @@
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('liqourodour_options',1,'Foul smell');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('liqourodour_options',88,'Not Stated');
   
-	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('babyoutcome_options',0,'Fresh stillbirth');
-	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('babyoutcome_options',1,'Macerated stillbirth');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('babyoutcome_options',0,'Single fresh stillbirth');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('babyoutcome_options',1,'Single macerated stillbirth');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('babyoutcome_options_ext',2,'Single very early neonatal death within 24hrs');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('babyoutcome_options_ext',3,'Multiple live birth');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('babyoutcome_options_ext',4,'Multiple with one or more fresh stillbirth');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('babyoutcome_options_ext',5,'Multiple with one or more macerated stillbirth');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('babyoutcome_options_ext',6,'Multiple with one or more very early neonatal death (within 24hrs)');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('babyoutcome_options',77,'Unknown');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('babyoutcome_options',88,'Not Stated');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('babyoutcome_options',99,'Not Applicable');
@@ -513,3 +549,17 @@
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',4,'Congenital anomalies');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',5,'Special case');
 	
+	
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('autopsyby_options',1,'Pathologist');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('autopsyby_options',2,'Medical Officer');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('autopsyby_options',3,'Other');
+
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('icd10mm_options',1,'Pregnancy with abortive complications');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('icd10mm_options',2,'Hypertensive disorder of pregnancy');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('icd10mm_options',3,'Obstetric haemorrhage');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('icd10mm_options',4,'Pregnancy related infection');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('icd10mm_options',5,'Other obstetric complication');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('icd10mm_options',6,'Unanticipated complication of management');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('icd10mm_options',7,'Non obstetric complication');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('icd10mm_options',8,'Unknown');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('icd10mm_options',9,'Coincidental/Accidental');

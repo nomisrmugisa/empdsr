@@ -40,11 +40,9 @@ public class case_birth implements Serializable {
 	@JoinColumn(name = "case_uuid", referencedColumnName = "case_uuid", insertable = true, updatable = true)
 	private case_identifiers case_uuid;
 
-	
 	@Column
 	private Integer birth_mode;
 
-	
 	@Column
 	private Integer birth_insistnormal;
 
@@ -52,34 +50,28 @@ public class case_birth implements Serializable {
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date birth_csproposedate;
-	
+
 	@Column
 	private Integer birth_csproposehour;
-	
-	
+
 	@Column
 	private Integer birth_csproposeminute;
-	
-	
+
 	@Column
 	@Temporal(TemporalType.TIME)
 	@DateTimeFormat(pattern = "HH:mm")
 	private Date birth_csproposetime;
 
-
-	
 	@Column
 	private Integer birth_provider;
-	
-	
+
 	@Column
 	private Integer birth_facility;
-	
-	
+
 	@Column
 	private Integer birth_abnormalities;
-	
-	@ManyToMany(cascade = CascadeType.PERSIST)
+
+	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "birth_abnormalities", joinColumns = @JoinColumn(name = "abnormal_uuid"), inverseJoinColumns = @JoinColumn(name = "abnormal_name"))
 	private List<abnormality_table> abnormalities;
 
@@ -87,49 +79,45 @@ public class case_birth implements Serializable {
 	@Column
 	private String new_abnormalities;
 
-	
 	@Column
 	private Integer birth_cordfaults;
-	
-	@ManyToMany(cascade = CascadeType.PERSIST)
+
+	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "birth_cordfaults", joinColumns = @JoinColumn(name = "cordfault_uuid"), inverseJoinColumns = @JoinColumn(name = "cordfault_name"))
 	private List<cordfault_table> cordfaults = new ArrayList<>();
 
 	@Lob
 	@Column
 	private String new_cordfaults;
-	
-	
+
 	@Column
 	private Integer birth_placentachecks;
-	
-	@ManyToMany(cascade = CascadeType.PERSIST)
+
+	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "birth_pacentachecks", joinColumns = @JoinColumn(name = "placentacheck_uuid"), inverseJoinColumns = @JoinColumn(name = "placentacheck_name"))
 	private List<placentacheck_table> placentachecks = new ArrayList<>();
 
 	@Lob
 	@Column
 	private String new_placentachecks;
-	
-	
+
 	@Column
 	private Integer birth_liqourvolume;
-	
-	
+
 	@Column
 	private Integer birth_liqourcolor;
-	
-	
+
 	@Column
 	private Integer birth_liqourodour;
-	
-	
+
 	@Column
 	private Integer birth_motheroutcome;
 
-	
 	@Column
 	private Integer birth_babyoutcome;
+
+	@Column
+	private Integer birth_mbabyoutcome;// show if maternal death
 
 	@Lob
 	@Column
@@ -274,7 +262,6 @@ public class case_birth implements Serializable {
 		this.new_cordfaults = new_cordfaults;
 	}
 
-
 	public Integer getBirth_placentachecks() {
 		return birth_placentachecks;
 	}
@@ -323,7 +310,6 @@ public class case_birth implements Serializable {
 		this.birth_liqourodour = birth_liqourodour;
 	}
 
-
 	public Integer getBirth_motheroutcome() {
 		return birth_motheroutcome;
 	}
@@ -346,6 +332,14 @@ public class case_birth implements Serializable {
 
 	public void setBirth_babyoutcome(Integer birth_babyoutcome) {
 		this.birth_babyoutcome = birth_babyoutcome;
+	}
+
+	public Integer getBirth_mbabyoutcome() {
+		return birth_mbabyoutcome;
+	}
+
+	public void setBirth_mbabyoutcome(Integer birth_mbabyoutcome) {
+		this.birth_mbabyoutcome = birth_mbabyoutcome;
 	}
 
 	@Override
@@ -372,6 +366,5 @@ public class case_birth implements Serializable {
 			return false;
 		return true;
 	}
-	
-	
+
 }

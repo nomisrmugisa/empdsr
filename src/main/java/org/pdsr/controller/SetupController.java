@@ -40,6 +40,7 @@ import org.pdsr.master.model.case_delivery;
 import org.pdsr.master.model.case_fetalheart;
 import org.pdsr.master.model.case_identifiers;
 import org.pdsr.master.model.case_labour;
+import org.pdsr.master.model.case_mdeath;
 import org.pdsr.master.model.case_notes;
 import org.pdsr.master.model.case_pregnancy;
 import org.pdsr.master.model.case_referral;
@@ -73,6 +74,7 @@ import org.pdsr.master.repo.CaseBirthRepository;
 import org.pdsr.master.repo.CaseDeliveryRepository;
 import org.pdsr.master.repo.CaseFetalheartRepository;
 import org.pdsr.master.repo.CaseLabourRepository;
+import org.pdsr.master.repo.CaseMdeathRepository;
 import org.pdsr.master.repo.CaseNotesRepository;
 import org.pdsr.master.repo.CasePregnancyRepository;
 import org.pdsr.master.repo.CaseReferralRepository;
@@ -100,6 +102,7 @@ import org.pdsr.slave.repo.SlaveCaseBirthRepository;
 import org.pdsr.slave.repo.SlaveCaseDeliveryRepository;
 import org.pdsr.slave.repo.SlaveCaseFetalheartRepository;
 import org.pdsr.slave.repo.SlaveCaseLabourRepository;
+import org.pdsr.slave.repo.SlaveCaseMdeathRepository;
 import org.pdsr.slave.repo.SlaveCaseNotesRepository;
 import org.pdsr.slave.repo.SlaveCasePregnancyRepository;
 import org.pdsr.slave.repo.SlaveCaseReferralRepository;
@@ -252,6 +255,12 @@ public class SetupController {
 	private SlaveCaseBabyRepository sbabyRepo;
 
 	@Autowired
+	private CaseMdeathRepository mdeathRepo;
+
+	@Autowired
+	private SlaveCaseMdeathRepository smdeathRepo;
+
+	@Autowired
 	private CaseNotesRepository noteRepo;
 
 	@Autowired
@@ -295,6 +304,7 @@ public class SetupController {
 		} else {
 			sync_table selected = new sync_table();
 			selected.setSync_id(CONSTANTS.FACILITY_ID);
+			selected.setSync_url("https://olincgroup.com/pdsr/mytest");
 			model.addAttribute("selected", selected);
 		}
 
@@ -308,7 +318,7 @@ public class SetupController {
 	}
 
 	@PostMapping("")
-	public String sync(Principal principal, @ModelAttribute sync_table selected, BindingResult results) {
+	public String sync(Principal principal, @ModelAttribute("selected") sync_table selected, BindingResult results) {
 
 		// do the sync operations here
 		Optional<facility_table> object = facilityRepo.findByFacility_code(selected.getSync_code());
@@ -426,7 +436,7 @@ public class SetupController {
 
 	@Transactional
 	@PostMapping("/district/{id}")
-	public String district(Principal principal, Model model, @ModelAttribute region_table selected,
+	public String district(Principal principal, Model model, @ModelAttribute("selected") region_table selected,
 			@PathVariable("id") String uuid) {
 
 		regionRepo.save(selected);
@@ -489,7 +499,7 @@ public class SetupController {
 
 	@Transactional
 	@PostMapping("/datamerge")
-	public String datamerge(Principal principal, @ModelAttribute datamerger selected) {
+	public String datamerge(Principal principal, @ModelAttribute("selected") datamerger selected) {
 
 		// merge location data from slave to master (overrides if exists)
 		if (icdRepo.count() == 0) {
@@ -657,7 +667,7 @@ public class SetupController {
 
 //	@Transactional
 	@PostMapping("/deletecase")
-	public String deletecaseconfirm(Principal principal, Model model, @ModelAttribute casedeleter selected) {
+	public String deletecaseconfirm(Principal principal, Model model, @ModelAttribute("selected") casedeleter selected) {
 
 		// if confirmation is given and object is found
 		if (selected != null && selected.isClear_uploaded()) {
@@ -898,6 +908,7 @@ public class SetupController {
 		mergeCaseBirth();
 		mergeCaseFetalheart();
 		mergeCaseBabydeath();
+		mergeCaseMdeath();
 		mergeCaseNotes();
 
 	}
@@ -915,6 +926,14 @@ public class SetupController {
 					mcase.setBiodata_sex(s.getBiodata_sex());
 					mcase.setBiodata_mage(s.getBiodata_mage());
 					mcase.setBiodata_medu(s.getBiodata_medu());
+					mcase.setBiodata_mdob(s.getBiodata_mdob());
+					mcase.setBiodata_maddress(s.getBiodata_maddress());
+					mcase.setBiodata_location(s.getBiodata_location());
+					mcase.setBiodata_contact(s.getBiodata_contact());
+					mcase.setBiodata_work(s.getBiodata_work());
+					mcase.setBiodata_marital(s.getBiodata_marital());
+					mcase.setBiodata_religion(s.getBiodata_religion());
+					mcase.setBiodata_ethnic(s.getBiodata_ethnic());
 					mcase.setBiodata_json(s.getBiodata_json());
 					mcase.setData_complete(s.getData_complete());
 
@@ -1017,6 +1036,7 @@ public class SetupController {
 					mcase.setDelivery_period(s.getDelivery_period());
 					mcase.setDelivery_time(s.getDelivery_time());
 					mcase.setDelivery_weight(s.getDelivery_weight());
+					mcase.setDelivery_occured(s.getDelivery_occured());
 					mcase.setDelivery_json(s.getDelivery_json());
 
 					mcase.setData_complete(s.getData_complete());
@@ -1207,6 +1227,8 @@ public class SetupController {
 
 					mcase.setBirth_provider(s.getBirth_provider());
 
+					mcase.setBirth_mbabyoutcome(s.getBirth_mbabyoutcome());
+
 					mcase.setBirth_json(s.getBirth_json());
 
 					mcase.setData_complete(s.getData_complete());
@@ -1325,6 +1347,96 @@ public class SetupController {
 		}
 
 	}
+
+	private void mergeCaseMdeath() {
+		List<org.pdsr.slave.model.case_mdeath> scases = smdeathRepo.findAll();
+		if (scases != null && scases.size() > 0) {
+
+			List<case_mdeath> mcases = new ArrayList<case_mdeath>();
+			for (org.pdsr.slave.model.case_mdeath s : scases) {
+				Optional<case_identifiers> icase = caseRepo.findById(s.getCase_uuid().getCase_uuid());
+				if (icase.isPresent()) {
+					
+					case_mdeath mcase = new case_mdeath();
+					mcase.setMdeath_uuid(s.getMdeath_uuid());
+
+					mcase.setMdeath_date(s.getMdeath_date());
+					mcase.setMdeath_time(s.getMdeath_time());
+					mcase.setMdeath_hour(s.getMdeath_hour());
+					mcase.setMdeath_minute(s.getMdeath_minute());
+					mcase.setMdeath_datetime_notstated(s.getMdeath_datetime_notstated());
+					mcase.setMdeath_autopsy(s.getMdeath_autopsy());
+					mcase.setMdeath_autopsy_date(s.getMdeath_autopsy_date());
+					mcase.setMdeath_autopsy_location(s.getMdeath_autopsy_location());
+					mcase.setMdeath_autopsy_by(s.getMdeath_autopsy_by());
+					mcase.setMdeath_autopsy_final_cod(s.getMdeath_autopsy_final_cod());
+					mcase.setMdeath_autopsy_antec_cod(s.getMdeath_autopsy_antec_cod());
+					mcase.setMdeath_autopsy_ops_cod(s.getMdeath_autopsy_ops_cod());
+
+					mcase.setMdeath_early_evacuation(s.getMdeath_early_evacuation());
+					mcase.setMdeath_early_antibiotic(s.getMdeath_early_antibiotic());
+					mcase.setMdeath_early_laparotomy(s.getMdeath_early_laparotomy());
+					mcase.setMdeath_early_hysterectomy(s.getMdeath_early_hysterectomy());
+					mcase.setMdeath_early_transfusion(s.getMdeath_early_transfusion());
+					mcase.setMdeath_early_antihyper(s.getMdeath_early_antihyper());
+					mcase.setMdeath_early_other(s.getMdeath_early_other());
+
+					mcase.setMdeath_ante_transfusion(s.getMdeath_ante_transfusion());
+					mcase.setMdeath_ante_antibiotic(s.getMdeath_ante_antibiotic());
+					mcase.setMdeath_ante_externalv(s.getMdeath_ante_externalv());
+					mcase.setMdeath_ante_magsulphate(s.getMdeath_ante_magsulphate());
+					mcase.setMdeath_ante_diazepam(s.getMdeath_ante_diazepam());
+					mcase.setMdeath_ante_antihyper(s.getMdeath_ante_antihyper());
+					mcase.setMdeath_ante_hysterotomy(s.getMdeath_ante_hysterotomy());
+					mcase.setMdeath_ante_other(s.getMdeath_ante_other());
+
+					mcase.setMdeath_intra_instrumental(s.getMdeath_intra_instrumental());
+					mcase.setMdeath_intra_antibiotic(s.getMdeath_intra_antibiotic());
+					mcase.setMdeath_intra_caesarian(s.getMdeath_intra_caesarian());
+					mcase.setMdeath_intra_hysterectomy(s.getMdeath_intra_hysterectomy());
+					mcase.setMdeath_intra_transfusion(s.getMdeath_intra_transfusion());
+					mcase.setMdeath_intra_magsulphate(s.getMdeath_intra_magsulphate());
+					mcase.setMdeath_intra_antihyper(s.getMdeath_intra_antihyper());
+					mcase.setMdeath_intra_diazepam(s.getMdeath_intra_diazepam());
+					mcase.setMdeath_intra_other(s.getMdeath_intra_other());
+
+					mcase.setMdeath_postpart_evacuation(s.getMdeath_postpart_evacuation());
+					mcase.setMdeath_postpart_antibiotic(s.getMdeath_postpart_antibiotic());
+					mcase.setMdeath_postpart_laparotomy(s.getMdeath_postpart_laparotomy());
+					mcase.setMdeath_postpart_hysterectomy(s.getMdeath_postpart_hysterectomy());
+					mcase.setMdeath_postpart_transfusion(s.getMdeath_postpart_transfusion());
+					mcase.setMdeath_postpart_magsulphate(s.getMdeath_postpart_magsulphate());
+					mcase.setMdeath_postpart_placentaremoval(s.getMdeath_postpart_placentaremoval());
+					mcase.setMdeath_postpart_antihyper(s.getMdeath_postpart_antihyper());
+					mcase.setMdeath_postpart_diazepam(s.getMdeath_postpart_diazepam());
+					mcase.setMdeath_postpart_other(s.getMdeath_postpart_other());
+
+					mcase.setMdeath_other_anaesthga(s.getMdeath_other_anaesthga());
+					mcase.setMdeath_other_epidural(s.getMdeath_other_epidural());
+					mcase.setMdeath_other_spinal(s.getMdeath_other_spinal());
+					mcase.setMdeath_other_local(s.getMdeath_other_local());
+					mcase.setMdeath_other_invasive(s.getMdeath_other_invasive());
+					mcase.setMdeath_other_antihyper(s.getMdeath_other_antihyper());
+					mcase.setMdeath_other_icuventilation(s.getMdeath_other_icuventilation());
+					mcase.setMdeath_new_intervention(s.getMdeath_new_intervention());
+
+					mcase.setMdeath_json(s.getMdeath_json());
+
+					mcase.setData_complete(s.getData_complete());
+
+					mcase.setCase_uuid(icase.get());
+
+					mcases.add(mcase);
+				}
+			}
+
+			// save master
+			mdeathRepo.saveAll(mcases);
+		}
+
+	}
+
+	// MERGE INTERVENTIONS
 
 	private void mergeCaseNotes() {
 		List<org.pdsr.slave.model.case_notes> scases = snoteRepo.findAll();

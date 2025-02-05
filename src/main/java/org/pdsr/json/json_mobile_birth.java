@@ -1,129 +1,60 @@
-package org.pdsr.master.model;
+package org.pdsr.json;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.MapsId;
-import javax.persistence.OneToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
-@Entity
-public class case_birth implements Serializable {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class json_mobile_birth implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@NotNull
-	@Size(min = 1, max = 80)
-	private String birth_uuid;
+	private String record_id;
 
-	@MapsId
-	@OneToOne(optional = false, cascade = CascadeType.ALL)
-	@JoinColumn(name = "case_uuid", referencedColumnName = "case_uuid", insertable = true, updatable = true)
-	private case_identifiers case_uuid;
-
-	@Column
 	private Integer birth_mode;
 
-	@Column
 	private Integer birth_insistnormal;
 
-	@Column
-	@Temporal(TemporalType.DATE)
-	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date birth_csproposedate;
 
-	@Column
 	private Integer birth_csproposehour;
-
-	@Column
+	
 	private Integer birth_csproposeminute;
-
-	@Column
-	@Temporal(TemporalType.TIME)
-	@DateTimeFormat(pattern = "HH:mm")
+		
 	private Date birth_csproposetime;
 
-	@Column
 	private Integer birth_provider;
-
-	@Column
+	
 	private Integer birth_facility;
-
-	@Column
+	
 	private Integer birth_abnormalities;
-
-	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "birth_abnormalities", joinColumns = @JoinColumn(name = "abnormal_uuid"), inverseJoinColumns = @JoinColumn(name = "abnormal_name"))
-	private List<abnormality_table> abnormalities;
-
-	@Lob
-	@Column
+	
 	private String new_abnormalities;
 
-	@Column
 	private Integer birth_cordfaults;
-
-	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "birth_cordfaults", joinColumns = @JoinColumn(name = "cordfault_uuid"), inverseJoinColumns = @JoinColumn(name = "cordfault_name"))
-	private List<cordfault_table> cordfaults = new ArrayList<>();
-
-	@Lob
-	@Column
+	
 	private String new_cordfaults;
-
-	@Column
+	
 	private Integer birth_placentachecks;
-
-	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "birth_pacentachecks", joinColumns = @JoinColumn(name = "placentacheck_uuid"), inverseJoinColumns = @JoinColumn(name = "placentacheck_name"))
-	private List<placentacheck_table> placentachecks = new ArrayList<>();
-
-	@Lob
-	@Column
+	
 	private String new_placentachecks;
-
-	@Column
+	
 	private Integer birth_liqourvolume;
-
-	@Column
+	
 	private Integer birth_liqourcolor;
-
-	@Column
+	
 	private Integer birth_liqourodour;
-
-	@Column
+	
 	private Integer birth_motheroutcome;
 
-	@Column
 	private Integer birth_babyoutcome;
 
-	@Column
-	private Integer birth_mbabyoutcome;// show if maternal death
-
-	@Lob
-	@Column
 	private String birth_json;
 
-	@Column
 	private Integer data_complete;
 
 	public Integer getData_complete() {
@@ -142,20 +73,12 @@ public class case_birth implements Serializable {
 		this.birth_json = birth_json;
 	}
 
-	public String getBirth_uuid() {
-		return birth_uuid;
+	public String getRecord_id() {
+		return record_id;
 	}
 
-	public void setBirth_uuid(String birth_uuid) {
-		this.birth_uuid = birth_uuid;
-	}
-
-	public case_identifiers getCase_uuid() {
-		return case_uuid;
-	}
-
-	public void setCase_uuid(case_identifiers case_uuid) {
-		this.case_uuid = case_uuid;
+	public void setRecord_id(String record_id) {
+		this.record_id = record_id;
 	}
 
 	public Integer getBirth_mode() {
@@ -222,14 +145,6 @@ public class case_birth implements Serializable {
 		this.birth_abnormalities = birth_abnormalities;
 	}
 
-	public List<abnormality_table> getAbnormalities() {
-		return abnormalities;
-	}
-
-	public void setAbnormalities(List<abnormality_table> abnormalities) {
-		this.abnormalities = abnormalities;
-	}
-
 	public String getNew_abnormalities() {
 		return new_abnormalities;
 	}
@@ -246,14 +161,6 @@ public class case_birth implements Serializable {
 		this.birth_cordfaults = birth_cordfaults;
 	}
 
-	public List<cordfault_table> getCordfaults() {
-		return cordfaults;
-	}
-
-	public void setCordfaults(List<cordfault_table> cordfaults) {
-		this.cordfaults = cordfaults;
-	}
-
 	public String getNew_cordfaults() {
 		return new_cordfaults;
 	}
@@ -262,20 +169,13 @@ public class case_birth implements Serializable {
 		this.new_cordfaults = new_cordfaults;
 	}
 
+
 	public Integer getBirth_placentachecks() {
 		return birth_placentachecks;
 	}
 
 	public void setBirth_placentachecks(Integer birth_placentachecks) {
 		this.birth_placentachecks = birth_placentachecks;
-	}
-
-	public List<placentacheck_table> getPlacentachecks() {
-		return placentachecks;
-	}
-
-	public void setPlacentachecks(List<placentacheck_table> placentachecks) {
-		this.placentachecks = placentachecks;
 	}
 
 	public String getNew_placentachecks() {
@@ -310,6 +210,7 @@ public class case_birth implements Serializable {
 		this.birth_liqourodour = birth_liqourodour;
 	}
 
+
 	public Integer getBirth_motheroutcome() {
 		return birth_motheroutcome;
 	}
@@ -334,19 +235,11 @@ public class case_birth implements Serializable {
 		this.birth_babyoutcome = birth_babyoutcome;
 	}
 
-	public Integer getBirth_mbabyoutcome() {
-		return birth_mbabyoutcome;
-	}
-
-	public void setBirth_mbabyoutcome(Integer birth_mbabyoutcome) {
-		this.birth_mbabyoutcome = birth_mbabyoutcome;
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((birth_uuid == null) ? 0 : birth_uuid.hashCode());
+		result = prime * result + ((record_id == null) ? 0 : record_id.hashCode());
 		return result;
 	}
 
@@ -358,13 +251,19 @@ public class case_birth implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		case_birth other = (case_birth) obj;
-		if (birth_uuid == null) {
-			if (other.birth_uuid != null)
+		json_mobile_birth other = (json_mobile_birth) obj;
+		if (record_id == null) {
+			if (other.record_id != null)
 				return false;
-		} else if (!birth_uuid.equals(other.birth_uuid))
+		} else if (!record_id.equals(other.record_id))
 			return false;
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return record_id;
+	}
+	
+	
 }

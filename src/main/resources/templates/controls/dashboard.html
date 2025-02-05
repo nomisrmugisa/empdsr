@@ -20,21 +20,40 @@
 				<p class="helpline text-danger" th:if="${#fields.hasErrors('sync_code')}" th:text="#{invalid.code}"></p>
 			</div>
 			<div class="col-md-4 mb-3">
-				<input type="email" class="form-control form-control-sm me-2 col-auto" th:field="*{sync_email}" required
+				<input type="email" class="form-control form-control-sm me-2 col-auto" th:field="*{sync_email}" readonly
 					th:placeholder="#{sync.email}" />
 			</div>
-			<div class="mb-3" th:if="${selected.sync_uuid}">
-				<input type="text" class="form-control form-control-sm" th:field="*{sync_name}" readonly />
+			<div th:if="${selected.sync_uuid}">
+				<div class="col-md-4 mb-3">
+					<input type="text" class="form-control form-control-sm" th:field="*{sync_name}" readonly />
+				</div>
+				<div class="col-md-4 mb-3">
+					<div class="helpline small">[[#{sync.url}]]</div>
+					<input class="form-control form-control-sm me-2" th:field="*{sync_url}"
+						th:placeholder="#{sync.url}" />
+				</div>
+				<div class="col-md-4 mb-3">
+					<div class="helpline small">[[#{sync.redcap.url}]]</div>
+					<input class="form-control form-control-sm me-2" th:field="*{sync_redcap_url}"
+						th:placeholder="#{sync.redcap.url}" />
+				</div>
+				<div class="col-md-4 mb-3">
+					<div class="helpline small">[[#{sync.redcap.token}]]</div>
+					<input class="form-control form-control-sm me-2" th:field="*{sync_redcap_token}"
+						th:placeholder="#{sync.redcap.token}" />
+				</div>
 			</div>
 
 			<hr class="mb-2 bg-primary">
 			<div class="">
 				<button class="btn btn-sm btn-primary" type="submit" th:utext="#{sync.button}"></button>
 				<span class="mb-3">
-					<a th:href="@{/controls/datamerge}" class="btn btn-outline-success btn-sm" th:utext="#{merger.next.button}"></a>
+					<a th:href="@{/controls/datamerge}" class="btn btn-outline-success btn-sm"
+						th:utext="#{merger.next.button}"></a>
 				</span>
 				<span class="mb-3">
-					<a th:href="@{/controls/deletecase}" class="btn btn-outline-danger btn-sm" th:utext="#{delete.next.button}"></a>
+					<a th:href="@{/controls/deletecase}" class="btn btn-outline-danger btn-sm"
+						th:utext="#{delete.next.button}"></a>
 				</span>
 			</div>
 

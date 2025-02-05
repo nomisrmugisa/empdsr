@@ -1,6 +1,7 @@
 package org.pdsr.master.model;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,7 +20,7 @@ public class datamap implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@NotNull
 	private String map_feature;
@@ -27,7 +28,7 @@ public class datamap implements Serializable {
 	@Id
 	@NotNull
 	private Integer map_value;
-	
+
 	@Column
 	@NotNull
 	private String map_label;
@@ -56,5 +57,11 @@ public class datamap implements Serializable {
 		this.map_label = map_label;
 	}
 
-	
+}
+
+class SortbyValue implements Comparator<datamap> {
+
+	public int compare(datamap a, datamap b) {
+		return a.getMap_value() - b.getMap_value();
+	}
 }

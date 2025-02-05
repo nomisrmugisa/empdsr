@@ -42,6 +42,10 @@ public class case_labour implements Serializable {
 
 	
 	@Column
+	private Integer labour_occured;
+	
+	
+	@Column
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date labour_seedate;
@@ -106,7 +110,7 @@ public class case_labour implements Serializable {
 	@Lob
 	@Column
 	private String new_complications;
-
+	
 	@Lob
 	@Column
 	private String labour_json;
@@ -272,6 +276,15 @@ public class case_labour implements Serializable {
 
 	public void setLabour_seedatetime_notstated(Integer labour_seedatetime_notstated) {
 		this.labour_seedatetime_notstated = labour_seedatetime_notstated;
+	}
+
+
+	public Integer getLabour_occured() {
+		return labour_occured;
+	}
+
+	public void setLabour_occured(Integer labour_occured) {
+		this.labour_occured = labour_occured;
 	}
 
 	@Override

@@ -36,6 +36,8 @@ public class case_delivery implements Serializable {
 	@JoinColumn(name = "case_uuid", referencedColumnName = "case_uuid", insertable = true, updatable = true)
 	private case_identifiers case_uuid;
 
+	@Column
+	private Integer delivery_occured;
 	
 	@Column
 	@Temporal(TemporalType.DATE)
@@ -50,6 +52,9 @@ public class case_delivery implements Serializable {
 	@Column
 	private Integer delivery_minute;
 	
+	@Column
+	private Double delivery_weight;
+	
 	
 	@Column
 	@Temporal(TemporalType.TIME)
@@ -58,16 +63,13 @@ public class case_delivery implements Serializable {
 
 	@Column
 	private Integer delivery_datetime_notstated;
-
+	
 	@Column
 	private Integer delivery_period;//dawn,morning,afternoon,evening,night
 	
 	
 	@Column
 	private Integer data_complete;
-
-	@Column
-	private Double delivery_weight;
 
 	@Lob
 	@Column
@@ -159,6 +161,14 @@ public class case_delivery implements Serializable {
 
 	public void setDelivery_datetime_notstated(Integer delivery_datetime_notstated) {
 		this.delivery_datetime_notstated = delivery_datetime_notstated;
+	}
+
+	public Integer getDelivery_occured() {
+		return delivery_occured;
+	}
+
+	public void setDelivery_occured(Integer delivery_occured) {
+		this.delivery_occured = delivery_occured;
 	}
 
 	@Override

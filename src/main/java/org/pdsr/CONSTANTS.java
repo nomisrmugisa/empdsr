@@ -7,14 +7,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttribute;
 
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-
 public class CONSTANTS {
 
 	public static final String FACILITY_ID = "PDRS";
 	public static final String ROOT_LOCATION = "attachments";
 	public static final String IMAGE_TAG = "XZYimageXZY";
+
+//	public static final String BASE_URL_GHANA = "https://olincgroup.com/pdsr/ghana";
+//	public static final String BASE_URL_NAMIBIA = "https://olincgroup.com/pdsr/namibia";
+//	P final String BASE_URL = "https://olincgroup.com/pdsr/sierraleone";
+
+	public static final Integer STILL_BIRTH = 1, NEONATAL_DEATH = 2, MATERNAL_DEATH = 3;
 
 	public static final Integer ARCHIVED_CASE = 9;
 

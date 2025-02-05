@@ -60,7 +60,8 @@
 		</div>
 		<div class="col-md-3">
 			<label class="control-label" th:text="#{label.case_death}"></label>&nbsp;
-			<div class="control-label fw-bold" th:text="${selected.case_death==1}?'Stillbirth':'Early Neonatal Death'">
+			<div class="control-label fw-bold"
+				th:text="${selected.case_death==1}?'Stillbirth':(${selected.case_death==2}?'Early Neonatal Death':'Maternal Death')">
 			</div>
 		</div>
 	</div>
@@ -77,12 +78,12 @@
 <div th:fragment="case_biodata">
 	<h4 th:text="#{title.biodata}" class="text-light p-1 rounded" style="background-color: rgb(57, 106, 147)"></h4>
 	<div th:insert="fragments/update-case :: core_data"></div>
-	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.biodata_sex}"></label>
+
+	<div class="row mb-3" id="biodata_motherdob">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.biodata_mdob}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{biodata.biodata_sex}">
-				<option th:each="option : ${sex_options}" th:value="${option.key}" th:text="${option.value}"></option>
-			</select>
+			<input id="biodata_mdob" class="form-control form-control-sm datepicker"
+				th:field="*{biodata.biodata_mdob}" />
 		</div>
 	</div>
 	<div class="row mb-3">
@@ -101,8 +102,72 @@
 			</select>
 		</div>
 	</div>
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.biodata_maddress}"></label>
+		<div class="col-md-6">
+			<textarea rows="4" class="form-control form-control-sm" th:field="*{biodata.biodata_maddress}">
+			</textarea>
+		</div>
+	</div>
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.biodata_location}"></label>
+		<div class="col-md-5">
+			<input type="text" maxlength="150" class="form-control form-control-sm"
+				th:field="*{biodata.biodata_location}" />
+		</div>
+	</div>
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.biodata_contact}"></label>
+		<div class="col-md-4">
+			<input type="text" maxlength="50" class="form-control form-control-sm"
+				th:field="*{biodata.biodata_contact}" />
+		</div>
+	</div>
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.biodata_work}"></label>
+		<div class="col-auto">
+			<select class="form-control form-control-sm" th:field="*{biodata.biodata_work}">
+				<option th:each="option : ${work_options}" th:value="${option.key}" th:text="${option.value}"></option>
+			</select>
+		</div>
+	</div>
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.biodata_marital}"></label>
+		<div class="col-auto">
+			<select class="form-control form-control-sm" th:field="*{biodata.biodata_marital}">
+				<option th:each="option : ${marital_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.biodata_religion}"></label>
+		<div class="col-auto">
+			<select class="form-control form-control-sm" th:field="*{biodata.biodata_religion}">
+				<option th:each="option : ${religion_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.biodata_ethnic}"></label>
+		<div class="col-auto">
+			<select class="form-control form-control-sm" th:field="*{biodata.biodata_ethnic}">
+				<option th:each="option : ${ethnic_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+	<div class="row mb-3" id="biodata_sex_div">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.biodata_sex}"></label>
+		<div class="col-auto">
+			<select id="biodata_sex" class="form-control form-control-sm" th:field="*{biodata.biodata_sex}">
+				<option th:each="option : ${sex_options}" th:value="${option.key}" th:text="${option.value}"></option>
+			</select>
+		</div>
+	</div>
 	<fieldset hidden=true>
-		<input th:field="*{biodata.biodata_uuid}" /> 
+		<input th:field="*{biodata.biodata_uuid}" />
 		<input th:field="*{biodata.case_uuid}" />
 	</fieldset>
 	<hr class="mb-2 bg-secondary">
@@ -227,7 +292,7 @@
 				<div id="referral_file" class="custom-file">
 					<input type="file" class="custom-file-input" id="customFile" th:field="*{referral.file}"
 						accept="image/png, image/jpg, image/jpeg">
-						<input th:field="*{referral.referral_file}" type="hidden"/>
+					<input th:field="*{referral.referral_file}" type="hidden" />
 				</div>
 			</div>
 		</div>
@@ -524,169 +589,185 @@
 
 
 
-
-
 <div th:fragment="case_labour">
 	<h4 th:text="#{title.labour}" class="text-light p-1 rounded" style="background-color: rgb(57, 106, 147)"></h4>
 	<div th:insert="fragments/update-case :: core_data"></div>
 
 	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.labour_datetime}"></label>
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.labour_occured}"></label>
 		<div class="col-auto">
-			<div class="row">
-				<div class="col-auto">
-					<input id="labour_seedate" class="form-control form-control-sm datepicker"
-						th:field="*{labour.labour_seedate}" />
-					<small class="badge bg-light text-danger" th:if="${#fields.hasErrors('labour.labour_seedate')}"
-						th:errors="*{labour.labour_seedate}">error</small>
-				</div>
-				<div class="col-auto">
-					<input id="labour_seetime" class="form-control form-control-sm timepicker"
-						th:field="*{labour.labour_seetime}" />
-					<small class="badge bg-light text-danger" th:if="${#fields.hasErrors('labour.labour_seetime')}"
-						th:errors="*{labour.labour_seetime}">error</small>
-				</div>
-				<div class="col-auto">
-					<label>
-						<input id="labour_seedatetime_notstated" type="checkbox" value="1" class="custom-checkbox"
-							th:field="*{labour.labour_seedatetime_notstated}"
-							onchange="changeLabourSeeDateTimeToREADONLYDynamic(this)" />
-						[[#{label.notstated}]]
-					</label>
-				</div>
-
-			</div>
-		</div>
-	</div>
-	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.labour_seeperiod}"></label>
-		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{labour.labour_seeperiod}">
-				<option th:each="option : ${period_options}" th:value="${option.key}" th:text="${option.value}">
-				</option>
-			</select>
-			<small class="badge bg-light text-danger" th:if="${#fields.hasErrors('labour.labour_seeperiod')}"
-				th:errors="*{labour.labour_seeperiod}">error</small>
-
-		</div>
-	</div>
-	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.labour_herbalaug}"></label>
-		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{labour.labour_herbalaug}">
+			<select id="labour_occured" class="form-control form-control-sm" th:field="*{labour.labour_occured}"
+				onchange="changeLabourViewDynamic(this)">
 				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
 		</div>
 	</div>
-	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.labour_startmode}"></label>
-		<div class="col-auto">
-			<select id="labour_startmode" class="form-control form-control-sm" th:field="*{labour.labour_startmode}"
-				onchange="changeLabourStartmodeOtherToNA(this)">
-				<option th:each="option : ${startmode_options}" th:value="${option.key}" th:text="${option.value}">
-				</option>
-			</select>
-		</div>
-	</div>
-	<fieldset id="labour_startmode_fieldset">
+
+	<fieldset id="labour_occured_fieldset">
 		<div class="row mb-3">
-			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.labour_partograph}"></label>
+			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.labour_datetime}"></label>
 			<div class="col-auto">
-				<select id="labour_partograph" class="form-control form-control-sm"
-					th:field="*{labour.labour_partograph}">
-					<option th:each="option : ${yesnodkna_options}" th:value="${option.key}" th:text="${option.value}">
+				<div class="row">
+					<div class="col-auto">
+						<input id="labour_seedate" class="form-control form-control-sm datepicker"
+							th:field="*{labour.labour_seedate}" />
+						<small class="badge bg-light text-danger" th:if="${#fields.hasErrors('labour.labour_seedate')}"
+							th:errors="*{labour.labour_seedate}">error</small>
+					</div>
+					<div class="col-auto">
+						<input id="labour_seetime" class="form-control form-control-sm timepicker"
+							th:field="*{labour.labour_seetime}" />
+						<small class="badge bg-light text-danger" th:if="${#fields.hasErrors('labour.labour_seetime')}"
+							th:errors="*{labour.labour_seetime}">error</small>
+					</div>
+					<div class="col-auto">
+						<label>
+							<input id="labour_seedatetime_notstated" type="checkbox" value="1" class="custom-checkbox"
+								th:field="*{labour.labour_seedatetime_notstated}"
+								onchange="changeLabourSeeDateTimeToREADONLYDynamic(this)" />
+							[[#{label.notstated}]]
+						</label>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<div class="row mb-3">
+			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.labour_seeperiod}"></label>
+			<div class="col-auto">
+				<select id="labour_seeperiod" class="form-control form-control-sm"
+					th:field="*{labour.labour_seeperiod}">
+					<option th:each="option : ${period_options}" th:value="${option.key}" th:text="${option.value}">
+					</option>
+				</select>
+				<small class="badge bg-light text-danger" th:if="${#fields.hasErrors('labour.labour_seeperiod')}"
+					th:errors="*{labour.labour_seeperiod}">error</small>
+
+			</div>
+		</div>
+		<div class="row mb-3">
+			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.labour_herbalaug}"></label>
+			<div class="col-auto">
+				<select id="labour_herbalaug" class="form-control form-control-sm"
+					th:field="*{labour.labour_herbalaug}">
+					<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
 					</option>
 				</select>
 			</div>
 		</div>
 		<div class="row mb-3">
-			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.labour_lasttime1}"></label>
+			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.labour_startmode}"></label>
 			<div class="col-auto">
-				<div class="row">
-					<div class="col-auto">
-						<div class="row">
-							<div class="col-md-6">
-								<select id="labour_lasthour1" class="form-control form-control-sm"
-									th:field="*{labour.labour_lasthour1}">
-									<option th:each="option : ${hour_options}" th:value="${option.key}"
-										th:text="${option.value}">
-									</option>
-								</select>
-							</div>
-							<div class="col-md-6">
-								<select id="labour_lastminute1" class="form-control form-control-sm"
-									th:field="*{labour.labour_lastminute1}">
-									<option th:each="option : ${minute_options}" th:value="${option.key}"
-										th:text="${option.value}">
-									</option>
-								</select>
+				<select id="labour_startmode" class="form-control form-control-sm" th:field="*{labour.labour_startmode}"
+					onchange="changeLabourStartmodeOtherToNA(this)">
+					<option th:each="option : ${startmode_options}" th:value="${option.key}" th:text="${option.value}">
+					</option>
+				</select>
+			</div>
+		</div>
+		<fieldset id="labour_startmode_fieldset">
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label border-bottom" th:text="#{label.labour_partograph}"></label>
+				<div class="col-auto">
+					<select id="labour_partograph" class="form-control form-control-sm"
+						th:field="*{labour.labour_partograph}">
+						<option th:each="option : ${yesnodkna_options}" th:value="${option.key}"
+							th:text="${option.value}">
+						</option>
+					</select>
+				</div>
+			</div>
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label border-bottom" th:text="#{label.labour_lasttime1}"></label>
+				<div class="col-auto">
+					<div class="row">
+						<div class="col-auto">
+							<div class="row">
+								<div class="col-md-6">
+									<select id="labour_lasthour1" class="form-control form-control-sm"
+										th:field="*{labour.labour_lasthour1}">
+										<option th:each="option : ${hour_options}" th:value="${option.key}"
+											th:text="${option.value}">
+										</option>
+									</select>
+								</div>
+								<div class="col-md-6">
+									<select id="labour_lastminute1" class="form-control form-control-sm"
+										th:field="*{labour.labour_lastminute1}">
+										<option th:each="option : ${minute_options}" th:value="${option.key}"
+											th:text="${option.value}">
+										</option>
+									</select>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-		<div class="row mb-3">
-			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.labour_lasttime2}"></label>
-			<div class="col-auto">
-				<div class="row">
-					<div class="col-auto">
-						<div class="row">
-							<div class="col-md-6">
-								<select id="labour_lasthour2" class="form-control form-control-sm"
-									th:field="*{labour.labour_lasthour2}">
-									<option th:each="option : ${hour_options}" th:value="${option.key}"
-										th:text="${option.value}">
-									</option>
-								</select>
-							</div>
-							<div class="col-md-6">
-								<select id="labour_lastminute2" class="form-control form-control-sm"
-									th:field="*{labour.labour_lastminute2}">
-									<option th:each="option : ${minute_options}" th:value="${option.key}"
-										th:text="${option.value}">
-									</option>
-								</select>
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label border-bottom" th:text="#{label.labour_lasttime2}"></label>
+				<div class="col-auto">
+					<div class="row">
+						<div class="col-auto">
+							<div class="row">
+								<div class="col-md-6">
+									<select id="labour_lasthour2" class="form-control form-control-sm"
+										th:field="*{labour.labour_lasthour2}">
+										<option th:each="option : ${hour_options}" th:value="${option.key}"
+											th:text="${option.value}">
+										</option>
+									</select>
+								</div>
+								<div class="col-md-6">
+									<select id="labour_lastminute2" class="form-control form-control-sm"
+										th:field="*{labour.labour_lastminute2}">
+										<option th:each="option : ${minute_options}" th:value="${option.key}"
+											th:text="${option.value}">
+										</option>
+									</select>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-	</fieldset>
-	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.labour_complications}"></label>
-		<div class="col-auto">
-			<select id="labour_complications" class="form-control form-control-sm"
-				th:field="*{labour.labour_complications}" onchange="changeLabourComplicationOtherToNA(this)">
-				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
-				</option>
-			</select>
-		</div>
-	</div>
-	<fieldset id="labour_complications_fieldset">
+		</fieldset>
 		<div class="row mb-3">
-			<label class="col-md-4 col-form-label" th:text="#{label.complications}"></label>
-			<div class="col-md-8">
-				<div class="row">
-					<div class="col-md-6" th:each="option : ${complication_options}">
-						<label class="form-label fw-bold"> <input class="complication_options" type="checkbox"
-								th:field="*{labour.complications}" th:value="${option.complication_name}" />
-							[[${option.complication_name}]]
-						</label>
+			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.labour_complications}"></label>
+			<div class="col-auto">
+				<select id="labour_complications" class="form-control form-control-sm"
+					th:field="*{labour.labour_complications}" onchange="changeLabourComplicationOtherToNA(this)">
+					<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+					</option>
+				</select>
+			</div>
+		</div>
+		<fieldset id="labour_complications_fieldset">
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label" th:text="#{label.complications}"></label>
+				<div class="col-md-8">
+					<div class="row">
+						<div class="col-md-6" th:each="option : ${complication_options}">
+							<label class="form-label fw-bold"> <input class="complication_options" type="checkbox"
+									th:field="*{labour.complications}" th:value="${option.complication_name}" />
+								[[${option.complication_name}]]
+							</label>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-		<div class="row mb-3">
-			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.new_complications}"></label>
-			<div class="col-md-8">
-				<textarea id="new_complications" rows="5" class="form-control form-control-sm"
-					th:field="*{labour.new_complications}" th:placeholder="#{hold.complication.new_line}"></textarea>
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label border-bottom" th:text="#{label.new_complications}"></label>
+				<div class="col-md-8">
+					<textarea id="new_complications" rows="5" class="form-control form-control-sm"
+						th:field="*{labour.new_complications}"
+						th:placeholder="#{hold.complication.new_line}"></textarea>
+				</div>
 			</div>
-		</div>
+		</fieldset>
 	</fieldset>
+
 	<fieldset hidden=true>
 		<input th:field="*{labour.labour_uuid}" /> <input th:field="*{labour.case_uuid}" />
 	</fieldset>
@@ -711,50 +792,64 @@
 	<div th:insert="fragments/update-case :: core_data"></div>
 
 	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.delivery_datetime}"></label>
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.delivery_occured}"></label>
 		<div class="col-auto">
-			<div class="row">
-				<div class="col-auto">
-					<input id="delivery_date" class="form-control form-control-sm datepicker"
-						th:field="*{delivery.delivery_date}" />
-					<small class="badge bg-light text-danger" th:if="${#fields.hasErrors('delivery.delivery_date')}"
-						th:errors="*{delivery.delivery_date}">error</small>
-				</div>
-				<div class="col-auto">
-					<input id="delivery_time" class="form-control form-control-sm timepicker"
-						th:field="*{delivery.delivery_time}" />
-					<small class="badge bg-light text-danger" th:if="${#fields.hasErrors('delivery.delivery_time')}"
-						th:errors="*{delivery.delivery_time}">error</small>
-				</div>
-				<div class="col-auto">
-					<label>
-						<input id="delivery_datetime_notstated" type="checkbox" value="1" class="custom-checkbox"
-							th:field="*{delivery.delivery_datetime_notstated}"
-							onchange="changeDeliveryDateTimeToREADONLYDynamic(this)" />
-						[[#{label.notstated}]]
-					</label>
+			<select id="delivery_occured" class="form-control form-control-sm" th:field="*{delivery.delivery_occured}"
+				onchange="changeDeliveryViewDynamic(this)">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<fieldset id="delivery_occured_fieldset">
+		<div class="row mb-3">
+			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.delivery_datetime}"></label>
+			<div class="col-auto">
+				<div class="row">
+					<div class="col-auto">
+						<input id="delivery_date" class="form-control form-control-sm datepicker"
+							th:field="*{delivery.delivery_date}" />
+						<small class="badge bg-light text-danger" th:if="${#fields.hasErrors('delivery.delivery_date')}"
+							th:errors="*{delivery.delivery_date}">error</small>
+					</div>
+					<div class="col-auto">
+						<input id="delivery_time" class="form-control form-control-sm timepicker"
+							th:field="*{delivery.delivery_time}" />
+						<small class="badge bg-light text-danger" th:if="${#fields.hasErrors('delivery.delivery_time')}"
+							th:errors="*{delivery.delivery_time}">error</small>
+					</div>
+					<div class="col-auto">
+						<label>
+							<input id="delivery_datetime_notstated" type="checkbox" value="1" class="custom-checkbox"
+								th:field="*{delivery.delivery_datetime_notstated}"
+								onchange="changeDeliveryDateTimeToREADONLYDynamic(this)" />
+							[[#{label.notstated}]]
+						</label>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.delivery_period}"></label>
-		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{delivery.delivery_period}">
-				<option th:each="option : ${period_options}" th:value="${option.key}" th:text="${option.value}">
-				</option>
-			</select>
-			<small class="badge bg-light text-danger" th:if="${#fields.hasErrors('delivery.delivery_period')}"
-				th:errors="*{delivery.delivery_period}">error</small>
+		<div class="row mb-3">
+			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.delivery_period}"></label>
+			<div class="col-auto">
+				<select id="delivery_period" class="form-control form-control-sm"
+					th:field="*{delivery.delivery_period}">
+					<option th:each="option : ${period_options}" th:value="${option.key}" th:text="${option.value}">
+					</option>
+				</select>
+				<small class="badge bg-light text-danger" th:if="${#fields.hasErrors('delivery.delivery_period')}"
+					th:errors="*{delivery.delivery_period}">error</small>
+			</div>
 		</div>
-	</div>
-	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.delivery_weight}"></label>
-		<div class="col-auto">
-			<input type="number" min="0" step="0.1" class="form-control form-control-sm"
-				th:field="*{delivery.delivery_weight}" />
+		<div class="row mb-3">
+			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.delivery_weight}"></label>
+			<div class="col-auto">
+				<input id="delivery_weight" type="number" min="0" step="0.1" class="form-control form-control-sm"
+					th:field="*{delivery.delivery_weight}" />
+			</div>
 		</div>
-	</div>
+	</fieldset>
 
 	<fieldset hidden=true>
 		<input th:field="*{delivery.delivery_uuid}" /> <input th:field="*{delivery.case_uuid}" />
@@ -977,10 +1072,11 @@
 			</select>
 		</div>
 	</div>
-	<div class="row mb-3">
+	<div class="row mb-3" id="birth_motheroutcome_div">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.birth_motheroutcome}"></label>
 		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{birth.birth_motheroutcome}">
+			<select id="birth_motheroutcome" class="form-control form-control-sm"
+				th:field="*{birth.birth_motheroutcome}">
 				<option th:each="option : ${motheroutcome_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
@@ -1175,7 +1271,7 @@
 				</div>
 				<div class="col-auto">
 					<label>
-						<input id="babydeath.baby_ddatetime_notstated" type="checkbox" value="1" class="custom-checkbox"
+						<input id="baby_ddatetime_notstated" type="checkbox" value="1" class="custom-checkbox"
 							th:field="*{babydeath.baby_ddatetime_notstated}"
 							onchange="changeBabydDateTimeToREADONLYDynamic(this)" />
 						[[#{label.notstated}]]
@@ -1210,6 +1306,534 @@
 </div>
 <!-- baby death end -->
 
+<!--mother's death-->
+<div th:fragment="case_mdeath">
+	<h4 th:text="#{title.mdeath}" class="text-light p-1 rounded" style="background-color: rgb(57, 106, 147)"></h4>
+	<div th:insert="fragments/update-case :: core_data"></div>
+
+
+	<h4>[[#{label.mdeath_early}]]</h4>
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_early_evacuation}"></label>
+		<div class="col-auto">
+			<select id="mdeath_early_evacuation" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_early_evacuation}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_early_antibiotic}"></label>
+		<div class="col-auto">
+			<select id="mdeath_early_antibiotic" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_early_antibiotic}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_early_laparotomy}"></label>
+		<div class="col-auto">
+			<select id="mdeath_early_laparotomy" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_early_laparotomy}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_early_hysterectomy}"></label>
+		<div class="col-auto">
+			<select id="mdeath_early_hysterectomy" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_early_hysterectomy}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_early_transfusion}"></label>
+		<div class="col-auto">
+			<select id="mdeath_early_transfusion" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_early_transfusion}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_early_antihyper}"></label>
+		<div class="col-auto">
+			<select id="mdeath_early_antihyper" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_early_antihyper}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_early_other}"></label>
+		<div class="col-md-6">
+			<textarea id="mdeath_early_other" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_early_other}">
+			</textarea>
+		</div>
+	</div>
+
+	<h4>[[#{label.mdeath_ante}]]</h4>
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_ante_transfusion}"></label>
+		<div class="col-auto">
+			<select id="mdeath_ante_transfusion" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_ante_transfusion}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_ante_antibiotic}"></label>
+		<div class="col-auto">
+			<select id="mdeath_ante_antibiotic" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_ante_antibiotic}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_ante_externalv}"></label>
+		<div class="col-auto">
+			<select id="mdeath_ante_externalv" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_ante_externalv}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_ante_magsulphate}"></label>
+		<div class="col-auto">
+			<select id="mdeath_ante_magsulphate" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_ante_magsulphate}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_ante_diazepam}"></label>
+		<div class="col-auto">
+			<select id="mdeath_ante_diazepam" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_ante_diazepam}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_ante_antihyper}"></label>
+		<div class="col-auto">
+			<select id="mdeath_ante_antihyper" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_ante_antihyper}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_ante_hysterotomy}"></label>
+		<div class="col-auto">
+			<select id="mdeath_ante_hysterotomy" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_ante_hysterotomy}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_ante_other}"></label>
+		<div class="col-md-6">
+			<textarea id="mdeath_ante_other" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_ante_other}">
+			</textarea>
+		</div>
+	</div>
+
+
+	<h4>[[#{label.mdeath_intra}]]</h4>
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_intra_instrumental}"></label>
+		<div class="col-auto">
+			<select id="mdeath_intra_instrumental" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_intra_instrumental}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_intra_antibiotic}"></label>
+		<div class="col-auto">
+			<select id="mdeath_intra_antibiotic" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_intra_antibiotic}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_intra_caesarian}"></label>
+		<div class="col-auto">
+			<select id="mdeath_intra_caesarian" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_intra_caesarian}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_intra_hysterectomy}"></label>
+		<div class="col-auto">
+			<select id="mdeath_intra_hysterectomy" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_intra_hysterectomy}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_intra_transfusion}"></label>
+		<div class="col-auto">
+			<select id="mdeath_intra_transfusion" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_intra_transfusion}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_intra_magsulphate}"></label>
+		<div class="col-auto">
+			<select id="mdeath_intra_magsulphate" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_intra_magsulphate}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_intra_antihyper}"></label>
+		<div class="col-auto">
+			<select id="mdeath_intra_antihyper" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_intra_antihyper}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_intra_diazepam}"></label>
+		<div class="col-auto">
+			<select id="mdeath_intra_diazepam" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_intra_diazepam}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_intra_other}"></label>
+		<div class="col-md-6">
+			<textarea id="mdeath_intra_other" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_intra_other}">
+			</textarea>
+		</div>
+	</div>
+
+	<h4>[[#{label.mdeath_postpart}]]</h4>
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_postpart_evacuation}"></label>
+		<div class="col-auto">
+			<select id="mdeath_postpart_evacuation" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_postpart_evacuation}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_postpart_antibiotic}"></label>
+		<div class="col-auto">
+			<select id="mdeath_postpart_antibiotic" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_postpart_antibiotic}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_postpart_laparotomy}"></label>
+		<div class="col-auto">
+			<select id="mdeath_postpart_laparotomy" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_postpart_laparotomy}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_postpart_hysterectomy}"></label>
+		<div class="col-auto">
+			<select id="mdeath_postpart_hysterectomy" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_postpart_hysterectomy}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_postpart_transfusion}"></label>
+		<div class="col-auto">
+			<select id="mdeath_postpart_transfusion" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_postpart_transfusion}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_postpart_magsulphate}"></label>
+		<div class="col-auto">
+			<select id="mdeath_postpart_magsulphate" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_postpart_magsulphate}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_postpart_placentaremoval}"></label>
+		<div class="col-auto">
+			<select id="mdeath_postpart_placentaremoval" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_postpart_placentaremoval}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_postpart_antihyper}"></label>
+		<div class="col-auto">
+			<select id="mdeath_postpart_antihyper" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_postpart_antihyper}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_postpart_diazepam}"></label>
+		<div class="col-auto">
+			<select id="mdeath_postpart_diazepam" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_postpart_diazepam}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_postpart_other}"></label>
+		<div class="col-md-6">
+			<textarea class="form-control form-control-sm" th:field="*{mdeath.mdeath_postpart_other}">
+			</textarea>
+		</div>
+	</div>
+
+	<h4>[[#{label.mdeath_other}]]</h4>
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_other_anaesthga}"></label>
+		<div class="col-auto">
+			<select id="mdeath_other_anaesthga" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_other_anaesthga}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_other_epidural}"></label>
+		<div class="col-auto">
+			<select id="mdeath_other_epidural" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_other_epidural}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_other_spinal}"></label>
+		<div class="col-auto">
+			<select id="mdeath_other_spinal" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_other_spinal}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_other_local}"></label>
+		<div class="col-auto">
+			<select id="mdeath_other_local" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_other_local}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_other_invasive}"></label>
+		<div class="col-auto">
+			<select id="mdeath_other_invasive" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_other_invasive}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_other_antihyper}"></label>
+		<div class="col-auto">
+			<select id="mdeath_other_antihyper" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_other_antihyper}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_other_icuventilation}"></label>
+		<div class="col-auto">
+			<select id="mdeath_other_icuventilation" class="form-control form-control-sm"
+				th:field="*{mdeath.mdeath_other_icuventilation}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_new_intervention}"></label>
+		<div class="col-md-6">
+			<textarea class="form-control form-control-sm" th:field="*{mdeath.mdeath_new_intervention}">
+			</textarea>
+		</div>
+	</div>
+
+	<hr class="mb-5" />
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_datetime}"></label>
+		<div class="col-auto">
+			<div class="row">
+				<div class="col-auto">
+					<input id="mdeath_date" class="form-control form-control-sm datepicker"
+						th:field="*{mdeath.mdeath_date}" />
+					<small class="badge bg-light text-danger" th:if="${#fields.hasErrors('mdeath.mdeath_date')}"
+						th:errors="*{mdeath.mdeath_date}">error</small>
+				</div>
+				<div class="col-auto">
+					<input id="mdeath_time" class="form-control form-control-sm timepicker"
+						th:field="*{mdeath.mdeath_time}" />
+					<small class="badge bg-light text-danger" th:if="${#fields.hasErrors('mdeath.mdeath_time')}"
+						th:errors="*{mdeath.mdeath_time}">error</small>
+				</div>
+				<div class="col-auto">
+					<label>
+						<input id="mdeath_datetime_notstated" type="checkbox" value="1" class="custom-checkbox"
+							th:field="*{mdeath.mdeath_datetime_notstated}"
+							onchange="changeMdeathDateTimeToREADONLYDynamic(this)" />
+						[[#{label.notstated}]]
+					</label>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_autopsy}"></label>
+		<div class="col-auto">
+			<select id="mdeath_autopsy" class="form-control form-control-sm" th:field="*{mdeath.mdeath_autopsy}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_autopsy_date}"></label>
+		<div class="col-auto">
+			<input id="mdeath_autopsy_date" class="form-control form-control-sm datepicker"
+				th:field="*{mdeath.mdeath_autopsy_date}" />
+		</div>
+	</div>
+
+
+	<fieldset hidden=true>
+		<input th:field="*{mdeath.mdeath_uuid}" />
+		<input th:field="*{mdeath.case_uuid}" />
+	</fieldset>
+
+	<hr class="mb-2 bg-secondary">
+	<div class="">
+		<a class="btn btn-light" th:utext="#{prev.button}"
+			th:href="@{/registry/edit/{id}?page=7(id=${selected.case_uuid})}"></a>
+		<button class="btn btn-primary" type="submit" th:utext="#{save.stay.button}"></button>
+		<button class="btn btn-primary" type="submit"
+			th:formaction="@{/registry/edit/{id}?page={pg}&go=1(id=${selected.case_uuid}, pg=${page})}"
+			th:utext="#{save.next.button}"></button>
+	</div>
+
+</div>
+<!--mother's death end-->
 
 
 <div th:fragment="case_notes">
@@ -1221,7 +1845,7 @@
 			<div class="custom-file">
 				<input type="file" class="custom-file-input" id="customFile" th:field="*{notes.file}"
 					accept="image/png,image/jpg,image/jpeg">
-						<input th:field="*{notes.notes_file}" type="hidden"/>
+				<input th:field="*{notes.notes_file}" type="hidden" />
 			</div>
 		</div>
 	</div>

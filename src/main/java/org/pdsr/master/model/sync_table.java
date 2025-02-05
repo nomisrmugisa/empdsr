@@ -45,6 +45,12 @@ public class sync_table implements Serializable {
 	@Column
 	private String sync_url;
 		
+	@Column
+	private String sync_redcap_url;
+		
+	@Column
+	private String sync_redcap_token;
+		
 	@Lob
 	@Column
 	private String sync_json;
@@ -95,6 +101,22 @@ public class sync_table implements Serializable {
 
 	public void setSync_url(String sync_url) {
 		this.sync_url = sync_url;
+	}
+
+	public String getSync_redcap_url() {
+		return sync_redcap_url;
+	}
+
+	public void setSync_redcap_url(String sync_redcap_url) {
+		this.sync_redcap_url = sync_redcap_url;
+	}
+
+	public String getSync_redcap_token() {
+		return sync_redcap_token;
+	}
+
+	public void setSync_redcap_token(String sync_redcap_token) {
+		this.sync_redcap_token = sync_redcap_token;
 	}
 
 	public String getSync_json() {

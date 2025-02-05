@@ -1,6 +1,7 @@
 package org.pdsr.slave.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -10,8 +11,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 public class case_biodata implements Serializable {
@@ -35,11 +40,40 @@ public class case_biodata implements Serializable {
 	private Integer biodata_sex;
 
 	@Column
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
+	private Date biodata_mdob;
+
+	@Column
 	private Integer biodata_mage;
 
 	@Column
 	private Integer biodata_medu;
 	
+	@Lob
+	@Column
+	private String biodata_maddress;
+
+	@Lob
+	@Column
+	private String biodata_location;
+	
+	@Lob
+	@Column
+	private String biodata_contact;
+	
+	@Column
+	private Integer biodata_work;
+	
+	@Column
+	private Integer biodata_marital;
+	
+	@Column
+	private Integer biodata_religion;
+	
+	@Column
+	private Integer biodata_ethnic;
+		
 	@Column
 	private Integer data_complete;
 
@@ -88,6 +122,70 @@ public class case_biodata implements Serializable {
 		this.biodata_medu = biodata_medu;
 	}
 	
+	public String getBiodata_location() {
+		return biodata_location;
+	}
+
+	public void setBiodata_location(String biodata_location) {
+		this.biodata_location = biodata_location;
+	}
+
+	public Date getBiodata_mdob() {
+		return biodata_mdob;
+	}
+
+	public void setBiodata_mdob(Date biodata_mdob) {
+		this.biodata_mdob = biodata_mdob;
+	}
+
+	public String getBiodata_maddress() {
+		return biodata_maddress;
+	}
+
+	public void setBiodata_maddress(String biodata_maddress) {
+		this.biodata_maddress = biodata_maddress;
+	}
+
+	public String getBiodata_contact() {
+		return biodata_contact;
+	}
+
+	public void setBiodata_contact(String biodata_contact) {
+		this.biodata_contact = biodata_contact;
+	}
+
+	public Integer getBiodata_work() {
+		return biodata_work;
+	}
+
+	public void setBiodata_work(Integer biodata_work) {
+		this.biodata_work = biodata_work;
+	}
+
+	public Integer getBiodata_marital() {
+		return biodata_marital;
+	}
+
+	public void setBiodata_marital(Integer biodata_marital) {
+		this.biodata_marital = biodata_marital;
+	}
+
+	public Integer getBiodata_religion() {
+		return biodata_religion;
+	}
+
+	public void setBiodata_religion(Integer biodata_religion) {
+		this.biodata_religion = biodata_religion;
+	}
+
+	public Integer getBiodata_ethnic() {
+		return biodata_ethnic;
+	}
+
+	public void setBiodata_ethic(Integer biodata_ethnic) {
+		this.biodata_ethnic = biodata_ethnic;
+	}
+
 	public Integer getData_complete() {
 		return data_complete;
 	}

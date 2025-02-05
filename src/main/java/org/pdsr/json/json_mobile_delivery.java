@@ -1,102 +1,42 @@
-package org.pdsr.master.model;
+package org.pdsr.json;
 
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.MapsId;
-import javax.persistence.OneToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
-@Entity
-public class case_delivery implements Serializable {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class json_mobile_delivery implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@NotNull
-	@Size(min = 1, max = 80)
-	private String delivery_uuid;
+	private String record_id;
 
-	@MapsId
-	@OneToOne(optional = false, cascade = CascadeType.ALL)
-	@JoinColumn(name = "case_uuid", referencedColumnName = "case_uuid", insertable = true, updatable = true)
-	private case_identifiers case_uuid;
-
-	@Column
-	private Integer delivery_occured;
-	
-	@Column
-	@Temporal(TemporalType.DATE)
-	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date delivery_date;
 
-	
-	@Column
 	private Integer delivery_hour;
 	
-	
-	@Column
 	private Integer delivery_minute;
 	
-	@Column
 	private Double delivery_weight;
 	
-	
-	@Column
-	@Temporal(TemporalType.TIME)
-	@DateTimeFormat(pattern = "HH:mm")
 	private Date delivery_time;
 
-	@Column
 	private Integer delivery_datetime_notstated;
 	
-	@Column
 	private Integer delivery_period;//dawn,morning,afternoon,evening,night
 	
-	
-	@Column
 	private Integer data_complete;
 
-	@Lob
-	@Column
-	private String delivery_json;
-		
-	public String getDelivery_json() {
-		return delivery_json;
+	public String getRecord_id() {
+		return record_id;
 	}
 
-	public void setDelivery_json(String delivery_json) {
-		this.delivery_json = delivery_json;
-	}
-
-	public String getDelivery_uuid() {
-		return delivery_uuid;
-	}
-
-	public void setDelivery_uuid(String delivery_uuid) {
-		this.delivery_uuid = delivery_uuid;
-	}
-
-	public case_identifiers getCase_uuid() {
-		return case_uuid;
-	}
-
-	public void setCase_uuid(case_identifiers case_uuid) {
-		this.case_uuid = case_uuid;
+	public void setRecord_id(String record_id) {
+		this.record_id = record_id;
 	}
 
 	public Date getDelivery_date() {
@@ -163,19 +103,11 @@ public class case_delivery implements Serializable {
 		this.delivery_datetime_notstated = delivery_datetime_notstated;
 	}
 
-	public Integer getDelivery_occured() {
-		return delivery_occured;
-	}
-
-	public void setDelivery_occured(Integer delivery_occured) {
-		this.delivery_occured = delivery_occured;
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((delivery_uuid == null) ? 0 : delivery_uuid.hashCode());
+		result = prime * result + ((record_id == null) ? 0 : record_id.hashCode());
 		return result;
 	}
 
@@ -187,13 +119,18 @@ public class case_delivery implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		case_delivery other = (case_delivery) obj;
-		if (delivery_uuid == null) {
-			if (other.delivery_uuid != null)
+		json_mobile_delivery other = (json_mobile_delivery) obj;
+		if (record_id == null) {
+			if (other.record_id != null)
 				return false;
-		} else if (!delivery_uuid.equals(other.delivery_uuid))
+		} else if (!record_id.equals(other.record_id))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return  record_id;
 	}
 		
 

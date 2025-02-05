@@ -2,15 +2,14 @@ package org.pdsr.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -25,17 +24,13 @@ import java.util.stream.Stream;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.pdsr.CONSTANTS;
 import org.pdsr.EmailService;
 import org.pdsr.InternetAvailabilityChecker;
+import org.pdsr.ServiceApi;
 import org.pdsr.json.json_data;
+import org.pdsr.json.json_redcap;
 import org.pdsr.master.model.abnormality_table;
 import org.pdsr.master.model.case_antenatal;
 import org.pdsr.master.model.case_babydeath;
@@ -45,6 +40,7 @@ import org.pdsr.master.model.case_delivery;
 import org.pdsr.master.model.case_fetalheart;
 import org.pdsr.master.model.case_identifiers;
 import org.pdsr.master.model.case_labour;
+import org.pdsr.master.model.case_mdeath;
 import org.pdsr.master.model.case_notes;
 import org.pdsr.master.model.case_pregnancy;
 import org.pdsr.master.model.case_referral;
@@ -67,6 +63,7 @@ import org.pdsr.master.repo.CaseBirthRepository;
 import org.pdsr.master.repo.CaseDeliveryRepository;
 import org.pdsr.master.repo.CaseFetalheartRepository;
 import org.pdsr.master.repo.CaseLabourRepository;
+import org.pdsr.master.repo.CaseMdeathRepository;
 import org.pdsr.master.repo.CaseNotesRepository;
 import org.pdsr.master.repo.CasePregnancyRepository;
 import org.pdsr.master.repo.CaseReferralRepository;
@@ -82,6 +79,7 @@ import org.pdsr.master.repo.ResuscitationTableRepository;
 import org.pdsr.master.repo.RiskTableRepository;
 import org.pdsr.master.repo.SyncTableRepository;
 import org.pdsr.master.repo.UserTableRepository;
+import org.pdsr.pojos.RedcapExtraction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ClassPathResource;
@@ -107,6 +105,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Controller
 @RequestMapping("/registry")
 public class CaseEntryController {
+
+	@Autowired
+	private ServiceApi api;
 
 	@Autowired
 	private SyncTableRepository syncRepo;
@@ -172,6 +173,9 @@ public class CaseEntryController {
 	private CaseBabyRepository babyRepo;
 
 	@Autowired
+	private CaseMdeathRepository mdeathRepo;
+
+	@Autowired
 	private CaseNotesRepository notRepo;
 
 	@Autowired
@@ -200,7 +204,379 @@ public class CaseEntryController {
 		model.addAttribute("items", entered_cases);
 		model.addAttribute("back", "back");
 
+		RedcapExtraction redcap = new RedcapExtraction();
+		model.addAttribute("redcap", redcap);
+
 		return "registry/case-retrieve";
+	}
+
+	@GetMapping("/redcap")
+	public String redcap(Principal principal, Model model) {
+
+		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+			model.addAttribute("activated", "0");
+			return "home";
+		}
+
+		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		model.addAttribute("myf", synctable.getSync_name());
+
+		RedcapExtraction redcap = new RedcapExtraction();
+		redcap.setProcessingStage(0);
+		model.addAttribute("redcap", redcap);
+		model.addAttribute("back", "back");
+
+		return "registry/case-redcap";
+	}
+
+	@Transactional
+	@PostMapping("/redcap")
+	public String redcap(Principal principal, Model model, @ModelAttribute RedcapExtraction redcap) {
+
+		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+			model.addAttribute("activated", "0");
+			return "home";
+		}
+
+		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		model.addAttribute("myf", synctable.getSync_name());
+
+		List<case_identifiers> entered_cases = caseRepo.findByDraftCases();// find cases not yet submitted
+		entered_cases.addAll(caseRepo.findByPendingCase_status(1));// find cases just entered and pending review
+
+		// pull red-cap cases within a date range
+		if (redcap.getProcessingStage() == null || redcap.getProcessingStage() == 0) {
+			List<json_redcap> redcap_cases = api.extractRedCapIdentifiers(redcap.getFrom(), redcap.getTo());
+
+			List<String> uploadErrors = new ArrayList<>();
+
+//			int counter = 1;
+			a: for (json_redcap elem : redcap_cases) {
+
+				if (elem.getCase_date() == null || elem.getCase_date() instanceof Date || elem.getCase_death() == null
+						|| elem.getCase_mid() == null || elem.getCase_mid().trim().isEmpty()
+						|| elem.getCase_mname() == null || elem.getCase_mname().trim().isEmpty()) {
+
+					String error = "Record ID : " + elem.getRecord_id()
+							+ " has no basic identity information. Was not uploaded";
+
+					uploadErrors.add(error);
+
+					continue a;
+				}
+
+				final String case_uuid = UUID.randomUUID().toString();
+
+				case_identifiers page1 = new case_identifiers();
+				page1.setCase_uuid(case_uuid);
+				page1.setCase_id(
+						"T" + elem.getCase_death() + "C" + (elem.getCase_date().getTime()) + elem.getRecord_id());
+
+				page1.setCase_date(elem.getCase_date());
+				page1.setCase_death(elem.getCase_death());
+				page1.setCase_mid(elem.getCase_mid());
+				page1.setCase_mname(elem.getCase_mname());
+
+				page1.setCase_status(0);// entry
+				page1.setData_sent(0);
+				page1.setCase_sync(synctable.getSync_code());
+				Optional<facility_table> facility = facilityRepo.findById(synctable.getSync_uuid());
+				page1.setFacility(facility.get());
+				caseRepo.save(page1);
+
+				case_biodata page2 = new case_biodata();
+				page2.setBiodata_uuid(case_uuid);
+				page2.setCase_uuid(page1);
+				page2.setBiodata_mage(elem.getBiodata_mage());
+				page2.setBiodata_sex(elem.getBiodata_sex());
+				page2.setBiodata_medu(elem.getBiodata_medu());
+				page2.setData_complete(elem.getCase_demographic_form_complete());
+				bioRepo.save(page2);
+
+				case_referral page3 = new case_referral();
+				page3.setReferral_uuid(case_uuid);
+				page3.setCase_uuid(page1);
+				page3.setReferral_case(elem.getReferral_case());
+				page3.setReferral_patient(elem.getReferral_patient());
+				page3.setReferral_source(elem.getReferral_source());
+				page3.setReferral_facility(elem.getReferral_facility());
+				page3.setReferral_date(elem.getReferral_date());
+				page3.setReferral_time(elem.getReferral_time());
+				{
+					Date time = page3.getReferral_time();
+					if (time != null) {
+						Calendar cal = Calendar.getInstance();
+						cal.setTime(time);
+						page3.setReferral_hour(cal.get(Calendar.HOUR_OF_DAY));
+						page3.setReferral_minute(cal.get(Calendar.MINUTE));
+					}
+				}
+				page3.setReferral_datetime_notstated(elem.getReferral_datetime_notstated());
+				page3.setReferral_adate(elem.getReferral_adate());
+				page3.setReferral_atime(elem.getReferral_atime());
+				{
+					Date time = page3.getReferral_atime();
+					if (time != null) {
+						Calendar cal = Calendar.getInstance();
+						cal.setTime(time);
+						page3.setReferral_ahour(cal.get(Calendar.HOUR_OF_DAY));
+						page3.setReferral_aminute(cal.get(Calendar.MINUTE));
+					}
+				}
+				page3.setReferral_adatetime_notstated(elem.getReferral_adatetime_notstated());
+				page3.setReferral_transport(elem.getReferral_transport());
+				page3.setReferral_notes(elem.getReferral_notes());
+				// can I pull the referral file uploaded?
+				page3.setData_complete(elem.getCase_referral_form_complete());
+				refRepo.save(page3);
+
+				case_pregnancy page4 = new case_pregnancy();
+				page4.setPregnancy_uuid(case_uuid);
+				page4.setCase_uuid(page1);
+				page4.setPregnancy_weeks(elem.getPregnancy_weeks());
+				page4.setPregnancy_days(elem.getPregnancy_days());
+				page4.setPregnancy_type(elem.getPregnancy_type());
+				page4.setData_complete(elem.getCase_pregnancy_form_complete());
+				preRepo.save(page4);
+
+				case_antenatal page5 = new case_antenatal();
+				page5.setAntenatal_uuid(case_uuid);
+				page5.setCase_uuid(page1);
+				page5.setAntenatal_gravida(elem.getAntenatal_gravida());
+				page5.setAntenatal_para(elem.getAntenatal_para());
+				page5.setAntenatal_attend(elem.getAntenatal_attend());
+				page5.setAntenatal_attendno(elem.getAntenatal_attendno());
+				page5.setAntenatal_facility(elem.getAntenatal_facility());
+				page5.setAntenatal_weeks(elem.getAntenatal_weeks());
+				page5.setAntenatal_days(elem.getAntenatal_days());
+				page5.setAntenatal_hiv(elem.getAntenatal_hiv());
+				page5.setAntenatal_art(elem.getAntenatal_art());
+				page5.setAntenatal_alcohol(elem.getAntenatal_alcohol());
+				page5.setAntenatal_smoker(elem.getAntenatal_smoker());
+				page5.setAntenatal_herbal(elem.getAntenatal_herbal());
+				page5.setAntenatal_folicacid(elem.getAntenatal_folicacid());
+				page5.setAntenatal_folicacid3m(elem.getAntenatal_folicacid3m());
+				page5.setAntenatal_tetanus(elem.getAntenatal_tetanus());
+				page5.setAntenatal_malprophy(elem.getAntenatal_malprophy());
+				page5.setAntenatal_risks(elem.getAntenatal_risks());
+				page5.setNew_risks(elem.getNew_risks());
+				page5.setData_complete(elem.getCase_antenatal_form_complete());
+				antRepo.save(page5);
+
+				case_labour page6 = new case_labour();
+				page6.setLabour_uuid(case_uuid);
+				page6.setCase_uuid(page1);
+				page6.setLabour_seedate(elem.getLabour_seedate());
+				page6.setLabour_seetime(elem.getLabour_seetime());
+				{
+					Date time = page6.getLabour_seetime();
+					if (time != null) {
+						Calendar cal = Calendar.getInstance();
+						cal.setTime(time);
+						page6.setLabour_seehour(cal.get(Calendar.HOUR_OF_DAY));
+						page6.setLabour_seeminute(cal.get(Calendar.MINUTE));
+					}
+				}
+				page6.setLabour_seedatetime_notstated(elem.getLabour_seedatetime_notstated());
+				page6.setLabour_seeperiod(elem.getLabour_seeperiod());
+				page6.setLabour_startmode(elem.getLabour_startmode());
+				page6.setLabour_herbalaug(elem.getLabour_herbalaug());
+				page6.setLabour_partograph(elem.getLabour_partograph());
+				page6.setLabour_lasthour1(elem.getLabour_lasthour1());
+				page6.setLabour_lastminute1(elem.getLabour_lastminute1());
+				page6.setLabour_lasthour2(elem.getLabour_lasthour2());
+				page6.setLabour_lastminute2(elem.getLabour_lastminute2());
+				page6.setLabour_complications(elem.getLabour_complications());
+				page6.setNew_complications(elem.getNew_complications());
+				page6.setData_complete(elem.getCase_labour_form_complete());
+				labRepo.save(page6);
+
+				case_delivery page7 = new case_delivery();
+				page7.setDelivery_uuid(case_uuid);
+				page7.setCase_uuid(page1);
+				page7.setDelivery_date(elem.getDelivery_date());
+				page7.setDelivery_time(elem.getDelivery_time());
+				{
+					Date time = page7.getDelivery_time();
+					if (time != null) {
+						Calendar cal = Calendar.getInstance();
+						cal.setTime(time);
+						page7.setDelivery_hour(cal.get(Calendar.HOUR_OF_DAY));
+						page7.setDelivery_minute(cal.get(Calendar.MINUTE));
+					}
+				}
+				page7.setDelivery_datetime_notstated(elem.getDelivery_datetime_notstated());
+				page7.setDelivery_period(elem.getDelivery_period());
+				page7.setData_complete(elem.getCase_delivery_form_complete());
+				delRepo.save(page7);
+
+				case_birth page8 = new case_birth();
+				page8.setBirth_uuid(case_uuid);
+				page8.setCase_uuid(page1);
+				page8.setBirth_mode(elem.getBirth_mode());
+				page8.setBirth_insistnormal(elem.getBirth_insistnormal());
+				page8.setBirth_csproposedate(elem.getBirth_csproposedate());
+				page8.setBirth_csproposetime(elem.getBirth_csproposetime());
+				{
+					Date time = page8.getBirth_csproposetime();
+					if (time != null) {
+						Calendar cal = Calendar.getInstance();
+						cal.setTime(time);
+						page8.setBirth_csproposehour(cal.get(Calendar.HOUR_OF_DAY));
+						page8.setBirth_csproposeminute(cal.get(Calendar.MINUTE));
+					}
+				}
+				page8.setBirth_provider(elem.getBirth_provider());
+				page8.setBirth_facility(elem.getBirth_facility());
+				page8.setBirth_abnormalities(elem.getBirth_abnormalities());
+				page8.setNew_abnormalities(elem.getNew_abnormalities());
+				page8.setBirth_cordfaults(elem.getBirth_cordfaults());
+				page8.setNew_cordfaults(elem.getNew_cordfaults());
+				page8.setBirth_placentachecks(elem.getBirth_placentachecks());
+				page8.setNew_placentachecks(elem.getNew_placentachecks());
+				page8.setBirth_liqourvolume(elem.getBirth_liqourvolume());
+				page8.setBirth_liqourcolor(elem.getBirth_liqourcolor());
+				page8.setBirth_liqourodour(elem.getBirth_liqourodour());
+				page8.setBirth_motheroutcome(elem.getBirth_motheroutcome());
+				page8.setBirth_babyoutcome(elem.getBirth_babyoutcome());
+				page8.setData_complete(elem.getCase_birth_form_complete());
+				birRepo.save(page8);
+
+				if (page1.getCase_death() == 1) {
+
+					case_fetalheart page9 = new case_fetalheart();
+					page9.setFetalheart_uuid(case_uuid);
+					page9.setCase_uuid(page1);
+					page9.setFetalheart_refered(elem.getFetalheart_refered());
+					page9.setFetalheart_arrival(elem.getFetalheart_arrival());
+					page9.setFetalheart_lastheard(elem.getFetalheart_lastheard());
+					page9.setData_complete(elem.getCase_fetal_heart_complete());
+					fetRepo.save(page9);
+				}
+
+				if (page1.getCase_death() == 2) {
+
+					case_babydeath page0 = new case_babydeath();
+					page0.setBaby_uuid(case_uuid);
+					page0.setCase_uuid(page1);
+					page0.setBaby_cry(elem.getBaby_cry());
+					page0.setBaby_resuscitation(elem.getBaby_resuscitation());
+					page0.setNew_resuscitation(elem.getNew_resuscitation());
+					page0.setBaby_apgar1(elem.getBaby_apgar1());
+					page0.setBaby_apgar5(elem.getBaby_apgar5());
+					page0.setBaby_admitted(elem.getBaby_admitted());
+					page0.setNew_diagnoses(elem.getNew_diagnoses());
+					page0.setBaby_ddate(elem.getBaby_ddate());
+					page0.setBaby_dtime(elem.getBaby_dtime());
+					{
+						Date time = page0.getBaby_dtime();
+						if (time != null) {
+							Calendar cal = Calendar.getInstance();
+							cal.setTime(time);
+							page0.setBaby_dhour(cal.get(Calendar.HOUR_OF_DAY));
+							page0.setBaby_dminute(cal.get(Calendar.MINUTE));
+						}
+					}
+					page0.setBaby_ddatetime_notstated(elem.getBaby_ddatetime_notstated());
+					page0.setBaby_medicalcod(elem.getBaby_medicalcod());
+					page0.setData_complete(elem.getCase_baby_death_complete());
+					babyRepo.save(page0);
+
+				}
+
+				if (page1.getCase_death() == 3) {
+
+					case_mdeath page0 = new case_mdeath();
+					page0.setMdeath_uuid(case_uuid);
+					page0.setCase_uuid(page1);
+					page0.setMdeath_date(elem.getMdeath_date());
+					page0.setMdeath_time(elem.getMdeath_time());
+					{
+						Date time = page0.getMdeath_time();
+						if (time != null) {
+							Calendar cal = Calendar.getInstance();
+							cal.setTime(time);
+							page0.setMdeath_hour(cal.get(Calendar.HOUR_OF_DAY));
+							page0.setMdeath_minute(cal.get(Calendar.MINUTE));
+						}
+					}
+					page0.setMdeath_datetime_notstated(elem.getMdeath_datetime_notstated());
+					page0.setMdeath_autopsy(elem.getMdeath_autopsy());
+					page0.setMdeath_autopsy_date(elem.getMdeath_autopsy_date());
+					page0.setMdeath_autopsy_location(elem.getMdeath_autopsy_location());
+					page0.setMdeath_autopsy_by(elem.getMdeath_autopsy_by());
+					page0.setMdeath_autopsy_final_cod(elem.getMdeath_autopsy_final_cod());
+					page0.setMdeath_autopsy_antec_cod(elem.getMdeath_autopsy_antec_cod());
+					page0.setMdeath_autopsy_ops_cod(elem.getMdeath_autopsy_ops_cod());
+
+					page0.setMdeath_early_evacuation(elem.getMdeath_early_evacuation());
+					page0.setMdeath_early_antibiotic(elem.getMdeath_early_antibiotic());
+					page0.setMdeath_early_laparotomy(elem.getMdeath_early_laparotomy());
+					page0.setMdeath_early_hysterectomy(elem.getMdeath_early_hysterectomy());
+					page0.setMdeath_early_transfusion(elem.getMdeath_early_transfusion());
+					page0.setMdeath_early_antihyper(elem.getMdeath_early_antihyper());
+					page0.setMdeath_early_other(elem.getMdeath_early_other());
+
+					page0.setMdeath_ante_transfusion(elem.getMdeath_ante_transfusion());
+					page0.setMdeath_ante_antibiotic(elem.getMdeath_ante_antibiotic());
+					page0.setMdeath_ante_externalv(elem.getMdeath_ante_externalv());
+					page0.setMdeath_ante_magsulphate(elem.getMdeath_ante_magsulphate());
+					page0.setMdeath_ante_diazepam(elem.getMdeath_ante_diazepam());
+					page0.setMdeath_ante_antihyper(elem.getMdeath_ante_antihyper());
+					page0.setMdeath_ante_hysterotomy(elem.getMdeath_ante_hysterotomy());
+					page0.setMdeath_ante_other(elem.getMdeath_ante_other());
+
+					page0.setMdeath_intra_instrumental(elem.getMdeath_intra_instrumental());
+					page0.setMdeath_intra_antibiotic(elem.getMdeath_intra_antibiotic());
+					page0.setMdeath_intra_caesarian(elem.getMdeath_intra_caesarian());
+					page0.setMdeath_intra_hysterectomy(elem.getMdeath_intra_hysterectomy());
+					page0.setMdeath_intra_transfusion(elem.getMdeath_intra_transfusion());
+					page0.setMdeath_intra_magsulphate(elem.getMdeath_intra_magsulphate());
+					page0.setMdeath_intra_antihyper(elem.getMdeath_intra_antihyper());
+					page0.setMdeath_intra_diazepam(elem.getMdeath_intra_diazepam());
+					page0.setMdeath_intra_other(elem.getMdeath_intra_other());
+
+					page0.setMdeath_postpart_evacuation(elem.getMdeath_postpart_evacuation());
+					page0.setMdeath_postpart_antibiotic(elem.getMdeath_postpart_antibiotic());
+					page0.setMdeath_postpart_laparotomy(elem.getMdeath_postpart_laparotomy());
+					page0.setMdeath_postpart_hysterectomy(elem.getMdeath_postpart_hysterectomy());
+					page0.setMdeath_postpart_transfusion(elem.getMdeath_postpart_transfusion());
+					page0.setMdeath_postpart_magsulphate(elem.getMdeath_postpart_magsulphate());
+					page0.setMdeath_postpart_placentaremoval(elem.getMdeath_postpart_placentaremoval());
+					page0.setMdeath_postpart_antihyper(elem.getMdeath_postpart_antihyper());
+					page0.setMdeath_postpart_diazepam(elem.getMdeath_postpart_diazepam());
+					page0.setMdeath_postpart_other(elem.getMdeath_postpart_other());
+
+					page0.setMdeath_other_anaesthga(elem.getMdeath_other_anaesthga());
+					page0.setMdeath_other_epidural(elem.getMdeath_other_epidural());
+					page0.setMdeath_other_spinal(elem.getMdeath_other_spinal());
+					page0.setMdeath_other_local(elem.getMdeath_other_local());
+					page0.setMdeath_other_invasive(elem.getMdeath_other_invasive());
+					page0.setMdeath_other_antihyper(elem.getMdeath_other_antihyper());
+					page0.setMdeath_other_icuventilation(elem.getMdeath_other_icuventilation());
+					page0.setMdeath_new_intervention(elem.getMdeath_new_intervention());
+
+					page0.setData_complete(elem.getCase_mdeath_complete());
+					mdeathRepo.save(page0);
+
+				}
+
+				case_notes notes = new case_notes();
+				notes.setNotes_uuid(case_uuid);
+				notes.setCase_uuid(page1);
+				notes.setNotes_text(elem.getNotes_text());
+				notRepo.save(notes);
+
+			}
+			if (!uploadErrors.isEmpty()) {
+				model.addAttribute("uploaderrors", uploadErrors);
+			}
+		}
+
+		model.addAttribute("redcap", redcap);
+		model.addAttribute("back", "back");
+
+		return "registry/case-redcap";
 	}
 
 	@GetMapping("/file")
@@ -212,7 +588,6 @@ public class CaseEntryController {
 
 		return new ResponseEntity<>(resource, headers, HttpStatus.OK);
 	}
-
 
 	@GetMapping("/add")
 	public String add(Principal principal, Model model) {
@@ -241,7 +616,7 @@ public class CaseEntryController {
 
 	@Transactional
 	@PostMapping("/add")
-	public String add(Principal principal, Model model, @ModelAttribute("selected") case_identifiers selected) {
+	public String add(Principal principal, Model model, @ModelAttribute case_identifiers selected) {
 		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
@@ -263,8 +638,7 @@ public class CaseEntryController {
 
 	@GetMapping("/edit/{id}")
 	public String edit(Principal principal, final Model model, @PathVariable("id") String case_uuid,
-			@RequestParam(name = "page", required = true) Integer page,
-			@RequestParam(name = "success", required = false) String success) {
+			@RequestParam(required = true) Integer page, @RequestParam(required = false) String success) {
 
 		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
 			model.addAttribute("activated", "0");
@@ -292,8 +666,19 @@ public class CaseEntryController {
 			final boolean bir = selected.getBirth().getData_complete() == 1;
 			final boolean fet = selected.getFetalheart() != null && selected.getFetalheart().getData_complete() == 1;
 			final boolean bab = selected.getBabydeath() != null && selected.getBabydeath().getData_complete() == 1;
+			final boolean mat = selected.getMdeath() != null && selected.getMdeath().getData_complete() == 1;
 
-			completed = bio && pre && ref && del && ant && lab && bir && (fet || bab);
+			completed = bio && pre && ref && del && ant && lab && bir;
+
+			if (selected.getCase_death() == CONSTANTS.STILL_BIRTH) {
+				completed = completed && fet;
+			} else if (selected.getCase_death() == CONSTANTS.NEONATAL_DEATH) {
+				completed = completed && bab;
+			} else if (selected.getCase_death() == CONSTANTS.MATERNAL_DEATH) {
+				completed = completed && mat;
+			} else {
+				completed = false;
+			}
 		}
 		if (completed) {
 			model.addAttribute("completed", completed);
@@ -385,7 +770,7 @@ public class CaseEntryController {
 		}
 
 		case 8: {
-			if (selected.getCase_death() == 1) {
+			if (selected.getCase_death() == CONSTANTS.STILL_BIRTH) {
 				model.addAttribute("fetactive", "active");
 				if (selected.getFetalheart() == null) {
 					case_fetalheart data = new case_fetalheart();
@@ -394,7 +779,7 @@ public class CaseEntryController {
 					selected.setFetalheart(data);
 
 				}
-			} else if (selected.getCase_death() == 2) {
+			} else if (selected.getCase_death() == CONSTANTS.NEONATAL_DEATH) {
 
 				model.addAttribute("babactive", "active");
 				if (selected.getBabydeath() == null) {
@@ -405,6 +790,16 @@ public class CaseEntryController {
 				}
 				model.addAttribute("diagnoses_options", diagRepo.findAll());
 				model.addAttribute("resuscitation_options", resusRepo.findAll());
+
+			} else if (selected.getCase_death() == CONSTANTS.MATERNAL_DEATH) {
+
+				model.addAttribute("itvactive", "active");
+				if (selected.getMdeath() == null) {
+					case_mdeath data = new case_mdeath();
+					data.setMdeath_uuid(UUID.randomUUID().toString());
+					data.setCase_uuid(selected);
+					selected.setMdeath(data);
+				}
 			}
 			break;
 		}
@@ -429,7 +824,9 @@ public class CaseEntryController {
 		model.addAttribute("selected", selected);
 		model.addAttribute("page", page);
 
-		if (success != null) {
+		if (success != null)
+
+		{
 			model.addAttribute("success", "Saved Successfully");
 		}
 
@@ -443,7 +840,6 @@ public class CaseEntryController {
 			BindingResult results) {
 
 		ObjectMapper objectMapper = new ObjectMapper();
-		// objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 
 		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
 			model.addAttribute("activated", "0");
@@ -622,14 +1018,13 @@ public class CaseEntryController {
 				final Integer hour = selected.getLabour().getLabour_seehour();
 
 				if (period != null && hour != null) {
-					// boolean dawn = (hour > 0 && hour < 6);
 					boolean morning = (hour >= 8 && hour < 14);
-					// boolean midday = (hour == 12);
 					boolean afternoon = (hour >= 14 && hour < 20);
 					boolean night = (hour >= 20 || hour < 8);
-					// boolean midnight = (hour > 21 || hour < 1);
 
-					if (period == 1 && !morning) {
+					if (period == 88 && (morning || afternoon || night)) {
+						results.rejectValue("labour.labour_seeperiod", "error.nostated");
+					} else if (period == 1 && !morning) {
 						results.rejectValue("labour.labour_seeperiod", "error.morning");
 					} else if (period == 3 && !afternoon) {
 						results.rejectValue("labour.labour_seeperiod", "error.afternoon");
@@ -702,23 +1097,16 @@ public class CaseEntryController {
 				final Integer hour = selected.getDelivery().getDelivery_hour();
 
 				if (period != null && hour != null) {
-					// boolean dawn = (hour > 0 && hour < 6);
 					boolean morning = (hour >= 8 && hour < 14);
-					// boolean midday = (hour == 12);
 					boolean afternoon = (hour >= 14 && hour < 20);
 					boolean night = (hour >= 20 || hour < 8);
-					// boolean midnight = (hour > 21 || hour < 1);
 
-					if (period == 1 && !morning) {
+					if (period == 88 && (morning || afternoon || night)) {
+						results.rejectValue("labour.labour_seeperiod", "error.nostated");
+					} else if (period == 1 && !morning) {
 						results.rejectValue("delivery.delivery_period", "error.morning");
-//					} else if (period == 2 && !midday) {
-//						results.rejectValue("delivery.delivery_period", "error.midday");
 					} else if (period == 3 && !afternoon) {
 						results.rejectValue("delivery.delivery_period", "error.afternoon");
-//					} else if (period == 4 && !evening) {
-//						results.rejectValue("delivery.delivery_period", "error.evening");
-//					} else if (period == 5 && !midnight) {
-//						results.rejectValue("delivery.delivery_period", "error.midnight");
 					} else if (period == 6 && !night) {
 						results.rejectValue("delivery.delivery_period", "error.night");
 					}
@@ -825,7 +1213,7 @@ public class CaseEntryController {
 			break;
 		}
 		case 8: {
-			if (selected.getCase_death() == 1) {
+			if (selected.getCase_death() == CONSTANTS.STILL_BIRTH) {
 				try {
 
 					case_fetalheart o = selected.getFetalheart();
@@ -844,7 +1232,7 @@ public class CaseEntryController {
 					e.printStackTrace();
 				}
 
-			} else if (selected.getCase_death() == 2) {
+			} else if (selected.getCase_death() == CONSTANTS.NEONATAL_DEATH) {
 				try {
 					Date time = selected.getBabydeath().getBaby_dtime();
 					if (time != null) {
@@ -893,10 +1281,113 @@ public class CaseEntryController {
 					e.printStackTrace();
 				}
 
+			} else if (selected.getCase_death() == CONSTANTS.MATERNAL_DEATH) {
+				try {
+					Date time = selected.getMdeath().getMdeath_time();
+					if (time != null) {
+						Calendar cal = Calendar.getInstance();
+						cal.setTime(time);
+						selected.getMdeath().setMdeath_hour(cal.get(Calendar.HOUR_OF_DAY));
+						selected.getMdeath().setMdeath_minute(cal.get(Calendar.MINUTE));
+					}
+
+					if (existing.getDelivery() != null) {
+
+						validateTheTimesOnMdeathPage(model, results, selected, existing);
+
+						if (results.hasErrors()) {
+							model.addAttribute("selected", selected);
+							model.addAttribute("page", page);
+							return "registry/case-update";
+						}
+
+					}
+
+					case_mdeath o = selected.getMdeath();
+
+					boolean mdeath_early_interv_missing = o.getMdeath_early_evacuation() == null
+							&& o.getMdeath_early_antibiotic() == null && o.getMdeath_early_laparotomy() == null
+							&& o.getMdeath_early_hysterectomy() == null && o.getMdeath_early_transfusion() == null
+							&& o.getMdeath_early_antihyper() == null
+							&& (o.getMdeath_early_other() == null || o.getMdeath_early_other().trim().isEmpty());
+
+					boolean mdeath_ante_interv_missing = o.getMdeath_ante_transfusion() == null
+							&& o.getMdeath_ante_antibiotic() == null && o.getMdeath_ante_externalv() == null
+							&& o.getMdeath_ante_magsulphate() == null && o.getMdeath_ante_diazepam() == null
+							&& o.getMdeath_ante_antihyper() == null && o.getMdeath_ante_hysterotomy() == null
+							&& (o.getMdeath_ante_other() == null || o.getMdeath_ante_other().trim().isEmpty());
+
+					boolean mdeath_intra_interv_missing = o.getMdeath_intra_instrumental() == null
+							&& o.getMdeath_intra_antibiotic() == null && o.getMdeath_intra_caesarian() == null
+							&& o.getMdeath_intra_hysterectomy() == null && o.getMdeath_intra_transfusion() == null
+							&& o.getMdeath_intra_magsulphate() == null && o.getMdeath_intra_antihyper() == null
+							&& o.getMdeath_intra_diazepam() == null
+							&& (o.getMdeath_intra_other() == null || o.getMdeath_intra_other().trim().isEmpty());
+
+					boolean mdeath_postpart_interv_missing = o.getMdeath_postpart_evacuation() == null
+							&& o.getMdeath_postpart_antibiotic() == null && o.getMdeath_postpart_laparotomy() == null
+							&& o.getMdeath_postpart_hysterectomy() == null && o.getMdeath_postpart_transfusion() == null
+							&& o.getMdeath_postpart_magsulphate() == null
+							&& o.getMdeath_postpart_placentaremoval() == null
+							&& o.getMdeath_postpart_antihyper() == null && o.getMdeath_postpart_diazepam() == null
+							&& (o.getMdeath_postpart_other() == null || o.getMdeath_postpart_other().trim().isEmpty());
+
+					boolean mdeath_other_interv_missing = o.getMdeath_other_anaesthga() == null
+							&& o.getMdeath_other_epidural() == null && o.getMdeath_other_spinal() == null
+							&& o.getMdeath_other_local() == null && o.getMdeath_other_invasive() == null
+							&& o.getMdeath_other_antihyper() == null && o.getMdeath_other_icuventilation() == null
+							&& (o.getMdeath_new_intervention() == null
+									|| o.getMdeath_new_intervention().trim().isEmpty());
+
+					boolean mdeath_datetime_expected = (o.getMdeath_datetime_notstated() == null
+							|| o.getMdeath_datetime_notstated() == 0);
+
+					boolean mdeath_datetime_any_specified = o.getMdeath_hour() != null || o.getMdeath_date() != null
+							|| o.getMdeath_minute() != null || o.getMdeath_time() != null;
+
+					boolean mdeath_datetime_any_missing = o.getMdeath_hour() == null || o.getMdeath_date() == null
+							|| o.getMdeath_minute() == null || o.getMdeath_time() == null;
+
+					boolean mdeath_autopsy_missing = o.getMdeath_autopsy() == null;
+
+					boolean mdeath_autopsy_expected = (o.getMdeath_autopsy() != null && o.getMdeath_autopsy() == 1)
+							&& (o.getMdeath_autopsy_date() == null || o.getMdeath_autopsy_location() == null
+									|| o.getMdeath_autopsy_location().trim().isEmpty()
+									|| o.getMdeath_autopsy_by() == null || o.getMdeath_autopsy_final_cod() == null
+									|| o.getMdeath_autopsy_final_cod().trim().isEmpty()
+									|| o.getMdeath_autopsy_antec_cod() == null
+									|| o.getMdeath_autopsy_antec_cod().trim().isEmpty()
+									|| o.getMdeath_autopsy_ops_cod() == null
+									|| o.getMdeath_autopsy_ops_cod().trim().isEmpty()
+									|| o.getMdeath_autopsy_icd_mm() == null);
+
+					if ((mdeath_datetime_expected && mdeath_datetime_any_missing)
+							|| (!mdeath_datetime_expected && mdeath_datetime_any_specified)
+							|| (mdeath_early_interv_missing || mdeath_ante_interv_missing || mdeath_intra_interv_missing
+									|| mdeath_postpart_interv_missing || mdeath_other_interv_missing
+									|| mdeath_autopsy_missing || mdeath_autopsy_expected)) {
+
+						System.err.println("" + mdeath_early_interv_missing + " " + mdeath_ante_interv_missing + " "
+								+ mdeath_intra_interv_missing + " " + mdeath_postpart_interv_missing + " "
+								+ mdeath_other_interv_missing + " " + mdeath_autopsy_missing + " "
+								+ mdeath_autopsy_expected);
+						o.setData_complete(0);
+					} else {
+						o.setData_complete(1);
+						final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getMdeath()));
+						selected.getMdeath().setMdeath_json(arrayToJson);
+					}
+
+					mdeathRepo.save(selected.getMdeath());
+				} catch (JsonProcessingException e) {
+					e.printStackTrace();
+				}
+
 			}
 			break;
 		}
 		case 9: {
+
 			try {
 				MultipartFile file = selected.getNotes().getFile();
 				selected.getNotes().setBase64image(null);
@@ -1210,6 +1701,40 @@ public class CaseEntryController {
 		return 0;
 	}
 
+	private Integer validateTheTimesOnMdeathPage(Model model, BindingResult results, case_identifiers selected,
+			case_identifiers existing) {
+		// validate
+		final Date deliveryDate = existing.getDelivery().getDelivery_date();
+		final Date deathDate = selected.getMdeath().getMdeath_date();
+
+		if (deathDate != null && deliveryDate != null) {
+
+			if (deathDate.before(deliveryDate)) {
+				results.rejectValue("mdeath.mdeath_date", "error.date.death.before.delivery");
+				return 1;
+			} else if (deathDate.compareTo(deliveryDate) == 0) {
+				final Date deliveryTime = existing.getDelivery().getDelivery_time();
+				final Date deathTime = selected.getBabydeath().getBaby_dtime();
+
+				if (deliveryTime != null && deathTime != null) {
+					final Integer deliveryHour = existing.getDelivery().getDelivery_hour();
+					final Integer deliveryMins = existing.getDelivery().getDelivery_minute();
+
+					final Integer deathHour = selected.getBabydeath().getBaby_dhour();
+					final Integer deathMins = selected.getBabydeath().getBaby_dminute();
+
+					if (((deathHour * 60) + deathMins) <= ((deliveryHour * 60) + deliveryMins)) {
+						results.rejectValue("mdeath.mdeath_time", "error.time.death.before.delivery");
+						return 2;
+					}
+				}
+			}
+
+		}
+
+		return 0;
+	}
+
 	@GetMapping(value = "/icdselect")
 	public @ResponseBody Set<icd_diagnoses> findByDiagnosis(@RequestParam(value = "q", required = true) String search) {
 
@@ -1274,6 +1799,54 @@ public class CaseEntryController {
 
 		map.put(null, "Select one");
 		for (datamap elem : mapRepo.findByMap_feature("edu_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("work_options")
+	public Map<Integer, String> workOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("work_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("marital_options")
+	public Map<Integer, String> maritalOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("marital_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("religion_options")
+	public Map<Integer, String> religionOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("religion_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("ethnic_options")
+	public Map<Integer, String> ethnicOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("ethnic_options")) {
 			map.put(elem.getMap_value(), elem.getMap_label());
 		}
 
@@ -1394,6 +1967,7 @@ public class CaseEntryController {
 		map.put(1, getQuestion("shift.morning"));
 		map.put(3, getQuestion("shift.afternoon"));
 		map.put(6, getQuestion("shift.night"));
+		map.put(88, "Not Stated");
 
 		return map;
 	}
@@ -1542,7 +2116,34 @@ public class CaseEntryController {
 		final Map<Integer, String> map = new LinkedHashMap<>();
 
 		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("babyoutcome_options")) {
+		List<datamap> datamap = mapRepo.findByMap_feature("babyoutcome_options");
+		datamap.addAll(mapRepo.findByMap_feature("babyoutcome_options_ext"));
+		datamap.sort(new Comparator<datamap>() {
+			public int compare(datamap a, datamap b) {
+				return a.getMap_value() - b.getMap_value();
+			}
+		});
+
+		for (datamap elem : datamap) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("babyoutcome_options_ext")
+	public Map<Integer, String> babyoutcomeOptionsExtSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		List<datamap> datamap = mapRepo.findByMap_feature("babyoutcome_options");
+		datamap.addAll(mapRepo.findByMap_feature("babyoutcome_options"));
+		datamap.sort(new Comparator<datamap>() {
+			public int compare(datamap a, datamap b) {
+				return a.getMap_value() - b.getMap_value();
+			}
+		});
+
+		for (datamap elem : datamap) {
 			map.put(elem.getMap_value(), elem.getMap_label());
 		}
 
@@ -1605,14 +2206,36 @@ public class CaseEntryController {
 		if (value == null) {
 			return "";
 		}
-		return mapRepo.findById(new datamapPK(feature, value)).get().getMap_label();
+
+		if (mapRepo.findById(new datamapPK(feature, value)).isPresent()) {
+			return mapRepo.findById(new datamapPK(feature, value)).get().getMap_label();
+		} else if (mapRepo.findById(new datamapPK(feature + "_ext", value)).isPresent()) {
+			return mapRepo.findById(new datamapPK(feature + "_ext", value)).get().getMap_label();
+		}
+
+		return "No answer";
 	}
 
 	private List<json_data> processListOf(case_biodata o) {
 		List<json_data> list = Stream.of(
-				new json_data(getQuestion("label.biodata_sex"), getAnswer("sex_options", o.getBiodata_sex()), true),
+				new json_data(getQuestion("label.biodata_mdob"),
+						(o.getBiodata_mdob() == null) ? "Not Stated"
+								: new SimpleDateFormat("dd-MMM-yyyy").format(o.getBiodata_mdob()),
+						true),
 				new json_data(getQuestion("label.biodata_mage"), o.getBiodata_mage() + getQuestion("txt.years"), true),
-				new json_data(getQuestion("label.biodata_medu"), getAnswer("edu_options", o.getBiodata_medu()), true))
+				new json_data(getQuestion("label.biodata_medu"), getAnswer("edu_options", o.getBiodata_medu()), true),
+				new json_data(getQuestion("label.biodata_maddress"), o.getBiodata_maddress(), true),
+				new json_data(getQuestion("label.biodata_location"), o.getBiodata_location(), true),
+				new json_data(getQuestion("label.biodata_contact"), o.getBiodata_contact(), true),
+				new json_data(getQuestion("label.biodata_work"), getAnswer("work_options", o.getBiodata_work()), true),
+				new json_data(getQuestion("label.biodata_marital"),
+						getAnswer("marital_options", o.getBiodata_marital()), true),
+				new json_data(getQuestion("label.biodata_religion"),
+						getAnswer("religion_options", o.getBiodata_religion()), true),
+				new json_data(getQuestion("label.biodata_ethnic"), getAnswer("ethnic_options", o.getBiodata_ethnic()),
+						true),
+				new json_data(getQuestion("label.biodata_sex"), getAnswer("sex_options", o.getBiodata_sex()),
+						(o.getCase_uuid().getCase_death() != CONSTANTS.MATERNAL_DEATH)))
 				.collect(Collectors.toList());
 
 		return list;
@@ -1666,6 +2289,8 @@ public class CaseEntryController {
 
 	private List<json_data> processListOf(case_delivery o) {
 		List<json_data> list = Stream.of(
+				new json_data(getQuestion("label.delivery_occured"),
+						getAnswer("yesnodk_options", o.getDelivery_occured()), true),
 				new json_data(getQuestion("label.delivery_datetime"),
 						(o.getDelivery_datetime_notstated() != null && o.getDelivery_datetime_notstated() == 1)
 								? "Not stated"
@@ -1738,12 +2363,16 @@ public class CaseEntryController {
 			items += o.getNew_complications();
 
 		List<json_data> list = Stream
-				.of(new json_data(getQuestion("label.labour_datetime"),
-						(o.getLabour_seedatetime_notstated() != null && o.getLabour_seedatetime_notstated() == 1)
-								? "Not stated"
-								: new SimpleDateFormat("dd-MMM-yyyy").format(o.getLabour_seedate()) + " at "
-										+ new SimpleDateFormat("HH:mm a").format(o.getLabour_seetime()),
-						true),
+				.of(new json_data(getQuestion("label.labour_occured"),
+						getAnswer("yesnodk_options", o.getLabour_occured()), true),
+						new json_data(getQuestion("label.labour_datetime"),
+								(o.getLabour_seedatetime_notstated() != null
+										&& o.getLabour_seedatetime_notstated() == 1)
+												? "Not stated"
+												: new SimpleDateFormat("dd-MMM-yyyy").format(o.getLabour_seedate())
+														+ " at "
+														+ new SimpleDateFormat("HH:mm a").format(o.getLabour_seetime()),
+								true),
 						new json_data(getQuestion("label.labour_seeperiod"),
 								getAnswer("period_options", o.getLabour_seeperiod()), true),
 						new json_data(getQuestion("label.labour_startmode"),
@@ -1886,6 +2515,119 @@ public class CaseEntryController {
 		return list;
 	}
 
+	private List<json_data> processListOf(case_mdeath o) {
+
+		List<json_data> list = Stream.of(
+
+				new json_data(getQuestion("label.mdeath_early_evacuation"),
+						getAnswer("yesnodk_options", o.getMdeath_early_evacuation()), true),
+				new json_data(getQuestion("label.mdeath_early_antibiotic"),
+						getAnswer("yesnodk_options", o.getMdeath_early_antibiotic()), true),
+				new json_data(getQuestion("label.mdeath_early_laparotomy"),
+						getAnswer("yesnodk_options", o.getMdeath_early_laparotomy()), true),
+				new json_data(getQuestion("label.mdeath_early_hysterectomy"),
+						getAnswer("yesnodk_options", o.getMdeath_early_hysterectomy()), true),
+				new json_data(getQuestion("label.mdeath_early_transfusion"),
+						getAnswer("yesnodk_options", o.getMdeath_early_transfusion()), true),
+				new json_data(getQuestion("label.mdeath_early_antihyper"),
+						getAnswer("yesnodk_options", o.getMdeath_early_antihyper()), true),
+				new json_data(getQuestion("label.mdeath_early_other"), o.getMdeath_early_other(), true),
+
+				new json_data(getQuestion("label.mdeath_ante_transfusion"),
+						getAnswer("yesnodk_options", o.getMdeath_ante_transfusion()), true),
+				new json_data(getQuestion("label.mdeath_ante_antibiotic"),
+						getAnswer("yesnodk_options", o.getMdeath_ante_antibiotic()), true),
+				new json_data(getQuestion("label.mdeath_ante_externalv"),
+						getAnswer("yesnodk_options", o.getMdeath_ante_externalv()), true),
+				new json_data(getQuestion("label.mdeath_ante_magsulphate"),
+						getAnswer("yesnodk_options", o.getMdeath_ante_magsulphate()), true),
+				new json_data(getQuestion("label.mdeath_ante_diazepam"),
+						getAnswer("yesnodk_options", o.getMdeath_ante_diazepam()), true),
+				new json_data(getQuestion("label.mdeath_ante_antihyper"),
+						getAnswer("yesnodk_options", o.getMdeath_ante_antihyper()), true),
+				new json_data(getQuestion("label.mdeath_ante_hysterotomy"),
+						getAnswer("yesnodk_options", o.getMdeath_ante_hysterotomy()), true),
+				new json_data(getQuestion("label.mdeath_ante_other"), o.getMdeath_ante_other(), true),
+
+				new json_data(getQuestion("label.mdeath_intra_instrumental"),
+						getAnswer("yesnodk_options", o.getMdeath_intra_instrumental()), true),
+				new json_data(getQuestion("label.mdeath_intra_antibiotic"),
+						getAnswer("yesnodk_options", o.getMdeath_intra_antibiotic()), true),
+				new json_data(getQuestion("label.mdeath_intra_caesarian"),
+						getAnswer("yesnodk_options", o.getMdeath_intra_caesarian()), true),
+				new json_data(getQuestion("label.mdeath_intra_hysterectomy"),
+						getAnswer("yesnodk_options", o.getMdeath_intra_hysterectomy()), true),
+				new json_data(getQuestion("label.mdeath_intra_transfusion"),
+						getAnswer("yesnodk_options", o.getMdeath_intra_transfusion()), true),
+				new json_data(getQuestion("label.mdeath_intra_magsulphate"),
+						getAnswer("yesnodk_options", o.getMdeath_intra_magsulphate()), true),
+				new json_data(getQuestion("label.mdeath_intra_antihyper"),
+						getAnswer("yesnodk_options", o.getMdeath_intra_antihyper()), true),
+				new json_data(getQuestion("label.mdeath_intra_diazepam"),
+						getAnswer("yesnodk_options", o.getMdeath_intra_diazepam()), true),
+				new json_data(getQuestion("label.mdeath_intra_other"), o.getMdeath_intra_other(), true),
+
+				new json_data(getQuestion("label.mdeath_postpart_evacuation"),
+						getAnswer("yesnodk_options", o.getMdeath_postpart_evacuation()), true),
+				new json_data(getQuestion("label.mdeath_postpart_antibiotic"),
+						getAnswer("yesnodk_options", o.getMdeath_postpart_antibiotic()), true),
+				new json_data(getQuestion("label.mdeath_postpart_laparotomy"),
+						getAnswer("yesnodk_options", o.getMdeath_postpart_laparotomy()), true),
+				new json_data(getQuestion("label.mdeath_postpart_hysterectomy"),
+						getAnswer("yesnodk_options", o.getMdeath_postpart_hysterectomy()), true),
+				new json_data(getQuestion("label.mdeath_postpart_transfusion"),
+						getAnswer("yesnodk_options", o.getMdeath_postpart_transfusion()), true),
+				new json_data(getQuestion("label.mdeath_postpart_magsulphate"),
+						getAnswer("yesnodk_options", o.getMdeath_postpart_magsulphate()), true),
+				new json_data(getQuestion("label.mdeath_postpart_placentaremoval"),
+						getAnswer("yesnodk_options", o.getMdeath_postpart_placentaremoval()), true),
+				new json_data(getQuestion("label.mdeath_postpart_antihyper"),
+						getAnswer("yesnodk_options", o.getMdeath_postpart_antihyper()), true),
+				new json_data(getQuestion("label.mdeath_postpart_diazepam"),
+						getAnswer("yesnodk_options", o.getMdeath_postpart_diazepam()), true),
+				new json_data(getQuestion("label.mdeath_postpart_other"), o.getMdeath_postpart_other(), true),
+
+				new json_data(getQuestion("label.mdeath_other_anaesthga"),
+						getAnswer("yesnodk_options", o.getMdeath_other_anaesthga()), true),
+				new json_data(getQuestion("label.mdeath_other_epidural"),
+						getAnswer("yesnodk_options", o.getMdeath_other_epidural()), true),
+				new json_data(getQuestion("label.mdeath_other_spinal"),
+						getAnswer("yesnodk_options", o.getMdeath_other_spinal()), true),
+				new json_data(getQuestion("label.mdeath_other_local"),
+						getAnswer("yesnodk_options", o.getMdeath_other_local()), true),
+				new json_data(getQuestion("label.mdeath_other_invasive"),
+						getAnswer("yesnodk_options", o.getMdeath_other_invasive()), true),
+				new json_data(getQuestion("label.mdeath_other_antihyper"),
+						getAnswer("yesnodk_options", o.getMdeath_other_antihyper()), true),
+				new json_data(getQuestion("label.mdeath_other_icuventilation"),
+						getAnswer("yesnodk_options", o.getMdeath_other_icuventilation()), true),
+				new json_data(getQuestion("label.mdeath_new_intervention"), o.getMdeath_new_intervention(), true),
+
+				new json_data(getQuestion("label.mdeath_datetime"),
+						(o.getMdeath_date() == null) ? ""
+								: new SimpleDateFormat("dd-MMM-yyyy").format(o.getMdeath_date()) + " at "
+										+ new SimpleDateFormat("HH:mm a").format(o.getMdeath_time()),
+						true),
+				new json_data(getQuestion("label.mdeath_autopsy"), getAnswer("yesnodk_options", o.getMdeath_autopsy()),
+						true),
+				new json_data(getQuestion("label.mdeath_autopsy_date"),
+						(o.getMdeath_date() == null) ? ""
+								: new SimpleDateFormat("dd-MMM-yyyy").format(o.getMdeath_date()),
+						true),
+				new json_data(getQuestion("label.mdeath_autopsy_location"), o.getMdeath_autopsy_location(), true),
+				new json_data(getQuestion("label.mdeath_autopsy_by"),
+						getAnswer("autopsyby_options", o.getMdeath_autopsy_by()), true),
+				new json_data(getQuestion("label.mdeath_autopsy_final_cod"), o.getMdeath_autopsy_final_cod(), true),
+				new json_data(getQuestion("label.mdeath_autopsy_antec_cod"), o.getMdeath_autopsy_antec_cod(), true),
+				new json_data(getQuestion("label.mdeath_autopsy_ops_cod"), o.getMdeath_autopsy_ops_cod(), true),
+				new json_data(getQuestion("label.mdeath_autopsy_icd_mm"),
+						getAnswer("autopsyby_options", o.getMdeath_autopsy_icd_mm()), true)
+
+		).collect(Collectors.toList());
+
+		return list;
+	}
+
 	private List<json_data> processListOf(case_notes o) {
 		List<json_data> list = Stream.of(new json_data(getQuestion("label.notes_text"), o.getNotes_text(), true),
 				new json_data(getQuestion("label.notes_file"),
@@ -1938,6 +2680,5 @@ public class CaseEntryController {
 		} else
 			return "";
 	}
-
 
 }// end class

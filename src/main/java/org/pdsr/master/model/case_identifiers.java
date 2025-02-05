@@ -12,11 +12,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
 public class case_identifiers implements Serializable {
 
@@ -66,6 +70,13 @@ public class case_identifiers implements Serializable {
 
 	@Column
 	private Integer data_sent;
+	
+	@Transient
+	private String cluster_uuid;//cluster mapping based on canopy algorithm
+	
+	@Transient
+	private Double similarity_score;// similarity strength based on fellegi-stunter model
+
 
 	public Integer getData_sent() {
 		return data_sent;
@@ -105,6 +116,9 @@ public class case_identifiers implements Serializable {
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_babydeath babydeath;
+
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
+	private case_mdeath mdeath;
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_notes notes;
@@ -243,6 +257,30 @@ public class case_identifiers implements Serializable {
 
 	public void setBabydeath(case_babydeath babydeath) {
 		this.babydeath = babydeath;
+	}
+
+	public String getCluster_uuid() {
+		return cluster_uuid;
+	}
+
+	public void setCluster_uuid(String cluster_uuid) {
+		this.cluster_uuid = cluster_uuid;
+	}
+
+	public Double getSimilarity_score() {
+		return similarity_score;
+	}
+
+	public void setSimilarity_score(Double similarity_score) {
+		this.similarity_score = similarity_score;
+	}
+
+	public case_mdeath getMdeath() {
+		return mdeath;
+	}
+
+	public void setMdeath(case_mdeath mdeath) {
+		this.mdeath = mdeath;
 	}
 
 	public case_notes getNotes() {
