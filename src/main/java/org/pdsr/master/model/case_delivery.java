@@ -40,6 +40,12 @@ public class case_delivery implements Serializable {
 	private Integer delivery_occured;
 	
 	@Column
+	private Integer delivery_abortion;
+	
+	@Column
+	private Integer delivery_occured_facility;
+	
+	@Column
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date delivery_date;
@@ -169,6 +175,22 @@ public class case_delivery implements Serializable {
 
 	public void setDelivery_occured(Integer delivery_occured) {
 		this.delivery_occured = delivery_occured;
+	}
+
+	public Integer getDelivery_occured_facility() {
+		return delivery_occured_facility;
+	}
+
+	public void setDelivery_occured_facility(Integer delivery_occured_facility) {
+		this.delivery_occured_facility = delivery_occured_facility;
+	}
+
+	public Integer getDelivery_abortion() {
+		return delivery_abortion;
+	}
+
+	public void setDelivery_abortion(Integer delivery_abortion) {
+		this.delivery_abortion = delivery_abortion;
 	}
 
 	@Override

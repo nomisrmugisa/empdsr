@@ -552,6 +552,7 @@
 		}
 
 		function changeLabourStartmodeOtherToNA(objCombo) {
+			var herbi = document.getElementById("labour_herbalind");
 			var parto = document.getElementById("labour_partograph");
 			var hour1 = document.getElementById("labour_lasthour1");
 			var mint1 = document.getElementById("labour_lastminute1");
@@ -559,6 +560,7 @@
 			var mint2 = document.getElementById("labour_lastminute2");
 
 			if (objCombo.value == '0' || objCombo.value == '88' || objCombo.value == '') {
+				herbi.value = '99';
 				parto.value = '99';
 				hour1.value = '99';
 				mint1.value = '99';
@@ -569,6 +571,7 @@
 				$('#labour_startmode_fieldset').hide('fade');
 
 			} else {
+				herbi.value = '';
 				parto.value = '';
 				hour1.value = '';
 				mint1.value = '';
@@ -658,6 +661,16 @@
 			} else {
 				$('#delivery_occured_fieldset').show();
 			}
+			
+			if (objCombo.value == '0') {
+				
+				$('#delivery_abortion_fieldset').show();
+				
+			} else {
+				
+				$('#delivery_abortion_fieldset').hide();
+			}
+
 		}
 
 
@@ -685,22 +698,43 @@
 
 		function changeDeliveryViewDynamic(objCombo) {
 
+			var delivery_occured_facility = document.getElementById("delivery_occured_facility");
 			var delivery_datetime_notstated = document.getElementById("delivery_datetime_notstated");
+			var delivery_period = document.getElementById("delivery_period");
+			var delivery_weight = document.getElementById("delivery_weight");
+
+			var delivery_abortion = document.getElementById("delivery_abortion");
 
 			if (objCombo.value != '1') {
+				delivery_occured_facility.value = '88';
 				delivery_datetime_notstated.checked = true;
 				delivery_period.value = '88';
 				delivery_weight.value = '0.9';
 
 				$('#delivery_occured_fieldset').hide();
 
+				
 			} else {
 				$('#delivery_occured_fieldset').show();
 
+				delivery_occured_facility.value = '';
 				delivery_datetime_notstated.checked = false;
 				delivery_period.value = '';
 				delivery_weight.value = '';
+				
 			}
+
+			if (objCombo.value == '0') {
+				
+				$('#delivery_abortion_fieldset').show();
+				delivery_abortion.value = '';
+				
+			} else {
+				
+				$('#delivery_abortion_fieldset').hide();
+				delivery_abortion.value = '88';
+			}
+
 
 			changeDeliveryDateTimeToREADONLYDynamic(objCombo)
 		}
@@ -1033,6 +1067,7 @@
 			}
 		}
 		changeMdeathDateTimeToREADONLY();
+
 		function changeMdeathDateTimeToREADONLYDynamic(objCombo) {
 			var rdate = document.getElementById("mdeath_date");
 			var rtime = document.getElementById("mdeath_time");
@@ -1049,6 +1084,71 @@
 			}
 		}
 
+	</script>
+	<script>
+
+		function changeMdeathAutopsyView() {
+			var objCombo = document.getElementById("mdeath_autopsy");
+			var aupsydate = document.getElementById("mdeath_autopsy_date");
+			var aupsyloc = document.getElementById("mdeath_autopsy_location");
+			var aupsyby = document.getElementById("mdeath_autopsy_by");
+			var aupsyfcod = document.getElementById("mdeath_autopsy_final_cod");
+			var aupsyacod = document.getElementById("mdeath_autopsy_antec_cod");
+			var aupsyocod = document.getElementById("mdeath_autopsy_ops_cod");
+
+			if (objCombo.value != '1') {
+				aupsydate.value = '';
+				aupsyloc.value = 'NA';
+				aupsyby.value = '99';
+				aupsyfcod.value = 'NA';
+				aupsyacod.value = 'NA';
+				aupsyocod.value = 'NA';
+
+				$('#mdeath_autopsy_fieldset').hide('fade');
+
+			} else {
+				$('#mdeath_autopsy_fieldset').show('fade');
+
+				aupsydate.value = '';
+				aupsyloc.value = '';
+				aupsyby.value = '';
+				aupsyfcod.value = '';
+				aupsyacod.value = '';
+				aupsyocod.value = '';
+			}
+		}
+
+		changeMdeathAutopsyView();
+
+		function changeMdeathAutopsyDynamic(objCombo) {
+			var aupsydate = document.getElementById("mdeath_autopsy_date");
+			var aupsyloc = document.getElementById("mdeath_autopsy_location");
+			var aupsyby = document.getElementById("mdeath_autopsy_by");
+			var aupsyfcod = document.getElementById("mdeath_autopsy_final_cod");
+			var aupsyacod = document.getElementById("mdeath_autopsy_antec_cod");
+			var aupsyocod = document.getElementById("mdeath_autopsy_ops_cod");
+
+			if (objCombo.value != '1') {
+				aupsydate.value = '';
+				aupsyloc.value = 'NA';
+				aupsyby.value = '99';
+				aupsyfcod.value = 'NA';
+				aupsyacod.value = 'NA';
+				aupsyocod.value = 'NA';
+
+				$('#mdeath_autopsy_fieldset').hide('fade');
+
+			} else {
+				$('#mdeath_autopsy_fieldset').show('fade');
+
+				aupsydate.value = '';
+				aupsyloc.value = '';
+				aupsyby.value = '';
+				aupsyfcod.value = '';
+				aupsyacod.value = '';
+				aupsyocod.value = '';
+			}
+		}
 	</script>
 
 

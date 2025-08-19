@@ -118,18 +118,6 @@ public class CaseAuditController {
 	@Autowired
 	private EmailService emailService;
 
-	private String[] getRecipients() {
-		List<String> recipientList = userRepo.findByUser_alerted(true);
-		if (recipientList == null) {
-			recipientList = new ArrayList<>();
-		}
-		recipientList.add("makmanu128@gmail.com");
-		recipientList.add("elelart@gmail.com");
-
-		return recipientList.toArray(new String[recipientList.size()]);
-
-	}
-
 	@Scheduled(cron = "0 0 9 * * 1,3") // (9pm) of every tuesday, thursday within each week
 	public void autoCheckPendingReviews() {
 		try {
@@ -141,21 +129,21 @@ public class CaseAuditController {
 				// alert for pending reviews
 				List<audit_case> auditsPending = acaseRepo.findActivePendingAudit(cal.getTime());
 				if (auditsPending.size() > 0) {
-					emailService.sendSimpleMessage(getRecipients(), "TEST MESSAGE - PDSR PENDING REVIEW NOTIFICATION!",
+					emailService.sendSimpleMessage(getRecipients(), "MPDSR PENDING REVIEW NOTIFICATION!",
 							"Hello Reviewers,\n" + "\nThere are " + auditsPending.size()
 									+ " deaths yet to be reviewed for this week" + "\nHealth Facility: "
 									+ sync.getSync_name() + " - " + sync.getSync_code()
-									+ "\nThis is a PILOT IMPLEMENTATION of the Enhanced Automated PDSR tool developed by Alex and Eliezer");
+									+ "\nThis is a PILOT IMPLEMENTATION of the Enhanced Automated MPDSR tool developed by Alex and Eliezer");
 				}
 
 				// alert for pending recommendations
 				List<audit_audit> recsPending = tcaseRepo.findByPendingRecommendation();
 				if (recsPending.size() > 0) {
 					emailService.sendSimpleMessage(getRecipients(),
-							"TEST MESSAGE - PDSR PENDING RECOMMENDATIONS NOTIFICATION!",
+							"MPDSR PENDING RECOMMENDATIONS NOTIFICATION!",
 							"Hello Reviewers,\n" + "\nThere are " + recsPending.size() + " recommendations to work on"
 									+ "\nHealth Facility: " + sync.getSync_name() + " - " + sync.getSync_code()
-									+ "\nThis is a PILOT IMPLEMENTATION of the Enhanced Automated PDSR tool developed by Alex and Eliezer");
+									+ "\nThis is a PILOT IMPLEMENTATION of the Enhanced Automated MPDSR tool developed by Alex and Eliezer");
 				}
 
 				// alerts for overdue actions
@@ -169,11 +157,11 @@ public class CaseAuditController {
 					overdue.add(elem);
 				}
 				if (overdue.size() > 0) {
-					emailService.sendSimpleMessage(getRecipients(), "TEST MESSAGE - PDSR OVERDUE ACTIONS NOTIFICATION!",
+					emailService.sendSimpleMessage(getRecipients(), "MPDSR OVERDUE ACTIONS NOTIFICATION!",
 							"Hello Reviewers,\n" + "\nThere are " + overdue.size()
 									+ " incomplete actions that have passed the deadline" + "\nHealth Facility: "
 									+ sync.getSync_name() + " - " + sync.getSync_code()
-									+ "\nThis is a PILOT IMPLEMENTATION of the Enhanced Automated PDSR tool developed by Alex and Eliezer");
+									+ "\nThis is a PILOT IMPLEMENTATION of the Enhanced Automated MPDSR tool developed by Alex and Eliezer");
 				}
 
 			}
@@ -415,6 +403,17 @@ public class CaseAuditController {
 				}
 			}
 
+			if (scase.getCase_death() == 3 && scase.getMdeath() != null) {
+				List<json_data> mdthdata;
+				try {
+					mdthdata = objectMapper.readValue(scase.getMdeath().getMdeath_json(), mapType);
+					fulldata.setMdeath(mdthdata);
+				} catch (JsonProcessingException e) {
+
+					e.printStackTrace();
+				}
+			}
+
 			List<json_data> notedata;
 			try {
 				notedata = objectMapper.readValue(scase.getNotes().getNotes_json(), mapType);
@@ -445,11 +444,11 @@ public class CaseAuditController {
 				if (InternetAvailabilityChecker.isInternetAvailable()) {
 
 					sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
-					emailService.sendSimpleMessage(getRecipients(), "TEST MESSAGE - PDSR NEW REVIEWS NOTIFICATION!",
+					emailService.sendSimpleMessage(getRecipients(), "MPDSR NEW REVIEWS NOTIFICATION!",
 							"Hello Reviewers,\n" + "\nThere are " + selectedForAuditing.size()
 									+ " deaths ready to be reviewed this week" + "\nHealth Facility: "
 									+ sync.getSync_name() + " - " + sync.getSync_code()
-									+ "\nThis is a PILOT IMPLEMENTATION of the Enhanced Automated PDSR tool developed by Alex and Eliezer");
+									+ "\nThis is a PILOT IMPLEMENTATION of the Enhanced Automated MPDSR tool developed by Alex and Eliezer");
 				}
 			} catch (IOException e) {
 			}
@@ -605,6 +604,11 @@ public class CaseAuditController {
 					if (scase.getCase_death() == 2) {
 						List<json_data> bdtdata = objectMapper.readValue(scase.getBabydeath().getBaby_json(), mapType);
 						fulldata.setBabydeath(bdtdata);
+					}
+
+					if (scase.getCase_death() == 3) {
+						List<json_data>mdthdata = objectMapper.readValue(scase.getMdeath().getMdeath_json(), mapType);
+						fulldata.setMdeath(mdthdata);
 					}
 
 					List<json_data> notedata = objectMapper.readValue(scase.getNotes().getNotes_json(), mapType);
@@ -794,11 +798,11 @@ public class CaseAuditController {
 					if (InternetAvailabilityChecker.isInternetAvailable()) {
 
 						sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
-						emailService.sendSimpleMessage(getRecipients(), "TEST MESSAGE - PDSR NEW REVIEWS NOTIFICATION!",
-								"Hello Reviewers,\n" + "\nThere are " + selectedForAuditing.size()
-										+ " deaths ready to be reviewed this week" + "\nHealth Facility: "
+						emailService.sendSimpleMessage(getRecipients(), "MPDSR NEW REVIEWS NOTIFICATION!",
+								"Hello Reviewers,\n" + "\nYou are " + selectedForAuditing.size()
+										+ " death case(s) ready to be reviewed this week" + "\nHealth Facility: "
 										+ sync.getSync_name() + " - " + sync.getSync_code()
-										+ "\nThis is a PILOT IMPLEMENTATION of the Enhanced Automated PDSR tool developed by Alex and Eliezer");
+										+ "\nThis is a PILOT IMPLEMENTATION of the Enhanced Automated MPDSR tool developed by Alex and Eliezer");
 					}
 				} catch (IOException e) {
 				}
@@ -848,6 +852,24 @@ public class CaseAuditController {
 		audit_case acase = acaseRepo.findById(case_uuid).get();
 		Optional<audit_audit> selected = tcaseRepo.findById(case_uuid);
 
+		// type of deaths
+		Map<Integer, String> death_map = new LinkedHashMap<>();
+		death_map.put(null, "Select one");
+
+		if (acase.getCase_death() == CONSTANTS.STILL_BIRTH) {
+			death_map.put(1, getQuestion("label.still.birth.intra"));
+			death_map.put(2, getQuestion("label.still.birth.antep"));
+		}
+
+		if (acase.getCase_death() == CONSTANTS.NEONATAL_DEATH) {
+			death_map.put(3, getQuestion("label.neonatal.death"));
+		}
+
+		if (acase.getCase_death() == CONSTANTS.MATERNAL_DEATH) {
+			death_map.put(4, getQuestion("label.maternal.death"));
+		}
+		model.addAttribute("death_options", death_map);
+
 		if (selected.isPresent()) {
 			audit_audit tcase = selected.get();
 
@@ -880,7 +902,7 @@ public class CaseAuditController {
 				}
 				break;
 			}
-			//case 4 should be maternal death
+			// case 4 should be maternal death
 			case 4: {
 				if (!icdRepo.findMaternalMMByICDGroup(tcase.getAudit_icdpm()).isEmpty()) {
 					icd_codes icd = icdRepo.findMaternalMMByICDGroup(tcase.getAudit_icdpm()).get(0);
@@ -908,6 +930,7 @@ public class CaseAuditController {
 			model.addAttribute("casedelivery", dataset.getDelivery());
 			model.addAttribute("caseantenatal", dataset.getAntenatal());
 			model.addAttribute("caselabour", dataset.getLabour());
+			model.addAttribute("casemdeath", dataset.getMdeath());
 			model.addAttribute("casebirth", dataset.getBirth());
 			model.addAttribute("casefetalheart", dataset.getFetalheart());
 			model.addAttribute("casebabydeath", dataset.getBabydeath());
@@ -1143,7 +1166,7 @@ public class CaseAuditController {
 		} else if (audit_death == 3) {
 
 			return icdRepo.findNeonatalICD("xx");
-			
+
 		} else if (audit_death == 4) {
 
 			return icdRepo.findMaternalICD("xx");
@@ -1233,19 +1256,6 @@ public class CaseAuditController {
 		for (datamap elem : mapRepo.findByMap_feature("cstatus_options")) {
 			map.put(elem.getMap_value(), elem.getMap_label());
 		}
-
-		return map;
-	}
-
-	@ModelAttribute("death_options")
-	public Map<Integer, String> deathOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(0, "Select one");
-		map.put(1, getQuestion("label.still.birth.intra"));
-		map.put(2, getQuestion("label.still.birth.antep"));
-		map.put(3, getQuestion("label.neonatal.death"));
-		map.put(4, getQuestion("label.maternal.death"));
 
 		return map;
 	}
@@ -1424,5 +1434,18 @@ public class CaseAuditController {
 			ex.printStackTrace();
 		}
 	}
+	
+	private String[] getRecipients() {
+		List<String> recipientList = userRepo.findByUser_alerted(true);
+		if (recipientList == null) {
+			recipientList = new ArrayList<>();
+		}
+		recipientList.add("makmanu128@gmail.com");
+		recipientList.add("elelart@gmail.com");
+
+		return recipientList.toArray(new String[recipientList.size()]);
+
+	}
+
 
 }// end class

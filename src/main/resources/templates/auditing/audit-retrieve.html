@@ -21,7 +21,11 @@
 						<th><a href="#" class="btn btn-sm btn-primary"
 								th:href="@{/auditing/edit/{id}(id=${item.audit_uuid})}" th:text="#{audit.audit}"></a>
 						</th>
-						<td th:text="${item.case_death == 1}?#{label.still.birth}:#{label.neonatal.death}"></td>
+						<td>
+							<span th:if="${item.case_death == 1}" th:text="#{label.still.birth}"></span>
+							<span th:if="${item.case_death == 2}" th:text="#{label.neonatal.death}"></span>
+							<span th:if="${item.case_death == 3}" th:text="#{label.maternal.death}"></span>
+						</td>
 						<td th:text="${item.audit_date}"></td>
 					</tr>
 				</tbody>
@@ -34,7 +38,8 @@
 		<form action="#" th:action="@{/auditing}" method="POST">
 			<div class="text-center">
 				<button class="btn btn-info btn-lg" type="submit" th:utext="#{load.cases.button}"></button>
-				<a class="btn btn-outline-primary btn-lg" href="#" th:href="@{/auditing/mycases}" th:utext="#{select.cases.button}"></a>
+				<a class="btn btn-outline-primary btn-lg" href="#" th:href="@{/auditing/mycases}"
+					th:utext="#{select.cases.button}"></a>
 			</div>
 		</form>
 	</div>
@@ -59,8 +64,11 @@
 								th:href="@{/auditing/recommend/{id}(id=${item.audit_uuid})}"
 								th:text="#{audit.recommendation}"></a>
 						</th>
-						<td
-							th:text="${item.audit_death == 1}?#{label.still.birth.intra}:(${item.audit_death == 2}?#{label.still.birth.antep}:(${item.audit_death == 3}?#{label.neonatal.death}:${item.audit_death}))">
+						<td>
+							<span th:if="${item.audit_death == 1}" th:text="#{label.still.birth.intra}"></span>
+							<span th:if="${item.audit_death == 2}" th:text="#{label.still.birth.antep}"></span>
+							<span th:if="${item.audit_death == 3}" th:text="#{label.neonatal.death}"></span>
+							<span th:if="${item.audit_death == 4}" th:text="#{label.maternal.death}"></span>
 						</td>
 						<td th:text="${item.audit_icdpm}"></td>
 						<td th:text="${item.audit_delay1 == 1}?#{label.yes}:#{label.no}"></td>

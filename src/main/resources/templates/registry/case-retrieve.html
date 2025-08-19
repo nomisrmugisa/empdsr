@@ -66,6 +66,11 @@
 								th:classappend="${item.babydeath}?(${item.babydeath.data_complete==1}?'bg-success':'bg-warning text-dark'):'bg-danger'">Baby's
 								Death</span>
 						</a>
+						<a th:href="@{/registry/edit/{id}?page=8(id=${item.case_uuid})}" th:if="${item.case_death==3}">
+							<span class="badge"
+								th:classappend="${item.mdeath}?(${item.mdeath.data_complete==1}?'bg-success':'bg-warning text-dark'):'bg-danger'">Mother's'
+								Death</span>
+						</a>
 						<a th:href="@{/registry/edit/{id}?page=9(id=${item.case_uuid})}">
 							<span class="badge" th:classappend="${item.notes}?'bg-success':'bg-danger'">Notes</span>
 						</a>

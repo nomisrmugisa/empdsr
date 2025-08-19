@@ -281,58 +281,78 @@ public class HomeController {
 
 		model.addAttribute("cyear", year);
 		
+		final Integer entered_md = caseRepo.countByCase_death(3);
 		final Integer entered_nd = caseRepo.countByCase_death(2);
 		final Integer entered_sb = caseRepo.countByCase_death(1);
+		model.addAttribute("entered_md", entered_md);
 		model.addAttribute("entered_nd", entered_nd);
 		model.addAttribute("entered_sb", entered_sb);
 
+		final Integer c_entered_md = caseRepo.countByCase_death(3, year);
 		final Integer c_entered_nd = caseRepo.countByCase_death(2, year);
 		final Integer c_entered_sb = caseRepo.countByCase_death(1, year);
+		model.addAttribute("c_entered_md", c_entered_md);
 		model.addAttribute("c_entered_nd", c_entered_nd);
 		model.addAttribute("c_entered_sb", c_entered_sb);
 
+		final Integer submitted_mdn = caseRepo.countBySubmittedAndType(3);
 		final Integer submitted_ndn = caseRepo.countBySubmittedAndType(2);
 		final Integer submitted_sbn = caseRepo.countBySubmittedAndType(1);
+		model.addAttribute("submitted_mdn", submitted_mdn);
 		model.addAttribute("submitted_ndn", submitted_ndn);
 		model.addAttribute("submitted_sbn", submitted_sbn);
 		
+		final Integer c_submitted_mdn = caseRepo.countBySubmittedAndType(3, year);
 		final Integer c_submitted_ndn = caseRepo.countBySubmittedAndType(2, year);
 		final Integer c_submitted_sbn = caseRepo.countBySubmittedAndType(1, year);
+		model.addAttribute("c_submitted_mdn", c_submitted_mdn);
 		model.addAttribute("c_submitted_ndn", c_submitted_ndn);
 		model.addAttribute("c_submitted_sbn", c_submitted_sbn);
 		
+		model.addAttribute("submitted_mdp", entered_md == 0 ? 0 : 100 * submitted_mdn / entered_md);
 		model.addAttribute("submitted_ndp", entered_nd == 0 ? 0 : 100 * submitted_ndn / entered_nd);
 		model.addAttribute("submitted_sbp", entered_sb == 0 ? 0 : 100 * submitted_sbn / entered_sb);
 
+		model.addAttribute("c_submitted_mdp", c_entered_md == 0 ? 0 : 100 * c_submitted_mdn / c_entered_md);
 		model.addAttribute("c_submitted_ndp", c_entered_nd == 0 ? 0 : 100 * c_submitted_ndn / c_entered_nd);
 		model.addAttribute("c_submitted_sbp", c_entered_sb == 0 ? 0 : 100 * c_submitted_sbn / c_entered_sb);
 
 		
+		final Integer selected_md = caseRepo.countSelectedCasesByCase_death(3);
 		final Integer selected_nd = caseRepo.countSelectedCasesByCase_death(2);
 		final Integer selected_sb = caseRepo.countSelectedCasesByCase_death(1);
+		model.addAttribute("selected_md", selected_md);
 		model.addAttribute("selected_nd", selected_nd);
 		model.addAttribute("selected_sb", selected_sb);
 		
 		
+		final Integer c_selected_md = caseRepo.countSelectedCasesByCase_death(3, year);
 		final Integer c_selected_nd = caseRepo.countSelectedCasesByCase_death(2, year);
 		final Integer c_selected_sb = caseRepo.countSelectedCasesByCase_death(1, year);
+		model.addAttribute("c_selected_md", c_selected_md);
 		model.addAttribute("c_selected_nd", c_selected_nd);
 		model.addAttribute("c_selected_sb", c_selected_sb);
 		
 
+		final Integer reviewed_mdn = caseRepo.countReviewedCasesByCase_death(3);
 		final Integer reviewed_ndn = caseRepo.countReviewedCasesByCase_death(2);
 		final Integer reviewed_sbn = caseRepo.countReviewedCasesByCase_death(1);
+		model.addAttribute("reviewed_mdn", reviewed_mdn);
 		model.addAttribute("reviewed_ndn", reviewed_ndn);
 		model.addAttribute("reviewed_sbn", reviewed_sbn);
 
+		final Integer c_reviewed_mdn = caseRepo.countReviewedCasesByCase_death(3, year);
 		final Integer c_reviewed_ndn = caseRepo.countReviewedCasesByCase_death(2, year);
 		final Integer c_reviewed_sbn = caseRepo.countReviewedCasesByCase_death(1, year);
+		model.addAttribute("c_reviewed_mdn", c_reviewed_mdn);
 		model.addAttribute("c_reviewed_ndn", c_reviewed_ndn);
 		model.addAttribute("c_reviewed_sbn", c_reviewed_sbn);
 
+		model.addAttribute("reviewed_mdp", selected_md == 0 ? 0 : 100 * reviewed_mdn / selected_md);
 		model.addAttribute("reviewed_ndp", selected_nd == 0 ? 0 : 100 * reviewed_ndn / selected_nd);
 		model.addAttribute("reviewed_sbp", selected_sb == 0 ? 0 : 100 * reviewed_sbn / selected_sb);
 
+		model.addAttribute("c_reviewed_mdp", c_selected_md == 0 ? 0 : 100 * c_reviewed_mdn / c_selected_md);
 		model.addAttribute("c_reviewed_ndp", c_selected_nd == 0 ? 0 : 100 * c_reviewed_ndn / c_selected_nd);
 		model.addAttribute("c_reviewed_sbp", c_selected_sb == 0 ? 0 : 100 * c_reviewed_sbn / c_selected_sb);
 
@@ -600,24 +620,36 @@ public class HomeController {
 
 		model.addAttribute("cyear", year);
 
+		model.addAttribute("entered_md", bcaseRepo.countByCase_death(3, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 		model.addAttribute("entered_nd", bcaseRepo.countByCase_death(2, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 		model.addAttribute("entered_sb", bcaseRepo.countByCase_death(1, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 
+		model.addAttribute("c_entered_md",
+				bcaseRepo.countByCase_death(3, year, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 		model.addAttribute("c_entered_nd",
 				bcaseRepo.countByCase_death(2, year, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 		model.addAttribute("c_entered_sb",
 				bcaseRepo.countByCase_death(1, year, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 
+		model.addAttribute("submitted_mdn",
+				bcaseRepo.countByCase_statusAndType(1, 3, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 		model.addAttribute("submitted_ndn",
 				bcaseRepo.countByCase_statusAndType(1, 2, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 		model.addAttribute("submitted_sbn",
 				bcaseRepo.countByCase_statusAndType(1, 1, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 
+		model.addAttribute("c_submitted_mdn",
+				bcaseRepo.countByCase_statusAndType(1, 3, year, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 		model.addAttribute("c_submitted_ndn",
 				bcaseRepo.countByCase_statusAndType(1, 2, year, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 		model.addAttribute("c_submitted_sbn",
 				bcaseRepo.countByCase_statusAndType(1, 1, year, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 
+		
+		model.addAttribute("submitted_mdp",
+				bcaseRepo.countByCase_death(3, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME) == 0 ? 0
+						: 100 * bcaseRepo.countByCase_statusAndType(1, 3, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME)
+								/ bcaseRepo.countByCase_death(3, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 		model.addAttribute("submitted_ndp",
 				bcaseRepo.countByCase_death(2, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME) == 0 ? 0
 						: 100 * bcaseRepo.countByCase_statusAndType(1, 2, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME)
@@ -627,6 +659,12 @@ public class HomeController {
 						: 100 * bcaseRepo.countByCase_statusAndType(1, 1, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME)
 								/ bcaseRepo.countByCase_death(1, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 
+		
+		model.addAttribute("c_submitted_mdp",
+				bcaseRepo.countByCase_death(3, year, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME) == 0 ? 0
+						: 100 * bcaseRepo.countByCase_statusAndType(1, 3, year, COUNTRY_NAME, REGION_NAME,
+								DISTRICT_NAME)
+								/ bcaseRepo.countByCase_death(3, year, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 		model.addAttribute("c_submitted_ndp",
 				bcaseRepo.countByCase_death(2, year, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME) == 0 ? 0
 						: 100 * bcaseRepo.countByCase_statusAndType(1, 2, year, COUNTRY_NAME, REGION_NAME,
@@ -639,26 +677,38 @@ public class HomeController {
 								/ bcaseRepo.countByCase_death(1, year, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 
 		// selected status=2
+		model.addAttribute("selected_md",
+				bcaseRepo.countByCase_statusAndType(2, 3, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 		model.addAttribute("selected_nd",
 				bcaseRepo.countByCase_statusAndType(2, 2, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 		model.addAttribute("selected_sb",
 				bcaseRepo.countByCase_statusAndType(2, 1, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 
+		model.addAttribute("c_selected_md",
+				bcaseRepo.countByCase_statusAndType(2, 3, year, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 		model.addAttribute("c_selected_nd",
 				bcaseRepo.countByCase_statusAndType(2, 2, year, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 		model.addAttribute("c_selected_sb",
 				bcaseRepo.countByCase_statusAndType(2, 1, year, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 
+		model.addAttribute("reviewed_mdn",
+				bcaseRepo.countByCase_statusAndType(3, 3, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 		model.addAttribute("reviewed_ndn",
 				bcaseRepo.countByCase_statusAndType(3, 2, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 		model.addAttribute("reviewed_sbn",
 				bcaseRepo.countByCase_statusAndType(3, 1, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 
+		model.addAttribute("c_reviewed_mdn",
+				bcaseRepo.countByCase_statusAndType(3, 2, year, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 		model.addAttribute("c_reviewed_ndn",
 				bcaseRepo.countByCase_statusAndType(3, 2, year, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 		model.addAttribute("c_reviewed_sbn",
 				bcaseRepo.countByCase_statusAndType(3, 1, year, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 
+		model.addAttribute("reviewed_mdp",
+				bcaseRepo.countByCase_statusAndType(3, 3, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME) == 0 ? 0
+						: 100 * bcaseRepo.countByCase_statusAndType(3, 3, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME)
+								/ bcaseRepo.countByCase_statusAndType(2, 3, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 		model.addAttribute("reviewed_ndp",
 				bcaseRepo.countByCase_statusAndType(3, 2, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME) == 0 ? 0
 						: 100 * bcaseRepo.countByCase_statusAndType(3, 2, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME)
@@ -668,6 +718,12 @@ public class HomeController {
 						: 100 * bcaseRepo.countByCase_statusAndType(3, 1, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME)
 								/ bcaseRepo.countByCase_statusAndType(2, 1, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 
+		model.addAttribute("reviewed_mdp",
+				bcaseRepo.countByCase_statusAndType(2, 3, year, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME) == 0 ? 0
+						: 100 * bcaseRepo.countByCase_statusAndType(3, 3, year, COUNTRY_NAME, REGION_NAME,
+								DISTRICT_NAME)
+								/ bcaseRepo.countByCase_statusAndType(2, 3, year, COUNTRY_NAME, REGION_NAME,
+										DISTRICT_NAME));
 		model.addAttribute("reviewed_ndp",
 				bcaseRepo.countByCase_statusAndType(2, 2, year, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME) == 0 ? 0
 						: 100 * bcaseRepo.countByCase_statusAndType(3, 2, year, COUNTRY_NAME, REGION_NAME,
@@ -959,20 +1015,29 @@ public class HomeController {
 
 		model.addAttribute("cyear", year);
 
+		model.addAttribute("entered_md", bcaseRepo.countByCase_death(3, COUNTRY_NAME, REGION_NAME));
 		model.addAttribute("entered_nd", bcaseRepo.countByCase_death(2, COUNTRY_NAME, REGION_NAME));
 		model.addAttribute("entered_sb", bcaseRepo.countByCase_death(1, COUNTRY_NAME, REGION_NAME));
 
+		model.addAttribute("c_entered_md", bcaseRepo.countByCase_death(3, year, COUNTRY_NAME, REGION_NAME));
 		model.addAttribute("c_entered_nd", bcaseRepo.countByCase_death(2, year, COUNTRY_NAME, REGION_NAME));
 		model.addAttribute("c_entered_sb", bcaseRepo.countByCase_death(1, year, COUNTRY_NAME, REGION_NAME));
 
+		model.addAttribute("submitted_mdn", bcaseRepo.countByCase_statusAndType(1, 3, COUNTRY_NAME, REGION_NAME));
 		model.addAttribute("submitted_ndn", bcaseRepo.countByCase_statusAndType(1, 2, COUNTRY_NAME, REGION_NAME));
 		model.addAttribute("submitted_sbn", bcaseRepo.countByCase_statusAndType(1, 1, COUNTRY_NAME, REGION_NAME));
 
+		model.addAttribute("c_submitted_mdn",
+				bcaseRepo.countByCase_statusAndType(1, 3, year, COUNTRY_NAME, REGION_NAME));
 		model.addAttribute("c_submitted_ndn",
 				bcaseRepo.countByCase_statusAndType(1, 2, year, COUNTRY_NAME, REGION_NAME));
 		model.addAttribute("c_submitted_sbn",
 				bcaseRepo.countByCase_statusAndType(1, 1, year, COUNTRY_NAME, REGION_NAME));
 
+		model.addAttribute("submitted_mdp",
+				bcaseRepo.countByCase_death(3, COUNTRY_NAME, REGION_NAME) == 0 ? 0
+						: 100 * bcaseRepo.countByCase_statusAndType(1, 3, COUNTRY_NAME, REGION_NAME)
+								/ bcaseRepo.countByCase_death(3, COUNTRY_NAME, REGION_NAME));
 		model.addAttribute("submitted_ndp",
 				bcaseRepo.countByCase_death(2, COUNTRY_NAME, REGION_NAME) == 0 ? 0
 						: 100 * bcaseRepo.countByCase_statusAndType(1, 2, COUNTRY_NAME, REGION_NAME)
@@ -982,6 +1047,10 @@ public class HomeController {
 						: 100 * bcaseRepo.countByCase_statusAndType(1, 1, COUNTRY_NAME, REGION_NAME)
 								/ bcaseRepo.countByCase_death(1, COUNTRY_NAME, REGION_NAME));
 
+		model.addAttribute("c_submitted_mdp",
+				bcaseRepo.countByCase_death(3, year, COUNTRY_NAME, REGION_NAME) == 0 ? 0
+						: 100 * bcaseRepo.countByCase_statusAndType(1, 3, year, COUNTRY_NAME, REGION_NAME)
+								/ bcaseRepo.countByCase_death(3, year, COUNTRY_NAME, REGION_NAME));
 		model.addAttribute("c_submitted_ndp",
 				bcaseRepo.countByCase_death(2, year, COUNTRY_NAME, REGION_NAME) == 0 ? 0
 						: 100 * bcaseRepo.countByCase_statusAndType(1, 2, year, COUNTRY_NAME, REGION_NAME)
@@ -992,20 +1061,29 @@ public class HomeController {
 								/ bcaseRepo.countByCase_death(1, year, COUNTRY_NAME, REGION_NAME));
 
 		// selected status=2
+		model.addAttribute("selected_md", bcaseRepo.countByCase_statusAndType(2, 3, COUNTRY_NAME, REGION_NAME));
 		model.addAttribute("selected_nd", bcaseRepo.countByCase_statusAndType(2, 2, COUNTRY_NAME, REGION_NAME));
 		model.addAttribute("selected_sb", bcaseRepo.countByCase_statusAndType(2, 1, COUNTRY_NAME, REGION_NAME));
 
+		model.addAttribute("c_selected_md", bcaseRepo.countByCase_statusAndType(2, 3, year, COUNTRY_NAME, REGION_NAME));
 		model.addAttribute("c_selected_nd", bcaseRepo.countByCase_statusAndType(2, 2, year, COUNTRY_NAME, REGION_NAME));
 		model.addAttribute("c_selected_sb", bcaseRepo.countByCase_statusAndType(2, 1, year, COUNTRY_NAME, REGION_NAME));
 
+		model.addAttribute("reviewed_mdn", bcaseRepo.countByCase_statusAndType(3, 3, COUNTRY_NAME, REGION_NAME));
 		model.addAttribute("reviewed_ndn", bcaseRepo.countByCase_statusAndType(3, 2, COUNTRY_NAME, REGION_NAME));
 		model.addAttribute("reviewed_sbn", bcaseRepo.countByCase_statusAndType(3, 1, COUNTRY_NAME, REGION_NAME));
 
+		model.addAttribute("c_reviewed_mdn",
+				bcaseRepo.countByCase_statusAndType(3, 3, year, COUNTRY_NAME, REGION_NAME));
 		model.addAttribute("c_reviewed_ndn",
 				bcaseRepo.countByCase_statusAndType(3, 2, year, COUNTRY_NAME, REGION_NAME));
 		model.addAttribute("c_reviewed_sbn",
 				bcaseRepo.countByCase_statusAndType(3, 1, year, COUNTRY_NAME, REGION_NAME));
 
+		model.addAttribute("reviewed_mdp",
+				bcaseRepo.countByCase_statusAndType(3, 3, COUNTRY_NAME, REGION_NAME) == 0 ? 0
+						: 100 * bcaseRepo.countByCase_statusAndType(3, 3, COUNTRY_NAME, REGION_NAME)
+								/ bcaseRepo.countByCase_statusAndType(2, 3, COUNTRY_NAME, REGION_NAME));
 		model.addAttribute("reviewed_ndp",
 				bcaseRepo.countByCase_statusAndType(3, 2, COUNTRY_NAME, REGION_NAME) == 0 ? 0
 						: 100 * bcaseRepo.countByCase_statusAndType(3, 2, COUNTRY_NAME, REGION_NAME)
@@ -1015,6 +1093,10 @@ public class HomeController {
 						: 100 * bcaseRepo.countByCase_statusAndType(3, 1, COUNTRY_NAME, REGION_NAME)
 								/ bcaseRepo.countByCase_statusAndType(2, 1, COUNTRY_NAME, REGION_NAME));
 
+		model.addAttribute("reviewed_mdp",
+				bcaseRepo.countByCase_statusAndType(2, 3, year, COUNTRY_NAME, REGION_NAME) == 0 ? 0
+						: 100 * bcaseRepo.countByCase_statusAndType(3, 3, year, COUNTRY_NAME, REGION_NAME)
+								/ bcaseRepo.countByCase_statusAndType(2, 3, year, COUNTRY_NAME, REGION_NAME));
 		model.addAttribute("reviewed_ndp",
 				bcaseRepo.countByCase_statusAndType(2, 2, year, COUNTRY_NAME, REGION_NAME) == 0 ? 0
 						: 100 * bcaseRepo.countByCase_statusAndType(3, 2, year, COUNTRY_NAME, REGION_NAME)
@@ -1292,18 +1374,26 @@ public class HomeController {
 
 		model.addAttribute("cyear", year);
 
+		model.addAttribute("entered_md", bcaseRepo.countByCase_death(3, COUNTRY_NAME));
 		model.addAttribute("entered_nd", bcaseRepo.countByCase_death(2, COUNTRY_NAME));
 		model.addAttribute("entered_sb", bcaseRepo.countByCase_death(1, COUNTRY_NAME));
 
+		model.addAttribute("c_entered_md", bcaseRepo.countByCase_death(3, year, COUNTRY_NAME));
 		model.addAttribute("c_entered_nd", bcaseRepo.countByCase_death(2, year, COUNTRY_NAME));
 		model.addAttribute("c_entered_sb", bcaseRepo.countByCase_death(1, year, COUNTRY_NAME));
 
+		model.addAttribute("submitted_mdn", bcaseRepo.countByCase_statusAndType(1, 3, COUNTRY_NAME));
 		model.addAttribute("submitted_ndn", bcaseRepo.countByCase_statusAndType(1, 2, COUNTRY_NAME));
 		model.addAttribute("submitted_sbn", bcaseRepo.countByCase_statusAndType(1, 1, COUNTRY_NAME));
 
+		model.addAttribute("c_submitted_mdn", bcaseRepo.countByCase_statusAndType(1, 3, year, COUNTRY_NAME));
 		model.addAttribute("c_submitted_ndn", bcaseRepo.countByCase_statusAndType(1, 2, year, COUNTRY_NAME));
 		model.addAttribute("c_submitted_sbn", bcaseRepo.countByCase_statusAndType(1, 1, year, COUNTRY_NAME));
 
+		model.addAttribute("submitted_mdp",
+				bcaseRepo.countByCase_death(3, COUNTRY_NAME) == 0 ? 0
+						: 100 * bcaseRepo.countByCase_statusAndType(1, 3, COUNTRY_NAME)
+								/ bcaseRepo.countByCase_death(3, COUNTRY_NAME));
 		model.addAttribute("submitted_ndp",
 				bcaseRepo.countByCase_death(2, COUNTRY_NAME) == 0 ? 0
 						: 100 * bcaseRepo.countByCase_statusAndType(1, 2, COUNTRY_NAME)
@@ -1313,6 +1403,10 @@ public class HomeController {
 						: 100 * bcaseRepo.countByCase_statusAndType(1, 1, COUNTRY_NAME)
 								/ bcaseRepo.countByCase_death(1, COUNTRY_NAME));
 
+		model.addAttribute("c_submitted_mdp",
+				bcaseRepo.countByCase_death(3, year, COUNTRY_NAME) == 0 ? 0
+						: 100 * bcaseRepo.countByCase_statusAndType(1, 3, year, COUNTRY_NAME)
+								/ bcaseRepo.countByCase_death(3, year, COUNTRY_NAME));
 		model.addAttribute("c_submitted_ndp",
 				bcaseRepo.countByCase_death(2, year, COUNTRY_NAME) == 0 ? 0
 						: 100 * bcaseRepo.countByCase_statusAndType(1, 2, year, COUNTRY_NAME)
@@ -1323,18 +1417,26 @@ public class HomeController {
 								/ bcaseRepo.countByCase_death(1, year, COUNTRY_NAME));
 
 		// selected status=2
+		model.addAttribute("selected_md", bcaseRepo.countByCase_statusAndType(2, 3, COUNTRY_NAME));
 		model.addAttribute("selected_nd", bcaseRepo.countByCase_statusAndType(2, 2, COUNTRY_NAME));
 		model.addAttribute("selected_sb", bcaseRepo.countByCase_statusAndType(2, 1, COUNTRY_NAME));
 
+		model.addAttribute("c_selected_md", bcaseRepo.countByCase_statusAndType(2, 3, year, COUNTRY_NAME));
 		model.addAttribute("c_selected_nd", bcaseRepo.countByCase_statusAndType(2, 2, year, COUNTRY_NAME));
 		model.addAttribute("c_selected_sb", bcaseRepo.countByCase_statusAndType(2, 1, year, COUNTRY_NAME));
 
+		model.addAttribute("reviewed_mdn", bcaseRepo.countByCase_statusAndType(3, 3, COUNTRY_NAME));
 		model.addAttribute("reviewed_ndn", bcaseRepo.countByCase_statusAndType(3, 2, COUNTRY_NAME));
 		model.addAttribute("reviewed_sbn", bcaseRepo.countByCase_statusAndType(3, 1, COUNTRY_NAME));
 
+		model.addAttribute("c_reviewed_mdn", bcaseRepo.countByCase_statusAndType(3, 3, year, COUNTRY_NAME));
 		model.addAttribute("c_reviewed_ndn", bcaseRepo.countByCase_statusAndType(3, 2, year, COUNTRY_NAME));
 		model.addAttribute("c_reviewed_sbn", bcaseRepo.countByCase_statusAndType(3, 1, year, COUNTRY_NAME));
 
+		model.addAttribute("reviewed_mdp",
+				bcaseRepo.countByCase_statusAndType(3, 3, COUNTRY_NAME) == 0 ? 0
+						: 100 * bcaseRepo.countByCase_statusAndType(3, 3, COUNTRY_NAME)
+								/ bcaseRepo.countByCase_statusAndType(2, 3, COUNTRY_NAME));
 		model.addAttribute("reviewed_ndp",
 				bcaseRepo.countByCase_statusAndType(3, 2, COUNTRY_NAME) == 0 ? 0
 						: 100 * bcaseRepo.countByCase_statusAndType(3, 2, COUNTRY_NAME)
@@ -1344,6 +1446,10 @@ public class HomeController {
 						: 100 * bcaseRepo.countByCase_statusAndType(3, 1, COUNTRY_NAME)
 								/ bcaseRepo.countByCase_statusAndType(2, 1, COUNTRY_NAME));
 
+		model.addAttribute("reviewed_mdp",
+				bcaseRepo.countByCase_statusAndType(2, 3, year, COUNTRY_NAME) == 0 ? 0
+						: 100 * bcaseRepo.countByCase_statusAndType(3, 3, year, COUNTRY_NAME)
+								/ bcaseRepo.countByCase_statusAndType(2, 3, year, COUNTRY_NAME));
 		model.addAttribute("reviewed_ndp",
 				bcaseRepo.countByCase_statusAndType(2, 2, year, COUNTRY_NAME) == 0 ? 0
 						: 100 * bcaseRepo.countByCase_statusAndType(3, 2, year, COUNTRY_NAME)

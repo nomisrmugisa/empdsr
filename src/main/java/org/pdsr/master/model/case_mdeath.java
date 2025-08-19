@@ -134,6 +134,12 @@ public class case_mdeath implements Serializable {
 	private Integer mdeath_postpart_placentaremoval;
 
 	@Column
+	private Integer mdeath_postpart_tacid;
+
+	@Column
+	private Integer mdeath_postpart_oxytocin;
+
+	@Column
 	private Integer mdeath_postpart_antihyper;
 
 	@Column
@@ -685,6 +691,22 @@ public class case_mdeath implements Serializable {
 
 	public void setMdeath_new_intervention(String mdeath_new_intervention) {
 		this.mdeath_new_intervention = mdeath_new_intervention;
+	}
+
+	public Integer getMdeath_postpart_tacid() {
+		return mdeath_postpart_tacid;
+	}
+
+	public void setMdeath_postpart_tacid(Integer mdeath_postpart_tacid) {
+		this.mdeath_postpart_tacid = mdeath_postpart_tacid;
+	}
+
+	public Integer getMdeath_postpart_oxytocin() {
+		return mdeath_postpart_oxytocin;
+	}
+
+	public void setMdeath_postpart_oxytocin(Integer mdeath_postpart_oxytocin) {
+		this.mdeath_postpart_oxytocin = mdeath_postpart_oxytocin;
 	}
 
 	public String getMdeath_json() {

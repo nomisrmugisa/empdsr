@@ -134,7 +134,7 @@
 											<td>[[${oavg.mdeath_osum}]]</td>
 											<td>[[${oavg.immr_oavg}]]</td>
 										</tr>
-									</tbody >
+									</tbody>
 								</table>
 							</div>
 						</div>
@@ -186,7 +186,7 @@
 											<td class="text-white">[[${#numbers.formatDecimal(cavg.immr_oavg,
 												1, 'COMMA', 1, 'POINT')}]]</td>
 										</tr>
-									</tbody >
+									</tbody>
 								</table>
 							</div>
 						</div>
@@ -286,9 +286,10 @@
 					<table class="table table-sm table-responsive text-white mb-3">
 						<thead class="table-primary small">
 							<tr class="small">
-								<th style="width: 50%;" th:text="#{fp.totals}">&nbsp;</th>
+								<th style="width: 40%;" th:text="#{fp.totals}">&nbsp;</th>
 								<th class="" th:text="#{fp.stillbirths}"></th>
 								<th class="" th:text="#{fp.neodeaths}"></th>
+								<th class="" th:text="#{fp.matdeaths}"></th>
 							</tr>
 						</thead>
 						<tbody class="small">
@@ -296,6 +297,7 @@
 								<td th:text="#{fp.cases.entered}"></td>
 								<td class="fw-bold">[[${entered_sb}]]</td>
 								<td class="fw-bold">[[${entered_nd}]]</td>
+								<td class="fw-bold">[[${entered_md}]]</td>
 							</tr>
 							<tr>
 								<td th:text="#{fp.cases.submitted}"></td>
@@ -307,12 +309,17 @@
 										class="small fw-normal">([[${#numbers.formatDecimal(submitted_ndp, 1,
 										'COMMA', 1,
 										'POINT')}]]%)</span></td>
+								<td class="fw-bold">[[${submitted_mdn}]]&nbsp;<span
+										class="small fw-normal">([[${#numbers.formatDecimal(submitted_mdp, 1,
+										'COMMA', 1,
+										'POINT')}]]%)</span></td>
 							</tr>
 
 							<tr>
 								<td th:text="#{fp.cases.selected}"></td>
 								<td class="fw-bold">[[${selected_sb}]]</td>
 								<td class="fw-bold">[[${selected_nd}]]</td>
+								<td class="fw-bold">[[${selected_md}]]</td>
 							</tr>
 							<tr>
 								<td th:text="#{fp.cases.reviewed}"></td>
@@ -324,16 +331,21 @@
 										class="small fw-normal">([[${#numbers.formatDecimal(reviewed_ndp, 1, 'COMMA',
 										1,
 										'POINT')}]]%)</span></td>
+								<td class="fw-bold">[[${reviewed_mdn}]]&nbsp;<span
+										class="small fw-normal">([[${#numbers.formatDecimal(reviewed_mdp, 1, 'COMMA',
+										1,
+										'POINT')}]]%)</span></td>
 
 							</tr>
-						</tbody >
+						</tbody>
 					</table>
 					<table class="table table-sm table-responsive text-white">
 						<thead class="table-primary small">
 							<tr class="small">
-								<th style="width: 50%;" th:text="#{fp.current}+' - '+${cyear}">&nbsp;</th>
+								<th style="width: 40%;" th:text="#{fp.current}+' - '+${cyear}">&nbsp;</th>
 								<th class="" th:text="#{fp.stillbirths}"></th>
 								<th class="" th:text="#{fp.neodeaths}"></th>
+								<th class="" th:text="#{fp.matdeaths}"></th>
 							</tr>
 						</thead>
 						<tbody class="small">
@@ -341,6 +353,7 @@
 								<td th:text="#{fp.cases.entered}"></td>
 								<td class="fw-bold">[[${c_entered_sb}]]</td>
 								<td class="fw-bold">[[${c_entered_nd}]]</td>
+								<td class="fw-bold">[[${c_entered_md}]]</td>
 							</tr>
 							<tr>
 								<td th:text="#{fp.cases.submitted}"></td>
@@ -354,12 +367,18 @@
 										1,
 										'COMMA', 1,
 										'POINT')}]]%)</span></td>
+								<td class="fw-bold">[[${c_submitted_mdn}]]&nbsp;<span
+										class="text-warning small fw-normal">([[${#numbers.formatDecimal(c_submitted_mdp,
+										1,
+										'COMMA', 1,
+										'POINT')}]]%)</span></td>
 							</tr>
 
 							<tr>
 								<td th:text="#{fp.cases.selected}"></td>
 								<td class="fw-bold">[[${c_selected_sb}]]</td>
 								<td class="fw-bold">[[${c_selected_nd}]]</td>
+								<td class="fw-bold">[[${c_selected_md}]]</td>
 							</tr>
 							<tr>
 								<td th:text="#{fp.cases.reviewed}"></td>
@@ -373,8 +392,13 @@
 										1,
 										'COMMA', 1,
 										'POINT')}]]%)</span></td>
+								<td class="fw-bold">[[${c_reviewed_mdn}]]&nbsp;<span
+										class="text-warning small fw-normal">([[${#numbers.formatDecimal(reviewed_mdp,
+										1,
+										'COMMA', 1,
+										'POINT')}]]%)</span></td>
 							</tr>
-						</tbody >
+						</tbody>
 					</table>
 				</div>
 				<div class="row">

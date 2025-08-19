@@ -667,7 +667,8 @@ public class SetupController {
 
 //	@Transactional
 	@PostMapping("/deletecase")
-	public String deletecaseconfirm(Principal principal, Model model, @ModelAttribute("selected") casedeleter selected) {
+	public String deletecaseconfirm(Principal principal, Model model,
+			@ModelAttribute("selected") casedeleter selected) {
 
 		// if confirmation is given and object is found
 		if (selected != null && selected.isClear_uploaded()) {
@@ -1356,7 +1357,7 @@ public class SetupController {
 			for (org.pdsr.slave.model.case_mdeath s : scases) {
 				Optional<case_identifiers> icase = caseRepo.findById(s.getCase_uuid().getCase_uuid());
 				if (icase.isPresent()) {
-					
+
 					case_mdeath mcase = new case_mdeath();
 					mcase.setMdeath_uuid(s.getMdeath_uuid());
 
@@ -1803,7 +1804,7 @@ public class SetupController {
 			json.setDistrict(district);
 			json.setRegion(region);
 			json.setCountry(country);
-			json.setRec_complete(elem.getRec_complete());
+			json.setRec_complete((elem.getRec_complete() == null) ? 0 : elem.getRec_complete());
 			json.setAudit_cdate(f.format(elem.getAudit_cdate()));
 
 			json.setAudit_csc(elem.getAudit_csc());
@@ -1856,9 +1857,9 @@ public class SetupController {
 			json.setDistrict(district);
 			json.setRegion(region);
 			json.setCountry(country);
-			json.setRec_complete(elem.getRec_complete());
+			json.setRec_complete((elem.getRec_complete() == null) ? 0 : elem.getRec_complete());
 			json.setAudit_cdate(f.format(elem.getAudit_cdate()));
-
+			
 			json.setAudit_csc(elem.getAudit_csc());
 			json.setAudit_death(elem.getAudit_death());
 			json.setAudit_delay1(elem.getAudit_delay1());
@@ -1943,6 +1944,7 @@ public class SetupController {
 
 			json_audit_recommendation json = new json_audit_recommendation();
 			json.setId(elem.getRecommendation_uuid() + country + code.toUpperCase());
+			json.setCode(code);
 			json.setAudit_uuid(elem.getAudit_uuid().getAudit_uuid() + country + code.toUpperCase());
 			json.setDistrict(district);
 			json.setRegion(region);
@@ -1983,6 +1985,7 @@ public class SetupController {
 
 			json_audit_recommendation json = new json_audit_recommendation();
 			json.setId(elem.getRecommendation_uuid() + country + code.toUpperCase());
+			json.setCode(code);
 			json.setAudit_uuid(elem.getAudit_uuid().getAudit_uuid() + country + code.toUpperCase());
 			json.setDistrict(district);
 			json.setRegion(region);

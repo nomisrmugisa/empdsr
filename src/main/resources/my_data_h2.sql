@@ -29,7 +29,11 @@
     MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_REGIONAL');
     MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_DISTRICT');
 
-    MERGE INTO country_table KEY(country_uuid) values('4','Disney World');
+    MERGE INTO country_table KEY(country_uuid) values('1','Ghana');
+    --MERGE INTO country_table KEY(country_uuid) values('2','Namibia');
+    --MERGE INTO country_table KEY(country_uuid) values('3','Sierra Leone');
+    --MERGE INTO country_table KEY(country_uuid) values('4','Uganda');
+    --MERGE INTO country_table KEY(country_uuid) values('5','Ethiopia');
 
     MERGE INTO risk_table KEY(risk_name) values('Cervical / uterine surgery','none');
     MERGE INTO risk_table KEY(risk_name) values('Last delivery > 10 years','none');
@@ -460,7 +464,6 @@
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mode_options',2,'Caesarean Section');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mode_options',88,'Not Stated');
   
-	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('startmode_options',0,'No labour');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('startmode_options',1,'Spontaneous');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('startmode_options',2,'Induced');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('startmode_options',88,'Not Stated');
@@ -549,7 +552,7 @@
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',4,'Congenital anomalies');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',5,'Special case');
 	
-	
+		
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('autopsyby_options',1,'Pathologist');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('autopsyby_options',2,'Medical Officer');
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('autopsyby_options',3,'Other');

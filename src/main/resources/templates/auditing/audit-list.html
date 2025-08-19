@@ -23,9 +23,15 @@
 						<input type="checkbox" th:field="*{rcases}" th:value="${option.case_uuid}" />
 					</th>
 					<td th:text="${option.case_date}"></td>
-					<td th:text="${option.case_death == 1}?#{label.still.birth}:#{label.neonatal.death}"></td>
-					<td
-						th:text="${option.case_death == 1}?${option.delivery.delivery_date}:${option.babydeath.baby_ddate}">
+					<td>
+						<span th:if="${option.case_death == 1}">[[#{label.still.birth}]]</span>
+						<span th:if="${option.case_death == 2}">[[#{label.neonatal.death}]]</span>
+						<span th:if="${option.case_death == 3}">[[#{label.maternal.death}]]</span>
+					</td>
+					<td>
+						<span th:if="${option.case_death == 1}">[[${option.delivery.delivery_date}]]</span>
+						<span th:if="${option.case_death == 2}">[[${option.babydeath.baby_ddate}]]</span>
+						<span th:if="${option.case_death == 3}">[[${option.mdeath.mdeath_date}]]</span>
 					</td>
 				</tr>
 			</tbody>

@@ -11,7 +11,7 @@
 		<!-- lookup parent from repository upgrading the 2.5.0 would affect the H2 database-->
 	</parent>
 	<groupId>org.unicef</groupId>
-	<artifactId>pdsr_open</artifactId>
+	<artifactId>pdsr_ethiopia</artifactId>
 	<version>2.5.1</version>
 	
 	<dependencies>

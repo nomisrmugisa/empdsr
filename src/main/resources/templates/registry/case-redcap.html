@@ -4,17 +4,18 @@
 <content>
 	<div class="float-end" th:text="${myf}"></div>
 	<div class="col-md-12 py-3 my-3 mx-auto p-5 rounded box-shadow" style="background-color: #92c7f2;">
+		<div class="display-4" th:unless="${isNowActive}">This feature will be available in the next update...</div>
 		<form action="#" th:action="@{/registry/redcap}" th:object="${redcap}" method="POST" class="needs-validation"
-			novalidate>
+			novalidate th:if="${isNowActive}">
 
 			<div class="row">
 				<div class="col-auto">
 					<label class="control-label" th:text="#{date.from}"></label>
-					<input id="from_date" class="form-control form-control-sm datepicker" th:field="*{from}" required/>
+					<input id="from_date" class="form-control form-control-sm datepicker" th:field="*{from}" required />
 				</div>
 				<div class="col-auto">
 					<label class="control-label" th:text="#{date.to}"></label>
-					<input id="to_date" class="form-control form-control-sm datepicker" th:field="*{to}" required/>
+					<input id="to_date" class="form-control form-control-sm datepicker" th:field="*{to}" required />
 				</div>
 			</div>
 			<hr class="mb-2 bg-secondary">

@@ -15,12 +15,16 @@
 						<div class="row mb-3">
 							<div class="col-auto">
 								<label class="text-secondary" th:text=#{label.date.audit}></label>
-								<i th:text="${#dates.format(selected.audit_case.audit_date,'dd-MMM-yyyy')}"></i>
+								<i class="fw-bold"
+									th:text="${#dates.format(selected.audit_case.audit_date,'dd-MMM-yyyy')}"></i>
 							</div>
 							<div class="col-auto">
 								<label class="text-secondary" th:text=#{label.case.type}></label>
-								<i
-									th:text="${selected.audit_case.case_death == 1}?#{label.still.birth}:#{label.neonatal.death}"></i>
+								<b>
+									<i th:if="${selected.audit_case.case_death == 1}">[[#{label.still.birth}]]</i>
+									<i th:if="${selected.audit_case.case_death == 2}">[[#{label.neonatal.death}]]</i>
+									<i th:if="${selected.audit_case.case_death == 3}">[[#{label.maternal.death}]]</i>
+								</b>
 							</div>
 						</div>
 						<div class="nav nav-pills mb-0 border-bottom small nav-justified" id="v-pills-tab"
@@ -64,6 +68,10 @@
 								aria-controls="v-pills-babydeath" aria-selected="false" th:if="${casebabydeath}">Baby's
 								Death</button>
 
+							<button class="nav-link" id="v-pills-mdeath-tab" data-bs-toggle="pill"
+								data-bs-target="#v-pills-mdeath" type="button" role="tab" aria-controls="v-pills-mdeath"
+								aria-selected="false">Mother's Death</button>
+
 							<button class="nav-link" id="v-pills-notes-tab" data-bs-toggle="pill"
 								data-bs-target="#v-pills-notes" type="button" role="tab" aria-controls="v-pills-notes"
 								aria-selected="false">Notes</button>
@@ -72,7 +80,7 @@
 						<div class="tab-content" id="v-pills-tabContent">
 							<div class="tab-pane fade show active" id="v-pills-biodata" role="tabpanel"
 								aria-labelledby="v-pills-biodata-tab">
-								<div class="overflow-auto" style="height: 400px;">
+								<div class="overflow-auto" style="height: 600px;">
 									<table class="table">
 										<thead>
 											<tr>
@@ -90,7 +98,7 @@
 							</div>
 							<div class="tab-pane fade" id="v-pills-pregnancy" role="tabpanel"
 								aria-labelledby="v-pills-pregnancy-tab">
-								<div class="overflow-auto" style="height: 400px;">
+								<div class="overflow-auto" style="height: 600px;">
 									<table class="table">
 										<thead>
 											<tr>
@@ -108,7 +116,7 @@
 							</div>
 							<div class="tab-pane fade" id="v-pills-referral" role="tabpanel"
 								aria-labelledby="v-pills-referral-tab">
-								<div class="overflow-auto" style="height: 400px;">
+								<div class="overflow-auto" style="height: 600px;">
 									<table class="table">
 										<thead>
 											<tr>
@@ -116,23 +124,16 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr>
-												<td>
-													<p th:each="item : ${casereferral}" th:if="${item.canreview}"
-														class="border-bottom">
-														<span class="text-secondary">
-															[[${item.question}]]
-														</span>
-														<strong
-															th:unless="${#strings.startsWith(item.answer,'XZYimageXZY')}"
-															th:utext="${item.answer}" style="width: 50%;"></strong>
-														<span th:if="${#strings.startsWith(item.answer,'XZYimageXZY')}"
-															style="width: 50%;">
-															<img id="itemphotoref"
-																th:src="'data:image/png;base64,'+${#strings.substringAfter(item.answer,'XZYimageXZY')}"
-																width="100%" />
-														</span>
-													</p>
+											<tr th:each="item : ${casereferral}" th:if="${item.canreview}">
+												<td th:unless="${#strings.startsWith(item.answer,'XZYimageXZY')}"
+													th:utext="${item.question}" class="text-secondary"></td>
+												<td th:unless="${#strings.startsWith(item.answer,'XZYimageXZY')}"
+													th:utext="${item.answer}" style="width: 50%;"></td>
+												<td th:if="${#strings.startsWith(item.answer,'XZYimageXZY')}"
+													style="width: 50%;" colspan="2">
+													<img id="itemphotoref"
+														th:src="'data:image/png;base64,'+${#strings.substringAfter(item.answer,'XZYimageXZY')}"
+														width="100%" />
 												</td>
 											</tr>
 										</tbody>
@@ -141,7 +142,7 @@
 							</div>
 							<div class="tab-pane fade" id="v-pills-delivery" role="tabpanel"
 								aria-labelledby="v-pills-delivery-tab">
-								<div class="overflow-auto" style="height: 400px;">
+								<div class="overflow-auto" style="height: 600px;">
 									<table class="table">
 										<thead>
 											<tr>
@@ -159,7 +160,7 @@
 							</div>
 							<div class="tab-pane fade" id="v-pills-antenatal" role="tabpanel"
 								aria-labelledby="v-pills-antenatal-tab">
-								<div class="overflow-auto" style="height: 400px;">
+								<div class="overflow-auto" style="height: 600px;">
 									<table class="table">
 										<thead>
 											<tr>
@@ -177,7 +178,7 @@
 							</div>
 							<div class="tab-pane fade" id="v-pills-labour" role="tabpanel"
 								aria-labelledby="v-pills-labour-tab">
-								<div class="overflow-auto" style="height: 400px;">
+								<div class="overflow-auto" style="height: 600px;">
 									<table class="table">
 										<thead>
 											<tr>
@@ -193,9 +194,27 @@
 									</table>
 								</div>
 							</div>
+							<div class="tab-pane fade" id="v-pills-mdeath" role="tabpanel"
+								aria-labelledby="v-pills-mdeath-tab">
+								<div class="overflow-auto" style="height: 600px;">
+									<table class="table">
+										<thead>
+											<tr>
+												<th colspan="2" th:text="#{title.mdeath}"></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="item : ${casemdeath}" th:if="${item.canreview}">
+												<td th:utext="${item.question}" class="text-secondary"></td>
+												<td th:utext="${item.answer}" style="width: 50%;"></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
 							<div class="tab-pane fade" id="v-pills-birth" role="tabpanel"
 								aria-labelledby="v-pills-birth-tab">
-								<div class="overflow-auto" style="height: 400px;">
+								<div class="overflow-auto" style="height: 600px;">
 									<table class="table">
 										<thead>
 											<tr>
@@ -213,7 +232,7 @@
 							</div>
 							<div class="tab-pane fade" id="v-pills-fetalheart" role="tabpanel"
 								aria-labelledby="v-pills-fetalheart-tab" th:if="${casefetalheart}">
-								<div class="overflow-auto" style="height: 400px;">
+								<div class="overflow-auto" style="height: 600px;">
 									<table class="table">
 										<thead>
 											<tr>
@@ -231,7 +250,7 @@
 							</div>
 							<div class="tab-pane fade" id="v-pills-babydeath" role="tabpanel"
 								aria-labelledby="v-pills-babydeath-tab" th:if="${casebabydeath}">
-								<div class="overflow-auto" style="height: 400px;">
+								<div class="overflow-auto" style="height: 600px;">
 									<table class="table">
 										<thead>
 											<tr>
@@ -249,7 +268,7 @@
 							</div>
 							<div class="tab-pane fade" id="v-pills-notes" role="tabpanel"
 								aria-labelledby="v-pills-notes-tab">
-								<div class="overflow-auto" style="height: 400px;">
+								<div class="overflow-auto" style="height: 600px;">
 									<table class="table">
 										<thead>
 											<tr>

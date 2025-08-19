@@ -73,6 +73,9 @@ public class case_labour implements Serializable {
 	
 	
 	@Column
+	private Integer labour_herbalind;
+	
+	@Column
 	private Integer labour_startmode;
 	
 	
@@ -285,6 +288,14 @@ public class case_labour implements Serializable {
 
 	public void setLabour_occured(Integer labour_occured) {
 		this.labour_occured = labour_occured;
+	}
+
+	public Integer getLabour_herbalind() {
+		return labour_herbalind;
+	}
+
+	public void setLabour_herbalind(Integer labour_herbalind) {
+		this.labour_herbalind = labour_herbalind;
 	}
 
 	@Override
