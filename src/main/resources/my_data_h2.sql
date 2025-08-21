@@ -349,8 +349,22 @@
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('ethnic_options',6,'Grussi');	
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('ethnic_options',7,'Gruma');	
 	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('ethnic_options',8,'Other');	
-	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('ethnic_options',88,'Not Stated');	
-
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('ethnic_options',88,'Not Stated');
+	
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('rnok_options',1,'Spouse');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('rnok_options',2,'Parent');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('rnok_options',3,'Sibling');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('rnok_options',4,'Relative');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('rnok_options',5,'Friend');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('rnok_options',6,'Non Relative');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('rnok_options',88,'Not Stated');
+	
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pod_options',1,'At Health Facility');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pod_options',2,'On arrival');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pod_options',3,'In transit');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pod_options',4,'Community death');
+	MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pod_options',88,'Not Stated');
+	
     MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pweeks_options',4,'Weeks');
     MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pweeks_options',5,'Weeks');
     MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pweeks_options',6,'Weeks');
