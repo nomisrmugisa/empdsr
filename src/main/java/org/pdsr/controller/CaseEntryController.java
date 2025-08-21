@@ -669,7 +669,6 @@ public class CaseEntryController {
 			final boolean ant = selected.getAntenatal().getData_complete() == 1;
 			final boolean lab = selected.getLabour().getData_complete() == 1;
 			final boolean bir = selected.getBirth().getData_complete() == 1;
-			final boolean ntc = selected.getNotes().getData_complete() == 1;
 
 			final boolean fet = selected.getFetalheart() != null && selected.getFetalheart().getData_complete() == 1;
 			final boolean bab = selected.getBabydeath() != null && selected.getBabydeath().getData_complete() == 1;
@@ -876,10 +875,7 @@ public class CaseEntryController {
 
 			try {
 				case_biodata o = selected.getBiodata();
-				if (o.getBiodata_mage() == null || o.getBiodata_medu() == null || o.getBiodata_sex() == null || 
-						o.getBiodata_village() == null || o.getBiodata_village().trim().isEmpty() || 
-						o.getBiodata_nok() == null || o.getBiodata_nok().trim().isEmpty() || 
-						o.getBiodata_rnok() == null || o.getBiodata_pod() == null) {
+				if (o.getBiodata_mage() == null || o.getBiodata_medu() == null || o.getBiodata_sex() == null) {
 					o.setData_complete(0);
 				} else {
 					o.setData_complete(1);
@@ -1453,34 +1449,24 @@ public class CaseEntryController {
 			break;
 		}
 		case 9: {
-			case_notes o = selected.getNotes();
 
 			try {
-				MultipartFile file = o.getFile();
-				o.setBase64image(null);
+				MultipartFile file = selected.getNotes().getFile();
+				selected.getNotes().setBase64image(null);
 
 				try {
 					if (file != null && file.getBytes() != null && file.getBytes().length > 0) {
-						o.setNotes_file(file.getBytes());
-						o.setNotes_filetype(file.getContentType());
+						selected.getNotes().setNotes_file(file.getBytes());
+						selected.getNotes().setNotes_filetype(file.getContentType());
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				
-				if (o.getNotes_dispdate() == null || o.getNotes_dlvby() == null || o.getNotes_dlvcontact() == null || 
-						o.getNotes_dlvdate() == null || o.getNotes_rcvby() == null || o.getNotes_rcvdate() == null || 
-						o.getNotes_ntfby() == null || o.getNotes_ntfcontact() == null) {
-					o.setData_complete(0);
-				} else {
-					o.setData_complete(1);
-					
-				final String arrayToJson = objectMapper.writeValueAsString(processListOf(o));
-				o.setNotes_json(arrayToJson);
 
-				}
+				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getNotes()));
+				selected.getNotes().setNotes_json(arrayToJson);
 
-				notRepo.save(o);
+				notRepo.save(selected.getNotes());
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
 			}
@@ -1981,31 +1967,6 @@ public class CaseEntryController {
 
 		return map;
 	}
-	
-	@ModelAttribute("rnok_options")
-	public Map<Integer, String> rnokOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("rnok_options")) {
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
-
-		return map;
-	}
-	
-	@ModelAttribute("pod_options")
-	public Map<Integer, String> podOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("pod_options")) {
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
-
-		return map;
-	}
-	
 
 	@ModelAttribute("pweeks_options")
 	public Map<Integer, String> pweeksOptionsSelectOne() {

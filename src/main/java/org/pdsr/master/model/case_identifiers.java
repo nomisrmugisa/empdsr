@@ -54,11 +54,6 @@ public class case_identifiers implements Serializable {
 	@Column
 	@Size(min = 1, max = 80)
 	private String case_mid;
-	
-	//@NotNull
-	@Column   //(unique = true)
-	@Size(min = 1, max = 80)
-	private String case_nin;
 
 	@NotNull
 	@Column
@@ -162,14 +157,6 @@ public class case_identifiers implements Serializable {
 
 	public String getCase_mid() {
 		return case_mid;
-	}
-
-	public String getCase_nin() {
-		return case_nin;
-	}
-
-	public void setCase_nin(String case_nin) {
-		this.case_nin = case_nin;
 	}
 
 	public void setCase_mid(String case_mid) {
