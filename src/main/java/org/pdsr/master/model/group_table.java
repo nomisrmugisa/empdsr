@@ -27,6 +27,13 @@ public class group_table implements Serializable {
 	@Size(min = 1, max = 255)
 	private String group_desc;
 
+	public group_table(@NotNull @Size(min = 1, max = 80) String group_role,
+			@NotNull @Size(min = 1, max = 255) String group_desc) {
+		super();
+		this.group_role = group_role;
+		this.group_desc = group_desc;
+	}
+
 	public String getGroup_role() {
 		return group_role;
 	}
