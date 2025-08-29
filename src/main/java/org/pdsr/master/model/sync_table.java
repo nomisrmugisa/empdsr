@@ -1,13 +1,18 @@
 package org.pdsr.master.model;
 
 import java.io.Serializable;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class sync_table implements Serializable {
@@ -21,22 +26,17 @@ public class sync_table implements Serializable {
 	@Id
 	@NotNull
 	@Size(min = 1, max = 80)
-	private String sync_id;
+	private String sync_id;//REMOTE SYNC ID (LICENSE ID)
 	
 	@Column(unique = true)
 	@NotNull
 	@Size(min = 1, max = 80)
-	private String sync_uuid;
-	
-	@Column(unique = true)
-	@NotNull
-	@Size(min = 1, max = 80)
-	private String sync_code;
+	private String sync_code;//FACILITY ID
 	
 	@Column
 	@NotNull
 	@Size(min = 1, max = 80)	
-	private String sync_name;
+	private String sync_name;//facility name
 	
 	@Column
 	@Size(min = 1, max = 80)	
@@ -44,16 +44,15 @@ public class sync_table implements Serializable {
 		
 	@Column
 	private String sync_url;
-		
-	@Column
-	private String sync_redcap_url;
-		
-	@Column
-	private String sync_redcap_token;
-		
+	
 	@Lob
 	@Column
 	private String sync_json;
+		
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "case_sync")
+    @JsonIgnore
+	private List<case_identifiers> cases;
+
 
 	public String getSync_id() {
 		return sync_id;
@@ -61,14 +60,6 @@ public class sync_table implements Serializable {
 
 	public void setSync_id(String sync_id) {
 		this.sync_id = sync_id;
-	}
-
-	public String getSync_uuid() {
-		return sync_uuid;
-	}
-
-	public void setSync_uuid(String sync_uuid) {
-		this.sync_uuid = sync_uuid;
 	}
 
 	public String getSync_code() {
@@ -103,22 +94,6 @@ public class sync_table implements Serializable {
 		this.sync_url = sync_url;
 	}
 
-	public String getSync_redcap_url() {
-		return sync_redcap_url;
-	}
-
-	public void setSync_redcap_url(String sync_redcap_url) {
-		this.sync_redcap_url = sync_redcap_url;
-	}
-
-	public String getSync_redcap_token() {
-		return sync_redcap_token;
-	}
-
-	public void setSync_redcap_token(String sync_redcap_token) {
-		this.sync_redcap_token = sync_redcap_token;
-	}
-
 	public String getSync_json() {
 		return sync_json;
 	}
@@ -127,36 +102,12 @@ public class sync_table implements Serializable {
 		this.sync_json = sync_json;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((sync_id == null) ? 0 : sync_id.hashCode());
-		result = prime * result + ((sync_uuid == null) ? 0 : sync_uuid.hashCode());
-		return result;
+	public List<case_identifiers> getCases() {
+		return cases;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		sync_table other = (sync_table) obj;
-		if (sync_id == null) {
-			if (other.sync_id != null)
-				return false;
-		} else if (!sync_id.equals(other.sync_id))
-			return false;
-		if (sync_uuid == null) {
-			if (other.sync_uuid != null)
-				return false;
-		} else if (!sync_uuid.equals(other.sync_uuid))
-			return false;
-		return true;
+	public void setCases(List<case_identifiers> cases) {
+		this.cases = cases;
 	}
-
 
 }

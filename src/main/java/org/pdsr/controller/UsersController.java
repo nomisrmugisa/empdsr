@@ -54,12 +54,12 @@ public class UsersController {
 	public String addUser(Principal principal, final Model model,
 			@RequestParam(name = "success", required = false) String success) {
 
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSync_name());
 
 		model.addAttribute("selected", new user_table());

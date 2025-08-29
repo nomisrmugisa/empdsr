@@ -124,7 +124,7 @@ public class CaseAuditController {
 			if (InternetAvailabilityChecker.isInternetAvailable()) {
 				Calendar cal = Calendar.getInstance();
 				cal.add(Calendar.DAY_OF_MONTH, -7);
-				sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+				sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 
 				// alert for pending reviews
 				List<audit_case> auditsPending = acaseRepo.findActivePendingAudit(cal.getTime());
@@ -174,12 +174,12 @@ public class CaseAuditController {
 	@GetMapping("")
 	public String list(Principal principal, Model model) {
 
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSync_name());
 
 		Calendar cal = Calendar.getInstance();
@@ -246,11 +246,11 @@ public class CaseAuditController {
 
 	@PostMapping("")
 	public String selectSpecialCases(Principal principal, Model model) {
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSync_name());
 
 		autoSelectCases();
@@ -260,11 +260,11 @@ public class CaseAuditController {
 
 	@GetMapping("/mycases")
 	public String manualSelectCases(Principal principal, Model model) {
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSync_name());
 
 		CaseWrapper selected = new CaseWrapper();
@@ -281,7 +281,7 @@ public class CaseAuditController {
 
 	@PostMapping("/mycases")
 	public String manualSelectCases(Principal principal, @ModelAttribute("selected") CaseWrapper selected) {
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			return "home";
 		}
 
@@ -443,7 +443,7 @@ public class CaseAuditController {
 			try {
 				if (InternetAvailabilityChecker.isInternetAvailable()) {
 
-					sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+					sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 					emailService.sendSimpleMessage(getRecipients(), "MPDSR NEW REVIEWS NOTIFICATION!",
 							"Hello Reviewers,\n" + "\nThere are " + selectedForAuditing.size()
 									+ " deaths ready to be reviewed this week" + "\nHealth Facility: "
@@ -495,7 +495,7 @@ public class CaseAuditController {
 			persDeque.push(4);
 
 			// Fetch the persistent deque
-			sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+			sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 			json_algorithm algorithm = (synctable.getSync_json() != null && synctable.getSync_json().trim() != "")
 					? objectMapper.readValue(synctable.getSync_json(), mapType1)
 					: new json_algorithm();
@@ -797,7 +797,7 @@ public class CaseAuditController {
 				try {
 					if (InternetAvailabilityChecker.isInternetAvailable()) {
 
-						sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+						sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 						emailService.sendSimpleMessage(getRecipients(), "MPDSR NEW REVIEWS NOTIFICATION!",
 								"Hello Reviewers,\n" + "\nYou are " + selectedForAuditing.size()
 										+ " death case(s) ready to be reviewed this week" + "\nHealth Facility: "
@@ -829,12 +829,12 @@ public class CaseAuditController {
 			@RequestParam(name = "success", required = false) String success,
 			@RequestParam(name = "error", required = false) String error) {
 
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSync_name());
 
 		if (success != null) {
@@ -955,7 +955,7 @@ public class CaseAuditController {
 
 		model.addAttribute("mcond_options", map);
 
-		model.addAttribute("facility_code", caseRepo.findById(case_uuid).get().getFacility().getFacility_code());
+		model.addAttribute("facility_code", caseRepo.findById(case_uuid).get().getCase_sync().getSync_code());
 
 		return "auditing/audit-create";
 	}
@@ -1001,12 +1001,12 @@ public class CaseAuditController {
 	public String recommendation(Principal principal, Model model, @PathVariable("id") String case_uuid,
 			@RequestParam(required = false) String success) {
 
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSync_name());
 
 		if (success != null) {
@@ -1102,12 +1102,12 @@ public class CaseAuditController {
 	public String recommendStarted(Principal principal, Model model, @PathVariable("id") String recommendation_uuid,
 			@RequestParam(name = "success", required = false) String success) {
 
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSync_name());
 
 		audit_recommendation selected = rcaseRepo.findById(recommendation_uuid).get();

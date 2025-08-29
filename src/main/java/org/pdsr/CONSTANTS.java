@@ -9,7 +9,9 @@ import java.nio.file.attribute.FileAttribute;
 
 public class CONSTANTS {
 
-	public static final String FACILITY_ID = "PDRS";
+	public static final String LICENSE_ID = "MPDRSGHANA";
+	public static final String LICENSE_COUNTRY = "Ghana";
+	public static final String WEBADMIN_ID = "webadmin";
 	public static final String ROOT_LOCATION = "attachments";
 	public static final String IMAGE_TAG = "XZYimageXZY";
 
@@ -34,6 +36,13 @@ public class CONSTANTS {
 	}
 
 	public static final byte[] readICD10(String filename) throws IOException {
+//		Resource resource = new ClassPathResource("static/" + filename);
+//		Path path = Paths.get(resource.getURI());
+//		Path path = Paths.get(filename);
+		return Files.readAllBytes(Paths.get(filename));
+	}
+
+	public static final byte[] read(String filename) throws IOException {
 //		Resource resource = new ClassPathResource("static/" + filename);
 //		Path path = Paths.get(resource.getURI());
 //		Path path = Paths.get(filename);

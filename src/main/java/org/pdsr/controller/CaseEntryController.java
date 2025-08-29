@@ -49,7 +49,6 @@ import org.pdsr.master.model.cordfault_table;
 import org.pdsr.master.model.datamap;
 import org.pdsr.master.model.datamapPK;
 import org.pdsr.master.model.diagnoses_table;
-import org.pdsr.master.model.facility_table;
 import org.pdsr.master.model.icd_diagnoses;
 import org.pdsr.master.model.placentacheck_table;
 import org.pdsr.master.model.resuscitation_table;
@@ -72,7 +71,6 @@ import org.pdsr.master.repo.ComplicationTableRepository;
 import org.pdsr.master.repo.CordfaultTableRepository;
 import org.pdsr.master.repo.DatamapRepository;
 import org.pdsr.master.repo.DiagnosesTableRepository;
-import org.pdsr.master.repo.FacilityTableRepository;
 import org.pdsr.master.repo.IcdDiagnosesRepository;
 import org.pdsr.master.repo.PlacentacheckTableRepository;
 import org.pdsr.master.repo.ResuscitationTableRepository;
@@ -140,9 +138,6 @@ public class CaseEntryController {
 	private PlacentacheckTableRepository placRepo;
 
 	@Autowired
-	private FacilityTableRepository facilityRepo;
-
-	@Autowired
 	private CaseRepository caseRepo;
 
 	@Autowired
@@ -190,12 +185,12 @@ public class CaseEntryController {
 	@GetMapping("")
 	public String list(Principal principal, Model model) {
 
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSync_name());
 
 		List<case_identifiers> entered_cases = caseRepo.findByDraftCases();// find cases not yet submitted
@@ -213,12 +208,12 @@ public class CaseEntryController {
 	@GetMapping("/redcap")
 	public String redcap(Principal principal, Model model) {
 
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSync_name());
 
 		RedcapExtraction redcap = new RedcapExtraction();
@@ -233,12 +228,12 @@ public class CaseEntryController {
 	@PostMapping("/redcap")
 	public String redcap(Principal principal, Model model, @ModelAttribute RedcapExtraction redcap) {
 
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSync_name());
 
 		List<case_identifiers> entered_cases = caseRepo.findByDraftCases();// find cases not yet submitted
@@ -279,9 +274,7 @@ public class CaseEntryController {
 
 				page1.setCase_status(0);// entry
 				page1.setData_sent(0);
-				page1.setCase_sync(synctable.getSync_code());
-				Optional<facility_table> facility = facilityRepo.findById(synctable.getSync_uuid());
-				page1.setFacility(facility.get());
+				page1.setCase_sync(synctable);
 				caseRepo.save(page1);
 
 				case_biodata page2 = new case_biodata();
@@ -592,21 +585,20 @@ public class CaseEntryController {
 	@GetMapping("/add")
 	public String add(Principal principal, Model model) {
 
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSync_name());
 
 		case_identifiers selected = new case_identifiers();
 		selected.setCase_date(new Date());
 
-		Optional<sync_table> code = syncRepo.findById(CONSTANTS.FACILITY_ID);
+		Optional<sync_table> code = syncRepo.findById(CONSTANTS.LICENSE_ID);
 		if (code.isPresent()) {
-			Optional<facility_table> facility = facilityRepo.findById(code.get().getSync_uuid());
-			selected.setFacility(facility.get());
+			selected.setCase_sync(synctable);
 		}
 
 		model.addAttribute("selected", selected);
@@ -617,19 +609,19 @@ public class CaseEntryController {
 	@Transactional
 	@PostMapping("/add")
 	public String add(Principal principal, Model model, @ModelAttribute case_identifiers selected) {
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSync_name());
 
 		selected.setCase_uuid(UUID.randomUUID().toString());
 		selected.setCase_id("T" + selected.getCase_death() + "C" + (new java.util.Date().getTime()));
 		selected.setCase_status(0);
 		selected.setData_sent(0);
-		selected.setCase_sync(syncRepo.findById(CONSTANTS.FACILITY_ID).get().getSync_code());
+		selected.setCase_sync(synctable);
 
 		caseRepo.save(selected);
 
@@ -640,12 +632,12 @@ public class CaseEntryController {
 	public String edit(Principal principal, final Model model, @PathVariable("id") String case_uuid,
 			@RequestParam(required = true) Integer page, @RequestParam(required = false) String success) {
 
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSync_name());
 
 		case_identifiers selected = caseRepo.findById(case_uuid).get();
@@ -858,12 +850,12 @@ public class CaseEntryController {
 
 		ObjectMapper objectMapper = new ObjectMapper();
 
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSync_name());
 
 		case_identifiers existing = caseRepo.findById(selected.getCase_uuid()).get();
@@ -1486,12 +1478,12 @@ public class CaseEntryController {
 	@GetMapping("/submit/{id}")
 	public String submit(Principal principal, Model model, @PathVariable("id") String case_uuid) {
 
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSync_name());
 
 		case_identifiers selected = caseRepo.findById(case_uuid).get();
@@ -1537,7 +1529,7 @@ public class CaseEntryController {
 		try {
 			if (InternetAvailabilityChecker.isInternetAvailable()) {
 
-				sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+				sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 				emailService.sendSimpleMessage(getRecipients(), "MPDSR DEATH NOTIFICATION!",
 						"Hello, \nThis is is to notify you of a " + getAnswer("death_options", selected.getCase_death())
 								+ "\nMother's age: " + selected.getBiodata().getBiodata_mage() + datetoShow

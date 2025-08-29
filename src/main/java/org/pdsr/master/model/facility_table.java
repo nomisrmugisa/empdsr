@@ -13,7 +13,11 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class facility_table implements Serializable {
 
 	/**
@@ -40,9 +44,6 @@ public class facility_table implements Serializable {
 	@JoinColumn(name = "district", referencedColumnName = "district_uuid", insertable = true, updatable = true)
 	private district_table district;
 	
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "facility")
-	private List<case_identifiers> caseList;
-
 	public String getFacility_uuid() {
 		return facility_uuid;
 	}
@@ -73,14 +74,6 @@ public class facility_table implements Serializable {
 
 	public void setDistrict(district_table district) {
 		this.district = district;
-	}
-
-	public List<case_identifiers> getCaseList() {
-		return caseList;
-	}
-
-	public void setCaseList(List<case_identifiers> caseList) {
-		this.caseList = caseList;
 	}
 
 	@Override

@@ -75,12 +75,12 @@ public class HomeController {
 
 	@GetMapping("")
 	public String home(Principal principal, Model model) {
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
 
-		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", sync.getSync_name());
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		facilityLevel(model, facility);
@@ -89,12 +89,12 @@ public class HomeController {
 
 	@GetMapping("/district")
 	public String district(Principal principal, Model model) {
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
 
-		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", sync.getSync_name());
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		districtLevel(model, facility);
@@ -104,12 +104,12 @@ public class HomeController {
 
 	@GetMapping("/district/search")
 	public String districtSearch(Principal principal, Model model) {
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
 
-		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", sync.getSync_name());
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		model.addAttribute("district", "active");
@@ -124,12 +124,12 @@ public class HomeController {
 
 	@PostMapping("/district/search")
 	public String districtSearch(Principal principal, Model model, @ModelAttribute("selected") wmsearch search) {
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
 
-		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", sync.getSync_name());
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		districtIndicators(model, search, facility);
@@ -141,12 +141,12 @@ public class HomeController {
 	@GetMapping("/regional")
 	public String regional(Principal principal, Model model) {
 
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
 
-		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", sync.getSync_name());
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		regionalLevel(model, facility);
@@ -155,12 +155,12 @@ public class HomeController {
 
 	@GetMapping("/regional/search")
 	public String regionalSearch(Principal principal, Model model) {
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
 
-		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", sync.getSync_name());
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		model.addAttribute("country_name", facility.getDistrict().getRegion().getCountry().getCountry_name());
@@ -174,12 +174,12 @@ public class HomeController {
 
 	@PostMapping("/regional/search")
 	public String regionalSearch(Principal principal, Model model, @ModelAttribute("selected") wmsearch search) {
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
 
-		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", sync.getSync_name());
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		regionalIndicators(model, search, facility, null);
@@ -189,12 +189,12 @@ public class HomeController {
 
 	@GetMapping("/national")
 	public String national(Principal principal, Model model) {
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
 
-		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", sync.getSync_name());
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		nationalLevel(model, facility);
@@ -204,12 +204,12 @@ public class HomeController {
 
 	@GetMapping("/national/search")
 	public String nationalSearch(Principal principal, Model model) {
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
 
-		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", sync.getSync_name());
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		model.addAttribute("national", "active");
@@ -224,12 +224,12 @@ public class HomeController {
 
 	@PostMapping("/national/search")
 	public String nationalSearch(Principal principal, Model model, @ModelAttribute("selected") wmsearch search) {
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
 
-		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", sync.getSync_name());
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		nationalIndicators(model, search, facility);
@@ -239,12 +239,12 @@ public class HomeController {
 
 	@GetMapping("/national/search/{region}")
 	public String nationalSearch(Principal principal, Model model, @PathVariable("region") String region_name) {
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
 
-		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", sync.getSync_name());
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		model.addAttribute("national", "active");
@@ -261,12 +261,12 @@ public class HomeController {
 	@PostMapping("/national/search/{region}")
 	public String nationalSearch(Principal principal, Model model, @PathVariable("region") String region_name,
 			@ModelAttribute("selected") wmsearch search) {
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
 
-		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", sync.getSync_name());
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		regionalIndicators(model, search, facility, region_name);

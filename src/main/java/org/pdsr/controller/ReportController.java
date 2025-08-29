@@ -78,13 +78,13 @@ public class ReportController {
 	@GetMapping("")
 	public String list(Principal principal, Model model, @RequestParam(required = false) String success) {
 
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSync_name());
 
 		List<Object[]> weeklist = weekRepo.findAllWeeklyYearAndMonth();
@@ -121,7 +121,7 @@ public class ReportController {
 			return "reporting/report-retrieve";
 		}
 
-		final sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		final sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", sync.getSync_name());
 
 		Calendar cal = Calendar.getInstance();
@@ -277,12 +277,12 @@ public class ReportController {
 	@GetMapping("/edit/{yearid}/{monthid}")
 	public String add(Principal principal, Model model, @PathVariable Integer yearid, @PathVariable Integer monthid) {
 
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
 
-		sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		List<monitoring_table> monlist = monRepo.findGlabels(true);
 		List<weekly_monitoring> headlist = new ArrayList<>();
 		for (monitoring_table elem : monlist) {
@@ -434,7 +434,7 @@ public class ReportController {
 	public String add(Principal principal, Model model, @ModelAttribute weekgrid selected, @PathVariable Integer yearid,
 			@PathVariable Integer monthid) {
 
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 		}
@@ -447,7 +447,7 @@ public class ReportController {
 	@GetMapping("/search")
 	public String search(Principal principal, Model model) {
 
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 
@@ -462,7 +462,7 @@ public class ReportController {
 	@PostMapping("/search")
 	public String search(Principal principal, Model model, @ModelAttribute("selected") wmsearch search) {
 
-		if (!syncRepo.findById(CONSTANTS.FACILITY_ID).isPresent()) {
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
 

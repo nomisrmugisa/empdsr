@@ -52,7 +52,7 @@ public class ServiceApi {
 	/////////////// USER TABLE////////////////////////////////
 	public String saveAll(DecryptedUserTable data) {
 
-		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.FACILITY_ID);
+		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.LICENSE_ID);
 
 		if (sync_table.isPresent()) {
 
@@ -80,7 +80,7 @@ public class ServiceApi {
 
 	public List<json_user_table> findAllUsers() {
 
-		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.FACILITY_ID);
+		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.LICENSE_ID);
 
 		if (sync_table.isPresent()) {
 
@@ -116,7 +116,7 @@ public class ServiceApi {
 
 	/////////////// CASE IDENTIFIERS////////////////////////////////
 	public String saveAll(DecryptedCaseIdentifiers data) {
-		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.FACILITY_ID);
+		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.LICENSE_ID);
 
 		if (sync_table.isPresent()) {
 
@@ -144,7 +144,7 @@ public class ServiceApi {
 
 	public List<json_case_identifiers> findAllCases() {
 
-		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.FACILITY_ID);
+		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.LICENSE_ID);
 
 		if (sync_table.isPresent()) {
 
@@ -181,7 +181,7 @@ public class ServiceApi {
 	/////////////// CASE AUDIT AUDIT////////////////////////////////
 	public String save(DecryptedAuditAudit data) {
 
-		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.FACILITY_ID);
+		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.LICENSE_ID);
 
 		if (sync_table.isPresent()) {
 
@@ -229,7 +229,7 @@ public class ServiceApi {
 
 	public List<json_audit_audit> findAllAudits() {
 
-		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.FACILITY_ID);
+		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.LICENSE_ID);
 
 		if (sync_table.isPresent()) {
 
@@ -266,7 +266,7 @@ public class ServiceApi {
 	/////////////// CASE AUDIT RECOMMENDATIONS////////////////////////////////
 	public String save(DecryptedAuditRecommendation data) {
 
-		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.FACILITY_ID);
+		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.LICENSE_ID);
 
 		if (sync_table.isPresent()) {
 
@@ -294,7 +294,7 @@ public class ServiceApi {
 
 	public String saveAll(DecryptedAuditRecommendation data) {
 
-		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.FACILITY_ID);
+		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.LICENSE_ID);
 
 		if (sync_table.isPresent()) {
 
@@ -322,7 +322,7 @@ public class ServiceApi {
 
 	public List<json_audit_recommendation> findAllRecommendations() {
 
-		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.FACILITY_ID);
+		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.LICENSE_ID);
 
 		if (sync_table.isPresent()) {
 
@@ -359,7 +359,7 @@ public class ServiceApi {
 	/////////////// CASE WEEKLY MONITORING////////////////////////////////
 	public String save(DecryptedWeeklyMonitoring data) {
 
-		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.FACILITY_ID);
+		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.LICENSE_ID);
 
 		if (sync_table.isPresent()) {
 
@@ -387,7 +387,7 @@ public class ServiceApi {
 
 	public String saveAll(DecryptedWeeklyMonitoring data) {
 
-		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.FACILITY_ID);
+		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.LICENSE_ID);
 
 		if (sync_table.isPresent()) {
 
@@ -415,7 +415,7 @@ public class ServiceApi {
 
 	public List<json_weekly_monitoring> findAllMonitoring() {
 
-		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.FACILITY_ID);
+		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.LICENSE_ID);
 
 		if (sync_table.isPresent()) {
 
@@ -452,12 +452,12 @@ public class ServiceApi {
 	/// REDCAP DATA
 	public List<json_redcap> extractRedCapIdentifiers(Date startDate, Date endDate) {
 
-		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.FACILITY_ID);
+		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.LICENSE_ID);
 
 		if (sync_table.isPresent()) {
 
-			API_URL = sync_table.get().getSync_redcap_url();
-			API_TOKEN = sync_table.get().getSync_redcap_token();
+			API_URL = "";//sync_table.get().getSync_redcap_url();
+			API_TOKEN = "";//sync_table.get().getSync_redcap_token();
 
 		}
 

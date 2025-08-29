@@ -56,7 +56,7 @@ public class WebSecurityConfig {
     @Bean
     WebSecurityCustomizer webSecurityCustomizer() throws Exception {
         return (web) -> {
-            web.ignoring().antMatchers("/h2-console/**", "/img/**", "/webjars/**");
+            web.ignoring().antMatchers("/h2-console/**", "/img/**", "/webjars/**", "/api/**");
         };
     }
 

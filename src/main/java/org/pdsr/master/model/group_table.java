@@ -27,6 +27,12 @@ public class group_table implements Serializable {
 	@Size(min = 1, max = 255)
 	private String group_desc;
 
+
+	public group_table() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	public group_table(@NotNull @Size(min = 1, max = 80) String group_role,
 			@NotNull @Size(min = 1, max = 255) String group_desc) {
 		super();

@@ -12,7 +12,6 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-
 @Entity
 public class country_table implements Serializable {
 
@@ -28,12 +27,16 @@ public class country_table implements Serializable {
 
 	@NotNull
 	@Column(unique = true)
-	@Size(min=1, max = 80)
+	@Size(min = 1, max = 80)
 	private String country_name;
-	
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "country")
-    private List<region_table> regionList = new ArrayList<>();
 
+	public country_table() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "country")
+	private List<region_table> regionList = new ArrayList<>();
 
 	public String getCountry_uuid() {
 		return country_uuid;
@@ -51,7 +54,6 @@ public class country_table implements Serializable {
 		this.country_name = country_name;
 	}
 
-	
 	public List<region_table> getRegionList() {
 		return regionList;
 	}
@@ -84,7 +86,5 @@ public class country_table implements Serializable {
 			return false;
 		return true;
 	}
-	
-	
 
 }

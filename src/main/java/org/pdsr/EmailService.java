@@ -23,7 +23,7 @@ public class EmailService {
 	public void sendSimpleMessage(String[] to, String subject, String text) {
 
 		SimpleMailMessage message = new SimpleMailMessage();
-		message.setFrom(syncRepo.findById(CONSTANTS.FACILITY_ID).get().getSync_email());
+		message.setFrom(syncRepo.findById(CONSTANTS.LICENSE_ID).get().getSync_email());
 		message.setTo(to);
 		message.setSubject(subject);
 		message.setText(text);
@@ -38,7 +38,7 @@ public class EmailService {
 
 		MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
-		message.setFrom(syncRepo.findById(CONSTANTS.FACILITY_ID).get().getSync_email());
+		message.setFrom(syncRepo.findById(CONSTANTS.LICENSE_ID).get().getSync_email());
 		helper.setTo(to);
 		helper.setSubject(subject);
 		helper.setText(text);

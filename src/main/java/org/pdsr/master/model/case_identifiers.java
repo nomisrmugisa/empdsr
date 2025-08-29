@@ -12,12 +12,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -39,11 +39,6 @@ public class case_identifiers implements Serializable {
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date case_date;
-
-	@NotNull
-	@Column
-	@Size(min = 1, max = 80)
-	private String case_sync;
 
 	@NotNull
 	@Column
@@ -71,55 +66,52 @@ public class case_identifiers implements Serializable {
 	@Column
 	private Integer data_sent;
 	
-	@Transient
-	private String cluster_uuid;//cluster mapping based on canopy algorithm
-	
-	@Transient
-	private Double similarity_score;// similarity strength based on fellegi-stunter model
-
-
-	public Integer getData_sent() {
-		return data_sent;
-	}
-
-	public void setData_sent(Integer data_sent) {
-		this.data_sent = data_sent;
-	}
-
+	@JsonIgnore
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "facility", referencedColumnName = "facility_uuid", insertable = true, updatable = true)
-	private facility_table facility;
+	@JoinColumn(name = "case_sync", referencedColumnName = "sync_id", insertable = true, updatable = true)
+	private sync_table case_sync;
 
+	@JsonIgnore
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_biodata biodata;
 
+	@JsonIgnore
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_pregnancy pregnancy;
 
+	@JsonIgnore
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_delivery delivery;
 
+	@JsonIgnore
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_referral referral;
 
+	@JsonIgnore
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_antenatal antenatal;
 
+	@JsonIgnore
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_labour labour;
 
+	@JsonIgnore
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_fetalheart fetalheart;
 
+	@JsonIgnore
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_birth birth;
 
+	@JsonIgnore
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_babydeath babydeath;
 
+	@JsonIgnore
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_mdeath mdeath;
 
+	@JsonIgnore
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_notes notes;
 
@@ -137,14 +129,6 @@ public class case_identifiers implements Serializable {
 
 	public void setCase_date(Date case_date) {
 		this.case_date = case_date;
-	}
-
-	public String getCase_sync() {
-		return case_sync;
-	}
-
-	public void setCase_sync(String case_sync) {
-		this.case_sync = case_sync;
 	}
 
 	public String getCase_id() {
@@ -179,12 +163,12 @@ public class case_identifiers implements Serializable {
 		this.case_death = case_death;
 	}
 
-	public facility_table getFacility() {
-		return facility;
+	public Integer getData_sent() {
+		return data_sent;
 	}
 
-	public void setFacility(facility_table facility) {
-		this.facility = facility;
+	public void setData_sent(Integer data_sent) {
+		this.data_sent = data_sent;
 	}
 
 	public case_biodata getBiodata() {
@@ -259,22 +243,6 @@ public class case_identifiers implements Serializable {
 		this.babydeath = babydeath;
 	}
 
-	public String getCluster_uuid() {
-		return cluster_uuid;
-	}
-
-	public void setCluster_uuid(String cluster_uuid) {
-		this.cluster_uuid = cluster_uuid;
-	}
-
-	public Double getSimilarity_score() {
-		return similarity_score;
-	}
-
-	public void setSimilarity_score(Double similarity_score) {
-		this.similarity_score = similarity_score;
-	}
-
 	public case_mdeath getMdeath() {
 		return mdeath;
 	}
@@ -297,6 +265,14 @@ public class case_identifiers implements Serializable {
 
 	public void setCase_status(Integer case_status) {
 		this.case_status = case_status;
+	}
+
+	public sync_table getCase_sync() {
+		return case_sync;
+	}
+
+	public void setCase_sync(sync_table case_sync) {
+		this.case_sync = case_sync;
 	}
 
 	@Override

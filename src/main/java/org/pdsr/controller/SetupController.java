@@ -64,6 +64,7 @@ import org.pdsr.master.model.user_table;
 import org.pdsr.master.model.weekly_monitoring;
 import org.pdsr.master.model.weekly_table;
 import org.pdsr.master.model.wmPK;
+import org.pdsr.master.repo.AbnormalityTableRepository;
 import org.pdsr.master.repo.AuditAuditRepository;
 import org.pdsr.master.repo.AuditCaseRepository;
 import org.pdsr.master.repo.AuditRecommendRepository;
@@ -79,13 +80,19 @@ import org.pdsr.master.repo.CaseNotesRepository;
 import org.pdsr.master.repo.CasePregnancyRepository;
 import org.pdsr.master.repo.CaseReferralRepository;
 import org.pdsr.master.repo.CaseRepository;
+import org.pdsr.master.repo.ComplicationTableRepository;
+import org.pdsr.master.repo.CordfaultTableRepository;
 import org.pdsr.master.repo.CountryTableRepository;
+import org.pdsr.master.repo.DiagnosesTableRepository;
 import org.pdsr.master.repo.DistrictTableRepository;
 import org.pdsr.master.repo.FacilityTableRepository;
 import org.pdsr.master.repo.IcdCodesRepository;
 import org.pdsr.master.repo.IcdDiagnosesRepository;
 import org.pdsr.master.repo.MonitoringTableRepository;
+import org.pdsr.master.repo.PlacentacheckTableRepository;
 import org.pdsr.master.repo.RegionTableRepository;
+import org.pdsr.master.repo.ResuscitationTableRepository;
+import org.pdsr.master.repo.RiskTableRepository;
 import org.pdsr.master.repo.SyncTableRepository;
 import org.pdsr.master.repo.UserTableRepository;
 import org.pdsr.master.repo.WeeklyMonitoringTableRepository;
@@ -147,7 +154,29 @@ public class SetupController {
 
 	@Autowired
 	private IcdDiagnosesRepository icddRepo;
+	
+	@Autowired
+	private RiskTableRepository riskRepo;
+	
+	@Autowired
+	private ComplicationTableRepository complicateRepo;
+	
+	@Autowired
+	private AbnormalityTableRepository abnormalRepo;
+	
+	@Autowired
+	private CordfaultTableRepository cordRepo;
+	
+	@Autowired
+	private PlacentacheckTableRepository placentaRepo;
+	
+	@Autowired
+	private ResuscitationTableRepository resuscitateRepo;
 
+	@Autowired
+	private DiagnosesTableRepository diagnosesRepo;
+
+	
 	@Autowired
 	private MonitoringTableRepository monRepo;
 
@@ -155,26 +184,14 @@ public class SetupController {
 	@Autowired
 	private FacilityTableRepository facilityRepo;
 
-//	@Autowired
-//	private SlaveFacilityTableRepository sfacilityRepo;
-
 	@Autowired
 	private DistrictTableRepository districtRepo;
-
-//	@Autowired
-//	private SlaveDistrictTableRepository sdistrictRepo;
 
 	@Autowired
 	private RegionTableRepository regionRepo;
 
-//	@Autowired
-//	private SlaveRegionTableRepository sregionRepo;
-
 	@Autowired
 	private CountryTableRepository countryRepo;
-
-//	@Autowired
-//	private SlaveCountryTableRepository scounrtyRepo;
 
 	@Autowired
 	private WeeklyTableRepository weeklyRepo;
@@ -296,15 +313,14 @@ public class SetupController {
 	@GetMapping("")
 	public String sync(Principal principal, Model model, @RequestParam(required = false) String success) {
 
-		Optional<sync_table> object = syncRepo.findById(CONSTANTS.FACILITY_ID);
+		Optional<sync_table> object = syncRepo.findById(CONSTANTS.LICENSE_ID);
 		if (object.isPresent()) {
 
 			model.addAttribute("selected", object.get());
 
 		} else {
 			sync_table selected = new sync_table();
-			selected.setSync_id(CONSTANTS.FACILITY_ID);
-			selected.setSync_url("https://olincgroup.com/pdsr/mytest");
+			selected.setSync_id(CONSTANTS.LICENSE_ID);
 			model.addAttribute("selected", selected);
 		}
 
@@ -325,11 +341,8 @@ public class SetupController {
 
 		if (!object.isPresent()) {
 			results.rejectValue("sync_code", "invalid.code");
-			selected.setSync_uuid("");
-			selected.setSync_name("");
-			selected.setSync_email("");
 		}
-
+		
 		if (results.hasErrors()) {
 			return "controls/dashboard";
 		}
@@ -337,12 +350,11 @@ public class SetupController {
 		facility_table facility = object.get();
 
 		selected.setSync_name(facility.getFacility_name());
-		selected.setSync_uuid(facility.getFacility_uuid());
 		syncRepo.save(selected);
 
 		try {
-			List<icd_codes> icds = loadICD();
-			icdRepo.saveAll(icds);
+			List<icd_codes> table = loadFromCsv("icd_code.csv", icd_codes.class);
+			icdRepo.saveAll(table);
 		} catch (IOException e) {
 			results.rejectValue("sync_code", "invalid.icds");
 			e.printStackTrace();
@@ -350,10 +362,73 @@ public class SetupController {
 		}
 
 		try {
-			List<icd_diagnoses> icdds = loadICDD();
-			icddRepo.saveAll(icdds);
+			List<icd_diagnoses> table = loadFromCsv("icd_diagnoses.csv", icd_diagnoses.class);
+			icddRepo.saveAll(table);
 		} catch (IOException e) {
 			results.rejectValue("sync_code", "invalid.icds");
+			e.printStackTrace();
+			return "controls/dashboard";
+		}
+		
+		try {
+			List<risk_table> table = loadFromCsv("risk_table.csv", risk_table.class);
+			riskRepo.saveAll(table);
+		} catch (IOException e) {
+			results.rejectValue("sync_code", "invalid.risks");
+			e.printStackTrace();
+			return "controls/dashboard";
+		}
+
+		try {
+			List<complication_table> table = loadFromCsv("complication_table.csv", complication_table.class);
+			complicateRepo.saveAll(table);
+		} catch (IOException e) {
+			results.rejectValue("sync_code", "invalid.complications");
+			e.printStackTrace();
+			return "controls/dashboard";
+		}
+
+		try {
+			List<abnormality_table> table = loadFromCsv("abnormality_table.csv", abnormality_table.class);
+			abnormalRepo.saveAll(table);
+		} catch (IOException e) {
+			results.rejectValue("sync_code", "invalid.abnormalities");
+			e.printStackTrace();
+			return "controls/dashboard";
+		}
+
+		try {
+			List<cordfault_table> table = loadFromCsv("cordfault_table.csv", cordfault_table.class);
+			cordRepo.saveAll(table);
+		} catch (IOException e) {
+			results.rejectValue("sync_code", "invalid.cordfaults");
+			e.printStackTrace();
+			return "controls/dashboard";
+		}
+
+		try {
+			List<placentacheck_table> table = loadFromCsv("placentacheck_table.csv", placentacheck_table.class);
+			placentaRepo.saveAll(table);
+		} catch (IOException e) {
+			results.rejectValue("sync_code", "invalid.placentachecks");
+			e.printStackTrace();
+			return "controls/dashboard";
+		}
+
+		try {
+			List<resuscitation_table> table = loadFromCsv("resuscitation_table.csv", resuscitation_table.class);
+			resuscitateRepo.saveAll(table);
+		} catch (IOException e) {
+			results.rejectValue("sync_code", "invalid.resuscitations");
+			e.printStackTrace();
+			return "controls/dashboard";
+		}
+
+		try {
+			List<diagnoses_table> table = loadFromCsv("diagnoses_table.csv", diagnoses_table.class);
+			diagnosesRepo.saveAll(table);
+		} catch (IOException e) {
+			results.rejectValue("sync_code", "invalid.diagnoses");
 			e.printStackTrace();
 			return "controls/dashboard";
 		}
@@ -504,7 +579,7 @@ public class SetupController {
 		// merge location data from slave to master (overrides if exists)
 		if (icdRepo.count() == 0) {
 			try {
-				List<icd_codes> icds = loadICD();
+				List<icd_codes> icds = loadFromCsv("icd_codes.csv", icd_codes.class);
 				icdRepo.saveAll(icds);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -514,7 +589,7 @@ public class SetupController {
 
 		if (icddRepo.count() == 0) {
 			try {
-				List<icd_diagnoses> icdds = loadICDD();
+				List<icd_diagnoses> icdds = loadFromCsv("icd_diagnoses.csv", icd_diagnoses.class);
 				icddRepo.saveAll(icdds);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -537,11 +612,10 @@ public class SetupController {
 
 		}
 
-		sync_table object = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
-		facility_table facility = facilityRepo.findByFacility_code(object.getSync_code()).get();
+		sync_table object = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		// merge case entries from slave to master (overrides if exists)
 		if (selected.isMerge_cases()) {
-			mergeCaseIdentifier(facility);
+			mergeCaseIdentifier(object);
 		}
 
 		// merge case audits from slave to master (overrides if exists)
@@ -572,7 +646,7 @@ public class SetupController {
 
 		try {
 			if (InternetAvailabilityChecker.isInternetAvailable()) {
-				sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+				sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 
 				facility_table facility = facilityRepo.findByFacility_code(sync.getSync_code()).get();
 
@@ -702,7 +776,7 @@ public class SetupController {
 
 				// delete locally cached data summaries related to case data from 3 databases
 
-				sync_table sync = syncRepo.findById(CONSTANTS.FACILITY_ID).get();
+				sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 
 				facility_table facility = facilityRepo.findByFacility_code(sync.getSync_code()).get();
 
@@ -875,7 +949,7 @@ public class SetupController {
 		}
 	}
 
-	private void mergeCaseIdentifier(facility_table facility) {
+	private void mergeCaseIdentifier(sync_table facility) {
 		List<org.pdsr.slave.model.case_identifiers> sdeaths = scaseRepo.findAll();
 		if (sdeaths != null && sdeaths.size() > 0) {
 			List<case_identifiers> deaths = new ArrayList<case_identifiers>();
@@ -888,10 +962,9 @@ public class SetupController {
 				death.setCase_mname(s.getCase_mname());
 				death.setCase_status(s.getCase_status());
 				death.setCase_death(s.getCase_death());
-				death.setCase_sync(s.getCase_sync());
 				death.setData_sent(s.getData_sent());
 
-				death.setFacility(facility);
+				death.setCase_sync(facility);
 
 				deaths.add(death);
 
@@ -1661,7 +1734,7 @@ public class SetupController {
 
 	private void pullUserData() {
 
-		Optional<sync_table> object = syncRepo.findById(CONSTANTS.FACILITY_ID);
+		Optional<sync_table> object = syncRepo.findById(CONSTANTS.LICENSE_ID);
 
 		if (object.isPresent()) {
 
@@ -1859,7 +1932,7 @@ public class SetupController {
 			json.setCountry(country);
 			json.setRec_complete((elem.getRec_complete() == null) ? 0 : elem.getRec_complete());
 			json.setAudit_cdate(f.format(elem.getAudit_cdate()));
-			
+
 			json.setAudit_csc(elem.getAudit_csc());
 			json.setAudit_death(elem.getAudit_death());
 			json.setAudit_delay1(elem.getAudit_delay1());
@@ -2157,44 +2230,24 @@ public class SetupController {
 
 	}
 
-	private List<icd_codes> loadICD() throws IOException {
+	private <T> List<T> loadFromCsv(String csv, Class<T> type) throws IOException {
+	    byte[] bytes = CONSTANTS.read(csv);
 
-		byte[] bytes = new byte[0];
+	    try (Reader reader = new BufferedReader(
+	            new InputStreamReader(new ByteArrayInputStream(bytes)))) {
 
-		bytes = CONSTANTS.readICD10("icd_code.csv");
+	        CsvToBean<T> csvToBean = new CsvToBeanBuilder<T>(reader)
+	                .withType(type)
+	                .withIgnoreLeadingWhiteSpace(true)
+	                .build();
 
-		try (Reader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)))) {
+	        return csvToBean.parse();
 
-			CsvToBean<icd_codes> csvToBean = new CsvToBeanBuilder<icd_codes>(reader).withType(icd_codes.class)
-					.withIgnoreLeadingWhiteSpace(true).build();
+	    } catch (Exception ex) {
+	        ex.printStackTrace();
+	    }
 
-			return csvToBean.parse();
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-
-		return new ArrayList<>();
-	}
-
-	private List<icd_diagnoses> loadICDD() throws IOException {
-
-		byte[] bytes = new byte[0];
-
-		bytes = CONSTANTS.readICD10("icd_diagnoses.csv");
-
-		try (Reader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)))) {
-
-			CsvToBean<icd_diagnoses> csvToBean = new CsvToBeanBuilder<icd_diagnoses>(reader)
-					.withType(icd_diagnoses.class).withIgnoreLeadingWhiteSpace(true).build();
-
-			return csvToBean.parse();
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-
-		return new ArrayList<>();
+	    return new ArrayList<>();
 	}
 
 }
