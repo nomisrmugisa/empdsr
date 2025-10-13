@@ -7,16 +7,16 @@
 	class="col-md-12 py-3 my-3 mx-auto p-5 rounded box-shadow table-responsive"
 	style="background-color: #92c7f2;">
 	<form action="#"
-		th:action="@{/controls/region/{id}(id=${selected.country_uuid})}"
+		th:action="@{/controls/region/{id}(id=${selected.facility_uuid})}"
 		th:object="${selected}" method="POST" class="needs-validation"
 		novalidate>
 		<div th:if="${success}" class="alert alert-success"
 			th:text="${success}"></div>
 
-		<input th:field="*{country_uuid}" hidden=true /> <input
-			th:field="*{country_name}" hidden=true />
+		<input th:field="*{facility_uuid}" hidden=true /> <input
+			th:field="*{facility_name}" hidden=true />
 		<div>
-			<a class="btn btn-sm btn-dark" th:href="@{/controls/regions}"
+			<a class="btn btn-sm btn-dark" th:href="@{/controls/countries}"
 				th:utext="#{back.button}"></a>
 		</div>
 		<table class="table ">
@@ -28,33 +28,40 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="item, itemStat : *{regionList}">
-					<td>[[${item.country.country_name}]] <input
-						th:field="*{regionList[__${itemStat.index}__].country}"
-						hidden=true readonly /> <input hidden=true readonly
-						th:field="*{regionList[__${itemStat.index}__].region_uuid}" /></td>
-					<td><input type="text" class="form-control form-control-sm"
-						th:field="*{regionList[__${itemStat.index}__].region_name}"
-						required /><span th:unless="${item.region_name}"><a
-							class="text-danger" th:if="${add}"
-							th:href="@{/controls/region/{id}(id=${selected.country_uuid})}"
-							th:text="#{cancel.button}"></a></span></td>
-					<td><a th:if="${item.region_name}" class="btn btn-info btn-sm"
-						th:href="@{/controls/district/{id}(id=${item.region_uuid})}">
-							[[#{th.districts.link}]] <span class="badge bg-primary">
-								[[${#lists.size(item.districtList)}]] </span>
-					</a></td>
+				<tr th:each="item, itemStat : *{children}">
+					<td>
+						<input th:field="*{children[__${itemStat.index}__].facility_uuid}" hidden=true readonly /> 
+						<input th:field="*{children[__${itemStat.index}__].newFacility.facility_uuid}" hidden=true readonly /> 
+						[[${item.facility_name}]] 
+					</td>
+					<td>
+						<input type="text" class="form-control form-control-sm" th:field="*{children[__${itemStat.index}__].facility_code}" required />
+						<input type="text" class="form-control form-control-sm" th:field="*{children[__${itemStat.index}__].facility_name}" required />
+						<span th:unless="${item.facility_name}">
+							<a class="text-danger" th:if="${add}" th:href="@{/controls/region/{id}(id=${selected.facility_uuid})}" th:text="#{cancel.button}">
+								Cancel
+							</a>
+						</span>
+					</td>
+					<td>
+						<a th:if="${item.facility_name}" class="btn btn-info btn-sm" th:href="@{/controls/district/{id}(id=${item.facility_uuid})}">
+							[[#{th.districts.link}]] 
+							<span class="badge bg-primary">
+								[[${#lists.size(item.facilities)}]] 
+							</span>
+						</a>
+					</td>
 				</tr>
 				<tr th:unless="${add}">
 					<td></td>
 					<td><a class="btn btn-sm btn-success small"
-						th:href="@{/controls/region/{id}?add=1(id=${selected.country_uuid})}"
+						th:href="@{/controls/region/{id}?add=1(id=${selected.facility_uuid})}"
 						th:text="#{add.button}"></a></td>
 					<td></td>
 				</tr>
 			</tbody>
 		</table>
-		<div class="mb-4" th:if="${selected.country_uuid}">
+		<div class="mb-4" th:if="${selected.facility_uuid}">
 			<button class="btn btn-primary" type="submit"
 				th:utext="#{save.button}"></button>
 		</div>

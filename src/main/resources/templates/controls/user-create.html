@@ -84,22 +84,6 @@
 					</div>
 				</div>
 			</div>
-			<hr />
-			<div class="row mb-3">
-				<label class="col-md-2 col-form-label" th:text="#{label.facilities}"></label>
-				<div class="col-md-8">
-					<div class="row">
-						<div class="col-md-12" th:each="option : ${user_facilities}">
-							<label class="form-label fw-bold"> <input type="checkbox" th:field="*{facilities}"
-									th:value="${option}" />
-								<span
-									class="text-muted">[[${option.facility_name}]]</span>&nbsp;<b>[[${option.facility_code}]]</b>
-							</label>
-						</div>
-					</div>
-				</div>
-			</div>
-
 			<hr class="mb-4 bg-secondary">
 			<div class="">
 				<button class="btn btn-primary btn-lg" type="submit">SUBMIT</button>

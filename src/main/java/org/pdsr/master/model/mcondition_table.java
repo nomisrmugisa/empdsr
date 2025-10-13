@@ -24,6 +24,22 @@ public class mcondition_table implements Serializable {
 	@Lob
 	@Column
 	private String icdm_name;
+	
+	
+	public mcondition_table() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
+	
+	public mcondition_table(String icdm, String icdmgroup, String icdm_name) {
+		super();
+		this.icdm = icdm;
+		this.icdmgroup = icdmgroup;
+		this.icdm_name = icdm_name;
+	}
+
+
 	public String getIcdm() {
 		return icdm;
 	}

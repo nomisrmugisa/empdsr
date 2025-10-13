@@ -46,6 +46,26 @@ public class monitoring_table implements Serializable {
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "wm_indices")
 	private List<weekly_monitoring> statistics = new ArrayList<>();
+	
+	
+
+	public monitoring_table() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
+	
+	public monitoring_table(Integer gindex, @NotNull String glabel, Integer mindex, String mlabel, String mdesc,
+			boolean gitem) {
+		super();
+		this.gindex = gindex;
+		this.glabel = glabel;
+		this.mindex = mindex;
+		this.mlabel = mlabel;
+		this.mdesc = mdesc;
+		this.gitem = gitem;
+	}
+
 
 	public Integer getMindex() {
 		return mindex;

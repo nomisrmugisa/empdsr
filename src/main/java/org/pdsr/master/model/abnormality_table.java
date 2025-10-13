@@ -9,6 +9,9 @@ import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
 public class abnormality_table implements Serializable {
 
@@ -26,6 +29,17 @@ public class abnormality_table implements Serializable {
 	@Column
 	@Size(max = 65535)
 	private String abnormal_desc;
+	
+	public abnormality_table() {
+		super();
+	}
+
+	public abnormality_table(@NotNull @Size(min = 1, max = 80) String abnormal_name,
+			@Size(max = 65535) String abnormal_desc) {
+		super();
+		this.abnormal_name = abnormal_name;
+		this.abnormal_desc = abnormal_desc;
+	}
 
 	public String getAbnormal_name() {
 		return abnormal_name;

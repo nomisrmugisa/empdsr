@@ -118,59 +118,6 @@ public class CaseAuditController {
 	@Autowired
 	private EmailService emailService;
 
-	@Scheduled(cron = "0 0 9 * * 1,3") // (9pm) of every tuesday, thursday within each week
-	public void autoCheckPendingReviews() {
-		try {
-			if (InternetAvailabilityChecker.isInternetAvailable()) {
-				Calendar cal = Calendar.getInstance();
-				cal.add(Calendar.DAY_OF_MONTH, -7);
-				sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-
-				// alert for pending reviews
-				List<audit_case> auditsPending = acaseRepo.findActivePendingAudit(cal.getTime());
-				if (auditsPending.size() > 0) {
-					emailService.sendSimpleMessage(getRecipients(), "MPDSR PENDING REVIEW NOTIFICATION!",
-							"Hello Reviewers,\n" + "\nThere are " + auditsPending.size()
-									+ " deaths yet to be reviewed for this week" + "\nHealth Facility: "
-									+ sync.getSync_name() + " - " + sync.getSync_code()
-									+ "\nThis is a PILOT IMPLEMENTATION of the Enhanced Automated MPDSR tool developed by Alex and Eliezer");
-				}
-
-				// alert for pending recommendations
-				List<audit_audit> recsPending = tcaseRepo.findByPendingRecommendation();
-				if (recsPending.size() > 0) {
-					emailService.sendSimpleMessage(getRecipients(),
-							"MPDSR PENDING RECOMMENDATIONS NOTIFICATION!",
-							"Hello Reviewers,\n" + "\nThere are " + recsPending.size() + " recommendations to work on"
-									+ "\nHealth Facility: " + sync.getSync_name() + " - " + sync.getSync_code()
-									+ "\nThis is a PILOT IMPLEMENTATION of the Enhanced Automated MPDSR tool developed by Alex and Eliezer");
-				}
-
-				// alerts for overdue actions
-				List<audit_recommendation> overdue = new ArrayList<>();
-				for (audit_recommendation elem : rcaseRepo.findByPendingAction()) {
-
-					if (new java.util.Date().after(elem.getRecommendation_deadline())
-							&& elem.getRecommendation_status() != 2) {
-					}
-
-					overdue.add(elem);
-				}
-				if (overdue.size() > 0) {
-					emailService.sendSimpleMessage(getRecipients(), "MPDSR OVERDUE ACTIONS NOTIFICATION!",
-							"Hello Reviewers,\n" + "\nThere are " + overdue.size()
-									+ " incomplete actions that have passed the deadline" + "\nHealth Facility: "
-									+ sync.getSync_name() + " - " + sync.getSync_code()
-									+ "\nThis is a PILOT IMPLEMENTATION of the Enhanced Automated MPDSR tool developed by Alex and Eliezer");
-				}
-
-			}
-
-		} catch (IOException e) {
-		}
-
-	}
-
 	@GetMapping("")
 	public String list(Principal principal, Model model) {
 

@@ -9,6 +9,9 @@ import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
 public class risk_table implements Serializable {
 
@@ -26,6 +29,18 @@ public class risk_table implements Serializable {
 	@Column
 	@Size(max = 65535)
 	private String risk_desc;
+
+	public risk_table() {
+		super();
+	}
+	
+	
+	public risk_table(@NotNull @Size(min = 1, max = 80) String risk_name, @Size(max = 65535) String risk_desc) {
+		super();
+		this.risk_name = risk_name;
+		this.risk_desc = risk_desc;
+	}
+
 
 	public String getRisk_name() {
 		return risk_name;

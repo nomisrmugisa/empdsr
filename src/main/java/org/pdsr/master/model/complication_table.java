@@ -9,6 +9,9 @@ import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
 public class complication_table implements Serializable {
 
@@ -26,6 +29,20 @@ public class complication_table implements Serializable {
 	@Column
 	@Size(max = 65535)
 	private String complication_desc;
+	
+	public complication_table() {
+		super();
+	}
+
+	public complication_table(@NotNull @Size(min = 1, max = 80) String complication_name,
+			@Size(max = 65535) String complication_desc) {
+		super();
+		this.complication_name = complication_name;
+		this.complication_desc = complication_desc;
+	}
+
+
+
 
 	public String getComplication_name() {
 		return complication_name;

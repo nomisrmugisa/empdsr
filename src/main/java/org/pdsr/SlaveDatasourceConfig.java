@@ -21,20 +21,20 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 		"org.pdsr.slave" })
 public class SlaveDatasourceConfig {
 
-	@Bean(name = "dbslave")
-	@ConfigurationProperties(prefix = "spring.datasource1")
-	public DataSource dataSource() {
+    @Bean(name = "dbslave")
+    @ConfigurationProperties(prefix = "spring.datasource1")
+    DataSource dataSource() {
 		return DataSourceBuilder.create().build();
 	}
 
 	@Bean(name = "secondaryEntityManagerFactory")
-	public LocalContainerEntityManagerFactoryBean secondaryEntityManagerFactory(EntityManagerFactoryBuilder builder,
+	LocalContainerEntityManagerFactoryBean secondaryEntityManagerFactory(EntityManagerFactoryBuilder builder,
 			@Qualifier("dbslave") DataSource secondaryDataSource) {
 		return builder.dataSource(secondaryDataSource).packages("org.pdsr.slave").build();
 	}
 
 	@Bean(name = "secondaryTransactionManager")
-	public PlatformTransactionManager secondaryTransactionManager(
+	PlatformTransactionManager secondaryTransactionManager(
 			@Qualifier("secondaryEntityManagerFactory") EntityManagerFactory secondaryEntityManagerFactory) {
 		return new JpaTransactionManager(secondaryEntityManagerFactory);
 	}

@@ -26,25 +26,25 @@ public class MasterDatasourceConfig {
 	@Bean(name = "dbmaster")
 	@Primary
 	@ConfigurationProperties(prefix = "spring.datasource")
-	public DataSource dataSource() {
+	DataSource dataSource() {
 		return DataSourceBuilder.create().build();
 	}
 
 	@Bean(name = "jdbcTemplate")
-	public JdbcTemplate jdbcTemplate(@Qualifier("dbmaster") DataSource ds) {
+	JdbcTemplate jdbcTemplate(@Qualifier("dbmaster") DataSource ds) {
 		return new JdbcTemplate(ds);
 	}
 
 	@Primary
 	@Bean(name = "masterEntityManagerFactory")
-	public LocalContainerEntityManagerFactoryBean masterEntityManagerFactory(EntityManagerFactoryBuilder builder,
+	LocalContainerEntityManagerFactoryBean masterEntityManagerFactory(EntityManagerFactoryBuilder builder,
 			@Qualifier("dbmaster") DataSource masterDataSource) {
 		return builder.dataSource(masterDataSource).packages("org.pdsr.master","org.pdsr.summary").build();
 	}
 
 	@Primary
 	@Bean(name = "masterTransactionManager")
-	public PlatformTransactionManager masterTransactionManager(
+	PlatformTransactionManager masterTransactionManager(
 			@Qualifier("masterEntityManagerFactory") EntityManagerFactory masterEntityManagerFactory) {
 		return new JpaTransactionManager(masterEntityManagerFactory);
 	}

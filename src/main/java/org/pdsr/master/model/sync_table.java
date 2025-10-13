@@ -26,7 +26,7 @@ public class sync_table implements Serializable {
 	@Id
 	@NotNull
 	@Size(min = 1, max = 80)
-	private String sync_id;//REMOTE SYNC ID (LICENSE ID)
+	private String sync_id;//REMOTE SYNC ID (LICENSE ID) ALSO THE COUNTRY ID
 	
 	@Column(unique = true)
 	@NotNull

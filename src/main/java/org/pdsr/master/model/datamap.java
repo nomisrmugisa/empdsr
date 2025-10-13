@@ -33,6 +33,17 @@ public class datamap implements Serializable {
 	@NotNull
 	private String map_label;
 
+	public datamap() {
+		super();
+	}
+
+	public datamap(@NotNull String map_feature, @NotNull Integer map_value, @NotNull String map_label) {
+		super();
+		this.map_feature = map_feature;
+		this.map_value = map_value;
+		this.map_label = map_label;
+	}
+
 	public String getMap_feature() {
 		return map_feature;
 	}

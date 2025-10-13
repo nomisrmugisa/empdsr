@@ -7,8 +7,6 @@ import java.util.List;
 
 import javax.crypto.spec.SecretKeySpec;
 
-import org.pdsr.summary.model.big_audit_recommendation;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import io.jsonwebtoken.JwtBuilder;
@@ -16,7 +14,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.Jwts;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DecryptedAuditRecommendation implements Serializable {
+public class DecryptedFacilityTable implements Serializable {
 
 	/**
 	 * 
@@ -25,20 +23,14 @@ public class DecryptedAuditRecommendation implements Serializable {
 
 	private boolean error;
 	private String message;
-	private big_audit_recommendation selected;
-	private List<big_audit_recommendation> data;
+	private json_facility_table selected;
+	private List<json_facility_table> data;
 
-	public DecryptedAuditRecommendation() {
+	public DecryptedFacilityTable() {
 	}
 	
-	public DecryptedAuditRecommendation(big_audit_recommendation selected) {
+	public DecryptedFacilityTable(json_facility_table selected) {
 		this.selected = selected;
-	}
-
-	
-	public DecryptedAuditRecommendation(List<big_audit_recommendation> data) {
-		super();
-		this.data = data;
 	}
 
 	public String getMessage() {
@@ -57,19 +49,19 @@ public class DecryptedAuditRecommendation implements Serializable {
 		this.error = error;
 	}
 
-	public big_audit_recommendation getSelected() {
+	public json_facility_table getSelected() {
 		return selected;
 	}
 
-	public void setSelected(big_audit_recommendation selected) {
+	public void setSelected(json_facility_table selected) {
 		this.selected = selected;
 	}
 
-	public List<big_audit_recommendation> getData() {
+	public List<json_facility_table> getData() {
 		return data;
 	}
 
-	public void setData(List<big_audit_recommendation> data) {
+	public void setData(List<json_facility_table> data) {
 		this.data = data;
 	}
 
@@ -84,7 +76,6 @@ public class DecryptedAuditRecommendation implements Serializable {
 		try {
 			hmacKey = new SecretKeySpec(KEY.getBytes("UTF-8"), SignatureAlgorithm.HS256.getJcaName());
 		} catch (UnsupportedEncodingException e) {
-			
 			hmacKey = null;
 			e.printStackTrace();
 		}
@@ -116,7 +107,6 @@ public class DecryptedAuditRecommendation implements Serializable {
 		try {
 			hmacKey = new SecretKeySpec(KEY.getBytes("UTF-8"), SignatureAlgorithm.HS256.getJcaName());
 		} catch (UnsupportedEncodingException e) {
-			
 			hmacKey = null;
 			e.printStackTrace();
 		}

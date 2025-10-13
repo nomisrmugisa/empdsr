@@ -26,7 +26,7 @@ public class complication_table implements Serializable {
 	@Column
 	@Size(max = 65535)
 	private String complication_desc;
-
+	
 	public String getComplication_name() {
 		return complication_name;
 	}

@@ -71,47 +71,36 @@ public class case_identifiers implements Serializable {
 	@JoinColumn(name = "case_sync", referencedColumnName = "sync_id", insertable = true, updatable = true)
 	private sync_table case_sync;
 
-	@JsonIgnore
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_biodata biodata;
 
-	@JsonIgnore
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_pregnancy pregnancy;
 
-	@JsonIgnore
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_delivery delivery;
 
-	@JsonIgnore
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_referral referral;
 
-	@JsonIgnore
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_antenatal antenatal;
 
-	@JsonIgnore
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_labour labour;
 
-	@JsonIgnore
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_fetalheart fetalheart;
 
-	@JsonIgnore
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_birth birth;
 
-	@JsonIgnore
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_babydeath babydeath;
 
-	@JsonIgnore
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_mdeath mdeath;
 
-	@JsonIgnore
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_notes notes;
 

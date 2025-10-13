@@ -10,6 +10,9 @@ import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
 public class resuscitation_table implements Serializable {
 
@@ -27,6 +30,18 @@ public class resuscitation_table implements Serializable {
 	@Column
 	@Size(max = 65535)
 	private String resuscitation_desc;
+
+	public resuscitation_table() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public resuscitation_table(@NotNull @Size(min = 1, max = 80) String resuscitation_name,
+			@Size(max = 65535) String resuscitation_desc) {
+		super();
+		this.resuscitation_name = resuscitation_name;
+		this.resuscitation_desc = resuscitation_desc;
+	}
 
 	public String getResuscitation_name() {
 		return resuscitation_name;
@@ -61,5 +76,4 @@ public class resuscitation_table implements Serializable {
 		return Objects.equals(resuscitation_name, other.resuscitation_name);
 	}
 
-	
 }

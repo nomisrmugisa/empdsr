@@ -24,6 +24,20 @@ public class cfactor_table implements Serializable {
 	private Integer idgroup;
 	@Column
 	private String cfactor_name;
+	
+	
+	public cfactor_table() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
+	public cfactor_table(Integer id, Integer idgroup, String cfactor_name) {
+		super();
+		this.id = id;
+		this.idgroup = idgroup;
+		this.cfactor_name = cfactor_name;
+	}
+
 	public Integer getId() {
 		return id;
 	}

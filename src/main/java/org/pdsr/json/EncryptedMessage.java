@@ -9,6 +9,7 @@ import javax.crypto.spec.SecretKeySpec;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -59,6 +60,7 @@ public class EncryptedMessage implements Serializable {
 	public void setJwt(String jwt) {
 		this.jwt = jwt;
 	}
+	
 
 	public Object decrypt() {
 

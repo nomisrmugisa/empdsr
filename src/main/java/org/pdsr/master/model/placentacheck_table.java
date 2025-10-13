@@ -9,6 +9,9 @@ import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
 public class placentacheck_table implements Serializable {
 
@@ -26,6 +29,17 @@ public class placentacheck_table implements Serializable {
 	@Column
 	@Size(max = 65535)
 	private String placentacheck_desc;
+
+	public placentacheck_table() {
+		super();
+	}
+
+	public placentacheck_table(@NotNull @Size(min = 1, max = 80) String placentacheck_name,
+			@Size(max = 65535) String placentacheck_desc) {
+		super();
+		this.placentacheck_name = placentacheck_name;
+		this.placentacheck_desc = placentacheck_desc;
+	}
 
 	public String getPlacentacheck_name() {
 		return placentacheck_name;

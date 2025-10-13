@@ -64,10 +64,6 @@ public class user_table implements Serializable {
 	@JoinTable(name = "user_group", joinColumns = @JoinColumn(name = "username"), inverseJoinColumns = @JoinColumn(name = "group_role"))
 	private List<group_table> groups = new ArrayList<>();
 
-	@ManyToMany(cascade = CascadeType.PERSIST)
-	@JoinTable(name = "user_facilities", joinColumns = @JoinColumn(name = "username"), inverseJoinColumns = @JoinColumn(name = "facility_uuid"))
-	private List<facility_table> facilities = new ArrayList<>();
-
 	public String getUsername() {
 		return username;
 	}
@@ -139,14 +135,6 @@ public class user_table implements Serializable {
 
 	public void setGroups(List<group_table> groups) {
 		this.groups = groups;
-	}
-
-	public List<facility_table> getFacilities() {
-		return facilities;
-	}
-
-	public void setFacilities(List<facility_table> facilities) {
-		this.facilities = facilities;
 	}
 
 	@Override

@@ -7,16 +7,15 @@
 	class="col-md-12 py-3 my-3 mx-auto p-5 rounded box-shadow table-responsive"
 	style="background-color: #92c7f2;">
 	<form action="#"
-		th:action="@{/controls/district/{id}(id=${selected.region_uuid})}"
+		th:action="@{/controls/district/{id}(id=${selected.facility_uuid})}"
 		th:object="${selected}" method="POST" class="needs-validation"
 		novalidate>
 		<div th:if="${success}" class="alert alert-success"
 			th:text="${success}"></div>
 
-		<input th:field="*{country}" hidden=true /> <input
-			th:field="*{region_uuid}" hidden=true /> <input
-			th:field="*{region_name}" hidden=true />
-
+		<input th:field="*{parent}" hidden=true /> <input
+			th:field="*{facility_uuid}" hidden=true /> <input
+			th:field="*{facility_name}" hidden=true />
 		<div>
 			<a class="btn btn-sm btn-dark"
 				th:href="@{/controls/region/{id}(id=${selected.country.country_uuid})}"
@@ -33,31 +32,31 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="item, itemStat : *{districtList}">
-					<td>[[${item.region.country.country_name}]] <input
-						th:field="*{districtList[__${itemStat.index}__].region}"
+				<tr th:each="item, itemStat : *{children}">
+					<td>[[${item.parent.parent.facility_name}]] <input
+						th:field="*{children[__${itemStat.index}__].parent}"
 						hidden=true readonly />
 					</td>
 					<td>[[${item.region.region_name}]] <input hidden=true readonly
-						th:field="*{districtList[__${itemStat.index}__].district_uuid}" /></td>
+						th:field="*{children[__${itemStat.index}__].facility_uuid}" /></td>
 					<td><input type="text" class="form-control form-control-sm"
-						th:field="*{districtList[__${itemStat.index}__].district_name}"
+						th:field="*{children[__${itemStat.index}__].facility_name}"
 						required /><span th:unless="${item.district_name}"><a
 							class="text-danger" th:if="${add}"
-							th:href="@{/controls/district/{id}(id=${selected.region_uuid})}"
+							th:href="@{/controls/district/{id}(id=${selected.facility_uuid})}"
 							th:text="#{cancel.button}"></a></span></td>
-					<td><a th:if="${item.district_name}"
+					<td><a th:if="${item.facility_name}"
 						class="btn btn-info btn-sm"
-						th:href="@{/controls/facility/{id}(id=${item.district_uuid})}">
+						th:href="@{/controls/facility/{id}(id=${item.facility_uuid})}">
 							[[#{th.facilities.link}]] <span class="badge bg-primary">
-								[[${#lists.size(item.facilityList)}]]</span>
+								[[${#lists.size(item.children)}]]</span>
 					</a></td>
 				</tr>
 				<tr th:unless="${add}">
 					<td></td>
 					<td></td>
 					<td><a class="btn btn-sm btn-success small"
-						th:href="@{/controls/district/{id}?add=1(id=${selected.region_uuid})}"
+						th:href="@{/controls/district/{id}?add=1(id=${selected.facility_uuid})}"
 						th:text="#{add.button}"></a></td>
 					<td></td>
 				</tr>

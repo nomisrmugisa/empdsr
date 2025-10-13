@@ -82,8 +82,7 @@ public class HomeController {
 
 		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", sync.getSync_name());
-		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
-		facilityLevel(model, facility);
+		facilityLevel(model);
 		return "home";
 	}
 
@@ -114,7 +113,7 @@ public class HomeController {
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		model.addAttribute("district", "active");
 		model.addAttribute("page", "active");
-		model.addAttribute("country_name", facility.getDistrict().getDistrict_name());
+		model.addAttribute("country_name", facility.getParent().getFacility_name());
 		model.addAttribute("selected", new wmsearch());
 		model.addAttribute("oavg", new wmoindicators());
 
@@ -163,10 +162,10 @@ public class HomeController {
 		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", sync.getSync_name());
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
-		model.addAttribute("country_name", facility.getDistrict().getRegion().getCountry().getCountry_name());
+		model.addAttribute("country_name", facility.getParent().getParent().getParent().getFacility_name());
 		model.addAttribute("regional", "active");
 		model.addAttribute("page", "active");
-		model.addAttribute("region_name", facility.getDistrict().getRegion().getRegion_name());
+		model.addAttribute("region_name", facility.getParent().getParent().getParent());
 		model.addAttribute("selected", new wmsearch());
 		model.addAttribute("oavg", new wmoindicators());
 		return "home";
@@ -213,9 +212,9 @@ public class HomeController {
 		model.addAttribute("myf", sync.getSync_name());
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		model.addAttribute("national", "active");
-		model.addAttribute("national_level", facility.getDistrict().getRegion().getCountry().getCountry_name());
+		model.addAttribute("national_level", facility.getParent().getParent().getParent().getFacility_name());
 		model.addAttribute("page", "active");
-		model.addAttribute("country_name", facility.getDistrict().getRegion().getCountry().getCountry_name());
+		model.addAttribute("country_name", facility.getParent().getParent().getParent().getFacility_name());
 		model.addAttribute("selected", new wmsearch());
 		model.addAttribute("oavg", new wmoindicators());
 
@@ -249,7 +248,7 @@ public class HomeController {
 		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
 		model.addAttribute("national", "active");
 		model.addAttribute("national_regional", region_name);
-		model.addAttribute("country_name", facility.getDistrict().getRegion().getCountry().getCountry_name());
+		model.addAttribute("country_name", facility.getParent().getParent().getParent().getFacility_name());
 		model.addAttribute("page", "active");
 		model.addAttribute("region_name", region_name);
 		model.addAttribute("selected", new wmsearch());
@@ -274,13 +273,13 @@ public class HomeController {
 		return "home";
 	}
 
-	private void facilityLevel(Model model, facility_table facility) {
+	private void facilityLevel(Model model) {
 
 		final int year = Calendar.getInstance().get(Calendar.YEAR);
 		final java.util.Date date = new Date();
 
 		model.addAttribute("cyear", year);
-		
+
 		final Integer entered_md = caseRepo.countByCase_death(3);
 		final Integer entered_nd = caseRepo.countByCase_death(2);
 		final Integer entered_sb = caseRepo.countByCase_death(1);
@@ -301,14 +300,14 @@ public class HomeController {
 		model.addAttribute("submitted_mdn", submitted_mdn);
 		model.addAttribute("submitted_ndn", submitted_ndn);
 		model.addAttribute("submitted_sbn", submitted_sbn);
-		
+
 		final Integer c_submitted_mdn = caseRepo.countBySubmittedAndType(3, year);
 		final Integer c_submitted_ndn = caseRepo.countBySubmittedAndType(2, year);
 		final Integer c_submitted_sbn = caseRepo.countBySubmittedAndType(1, year);
 		model.addAttribute("c_submitted_mdn", c_submitted_mdn);
 		model.addAttribute("c_submitted_ndn", c_submitted_ndn);
 		model.addAttribute("c_submitted_sbn", c_submitted_sbn);
-		
+
 		model.addAttribute("submitted_mdp", entered_md == 0 ? 0 : 100 * submitted_mdn / entered_md);
 		model.addAttribute("submitted_ndp", entered_nd == 0 ? 0 : 100 * submitted_ndn / entered_nd);
 		model.addAttribute("submitted_sbp", entered_sb == 0 ? 0 : 100 * submitted_sbn / entered_sb);
@@ -317,22 +316,19 @@ public class HomeController {
 		model.addAttribute("c_submitted_ndp", c_entered_nd == 0 ? 0 : 100 * c_submitted_ndn / c_entered_nd);
 		model.addAttribute("c_submitted_sbp", c_entered_sb == 0 ? 0 : 100 * c_submitted_sbn / c_entered_sb);
 
-		
 		final Integer selected_md = caseRepo.countSelectedCasesByCase_death(3);
 		final Integer selected_nd = caseRepo.countSelectedCasesByCase_death(2);
 		final Integer selected_sb = caseRepo.countSelectedCasesByCase_death(1);
 		model.addAttribute("selected_md", selected_md);
 		model.addAttribute("selected_nd", selected_nd);
 		model.addAttribute("selected_sb", selected_sb);
-		
-		
+
 		final Integer c_selected_md = caseRepo.countSelectedCasesByCase_death(3, year);
 		final Integer c_selected_nd = caseRepo.countSelectedCasesByCase_death(2, year);
 		final Integer c_selected_sb = caseRepo.countSelectedCasesByCase_death(1, year);
 		model.addAttribute("c_selected_md", c_selected_md);
 		model.addAttribute("c_selected_nd", c_selected_nd);
 		model.addAttribute("c_selected_sb", c_selected_sb);
-		
 
 		final Integer reviewed_mdn = caseRepo.countReviewedCasesByCase_death(3);
 		final Integer reviewed_ndn = caseRepo.countReviewedCasesByCase_death(2);
@@ -355,7 +351,6 @@ public class HomeController {
 		model.addAttribute("c_reviewed_mdp", c_selected_md == 0 ? 0 : 100 * c_reviewed_mdn / c_selected_md);
 		model.addAttribute("c_reviewed_ndp", c_selected_nd == 0 ? 0 : 100 * c_reviewed_ndn / c_selected_nd);
 		model.addAttribute("c_reviewed_sbp", c_selected_sb == 0 ? 0 : 100 * c_reviewed_sbn / c_selected_sb);
-
 
 		// SUMMARY STATISTICS
 		final String[] adata = wmRepo.findFrontPageRates().get(0);
@@ -609,9 +604,9 @@ public class HomeController {
 
 	private void districtLevel(Model model, facility_table facility) {
 
-		final String COUNTRY_NAME = facility.getDistrict().getRegion().getCountry().getCountry_name();
-		final String REGION_NAME = facility.getDistrict().getRegion().getRegion_name();
-		final String DISTRICT_NAME = facility.getDistrict().getDistrict_name();
+		final String COUNTRY_NAME = facility.getParent().getParent().getParent().getFacility_name();
+		final String REGION_NAME = facility.getParent().getParent().getFacility_name();
+		final String DISTRICT_NAME = facility.getParent().getFacility_name();
 
 		model.addAttribute("district", "active");
 
@@ -645,7 +640,6 @@ public class HomeController {
 		model.addAttribute("c_submitted_sbn",
 				bcaseRepo.countByCase_statusAndType(1, 1, year, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 
-		
 		model.addAttribute("submitted_mdp",
 				bcaseRepo.countByCase_death(3, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME) == 0 ? 0
 						: 100 * bcaseRepo.countByCase_statusAndType(1, 3, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME)
@@ -659,7 +653,6 @@ public class HomeController {
 						: 100 * bcaseRepo.countByCase_statusAndType(1, 1, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME)
 								/ bcaseRepo.countByCase_death(1, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME));
 
-		
 		model.addAttribute("c_submitted_mdp",
 				bcaseRepo.countByCase_death(3, year, COUNTRY_NAME, REGION_NAME, DISTRICT_NAME) == 0 ? 0
 						: 100 * bcaseRepo.countByCase_statusAndType(1, 3, year, COUNTRY_NAME, REGION_NAME,
@@ -1005,8 +998,8 @@ public class HomeController {
 
 	private void regionalLevel(Model model, facility_table facility) {
 
-		final String COUNTRY_NAME = facility.getDistrict().getRegion().getCountry().getCountry_name();
-		final String REGION_NAME = facility.getDistrict().getRegion().getRegion_name();
+		final String COUNTRY_NAME = facility.getParent().getParent().getParent().getFacility_name();
+		final String REGION_NAME = facility.getParent().getParent().getFacility_name();
 
 		model.addAttribute("regional", "active");
 
@@ -1365,7 +1358,7 @@ public class HomeController {
 
 	private void nationalLevel(Model model, facility_table facility) {
 
-		final String COUNTRY_NAME = facility.getDistrict().getRegion().getCountry().getCountry_name();
+		final String COUNTRY_NAME = facility.getParent().getParent().getParent().getFacility_name();
 
 		model.addAttribute("national", "active");
 
@@ -1710,7 +1703,7 @@ public class HomeController {
 
 	private void nationalIndicators(Model model, wmsearch search, facility_table facility) {
 
-		final String COUNTRY_NAME = facility.getDistrict().getRegion().getCountry().getCountry_name();
+		final String COUNTRY_NAME = facility.getParent().getParent().getParent().getFacility_name();
 
 		model.addAttribute("national", "active");
 		model.addAttribute("national_level", COUNTRY_NAME);
@@ -1916,9 +1909,9 @@ public class HomeController {
 
 	private void regionalIndicators(Model model, wmsearch search, facility_table facility, String region_name) {
 
-		final String COUNTRY_NAME = facility.getDistrict().getRegion().getCountry().getCountry_name();
+		final String COUNTRY_NAME = facility.getParent().getParent().getParent().getFacility_name();
 		final String REGION_NAME = (region_name != null) ? region_name
-				: facility.getDistrict().getRegion().getRegion_name();
+				: facility.getParent().getParent().getFacility_name();
 
 		model.addAttribute((region_name != null) ? "national" : "regional", "active");
 		if (region_name != null) {
@@ -2127,9 +2120,9 @@ public class HomeController {
 
 	private void districtIndicators(Model model, wmsearch search, facility_table facility) {
 
-		final String COUNTRY_NAME = facility.getDistrict().getRegion().getCountry().getCountry_name();
-		final String REGION_NAME = facility.getDistrict().getRegion().getRegion_name();
-		final String DISTRICT_NAME = facility.getDistrict().getDistrict_name();
+		final String COUNTRY_NAME = facility.getParent().getParent().getParent().getFacility_name();
+		final String REGION_NAME = facility.getParent().getParent().getFacility_name();
+		final String DISTRICT_NAME = facility.getParent().getFacility_name();
 
 		model.addAttribute("district", "active");
 		model.addAttribute("page", "active");

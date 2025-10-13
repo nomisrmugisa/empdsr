@@ -4,23 +4,19 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import org.pdsr.json.DecryptedAuditAudit;
 import org.pdsr.json.DecryptedAuditRecommendation;
 import org.pdsr.json.DecryptedCaseIdentifiers;
-import org.pdsr.json.DecryptedUserTable;
 import org.pdsr.json.DecryptedWeeklyMonitoring;
 import org.pdsr.json.EncryptedMessage;
-import org.pdsr.json.json_audit_audit;
-import org.pdsr.json.json_audit_recommendation;
-import org.pdsr.json.json_case_identifiers;
 import org.pdsr.json.json_redcap;
-import org.pdsr.json.json_user_table;
-import org.pdsr.json.json_weekly_monitoring;
-import org.pdsr.master.model.sync_table;
+import org.pdsr.master.model.facility_table;
 import org.pdsr.master.repo.SyncTableRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.pdsr.summary.model.big_audit_audit;
+import org.pdsr.summary.model.big_audit_recommendation;
+import org.pdsr.summary.model.big_case_identifiers;
+import org.pdsr.summary.model.big_weekly_monitoring;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -39,100 +35,51 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 public class ServiceApi {
 
-	@Autowired
-	private SyncTableRepository syncRepo;
-	private String BASE_URL, API_URL, API_TOKEN;// by eliezer
+	private final String BASE_URL, FAC_CODE, API_URL, API_TOKEN;
 
 	private final RestTemplate restTemplate;
 
-	public ServiceApi(final RestTemplateBuilder restTemplateBuilder) {
+	public ServiceApi(final RestTemplateBuilder restTemplateBuilder, SyncTableRepository syncRepo) {
 		this.restTemplate = restTemplateBuilder.build();
+
+		BASE_URL = syncRepo.findById(CONSTANTS.LICENSE_ID).get().getSync_url();
+		FAC_CODE = syncRepo.findById(CONSTANTS.LICENSE_ID).get().getSync_code();
+		API_URL = "";// sync_table.get().getSync_redcap_url();
+		API_TOKEN = "";// sync_table.get().getSync_redcap_token();
 	}
 
-	/////////////// USER TABLE////////////////////////////////
-	public String saveAll(DecryptedUserTable data) {
-
-		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.LICENSE_ID);
-
-		if (sync_table.isPresent()) {
-
-			BASE_URL = sync_table.get().getSync_url();
-
-		}
-
-		final String URL = BASE_URL.concat("/saveusers.php");
-		EncryptedMessage json = new EncryptedMessage();
-
-		json.setError(false);
-		json.setMessage("Encrypted");
-		json.setJwt(data.encryptList(json.getKEY(), json.getISS(), json.getAUD()));
+	/////////////// PULL FROM CENTRAL SERVER ////////////////////////////////
+	public facility_table pullMyFacility() {
 
 		try {
 
-			return restTemplate.postForObject(URL, json, EncryptedMessage.class).getMessage();
+			final String URL = BASE_URL.concat("/facility/" + FAC_CODE);
+			facility_table w = restTemplate.getForObject(URL, facility_table.class);
+
+			return w;
 
 		} catch (Exception ex) {
 
-			return new EncryptedMessage(Boolean.TRUE, ex.getLocalizedMessage()).getMessage();
+			ex.printStackTrace();
 		}
 
-	}
-
-	public List<json_user_table> findAllUsers() {
-
-		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.LICENSE_ID);
-
-		if (sync_table.isPresent()) {
-
-			BASE_URL = sync_table.get().getSync_url();
-
-		}
-
-		EncryptedMessage json = null;
-
-		final String URL = BASE_URL.concat("/findusers.php");
-
-		try {
-			json = restTemplate.getForObject(URL, EncryptedMessage.class);
-
-		} catch (RestClientException ex) {
-			json = new EncryptedMessage(Boolean.TRUE, ex.getLocalizedMessage());
-		}
-
-		if (json.isError()) {
-			return new ArrayList<json_user_table>();
-		}
-
-		if (json.equals(null)) {
-
-			return new ArrayList<json_user_table>();
-		}
-
-		ObjectMapper mapper = new ObjectMapper();
-		DecryptedUserTable data = mapper.convertValue(json.decrypt(), DecryptedUserTable.class);
-
-		return data.getData();
+		return null;
 	}
 
 	/////////////// CASE IDENTIFIERS////////////////////////////////
-	public String saveAll(DecryptedCaseIdentifiers data) {
-		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.LICENSE_ID);
+	public String postCases(List<big_case_identifiers> jsons) {
 
-		if (sync_table.isPresent()) {
+		DecryptedCaseIdentifiers data = new DecryptedCaseIdentifiers();
+		data.setData(jsons);
 
-			BASE_URL = sync_table.get().getSync_url();
-
-		}
-
-		final String URL = BASE_URL.concat("/savecases.php");
 		EncryptedMessage json = new EncryptedMessage();
-
 		json.setError(false);
 		json.setMessage("Encrypted");
 		json.setJwt(data.encryptList(json.getKEY(), json.getISS(), json.getAUD()));
 
 		try {
 
+			final String URL = BASE_URL.concat("/savecases.php");
 			return restTemplate.postForObject(URL, json, EncryptedMessage.class).getMessage();
 
 		} catch (Exception ex) {
@@ -142,21 +89,13 @@ public class ServiceApi {
 
 	}
 
-	public List<json_case_identifiers> findAllCases() {
-
-		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.LICENSE_ID);
-
-		if (sync_table.isPresent()) {
-
-			BASE_URL = sync_table.get().getSync_url();
-
-		}
+	public List<big_case_identifiers> getCases() {
 
 		EncryptedMessage json = null;
 
-		final String URL = BASE_URL.concat("/findcases.php");
 
 		try {
+			final String URL = BASE_URL.concat("/findcases.php");
 			json = restTemplate.getForObject(URL, EncryptedMessage.class);
 
 		} catch (RestClientException ex) {
@@ -164,12 +103,12 @@ public class ServiceApi {
 		}
 
 		if (json.isError()) {
-			return new ArrayList<json_case_identifiers>();
+			return new ArrayList<big_case_identifiers>();
 		}
 
 		if (json.equals(null)) {
 
-			return new ArrayList<json_case_identifiers>();
+			return new ArrayList<big_case_identifiers>();
 		}
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -179,45 +118,19 @@ public class ServiceApi {
 	}
 
 	/////////////// CASE AUDIT AUDIT////////////////////////////////
-	public String save(DecryptedAuditAudit data) {
+	public String postAudits(List<big_audit_audit> jsons) {
 
-		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.LICENSE_ID);
+		DecryptedAuditAudit data = new DecryptedAuditAudit();
+		data.setData(jsons);
 
-		if (sync_table.isPresent()) {
-
-			BASE_URL = sync_table.get().getSync_url();
-
-		}
-
-		final String URL = BASE_URL.concat("/saveaudit.php");
 		EncryptedMessage json = new EncryptedMessage();
-
-		json.setError(false);
-		json.setMessage("Encrypted");
-		json.setJwt(data.encrypt(json.getKEY(), json.getISS(), json.getAUD()));
-
-		try {
-
-			return restTemplate.postForObject(URL, json, EncryptedMessage.class).getMessage();
-
-		} catch (Exception ex) {
-
-			return new EncryptedMessage(Boolean.TRUE, ex.getLocalizedMessage()).getMessage();
-		}
-
-	}
-
-	public String saveAll(DecryptedAuditAudit data) {
-
-		final String URL = BASE_URL.concat("/saveaudits.php");
-		EncryptedMessage json = new EncryptedMessage();
-
 		json.setError(false);
 		json.setMessage("Encrypted");
 		json.setJwt(data.encryptList(json.getKEY(), json.getISS(), json.getAUD()));
 
 		try {
 
+			final String URL = BASE_URL.concat("/saveaudits.php");
 			return restTemplate.postForObject(URL, json, EncryptedMessage.class).getMessage();
 
 		} catch (Exception ex) {
@@ -227,21 +140,13 @@ public class ServiceApi {
 
 	}
 
-	public List<json_audit_audit> findAllAudits() {
-
-		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.LICENSE_ID);
-
-		if (sync_table.isPresent()) {
-
-			BASE_URL = sync_table.get().getSync_url();
-
-		}
+	public List<big_audit_audit> getAudits() {
 
 		EncryptedMessage json = null;
 
-		final String URL = BASE_URL.concat("/findaudits.php");
 
 		try {
+			final String URL = BASE_URL.concat("/findaudits.php");
 			json = restTemplate.getForObject(URL, EncryptedMessage.class);
 
 		} catch (RestClientException ex) {
@@ -249,12 +154,12 @@ public class ServiceApi {
 		}
 
 		if (json.isError()) {
-			return new ArrayList<json_audit_audit>();
+			return new ArrayList<big_audit_audit>();
 		}
 
 		if (json.equals(null)) {
 
-			return new ArrayList<json_audit_audit>();
+			return new ArrayList<big_audit_audit>();
 		}
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -264,53 +169,19 @@ public class ServiceApi {
 	}
 
 	/////////////// CASE AUDIT RECOMMENDATIONS////////////////////////////////
-	public String save(DecryptedAuditRecommendation data) {
+	public String postRecommendations(List<big_audit_recommendation> jsons) {
 
-		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.LICENSE_ID);
+		DecryptedAuditRecommendation data = new DecryptedAuditRecommendation();
+		data.setData(jsons);
 
-		if (sync_table.isPresent()) {
-
-			BASE_URL = sync_table.get().getSync_url();
-
-		}
-
-		final String URL = BASE_URL.concat("/saveaction.php");
 		EncryptedMessage json = new EncryptedMessage();
-
-		json.setError(false);
-		json.setMessage("Encrypted");
-		json.setJwt(data.encrypt(json.getKEY(), json.getISS(), json.getAUD()));
-
-		try {
-
-			return restTemplate.postForObject(URL, json, EncryptedMessage.class).getMessage();
-
-		} catch (Exception ex) {
-
-			return new EncryptedMessage(Boolean.TRUE, ex.getLocalizedMessage()).getMessage();
-		}
-
-	}
-
-	public String saveAll(DecryptedAuditRecommendation data) {
-
-		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.LICENSE_ID);
-
-		if (sync_table.isPresent()) {
-
-			BASE_URL = sync_table.get().getSync_url();
-
-		}
-
-		final String URL = BASE_URL.concat("/saveactions.php");
-		EncryptedMessage json = new EncryptedMessage();
-
 		json.setError(false);
 		json.setMessage("Encrypted");
 		json.setJwt(data.encryptList(json.getKEY(), json.getISS(), json.getAUD()));
 
 		try {
 
+			final String URL = BASE_URL.concat("/saverecs.php");
 			return restTemplate.postForObject(URL, json, EncryptedMessage.class).getMessage();
 
 		} catch (Exception ex) {
@@ -320,21 +191,13 @@ public class ServiceApi {
 
 	}
 
-	public List<json_audit_recommendation> findAllRecommendations() {
-
-		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.LICENSE_ID);
-
-		if (sync_table.isPresent()) {
-
-			BASE_URL = sync_table.get().getSync_url();
-
-		}
+	public List<big_audit_recommendation> getRecommendations() {
 
 		EncryptedMessage json = null;
 
-		final String URL = BASE_URL.concat("/findactions.php");
 
 		try {
+			final String URL = BASE_URL.concat("/findrecs.php");
 			json = restTemplate.getForObject(URL, EncryptedMessage.class);
 
 		} catch (RestClientException ex) {
@@ -342,12 +205,12 @@ public class ServiceApi {
 		}
 
 		if (json.isError()) {
-			return new ArrayList<json_audit_recommendation>();
+			return new ArrayList<big_audit_recommendation>();
 		}
 
 		if (json.equals(null)) {
 
-			return new ArrayList<json_audit_recommendation>();
+			return new ArrayList<big_audit_recommendation>();
 		}
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -357,53 +220,19 @@ public class ServiceApi {
 	}
 
 	/////////////// CASE WEEKLY MONITORING////////////////////////////////
-	public String save(DecryptedWeeklyMonitoring data) {
+	public String postWeeklyMonitorings(List<big_weekly_monitoring> jsons) {
 
-		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.LICENSE_ID);
+		DecryptedWeeklyMonitoring data = new DecryptedWeeklyMonitoring();
+		data.setData(jsons);
 
-		if (sync_table.isPresent()) {
-
-			BASE_URL = sync_table.get().getSync_url();
-
-		}
-
-		final String URL = BASE_URL.concat("/saveweekly.php");
 		EncryptedMessage json = new EncryptedMessage();
-
-		json.setError(false);
-		json.setMessage("Encrypted");
-		json.setJwt(data.encrypt(json.getKEY(), json.getISS(), json.getAUD()));
-
-		try {
-
-			return restTemplate.postForObject(URL, json, EncryptedMessage.class).getMessage();
-
-		} catch (Exception ex) {
-
-			return new EncryptedMessage(Boolean.TRUE, ex.getLocalizedMessage()).getMessage();
-		}
-
-	}
-
-	public String saveAll(DecryptedWeeklyMonitoring data) {
-
-		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.LICENSE_ID);
-
-		if (sync_table.isPresent()) {
-
-			BASE_URL = sync_table.get().getSync_url();
-
-		}
-
-		final String URL = BASE_URL.concat("/saveweeklys.php");
-		EncryptedMessage json = new EncryptedMessage();
-
 		json.setError(false);
 		json.setMessage("Encrypted");
 		json.setJwt(data.encryptList(json.getKEY(), json.getISS(), json.getAUD()));
 
 		try {
 
+			final String URL = BASE_URL.concat("/savewms.php");
 			return restTemplate.postForObject(URL, json, EncryptedMessage.class).getMessage();
 
 		} catch (Exception ex) {
@@ -413,21 +242,13 @@ public class ServiceApi {
 
 	}
 
-	public List<json_weekly_monitoring> findAllMonitoring() {
-
-		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.LICENSE_ID);
-
-		if (sync_table.isPresent()) {
-
-			BASE_URL = sync_table.get().getSync_url();
-
-		}
+	public List<big_weekly_monitoring> getWeeklyMonitorings() {
 
 		EncryptedMessage json = null;
 
-		final String URL = BASE_URL.concat("/findweeklys.php");
 
 		try {
+			final String URL = BASE_URL.concat("/findwms.php");
 			json = restTemplate.getForObject(URL, EncryptedMessage.class);
 
 		} catch (RestClientException ex) {
@@ -435,12 +256,12 @@ public class ServiceApi {
 		}
 
 		if (json.isError()) {
-			return new ArrayList<json_weekly_monitoring>();
+			return new ArrayList<big_weekly_monitoring>();
 		}
 
 		if (json.equals(null)) {
 
-			return new ArrayList<json_weekly_monitoring>();
+			return new ArrayList<big_weekly_monitoring>();
 		}
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -451,15 +272,6 @@ public class ServiceApi {
 
 	/// REDCAP DATA
 	public List<json_redcap> extractRedCapIdentifiers(Date startDate, Date endDate) {
-
-		Optional<sync_table> sync_table = syncRepo.findById(CONSTANTS.LICENSE_ID);
-
-		if (sync_table.isPresent()) {
-
-			API_URL = "";//sync_table.get().getSync_redcap_url();
-			API_TOKEN = "";//sync_table.get().getSync_redcap_token();
-
-		}
 
 		try {
 

@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.crypto.spec.SecretKeySpec;
 
+import org.pdsr.summary.model.big_audit_audit;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import io.jsonwebtoken.JwtBuilder;
@@ -23,14 +25,19 @@ public class DecryptedAuditAudit implements Serializable {
 
 	private boolean error;
 	private String message;
-	private json_audit_audit selected;
-	private List<json_audit_audit> data;
+	private big_audit_audit selected;
+	private List<big_audit_audit> data;
 
 	public DecryptedAuditAudit() {
 	}
 	
-	public DecryptedAuditAudit(json_audit_audit selected) {
+	public DecryptedAuditAudit(big_audit_audit selected) {
 		this.selected = selected;
+	}
+
+	public DecryptedAuditAudit(List<big_audit_audit> data) {
+		super();
+		this.data = data;
 	}
 
 	public String getMessage() {
@@ -49,19 +56,19 @@ public class DecryptedAuditAudit implements Serializable {
 		this.error = error;
 	}
 
-	public json_audit_audit getSelected() {
+	public big_audit_audit getSelected() {
 		return selected;
 	}
 
-	public void setSelected(json_audit_audit selected) {
+	public void setSelected(big_audit_audit selected) {
 		this.selected = selected;
 	}
 
-	public List<json_audit_audit> getData() {
+	public List<big_audit_audit> getData() {
 		return data;
 	}
 
-	public void setData(List<json_audit_audit> data) {
+	public void setData(List<big_audit_audit> data) {
 		this.data = data;
 	}
 

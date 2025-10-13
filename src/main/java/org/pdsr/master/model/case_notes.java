@@ -16,6 +16,10 @@ import javax.validation.constraints.Size;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
 public class case_notes implements Serializable {
 
@@ -30,6 +34,7 @@ public class case_notes implements Serializable {
 	@Size(min = 1, max = 80)
 	private String notes_uuid;
 
+	@JsonIgnore
 	@MapsId
 	@OneToOne(optional = false, cascade = CascadeType.ALL)
 	@JoinColumn(name = "case_uuid", referencedColumnName = "case_uuid", insertable = true, updatable = true)
@@ -46,12 +51,15 @@ public class case_notes implements Serializable {
 	@Column
 	private byte[] notes_file;
 	
+	@JsonIgnore
 	@Transient
 	private MultipartFile file;
 	
+	@JsonIgnore
 	@Transient
 	private String base64image;
 	
+	@JsonIgnore
 	@Lob
 	@Column
 	private String notes_json;

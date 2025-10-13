@@ -22,6 +22,21 @@ public class mcgroup_table implements Serializable {
 	@Lob
 	@Column
 	private String icdmgroup_name;
+	
+	
+	public mcgroup_table() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
+	
+	public mcgroup_table(String icdmgroup, String icdmgroup_name) {
+		super();
+		this.icdmgroup = icdmgroup;
+		this.icdmgroup_name = icdmgroup_name;
+	}
+
+
 	public String getIcdmgroup() {
 		return icdmgroup;
 	}

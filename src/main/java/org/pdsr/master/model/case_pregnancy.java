@@ -13,6 +13,10 @@ import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
 public class case_pregnancy implements Serializable {
 
@@ -26,6 +30,7 @@ public class case_pregnancy implements Serializable {
 	@Size(min = 1, max = 80)
 	private String pregnancy_uuid;
 
+	@JsonIgnore
 	@MapsId
 	@OneToOne(optional = false, cascade = CascadeType.ALL)
 	@JoinColumn(name = "case_uuid", referencedColumnName = "case_uuid", insertable = true, updatable = true)
@@ -46,6 +51,7 @@ public class case_pregnancy implements Serializable {
 	@Column
 	private Integer data_complete;
 
+	@JsonIgnore
 	@Lob
 	@Column
 	private String pregnancy_json;

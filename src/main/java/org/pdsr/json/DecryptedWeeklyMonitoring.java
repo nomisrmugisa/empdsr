@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.crypto.spec.SecretKeySpec;
 
+import org.pdsr.summary.model.big_weekly_monitoring;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import io.jsonwebtoken.JwtBuilder;
@@ -23,14 +25,21 @@ public class DecryptedWeeklyMonitoring implements Serializable {
 
 	private boolean error;
 	private String message;
-	private json_weekly_monitoring selected;
-	private List<json_weekly_monitoring> data;
+	private big_weekly_monitoring selected;
+	private List<big_weekly_monitoring> data;
 
 	public DecryptedWeeklyMonitoring() {
 	}
 	
-	public DecryptedWeeklyMonitoring(json_weekly_monitoring selected) {
+	public DecryptedWeeklyMonitoring(big_weekly_monitoring selected) {
 		this.selected = selected;
+	}
+	
+	
+
+	public DecryptedWeeklyMonitoring(List<big_weekly_monitoring> data) {
+		super();
+		this.data = data;
 	}
 
 	public String getMessage() {
@@ -49,19 +58,21 @@ public class DecryptedWeeklyMonitoring implements Serializable {
 		this.error = error;
 	}
 
-	public json_weekly_monitoring getSelected() {
+	public big_weekly_monitoring getSelected() {
 		return selected;
 	}
 
-	public void setSelected(json_weekly_monitoring selected) {
+	public void setSelected(big_weekly_monitoring selected) {
 		this.selected = selected;
 	}
+	
+	
 
-	public List<json_weekly_monitoring> getData() {
+	public List<big_weekly_monitoring> getData() {
 		return data;
 	}
 
-	public void setData(List<json_weekly_monitoring> data) {
+	public void setData(List<big_weekly_monitoring> data) {
 		this.data = data;
 	}
 

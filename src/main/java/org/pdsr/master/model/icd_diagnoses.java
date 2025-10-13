@@ -7,9 +7,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.opencsv.bean.CsvBindByName;
 import com.sun.istack.NotNull;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
 public class icd_diagnoses implements Serializable {
 

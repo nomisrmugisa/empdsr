@@ -19,6 +19,10 @@ import javax.validation.constraints.Size;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
 public class case_mdeath implements Serializable {
 
@@ -32,6 +36,7 @@ public class case_mdeath implements Serializable {
 	@Size(min = 1, max = 80)
 	private String mdeath_uuid;
 
+	@JsonIgnore
 	@MapsId
 	@OneToOne(optional = false, cascade = CascadeType.ALL)
 	@JoinColumn(name = "case_uuid", referencedColumnName = "case_uuid", insertable = true, updatable = true)
@@ -222,6 +227,7 @@ public class case_mdeath implements Serializable {
 	@Column
 	private Integer mdeath_autopsy_icd_mm;
 
+	@JsonIgnore
 	@Lob
 	@Column
 	private String mdeath_json;

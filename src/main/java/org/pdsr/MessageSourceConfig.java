@@ -10,7 +10,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 public class MessageSourceConfig {
 
     @Bean
-    public MessageSource messageSource() {
+    MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
         messageSource.setBasename("classpath:locale/messages");
         messageSource.setCacheSeconds(3600); //refresh cache once per hour
@@ -20,7 +20,7 @@ public class MessageSourceConfig {
     }
     
 	@Bean
-	public LocalValidatorFactoryBean getValidator() {
+	LocalValidatorFactoryBean getValidator() {
 	    LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
 	    bean.setValidationMessageSource(messageSource());
 	    return bean;

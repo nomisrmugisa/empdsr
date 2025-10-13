@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.crypto.spec.SecretKeySpec;
 
+import org.pdsr.summary.model.big_case_identifiers;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import io.jsonwebtoken.JwtBuilder;
@@ -23,14 +25,19 @@ public class DecryptedCaseIdentifiers implements Serializable {
 
 	private boolean error;
 	private String message;
-	private json_case_identifiers selected;
-	private List<json_case_identifiers> data;
+	private big_case_identifiers selected;
+	private List<big_case_identifiers> data;
 
 	public DecryptedCaseIdentifiers() {
 	}
 	
-	public DecryptedCaseIdentifiers(json_case_identifiers selected) {
+	public DecryptedCaseIdentifiers(big_case_identifiers selected) {
 		this.selected = selected;
+	}
+
+	public DecryptedCaseIdentifiers(List<big_case_identifiers> data) {
+		super();
+		this.data = data;
 	}
 
 	public String getMessage() {
@@ -49,19 +56,19 @@ public class DecryptedCaseIdentifiers implements Serializable {
 		this.error = error;
 	}
 
-	public json_case_identifiers getSelected() {
+	public big_case_identifiers getSelected() {
 		return selected;
 	}
 
-	public void setSelected(json_case_identifiers selected) {
+	public void setSelected(big_case_identifiers selected) {
 		this.selected = selected;
 	}
 
-	public List<json_case_identifiers> getData() {
+	public List<big_case_identifiers> getData() {
 		return data;
 	}
 
-	public void setData(List<json_case_identifiers> data) {
+	public void setData(List<big_case_identifiers> data) {
 		this.data = data;
 	}
 

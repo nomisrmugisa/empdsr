@@ -42,11 +42,11 @@ public class CONSTANTS {
 		return Files.readAllBytes(Paths.get(filename));
 	}
 
-	public static final byte[] read(String filename) throws IOException {
+	public static final byte[] read(String folder, String filename) throws IOException {
 //		Resource resource = new ClassPathResource("static/" + filename);
 //		Path path = Paths.get(resource.getURI());
 //		Path path = Paths.get(filename);
-		return Files.readAllBytes(Paths.get(filename));
+		return Files.readAllBytes(Paths.get(folder).resolve(filename));
 	}
 
 	public static final boolean removeFromDisk(final String USER, final String MEMO, String filename)

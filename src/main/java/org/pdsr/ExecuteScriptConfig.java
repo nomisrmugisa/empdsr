@@ -11,8 +11,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 
 @Configuration
-public class InMemoryConfig {
-	private final String SAMPLE_DATA = "classpath:my_data_h2.sql";
+public class ExecuteScriptConfig {
+	private final String SQL_SCRIPT = "classpath:my_data_h2.sql";
 	
 	@Autowired
 	@Qualifier("jdbcTemplate")
@@ -22,8 +22,8 @@ public class InMemoryConfig {
 	private ResourceLoader resourceLoader;
 
 	@PostConstruct
-	public void loadIfInMemory() throws Exception {
-		Resource resource = resourceLoader.getResource(SAMPLE_DATA);
-		ScriptUtils.executeSqlScript(datasource.getDataSource().getConnection(), resource);
+	public void executeSQLScript() throws Exception {
+//		Resource resource = resourceLoader.getResource(SQL_SCRIPT);
+//		ScriptUtils.executeSqlScript(datasource.getDataSource().getConnection(), resource);
 	}
 }

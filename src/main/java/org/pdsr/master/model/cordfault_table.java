@@ -9,6 +9,9 @@ import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
 public class cordfault_table implements Serializable {
 
@@ -26,6 +29,17 @@ public class cordfault_table implements Serializable {
 	@Column
 	@Size(max = 65535)
 	private String cordfault_desc;
+
+	public cordfault_table() {
+		super();
+	}
+
+	public cordfault_table(@NotNull @Size(min = 1, max = 80) String cordfault_name,
+			@Size(max = 65535) String cordfault_desc) {
+		super();
+		this.cordfault_name = cordfault_name;
+		this.cordfault_desc = cordfault_desc;
+	}
 
 	public String getCordfault_name() {
 		return cordfault_name;
