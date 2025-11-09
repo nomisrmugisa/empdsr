@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.pdsr.CONSTANTS;
 import org.pdsr.InternetAvailabilityChecker;
 import org.pdsr.ServiceApi;
 import org.pdsr.master.model.abnormality_table;
@@ -25,6 +26,7 @@ import org.pdsr.master.model.weekly_monitoring;
 import org.pdsr.master.repo.AuditAuditRepository;
 import org.pdsr.master.repo.AuditRecommendRepository;
 import org.pdsr.master.repo.CaseRepository;
+import org.pdsr.master.repo.SyncTableRepository;
 import org.pdsr.master.repo.WeeklyMonitoringTableRepository;
 import org.pdsr.summary.model.SummaryPK;
 import org.pdsr.summary.model.big_audit_audit;
@@ -45,6 +47,9 @@ public class CentralPushController {
 
 	@Autowired
 	private ServiceApi api;
+
+	@Autowired
+	private SyncTableRepository syncRepo;
 
 	@Autowired
 	private WeeklyMonitoringTableRepository weekMRepo;
@@ -83,30 +88,25 @@ public class CentralPushController {
 	@PostMapping("")
 	public String centralmerge(Principal principal, @RequestParam(required = false) Integer all) {
 
-		try {
+		facility_table facility = api.pullMyFacility();
 
-			if (!InternetAvailabilityChecker.isInternetAvailable()) {
-				return "redirect:/controls/centralmerge?failure=0";
-			}
-
-			// pull facility data remotely
-			facility_table facility = api.pullMyFacility();
-
-			final String country = facility.getParent().getParent().getParent().getFacility_name();
-			final String region = facility.getParent().getParent().getFacility_name();
-			final String district = facility.getParent().getFacility_name();
-			final String code = facility.getFacility_code();
-
-			pushCaseData(code, district, region, country, (all != null && all == 1));
-			pushAuditData(code, district, region, country, (all != null && all == 1));
-			pushRecommendationData(code, district, region, country, (all != null && all == 1));
-			pushMonitoringData(code, district, region, country, (all != null && all == 1));
-
-			return "redirect:/controls/centralmerge?success=yes";
-
-		} catch (IOException e) {
-			return "redirect:/controls/centralmerge?failure=1";
+		if (facility == null) {
+			return "redirect:/controls/centralmerge?failure=0";
 		}
+
+		// pull facility data remotely
+
+		final String country = facility.getParent().getParent().getParent().getFacility_name();
+		final String region = facility.getParent().getParent().getFacility_name();
+		final String district = facility.getParent().getFacility_name();
+		final String code = facility.getFacility_code();
+
+		pushCaseData(code, district, region, country, (all != null && all == 1));
+		pushAuditData(code, district, region, country, (all != null && all == 1));
+		pushRecommendationData(code, district, region, country, (all != null && all == 1));
+		pushMonitoringData(code, district, region, country, (all != null && all == 1));
+
+		return "redirect:/controls/centralmerge?success=yes";
 
 	}
 
@@ -404,10 +404,13 @@ public class CentralPushController {
 
 		}
 
-		final String msg = api.postCases(jsons);
+		if (jsons != null && !jsons.isEmpty()) {
+			
+			final String msg = api.postCases(jsons);
 
-		if ("success".equals(msg)) {
-			caseRepo.saveAll(sent);
+			if ("success".equals(msg)) {
+				caseRepo.saveAll(sent);
+			}
 		}
 	}
 
@@ -450,10 +453,12 @@ public class CentralPushController {
 
 		}
 
-		final String msg = api.postAudits(jsons);
+		if (jsons != null && !jsons.isEmpty()) {
+			final String msg = api.postAudits(jsons);
 
-		if ("success".equals(msg)) {
-			aaudRepo.saveAll(sent);
+			if ("success".equals(msg)) {
+				aaudRepo.saveAll(sent);
+			}
 		}
 
 	}
@@ -489,10 +494,12 @@ public class CentralPushController {
 
 		}
 
-		final String msg = api.postRecommendations(jsons);
+		if (jsons != null && !jsons.isEmpty()) {
+			final String msg = api.postRecommendations(jsons);
 
-		if ("success".equals(msg)) {
-			recRepo.saveAll(sent);
+			if ("success".equals(msg)) {
+				recRepo.saveAll(sent);
+			}
 		}
 
 	}
@@ -526,12 +533,13 @@ public class CentralPushController {
 
 		}
 
-		final String msg = api.postWeeklyMonitorings(jsons);
+		if (jsons != null && !jsons.isEmpty()) {
+			final String msg = api.postWeeklyMonitorings(jsons);
 
-		if ("success".equals(msg)) {
-			weekMRepo.saveAll(sent);
+			if ("success".equals(msg)) {
+				weekMRepo.saveAll(sent);
+			}
 		}
-
 	}
 
 }

@@ -310,22 +310,26 @@ public class CaseAuditController {
 				e.printStackTrace();
 			}
 
-			List<json_data> labdata;
-			try {
-				labdata = objectMapper.readValue(scase.getLabour().getLabour_json(), mapType);
-				fulldata.setLabour(labdata);
-			} catch (JsonProcessingException e) {
+			if (scase.getLabour() != null) {
+				List<json_data> labdata;
+				try {
+					labdata = objectMapper.readValue(scase.getLabour().getLabour_json(), mapType);
+					fulldata.setLabour(labdata);
+				} catch (JsonProcessingException e) {
 
-				e.printStackTrace();
+					e.printStackTrace();
+				}
 			}
 
-			List<json_data> birdata;
-			try {
-				birdata = objectMapper.readValue(scase.getBirth().getBirth_json(), mapType);
-				fulldata.setBirth(birdata);
-			} catch (JsonProcessingException e) {
+			if (scase.getBirth() != null && scase.getBirth().getBirth_json() != null) {
+				List<json_data> birdata;
+				try {
+					birdata = objectMapper.readValue(scase.getBirth().getBirth_json(), mapType);
+					fulldata.setBirth(birdata);
+				} catch (JsonProcessingException e) {
 
-				e.printStackTrace();
+					e.printStackTrace();
+				}
 			}
 
 			if (scase.getCase_death() == 1 && scase.getFetalheart() != null) {
@@ -554,7 +558,7 @@ public class CaseAuditController {
 					}
 
 					if (scase.getCase_death() == 3) {
-						List<json_data>mdthdata = objectMapper.readValue(scase.getMdeath().getMdeath_json(), mapType);
+						List<json_data> mdthdata = objectMapper.readValue(scase.getMdeath().getMdeath_json(), mapType);
 						fulldata.setMdeath(mdthdata);
 					}
 
@@ -1381,7 +1385,7 @@ public class CaseAuditController {
 			ex.printStackTrace();
 		}
 	}
-	
+
 	private String[] getRecipients() {
 		List<String> recipientList = userRepo.findByUser_alerted(true);
 		if (recipientList == null) {
@@ -1393,6 +1397,5 @@ public class CaseAuditController {
 		return recipientList.toArray(new String[recipientList.size()]);
 
 	}
-
 
 }// end class

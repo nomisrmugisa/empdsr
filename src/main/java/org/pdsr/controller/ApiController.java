@@ -83,7 +83,7 @@ public class ApiController {
 		EncryptedMessage data = new EncryptedMessage();
 		data.setError(false);
 		data.setMessage("Retrieved successfully");		
-		data.setJwt(new DecryptedCaseIdentifiers(big).encryptList(data.getKEY(), data.getISS(), data.getAUD()));
+		data.setJwt(data.encrypt(new DecryptedCaseIdentifiers(big)));
 
 		return data;
 	}
@@ -112,7 +112,7 @@ public class ApiController {
 		EncryptedMessage data = new EncryptedMessage();
 		data.setError(false);
 		data.setMessage("Retrieved successfully");		
-		data.setJwt(new DecryptedAuditAudit(big).encryptList(data.getKEY(), data.getISS(), data.getAUD()));
+		data.setJwt(data.encrypt(new DecryptedAuditAudit(big)));
 
 		return data;
 	}
@@ -141,7 +141,7 @@ public class ApiController {
 		EncryptedMessage data = new EncryptedMessage();
 		data.setError(false);
 		data.setMessage("Retrieved successfully");		
-		data.setJwt(new DecryptedAuditRecommendation(big).encryptList(data.getKEY(), data.getISS(), data.getAUD()));
+		data.setJwt(data.encrypt(new DecryptedAuditRecommendation(big)));
 
 		return data;
 	}
@@ -170,7 +170,7 @@ public class ApiController {
 		EncryptedMessage data = new EncryptedMessage();
 		data.setError(false);
 		data.setMessage("Retrieved successfully");		
-		data.setJwt(new DecryptedWeeklyMonitoring(big).encryptList(data.getKEY(), data.getISS(), data.getAUD()));
+		data.setJwt(data.encrypt(new DecryptedWeeklyMonitoring(big)));
 
 		return data;
 	}

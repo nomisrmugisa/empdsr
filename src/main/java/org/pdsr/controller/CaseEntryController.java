@@ -241,7 +241,7 @@ public class CaseEntryController {
 
 		// pull red-cap cases within a date range
 		if (redcap.getProcessingStage() == null || redcap.getProcessingStage() == 0) {
-			List<json_redcap> redcap_cases = api.extractRedCapIdentifiers(redcap.getFrom(), redcap.getTo());
+			List<json_redcap> redcap_cases = api.extractRedCapIdentifiers(redcap.getFrom(), redcap.getTo(), "", "");
 
 			List<String> uploadErrors = new ArrayList<>();
 

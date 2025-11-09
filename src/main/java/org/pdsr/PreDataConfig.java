@@ -22,12 +22,20 @@ import org.pdsr.master.model.placentacheck_table;
 import org.pdsr.master.model.resuscitation_table;
 import org.pdsr.master.model.risk_table;
 import org.pdsr.master.model.user_table;
+import org.pdsr.master.repo.AbnormalityTableRepository;
+import org.pdsr.master.repo.CFactorsRepository;
+import org.pdsr.master.repo.ComplicationTableRepository;
+import org.pdsr.master.repo.CordfaultTableRepository;
+import org.pdsr.master.repo.DatamapRepository;
 import org.pdsr.master.repo.DiagnosesTableRepository;
 import org.pdsr.master.repo.FacilityTableRepository;
 import org.pdsr.master.repo.GroupTableRepository;
 import org.pdsr.master.repo.McgroupRepository;
 import org.pdsr.master.repo.MconditionsRepository;
+import org.pdsr.master.repo.MonitoringTableRepository;
+import org.pdsr.master.repo.PlacentacheckTableRepository;
 import org.pdsr.master.repo.ResuscitationTableRepository;
+import org.pdsr.master.repo.RiskTableRepository;
 import org.pdsr.master.repo.UserTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -52,6 +60,21 @@ public class PreDataConfig {
 	private ResuscitationTableRepository resRepo;
 	
 	@Autowired
+	private RiskTableRepository riskRepo;
+	
+	@Autowired
+	private ComplicationTableRepository compRepo;
+	
+	@Autowired
+	private AbnormalityTableRepository abnorRepo;
+	
+	@Autowired
+	private CordfaultTableRepository cordRepo;
+	
+	@Autowired
+	private PlacentacheckTableRepository placentaRepo;
+	
+	@Autowired
 	private DiagnosesTableRepository diagRepo;
 	
 	@Autowired
@@ -59,6 +82,15 @@ public class PreDataConfig {
 	
 	@Autowired
 	private MconditionsRepository mcondRepo;
+	
+	@Autowired
+	private CFactorsRepository cfactorRepo;
+	
+	@Autowired
+	private MonitoringTableRepository monRepo;
+	
+	@Autowired
+	private DatamapRepository dmapRepo;
 
 	@PostConstruct
 	public void preloadingDatabase() {
@@ -130,6 +162,7 @@ public class PreDataConfig {
 		    res.add(new risk_table("Abnormal lie/presentation","none"));
 		    res.add(new risk_table("previous cesarean section","none"));
 		    res.add(new risk_table("history of postpartum hemorrhage","none"));
+			riskRepo.saveAll(res);
 		}
 		
 		{
@@ -149,6 +182,7 @@ public class PreDataConfig {
 		    res.add(new complication_table("Latrogenic complications","none"));
 		    res.add(new complication_table("Latrogenic complications","none"));
 		    res.add(new complication_table("Severe anaemia","none"));
+			compRepo.saveAll(res);
 		}
 		
 		{
@@ -163,12 +197,14 @@ public class PreDataConfig {
 		    res.add(new abnormality_table("Micrognathia","none"));
 		    res.add(new abnormality_table("Dysmorphic features","none"));
 		    res.add(new abnormality_table("Dyspigmentation","none"));
+			abnorRepo.saveAll(res);
 		}
 		
 		{
 			List<cordfault_table> res = new ArrayList<>();
 			res.add(new cordfault_table("Kinks and knots","none"));
 			res.add(new cordfault_table("Degenerated cord","none"));
+			cordRepo.saveAll(res);
 		}
 		
 		{
@@ -183,6 +219,7 @@ public class PreDataConfig {
 		    res.add(new placentacheck_table("Praevia","none"));
 		    res.add(new placentacheck_table("Abruptio","none"));
 		    res.add(new placentacheck_table("Percreta","none"));
+			placentaRepo.saveAll(res);
 		}
 		
 		{
@@ -262,7 +299,6 @@ public class PreDataConfig {
 			res.add(new mcondition_table("M4.15","M4","nutritional chemical substances"));
 			res.add(new mcondition_table("M4.16","M4","environmental chemical substances"));
 			res.add(new mcondition_table("M4.17","M4","unspecified maternal condition"));
-
 			mcondRepo.saveAll(res);
 
 		}
@@ -332,6 +368,7 @@ public class PreDataConfig {
 			res.add(new cfactor_table(427,400,"Anaesthesia complications during operative delivery"));
 			res.add(new cfactor_table(501,500,"Insufficient notes"));
 			res.add(new cfactor_table(502,500,"Patient notes or mothers ANC card missing"));
+			cfactorRepo.saveAll(res);
 
 		}
 		
@@ -367,6 +404,7 @@ public class PreDataConfig {
 		    
 		    res.add(new monitoring_table(16,"Maternal deaths",161,"Maternal deaths","women who died in pregnancy or around child birth",true));
 			
+			monRepo.saveAll(res);
 
 		}
 		
@@ -683,6 +721,7 @@ public class PreDataConfig {
 			res.add(new datamap("icd10mm_options",7,"Non obstetric complication"));
 			res.add(new datamap("icd10mm_options",8,"Unknown"));
 			res.add(new datamap("icd10mm_options",9,"Coincidental/Accidental"));
+			dmapRepo.saveAll(res);
 
 		}
 

@@ -74,7 +74,7 @@ public class EncryptedMessage implements Serializable {
 
 		Claims claims = Jwts.parser().setSigningKey(hmacKey).parseClaimsJws(jwt).getBody();
 
-		return claims.get("dataset");
+		return claims.get("data");
 
 	}
 
@@ -90,6 +90,36 @@ public class EncryptedMessage implements Serializable {
 		return AUD;
 	}
 	
-	
+	public String encrypt(Object selected) {
+
+
+		// The JWT signature algorithm we will be using to sign the token
+		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
+		// We will sign our JWT with our ApiKey secret
+		Key hmacKey;
+		try {
+			hmacKey = new SecretKeySpec(KEY.getBytes("UTF-8"), SignatureAlgorithm.HS256.getJcaName());
+		} catch (UnsupportedEncodingException e) {
+			hmacKey = null;
+			e.printStackTrace();
+		}
+
+		// Let's set the JWT Claims
+		JwtBuilder builder = Jwts.builder()
+				.setIssuer(ISS)
+				.setAudience(AUD)
+				.setHeaderParam("typ", "JWT")
+				.claim("data", selected)
+				.signWith(signatureAlgorithm, hmacKey);
+
+		// Builds the JWT and serializes it to a compact, URL-safe string
+
+		final String jwt = builder.compact();
+
+		return jwt;
+
+	}
+
 
 }

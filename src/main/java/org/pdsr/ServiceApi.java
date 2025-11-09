@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.pdsr.dhis2.Dhis2Form;
 import org.pdsr.json.DecryptedAuditAudit;
 import org.pdsr.json.DecryptedAuditRecommendation;
 import org.pdsr.json.DecryptedCaseIdentifiers;
@@ -35,17 +36,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 public class ServiceApi {
 
-	private final String BASE_URL, FAC_CODE, API_URL, API_TOKEN;
+	private final String BASE_URL, FAC_CODE;
 
-	private final RestTemplate restTemplate;
+	private final RestTemplateBuilder builder;
 
-	public ServiceApi(final RestTemplateBuilder restTemplateBuilder, SyncTableRepository syncRepo) {
-		this.restTemplate = restTemplateBuilder.build();
+	public ServiceApi(final RestTemplateBuilder builder, SyncTableRepository syncRepo) {
+		this.builder = builder;
 
-		BASE_URL = syncRepo.findById(CONSTANTS.LICENSE_ID).get().getSync_url();
+		BASE_URL = syncRepo.findById(CONSTANTS.LICENSE_ID).get().getSync_url() + "/api";
 		FAC_CODE = syncRepo.findById(CONSTANTS.LICENSE_ID).get().getSync_code();
-		API_URL = "";// sync_table.get().getSync_redcap_url();
-		API_TOKEN = "";// sync_table.get().getSync_redcap_token();
 	}
 
 	/////////////// PULL FROM CENTRAL SERVER ////////////////////////////////
@@ -54,7 +53,7 @@ public class ServiceApi {
 		try {
 
 			final String URL = BASE_URL.concat("/facility/" + FAC_CODE);
-			facility_table w = restTemplate.getForObject(URL, facility_table.class);
+			facility_table w = builder.build().getForObject(URL, facility_table.class);
 
 			return w;
 
@@ -67,24 +66,21 @@ public class ServiceApi {
 	}
 
 	/////////////// CASE IDENTIFIERS////////////////////////////////
-	public String postCases(List<big_case_identifiers> jsons) {
-
-		DecryptedCaseIdentifiers data = new DecryptedCaseIdentifiers();
-		data.setData(jsons);
+	public String postCases(List<big_case_identifiers> big) {
 
 		EncryptedMessage json = new EncryptedMessage();
 		json.setError(false);
 		json.setMessage("Encrypted");
-		json.setJwt(data.encryptList(json.getKEY(), json.getISS(), json.getAUD()));
+		json.setJwt(json.encrypt(new DecryptedCaseIdentifiers(big)));
 
 		try {
 
-			final String URL = BASE_URL.concat("/savecases.php");
-			return restTemplate.postForObject(URL, json, EncryptedMessage.class).getMessage();
-
+			final String URL = BASE_URL.concat("/savecases");
+			return builder.build().postForObject(URL, json, EncryptedMessage.class).getMessage();
+			
 		} catch (Exception ex) {
 
-			return new EncryptedMessage(Boolean.TRUE, ex.getLocalizedMessage()).getMessage();
+			return ex.getLocalizedMessage();
 		}
 
 	}
@@ -93,10 +89,9 @@ public class ServiceApi {
 
 		EncryptedMessage json = null;
 
-
 		try {
-			final String URL = BASE_URL.concat("/findcases.php");
-			json = restTemplate.getForObject(URL, EncryptedMessage.class);
+			final String URL = BASE_URL.concat("/findcases");
+			json = builder.build().getForObject(URL, EncryptedMessage.class);
 
 		} catch (RestClientException ex) {
 			json = new EncryptedMessage(Boolean.TRUE, ex.getLocalizedMessage());
@@ -118,20 +113,17 @@ public class ServiceApi {
 	}
 
 	/////////////// CASE AUDIT AUDIT////////////////////////////////
-	public String postAudits(List<big_audit_audit> jsons) {
-
-		DecryptedAuditAudit data = new DecryptedAuditAudit();
-		data.setData(jsons);
+	public String postAudits(List<big_audit_audit> big) {
 
 		EncryptedMessage json = new EncryptedMessage();
 		json.setError(false);
 		json.setMessage("Encrypted");
-		json.setJwt(data.encryptList(json.getKEY(), json.getISS(), json.getAUD()));
+		json.setJwt(json.encrypt(new DecryptedAuditAudit(big)));
 
 		try {
 
-			final String URL = BASE_URL.concat("/saveaudits.php");
-			return restTemplate.postForObject(URL, json, EncryptedMessage.class).getMessage();
+			final String URL = BASE_URL.concat("/saveaudits");
+			return builder.build().postForObject(URL, json, EncryptedMessage.class).getMessage();
 
 		} catch (Exception ex) {
 
@@ -144,10 +136,9 @@ public class ServiceApi {
 
 		EncryptedMessage json = null;
 
-
 		try {
-			final String URL = BASE_URL.concat("/findaudits.php");
-			json = restTemplate.getForObject(URL, EncryptedMessage.class);
+			final String URL = BASE_URL.concat("/findaudits");
+			json = builder.build().getForObject(URL, EncryptedMessage.class);
 
 		} catch (RestClientException ex) {
 			json = new EncryptedMessage(Boolean.TRUE, ex.getLocalizedMessage());
@@ -169,20 +160,17 @@ public class ServiceApi {
 	}
 
 	/////////////// CASE AUDIT RECOMMENDATIONS////////////////////////////////
-	public String postRecommendations(List<big_audit_recommendation> jsons) {
-
-		DecryptedAuditRecommendation data = new DecryptedAuditRecommendation();
-		data.setData(jsons);
+	public String postRecommendations(List<big_audit_recommendation> big) {
 
 		EncryptedMessage json = new EncryptedMessage();
 		json.setError(false);
 		json.setMessage("Encrypted");
-		json.setJwt(data.encryptList(json.getKEY(), json.getISS(), json.getAUD()));
+		json.setJwt(json.encrypt(new DecryptedAuditRecommendation(big)));
 
 		try {
 
-			final String URL = BASE_URL.concat("/saverecs.php");
-			return restTemplate.postForObject(URL, json, EncryptedMessage.class).getMessage();
+			final String URL = BASE_URL.concat("/saverecs");
+			return builder.build().postForObject(URL, json, EncryptedMessage.class).getMessage();
 
 		} catch (Exception ex) {
 
@@ -195,10 +183,9 @@ public class ServiceApi {
 
 		EncryptedMessage json = null;
 
-
 		try {
-			final String URL = BASE_URL.concat("/findrecs.php");
-			json = restTemplate.getForObject(URL, EncryptedMessage.class);
+			final String URL = BASE_URL.concat("/findrecs");
+			json = builder.build().getForObject(URL, EncryptedMessage.class);
 
 		} catch (RestClientException ex) {
 			json = new EncryptedMessage(Boolean.TRUE, ex.getLocalizedMessage());
@@ -220,20 +207,17 @@ public class ServiceApi {
 	}
 
 	/////////////// CASE WEEKLY MONITORING////////////////////////////////
-	public String postWeeklyMonitorings(List<big_weekly_monitoring> jsons) {
-
-		DecryptedWeeklyMonitoring data = new DecryptedWeeklyMonitoring();
-		data.setData(jsons);
+	public String postWeeklyMonitorings(List<big_weekly_monitoring> big) {
 
 		EncryptedMessage json = new EncryptedMessage();
 		json.setError(false);
 		json.setMessage("Encrypted");
-		json.setJwt(data.encryptList(json.getKEY(), json.getISS(), json.getAUD()));
+		json.setJwt(json.encrypt(new DecryptedWeeklyMonitoring(big)));
 
 		try {
 
-			final String URL = BASE_URL.concat("/savewms.php");
-			return restTemplate.postForObject(URL, json, EncryptedMessage.class).getMessage();
+			final String URL = BASE_URL.concat("/savewms");
+			return builder.build().postForObject(URL, json, EncryptedMessage.class).getMessage();
 
 		} catch (Exception ex) {
 
@@ -246,10 +230,9 @@ public class ServiceApi {
 
 		EncryptedMessage json = null;
 
-
 		try {
-			final String URL = BASE_URL.concat("/findwms.php");
-			json = restTemplate.getForObject(URL, EncryptedMessage.class);
+			final String URL = BASE_URL.concat("/findwms");
+			json = builder.build().getForObject(URL, EncryptedMessage.class);
 
 		} catch (RestClientException ex) {
 			json = new EncryptedMessage(Boolean.TRUE, ex.getLocalizedMessage());
@@ -270,8 +253,25 @@ public class ServiceApi {
 		return data.getData();
 	}
 
+	/// DHIS2 SAVE FORM
+	public Dhis2Form saveForm(Dhis2Form json, String dhis2_url, String dhis2_username, String dhis2_password) {
+
+		try {
+
+			RestTemplate rt = builder.basicAuthentication(dhis2_username, dhis2_password).build();
+
+			rt.postForObject(dhis2_url, json, Dhis2Form.class);
+
+		} catch (RestClientException ex) {
+			System.err.println("Error is " + ex.getMessage());
+			ex.printStackTrace();
+		}
+
+		return new Dhis2Form();
+	}
+
 	/// REDCAP DATA
-	public List<json_redcap> extractRedCapIdentifiers(Date startDate, Date endDate) {
+	public List<json_redcap> extractRedCapIdentifiers(Date startDate, Date endDate, String REDCAP_API_URL, String REDCAP_API_TOKEN) {
 
 		try {
 
@@ -280,7 +280,7 @@ public class ServiceApi {
 
 			SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 			MultiValueMap<String, String> vars = new LinkedMultiValueMap<>();
-			vars.add("token", API_TOKEN);
+			vars.add("token", REDCAP_API_TOKEN);
 			vars.add("content", "record");
 			vars.add("format", "json");
 			vars.add("type", "flat");
@@ -289,8 +289,8 @@ public class ServiceApi {
 
 			HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(vars, headers);
 
-			ResponseEntity<List<json_redcap>> response = restTemplate.exchange(API_URL, HttpMethod.POST, request,
-					new ParameterizedTypeReference<List<json_redcap>>() {
+			ResponseEntity<List<json_redcap>> response = builder.build().exchange(REDCAP_API_URL, HttpMethod.POST,
+					request, new ParameterizedTypeReference<List<json_redcap>>() {
 					});
 
 			System.out.println("Size of data is " + dateformat.format(startDate) + " " + dateformat.format(endDate)

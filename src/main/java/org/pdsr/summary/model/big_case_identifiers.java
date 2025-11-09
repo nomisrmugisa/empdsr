@@ -14,6 +14,8 @@ import javax.validation.constraints.Size;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Entity
 public class big_case_identifiers implements Serializable {
 
@@ -106,6 +108,7 @@ public class big_case_identifiers implements Serializable {
 	@Column
 	private Double delivery_weight;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
 	@Column
 	@Temporal(TemporalType.TIME)
 	@DateTimeFormat(pattern = "HH:mm")
@@ -141,6 +144,7 @@ public class big_case_identifiers implements Serializable {
 	@Column
 	private Integer referral_minute;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
 	@Column
 	@Temporal(TemporalType.TIME)
 	@DateTimeFormat(pattern = "HH:mm")
@@ -160,6 +164,7 @@ public class big_case_identifiers implements Serializable {
 	@Column
 	private Integer referral_aminute;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
 	@Column
 	@Temporal(TemporalType.TIME)
 	@DateTimeFormat(pattern = "HH:mm")
@@ -253,6 +258,7 @@ public class big_case_identifiers implements Serializable {
 	@Column
 	private Integer labour_seeminute;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
 	@Column
 	@Temporal(TemporalType.TIME)
 	@DateTimeFormat(pattern = "HH:mm")
@@ -321,6 +327,7 @@ public class big_case_identifiers implements Serializable {
 	@Column
 	private Integer birth_csproposeminute;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
 	@Column
 	@Temporal(TemporalType.TIME)
 	@DateTimeFormat(pattern = "HH:mm")
@@ -409,6 +416,7 @@ public class big_case_identifiers implements Serializable {
 	@Column
 	private Integer baby_dminute;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
 	@Column
 	@Temporal(TemporalType.TIME)
 	@DateTimeFormat(pattern = "HH:mm")
@@ -568,6 +576,7 @@ public class big_case_identifiers implements Serializable {
 	@Column
 	private Integer mdeath_minute;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
 	@Column
 	@Temporal(TemporalType.TIME)
 	@DateTimeFormat(pattern = "HH:mm")

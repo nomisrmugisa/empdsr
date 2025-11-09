@@ -112,7 +112,7 @@ public class ReportController {
 		return "reporting/report-retrieve";
 	}
 
-	@org.springframework.transaction.annotation.Transactional
+	@Transactional
 	@PostMapping("")
 	public String list(Principal principal, @ModelAttribute upload selected, Model model) {
 
