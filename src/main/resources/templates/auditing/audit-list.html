@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/auditing :: layout(_,~{},~{},~{::content},~{::subnav})}">
+<subnav>
+	<div class="m-1 small"></div>
+</subnav>
+
+<content>
+	<hr />
+	<form action="#" th:action="@{/auditing/mycases}" th:object="${selected}" method="POST" novalidate>
+		<input type="hidden" th:field="*{id}" />
+		<table class="table table-hover table-bordered table-sm table-responsive-sm small">
+			<thead>
+				<tr class="table-dark">
+					<th th:text="#{th.case.select}"></th>
+					<th th:text="#{th.date.entered}"></th>
+					<th th:text="#{th.case.type}"></th>
+					<th th:text="#{th.date.death}"></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="option : ${active_cases}" th:class="'table-danger'">
+					<th>
+						<input type="checkbox" th:field="*{rcases}" th:value="${option.case_uuid}" />
+					</th>
+					<td th:text="${option.case_date}"></td>
+					<td>
+						<span th:if="${option.case_death == 1}">[[#{label.still.birth}]]</span>
+						<span th:if="${option.case_death == 2}">[[#{label.neonatal.death}]]</span>
+						<span th:if="${option.case_death == 3}">[[#{label.maternal.death}]]</span>
+					</td>
+					<td>
+						<span th:if="${option.case_death == 1}">[[${option.delivery.delivery_date}]]</span>
+						<span th:if="${option.case_death == 2}">[[${option.babydeath.baby_ddate}]]</span>
+						<span th:if="${option.case_death == 3}">[[${option.mdeath.mdeath_date}]]</span>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="text-center">
+			<button class="btn btn-primary" type="submit" th:utext="#{submit.audit.button}"></button>
+		</div>
+	</form>
+</content>
+
+</html>

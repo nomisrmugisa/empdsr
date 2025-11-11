@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/controls :: layout(_,~{},~{::scripts},~{::content},~{})}">
+
+
+<content>
+	<div class="jumbotron mt-4">
+		<h1 class="display-4 text-danger" th:utext="#{merger.title}"></h1>
+		<p class="lead" th:utext="#{merger.note}"></p>
+		<hr class="my-4">
+		<p th:utext="#{merger.code.note}"></p>
+		<form action="#" th:action="@{/controls/datamerge}" th:object="${selected}" method="POST"
+			class="needs-validation" novalidate>
+
+			<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+			<div class="col-md-12">
+				<label class="form-label fw-bold"> <input type="checkbox" th:field="*{merge_location}"
+						th:value="${selected.merge_location}" />
+					[[#{merge.location}]]
+				</label>
+			</div>
+			<div class="col-md-12">
+				<label class="form-label fw-bold"> <input type="checkbox" th:field="*{merge_cases}"
+						th:value="${selected.merge_cases}" />
+					[[#{merge.cases}]]
+				</label>
+			</div>
+			<div class="col-md-12">
+				<label class="form-label fw-bold"> <input type="checkbox" th:field="*{merge_audit}"
+						th:value="${selected.merge_audit}" />
+					[[#{merge.audit}]]
+				</label>
+			</div>
+			<div class="col-md-12">
+				<label class="form-label fw-bold"> <input type="checkbox" th:field="*{merge_weekly}"
+						th:value="${selected.merge_weekly}" />
+					[[#{merge.weekrep}]]
+				</label>
+			</div>
+			<hr class="mb-2 bg-danger">
+			<button class="btn btn-sm btn-danger" type="submit" th:utext="#{merger.button}"></button>
+			<span class="mb-3">
+				<a th:href="@{/controls/centralmerge}" class="btn btn-outline-success btn-sm"
+					th:utext="#{merger.central.next.button}"></a>
+			</span>
+		</form>
+	</div>
+</content>
+<scripts>
+	<script>
+		(function () {
+			'use strict';
+			window.addEventListener('load', function () {
+				// Fetch all the forms we want to apply custom Bootstrap validation styles to
+				var forms = document.getElementsByClassName('needs-validation');
+
+				// Loop over them and prevent submission
+				var validation = Array.prototype.filter.call(forms, function (form) {
+					form.addEventListener('submit', function (event) {
+						if (form.checkValidity() === false) {
+							event.preventDefault();
+							event.stopPropagation();
+						}
+						form.classList.add('was-validated');
+
+					}, false);
+				});
+			}, false);
+		})();
+	</script>
+</scripts>
+
+</html>

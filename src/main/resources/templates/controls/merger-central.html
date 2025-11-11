@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/controls :: layout(_,~{},~{},~{::content},~{})}">
+
+
+<content>
+	<div class="jumbotron mt-4">
+		<h1 class="display-4 text-danger" th:utext="#{merger.central.title}"></h1>
+		<p class="lead" th:utext="#{merger.central.note}"></p>
+		<hr class="my-4">
+		<form action="#" th:action="@{/controls/centralmerge}" method="POST" class="needs-validation" novalidate>
+
+			<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+			<label>
+				<input type="checkbox" value="1" id="all" name="all"/>
+				[[#{merger.central.all.data}]]
+			</label>
+			<button class="btn btn-sm btn-danger" type="submit" th:utext="#{merger.central.button}"></button>
+			<span class="mb-3">
+				<a th:href="@{/controls/downloadmerge}" class="btn btn-outline-primary btn-sm"
+					th:utext="#{merger.download.next.button}"></a>
+			</span>
+
+		</form>
+	</div>
+</content>
+
+</html>

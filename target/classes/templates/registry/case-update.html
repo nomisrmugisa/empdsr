@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/registry :: layout(_,~{::links},~{::scripts},~{::content},~{})}">
+<links>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" />
+</links>
+
+<content>
+	<div class="float-end" th:text="${selected.facility.facility_code}"></div>
+
+	<div class="col-md-12 py-3 my-3 mx-auto p-5 rounded box-shadow" style="background-color: #92c7f2;">
+		<div class="row">
+			<div class="col-auto mb-1 small">
+				<a th:href="@{/registry/edit/{id}?page=1(id=${selected.case_uuid})}">
+					<span th:class="${bioactive} + ' btn small mb-2'"
+						th:classappend="${selected.biodata}?(${selected.biodata.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Profile</span>
+				</a>
+				<a th:href="@{/registry/edit/{id}?page=2(id=${selected.case_uuid})}">
+					<span th:class="${refactive} + ' btn small mb-2'"
+						th:classappend="${selected.referral}?(${selected.referral.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Referral</span>
+				</a>
+				<a th:href="@{/registry/edit/{id}?page=3(id=${selected.case_uuid})}">
+					<span th:class="${preactive} + ' btn small mb-2'"
+						th:classappend="${selected.pregnancy}?(${selected.pregnancy.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Pregnancy</span>
+				</a>
+				<a th:href="@{/registry/edit/{id}?page=4(id=${selected.case_uuid})}">
+					<span th:class="${antactive} + ' btn small mb-2'"
+						th:classappend="${selected.antenatal}?(${selected.antenatal.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Antenatal</span>
+				</a>
+				<a th:href="@{/registry/edit/{id}?page=5(id=${selected.case_uuid})}">
+					<span th:class="${labactive} + ' btn small mb-2'"
+						th:classappend="${selected.labour}?(${selected.labour.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Labour</span>
+				</a>
+				<a th:href="@{/registry/edit/{id}?page=6(id=${selected.case_uuid})}">
+					<span th:class="${delactive} + ' btn small mb-2'"
+						th:classappend="${selected.delivery}?(${selected.delivery.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Delivery</span>
+				</a>
+				<a th:href="@{/registry/edit/{id}?page=7(id=${selected.case_uuid})}">
+					<span th:class="${biractive} + ' btn small mb-2'"
+						th:classappend="${selected.birth}?(${selected.birth.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Birth</span>
+				</a>
+				<a th:href="@{/registry/edit/{id}?page=8(id=${selected.case_uuid})}" th:if="${selected.case_death==1}">
+					<span th:class="${fetactive} + ' btn small mb-2'"
+						th:classappend="${selected.fetalheart}?(${selected.fetalheart.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Fetal
+						Heart</span>
+				</a>
+				<a th:href="@{/registry/edit/{id}?page=8(id=${selected.case_uuid})}" th:if="${selected.case_death==2}">
+					<span th:class="${babactive} + ' btn small mb-2'"
+						th:classappend="${selected.babydeath}?(${selected.babydeath.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Baby's
+						Death</span>
+				</a>
+				<a th:href="@{/registry/edit/{id}?page=8(id=${selected.case_uuid})}" th:if="${selected.case_death==3}">
+					<span th:class="${matactive} + ' btn small mb-2'"
+						th:classappend="${selected.mdeath}?(${selected.mdeath.data_complete==1}?'btn-success':'btn-warning'):'btn-danger'">Mother's
+						Death</span>
+				</a>
+				<a th:href="@{/registry/edit/{id}?page=9(id=${selected.case_uuid})}">
+					<span th:class="${notactive} + ' btn small mb-2'"
+						th:classappend="${selected.notes}?'btn-success':'btn-danger'">Notes</span>
+				</a>
+				<a th:href="@{/registry/submit/{id}(id=${selected.case_uuid}, pg=${page})}" class="btn btn-danger mb-2"
+					th:utext="#{submit.audit.button}" th:if="${completed}"></a>
+
+				<span th:text="${selected.case_status==1}?'Submitted!':'Incomplete'"
+					th:class="${selected.case_status==1}?'text-primary fw-bold':'text-muted'"></span>
+
+			</div>
+		</div>
+
+		<form action="#" enctype="multipart/form-data"
+			th:action="@{/registry/edit/{id}?page={pg}(id=${selected.case_uuid}, pg=${page})}" th:object="${selected}"
+			method="POST" class="needs-validation" novalidate>
+			<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+			<div th:if="${page==0}" th:insert="fragments/update-case :: case_identifiers"></div>
+			<div th:if="${page==1}" th:insert="fragments/update-case :: case_biodata"></div>
+			<div th:if="${page==2}" th:insert="fragments/update-case :: case_referral"></div>
+			<div th:if="${page==3}" th:insert="fragments/update-case :: case_pregnancy"></div>
+			<div th:if="${page==4}" th:insert="fragments/update-case :: case_antenatal"></div>
+			<div th:if="${page==5}" th:insert="fragments/update-case :: case_labour"></div>
+			<div th:if="${page==6}" th:insert="fragments/update-case :: case_delivery"></div>
+			<div th:if="${page==7}" th:insert="fragments/update-case :: case_birth"></div>
+			<div th:if="${page==8 and selected.case_death==1}" th:insert="fragments/update-case :: case_fetalheart">
+			</div>
+			<div th:if="${page==8 and selected.case_death==2}" th:insert="fragments/update-case :: case_babydeath">
+			</div>
+			<div th:if="${page==8 and selected.case_death==3}" th:insert="fragments/update-case :: case_mdeath">
+			</div>
+			<div th:if="${page==9}" th:insert="fragments/update-case :: case_notes"></div>
+		</form>
+	</div>
+</content>
+
+<scripts>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+	<script th:inline="javascript">
+		$('#icd_diagnoses').select2({
+			minimumInputLength: 3,
+			ajax: {
+				url: 'http://localhost:5000/registry/icdselect',
+				dataType: 'json',
+				delay: 250,
+				data: function (params) {
+					return {
+						q: params.term, // search term
+						page: params.page
+					};
+				},
+				processResults: function (data, params) {
+					// parse the results into the format expected by Select2
+					// since we are using custom formatting functions we do not need to
+					// alter the remote JSON data, except to indicate that infinite
+					// scrolling can be used
+					params.page = params.page || 1;
+
+					var results = [];
+					$.each(data, function (k, v) {
+						results.push({
+							id: v.icd_code,
+							text: v.icd_desc
+						});
+					});
+
+					return {
+						results: results,
+						pagination:
+						{
+							more: (params.page * 30) < results.recordsTotal
+						}
+					};
+
+				},
+				cache: true
+			},
+			placeholder: /*[[#{hold.icd_diagnosis}]]*/ "",
+			templateResult: formatRepo,
+			templateSelection: formatRepoSelection
+		});
+
+		function formatRepo(repo) {
+			if (repo.loading) {
+				return repo.text;
+			}
+
+			var $container = $(
+				"<option value='" + repo.id + "'>" + repo.id + " : " + repo.text + "</option>"
+			);
+
+			return $container;
+		}
+
+		function formatRepoSelection(repo) {
+			return repo.id;
+		}
+	</script>
+
+	<script>
+		function profileBabySexView() {
+			var deathtype = document.getElementById("case_death");
+			var outcomesel = document.getElementById("biodata_sex");
+
+			if (deathtype.value == '3') {
+				$('#biodata_sex_div').hide();
+				outcomesel.value = '99';
+
+			} else {
+				$('#biodata_sex_div').show();
+			}
+		}
+		profileBabySexView();
+	</script>
+
+	<script>
+		function changeReferralFacilityToNA() {
+			var objCombo = document.getElementById("referral_source");
+			var rfac = document.getElementById("referral_facility");
+
+			if (objCombo.value != '0' && objCombo.value != '1') {
+				rfac.readOnly = true;
+			} else {
+				rfac.readOnly = false;
+			}
+		}
+
+		function changeReferralDateTimeToREADONLY() {
+			var objCombo = document.getElementById("referral_datetime_notstated");
+			var rdate = document.getElementById("referral_date");
+			var rtime = document.getElementById("referral_time");
+
+			if (objCombo.checked) {
+				rdate.disabled = true;
+				rtime.disabled = true;
+			} else {
+				rdate.disabled = false;
+				rtime.disabled = false;
+			}
+		}
+
+		function changeReferralaDateTimeToREADONLY() {
+			var objCombo = document.getElementById("referral_adatetime_notstated");
+			var rdate = document.getElementById("referral_adate");
+			var rtime = document.getElementById("referral_atime");
+
+			if (objCombo.checked) {
+				rdate.disabled = true;
+				rtime.disabled = true;
+			} else {
+				rdate.disabled = false;
+				rtime.disabled = false;
+			}
+		}
+
+		function changeReferralStatus1(objCombo) {
+			var rpat = document.getElementById("referral_patient");
+			var rsrc = document.getElementById("referral_source");
+			var rfac = document.getElementById("referral_facility");
+			var rdate = document.getElementById("referral_date");
+			var rtime = document.getElementById("referral_time");
+			var rdt = document.getElementById("referral_datetime_notstated");
+			var radate = document.getElementById("referral_adate");
+			var ratime = document.getElementById("referral_atime");
+			var radt = document.getElementById("referral_adatetime_notstated");
+			var rtrans = document.getElementById("referral_transport");
+			var rfile = document.getElementById("referral_file");
+			var rnotes = document.getElementById("referral_notes");
+
+			if (objCombo.value != '1') {
+				rpat.value = '99';
+				rsrc.value = '99';
+				rdt.checked = true;
+				radt.checked = true;
+				rtrans.value = '99';
+				rfile.hidden = true;
+				rnotes.readOnly = true;
+
+				$('#referral_fieldset').hide();
+
+			} else {
+				$('#referral_fieldset').show();
+
+				rpat.value = '';
+				rsrc.value = '';
+				rdt.checked = false;
+				radt.checked = false;
+				rtrans.value = '';
+				rfile.hidden = false;
+				rnotes.readOnly = false;
+			}
+		}
+
+		function changeReferralStatus() {
+			var objCombo = document.getElementById("referral_case");
+
+			if (objCombo.value != '1') {
+
+				$('#referral_fieldset').hide();
+
+			} else {
+				$('#referral_fieldset').show();
+			}
+		}
+
+
+		changeReferralFacilityToNA();
+		changeReferralDateTimeToREADONLY();
+		changeReferralaDateTimeToREADONLY();
+		changeReferralStatus();
+
+		function changeReferralViewDynamic(objCombo) {
+
+			changeReferralStatus1(objCombo);
+
+			changeReferralFacilityToNA();
+			changeReferralDateTimeToREADONLY();
+			changeReferralaDateTimeToREADONLY();
+
+		}
+
+	</script>
+
+
+	<script>
+		function changeReferralFacilityToNADynamic(objCombo) {
+			var rfac = document.getElementById("referral_facility");
+
+			if (objCombo.value != '0' && objCombo.value != '1') {
+				rfac.value = "NA";
+				rfac.readOnly = true;
+			} else {
+				rfac.value = "";
+				rfac.readOnly = false;
+			}
+		}
+
+		function changeReferralDateTimeToREADONLYDynamic(objCombo) {
+			var rdate = document.getElementById("referral_date");
+			var rtime = document.getElementById("referral_time");
+
+			rdate.value = "";
+			rtime.value = "";
+
+			if (objCombo.checked) {
+				rdate.disabled = true;
+				rtime.disabled = true;
+			} else {
+				rdate.disabled = false;
+				rtime.disabled = false;
+			}
+		}
+
+		function changeReferralaDateTimeToREADONLYDynamic(objCombo) {
+			var rdate = document.getElementById("referral_adate");
+			var rtime = document.getElementById("referral_atime");
+
+			rdate.value = "";
+			rtime.value = "";
+
+			if (objCombo.checked) {
+				rdate.disabled = true;
+				rtime.disabled = true;
+			} else {
+				rdate.disabled = false;
+				rtime.disabled = false;
+			}
+		}
+	</script>
+	<script>
+		function onChangeValue() {
+			const gravida = document.getElementById("antenatal_gravida");
+			const para = document.getElementById("antenatal_para");
+
+			if (Number(gravida.value) < Number(para.value)) {
+				gravida.setCustomValidity('Gravidity should not be less that Parity');
+				para.setCustomValidity('Gravidity should not be less that Parity');
+			} else {
+				gravida.setCustomValidity('');
+				para.setCustomValidity('');
+			}
+		}
+	</script>
+	<script>
+		function changeAntenatalView() {
+			var objCombo = document.getElementById("antenatal_attend");
+
+			if (objCombo.value != '1') {
+				$('#antenatal_attend_fieldset').hide();
+
+			} else {
+				$('#antenatal_attend_fieldset').show();
+			}
+		}
+		changeAntenatalView();
+	</script>
+	<script>
+		function changeAntenatalOtherToNA(objCombo) {
+			var attno = document.getElementById("antenatal_attendno");
+			var atfac = document.getElementById("antenatal_facility");
+			var atwks = document.getElementById("antenatal_weeks");
+			var atdys = document.getElementById("antenatal_days");
+
+			if (objCombo.value != '1') {
+				attno.value = '99';
+				atfac.value = "NA";
+				atwks.value = '99';
+				atdys.value = '99';
+
+				$('#antenatal_attend_fieldset').hide('fade');
+
+			} else {
+				$('#antenatal_attend_fieldset').show('fade');
+
+				attno.value = '';
+				atfac.value = "";
+				atwks.value = '';
+				atdys.value = '';
+			}
+		}
+	</script>
+	<script>
+		function changeAntenatalRiskView() {
+			var objCombo = document.getElementById("antenatal_risks");
+
+			if (objCombo.value != '1') {
+				$('#antenatal_risks_fieldset').hide();
+
+			} else {
+				$('#antenatal_risks_fieldset').show();
+			}
+		}
+		changeAntenatalRiskView();
+	</script>
+	<script>
+		function changeAntenatalRiskOtherToNA(objCombo) {
+			var rskopt = document.getElementsByClassName("risk_options");
+			var nwrsks = document.getElementById("new_risks");
+
+			if (objCombo.value != '1') {
+
+				for (var i = 0; i < rskopt.length; i++) {
+					if (rskopt[i].type == 'checkbox') {
+						rskopt[i].checked = false;
+					}
+				}
+
+				nwrsks.value = "";
+
+				$('#antenatal_risks_fieldset').hide('fade');
+
+			} else {
+				$('#antenatal_risks_fieldset').show('fade');
+
+			}
+		}
+	</script>
+	<script>
+		function changeAntenatalFolicView() {
+			var objCombo = document.getElementById("antenatal_folicacid");
+
+			if (objCombo.value != '1') {
+				$('#antenatal_folic_fieldset').hide();
+
+			} else {
+				$('#antenatal_folic_fieldset').show();
+			}
+		}
+		changeAntenatalFolicView();
+	</script>
+	<script>
+		function changeAntenatalFolicOtherToNA(objCombo) {
+			var folic3m = document.getElementById("antenatal_folicacid3m");
+
+			if (objCombo.value != '1') {
+
+				folic3m.value = "99";
+
+				$('#antenatal_folic_fieldset').hide('fade');
+
+			} else {
+				$('#antenatal_folic_fieldset').show('fade');
+
+				folic3m.value = "";
+			}
+		}
+	</script>
+
+	<script>
+		function changeAntenatalHIVView() {
+			var objCombo = document.getElementById("antenatal_hiv");
+
+			if (objCombo.value != '1') {
+				$('#antenatal_hiv_fieldset').hide();
+
+			} else {
+				$('#antenatal_hiv_fieldset').show();
+			}
+		}
+		changeAntenatalHIVView();
+	</script>
+	<script>
+		function changeAntenatalHIVOtherToNA(objCombo) {
+			var art = document.getElementById("antenatal_art");
+
+			if (objCombo.value != '1') {
+
+				art.value = "99";
+
+				$('#antenatal_hiv_fieldset').hide('fade');
+
+			} else {
+				$('#antenatal_hiv_fieldset').show('fade');
+
+				art.value = "";
+			}
+		}
+	</script>
+
+	<script>
+		function changeAntenatalMalTestView() {
+			var objCombo = document.getElementById("antenatal_maltest");
+
+			if (objCombo.value != '1') {
+				$('#antenatal_maltest_fieldset').hide();
+
+			} else {
+				$('#antenatal_maltest_fieldset').show();
+			}
+		}
+		changeAntenatalMalTestView();
+	</script>
+	<script>
+		function changeAntenatalMalTestToNA(objCombo) {
+			var maltestres = document.getElementById("antenatal_maltestres");
+
+			if (objCombo.value != '1') {
+
+				maltestres.value = "88";
+
+				$('#antenatal_maltest_fieldset').hide('fade');
+
+			} else {
+				$('#antenatal_maltest_fieldset').show('fade');
+
+				maltestres.value = "";
+			}
+		}
+	</script>
+
+	<script>
+		function changeAntenatalMalProphyView() {
+			var objCombo = document.getElementById("antenatal_malprophy");
+
+			if (objCombo.value != '1') {
+				$('#antenatal_malprophy_fieldset').hide();
+
+			} else {
+				$('#antenatal_malprophy_fieldset').show();
+			}
+		}
+		changeAntenatalMalProphyView();
+	</script>
+	<script>
+		function changeAntenatalMalProphyToNA(objCombo) {
+			//var objCombo = document.getElementById("antenatal_malprophy");
+			if (objCombo.value != '1') {
+				$('#antenatal_malprophy_fieldset').hide();
+
+			} else {
+				$('#antenatal_malprophy_fieldset').show();
+			}
+		}
+	</script>
+
+	<script>
+		function changeAntenatalMalProphyView() {
+			var objCombo = document.getElementById("antenatal_tetanus");
+
+			if (objCombo.value != '1') {
+				$('#antenatal_tetanus_fieldset').hide();
+
+			} else {
+				$('#antenatal_tetanus_fieldset').show();
+			}
+		}
+		changeAntenatalMalProphyView();
+	</script>
+	<script>
+		function changeAntenatalTetanusToNA(objCombo) {
+			//var objCombo = document.getElementById("antenatal_tetanus");
+			if (objCombo.value != '1') {
+				$('#antenatal_tetanus_fieldset').hide();
+
+			} else {
+				$('#antenatal_tetanus_fieldset').show();
+			}
+		}
+	</script>
+
+	<script>
+		function changeAntenatalSyphTestView() {
+			var objCombo = document.getElementById("antenatal_syphtest");
+
+			if (objCombo.value != '1') {
+				$('#antenatal_syphtest_fieldset').hide();
+
+			} else {
+				$('#antenatal_syphtest_fieldset').show();
+			}
+		}
+		changeAntenatalSyphTestView();
+	</script>
+	<script>
+		function changeAntenatalSyphTestToNA(objCombo) {
+			var maltestres = document.getElementById("antenatal_syphtestres");
+
+			if (objCombo.value != '1') {
+
+				maltestres.value = "88";
+
+				$('#antenatal_syphtest_fieldset').hide('fade');
+
+			} else {
+				$('#antenatal_syphtest_fieldset').show('fade');
+
+				maltestres.value = "";
+			}
+		}
+	</script>
+
+	<script>
+		function changeAntenatalHbTestView() {
+			var objCombo = document.getElementById("antenatal_hbtest");
+
+			if (objCombo.value != '1') {
+				$('#antenatal_hbtest_fieldset').hide();
+
+			} else {
+				$('#antenatal_hbtest_fieldset').show();
+			}
+		}
+		changeAntenatalHbTestView();
+	</script>
+	<script>
+		function changeAntenatalHbTestToNA(objCombo) {
+			//var objCombo = document.getElementById("antenatal_hbtest");
+			if (objCombo.value != '1') {
+				$('#antenatal_hbtest_fieldset').hide();
+
+			} else {
+				$('#antenatal_hbtest_fieldset').show();
+			}
+		}
+	</script>
+
+	<script>
+		function changeLabourPartographView() {
+			var objCombo = document.getElementById("labour_partograph");
+
+			if (objCombo.value != '0' && objCombo.value != '1') {
+				$('#labour_partograph_yes_fieldset').hide();
+				$('#labour_partograph_no_fieldset').hide();
+			} 
+			else if (objCombo.value == '0'){
+				$('#labour_partograph_no_fieldset').show();
+				$('#labour_partograph_yes_fieldset').hide();
+			}
+			else if (objCombo.value == '1'){
+				$('#labour_partograph_yes_fieldset').show();
+				$('#labour_partograph_no_fieldset').hide();
+			}
+		}
+		changeLabourPartographView();
+	</script>
+	<script> 
+		function changeLabourPartographOtherToNA(objCombo) {
+			var partograph_yes = document.getElementById("labour_partograph_yes");
+			var partograph_no = document.getElementById("labour_partograph_no");
+
+			if (objCombo.value != '1') {
+
+				partograph_yes.value = "88";
+				$('#labour_partograph_yes_fieldset').hide('fade');
+
+			} 
+			else if (objCombo.value == '0') {
+				$('#labour_partograph_no_fieldset').show('fade');
+				partograph_no.value = ""; 
+
+				partograph_yes.value = "88";
+				$('#labour_partograph_yes_fieldset').hide('fade');
+			}
+			else if (objCombo.value == '1') {
+				$('#labour_partograph_yes_fieldset').show('fade');
+				$('#labour_partograph_no_fieldset').hide('fade');
+
+				partograph_yes.value = "";
+			} 
+			
+		}
+	</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<script>
+		function changeLabourComplicationView() {
+			var objCombo = document.getElementById("labour_complications");
+
+			if (objCombo.value != '1') {
+				$('#labour_complications_fieldset').hide();
+
+			} else {
+				$('#labour_complications_fieldset').show();
+			}
+		}
+
+		function changeLabourStartmodeView() {
+			var objCombo = document.getElementById("labour_startmode");
+
+			if (objCombo.value == '0' || objCombo.value == '88' || objCombo.value == '') {
+				$('#labour_startmode_fieldset').hide();
+
+			} else {
+				$('#labour_startmode_fieldset').show();
+			}
+		}
+
+		function changeLabourSeeDateTimeToREADONLY() {
+			var objCombo = document.getElementById("labour_seedatetime_notstated");
+			var rdate = document.getElementById("labour_seedate");
+			var rtime = document.getElementById("labour_seetime");
+
+			if (objCombo.checked) {
+				rdate.disabled = true;
+				rtime.disabled = true;
+			} else {
+				rdate.disabled = false;
+				rtime.disabled = false;
+			}
+		}
+
+		function changeLabourStatus() {
+			var objCombo = document.getElementById("labour_occured");
+
+			if (objCombo.value != '1') {
+
+				$('#labour_occured_fieldset').hide();
+
+			} else {
+				$('#labour_occured_fieldset').show();
+			}
+		}
+
+		changeLabourComplicationView();
+		changeLabourStartmodeView();
+		changeLabourSeeDateTimeToREADONLY();
+		changeLabourStatus();
+
+	</script>
+
+	<script>
+		function changeLabourComplicationOtherToNA(objCombo) {
+			var rskopt = document.getElementsByClassName("complication_options");
+			var nwrsks = document.getElementById("new_complications");
+
+			if (objCombo.value != '1') {
+
+				for (var i = 0; i < rskopt.length; i++) {
+					if (rskopt[i].type == 'checkbox') {
+						rskopt[i].checked = false;
+					}
+				}
+
+				nwrsks.value = "";
+
+				$('#labour_complications_fieldset').hide('fade');
+
+			} else {
+				$('#labour_complications_fieldset').show('fade');
+
+			}
+		}
+
+		function changeLabourStartmodeOtherToNA(objCombo) {
+			var herbi = document.getElementById("labour_herbalind");
+			var parto = document.getElementById("labour_partograph");
+			var hour1 = document.getElementById("labour_lasthour1");
+			var mint1 = document.getElementById("labour_lastminute1");
+			var hour2 = document.getElementById("labour_lasthour2");
+			var mint2 = document.getElementById("labour_lastminute2");
+
+			if (objCombo.value == '0' || objCombo.value == '88' || objCombo.value == '') {
+				herbi.value = '99';
+				parto.value = '99';
+				hour1.value = '99';
+				mint1.value = '99';
+				hour2.value = '99';
+				mint2.value = '99';
+
+
+				$('#labour_startmode_fieldset').hide('fade');
+
+			} else {
+				herbi.value = '';
+				parto.value = '';
+				hour1.value = '';
+				mint1.value = '';
+				hour2.value = '';
+				mint2.value = '';
+
+				$('#labour_startmode_fieldset').show('fade');
+
+			}
+		}
+
+		function changeLabourSeeDateTimeToREADONLYDynamic(objCombo) {
+			var rdate = document.getElementById("labour_seedate");
+			var rtime = document.getElementById("labour_seetime");
+
+			rdate.value = "";
+			rtime.value = "";
+
+			if (objCombo.checked) {
+				rdate.disabled = true;
+				rtime.disabled = true;
+			} else {
+				rdate.disabled = false;
+				rtime.disabled = false;
+			}
+		}
+
+		function changeLabourViewDynamic(objCombo) {
+
+			var labour_complications = document.getElementById("labour_complications");
+			var labour_startmode = document.getElementById("labour_startmode");
+			//var labour_seedatetime_notstated = document.getElementById("labour_seedatetime_notstated");
+			var labour_herbalaug = document.getElementById("labour_herbalaug");
+			var labour_seeperiod = document.getElementById("labour_seeperiod");
+
+			if (objCombo.value != '1') {
+				labour_complications.value = '88';
+				labour_startmode.value = '88';
+				//labour_seedatetime_notstated.checked = true;
+				labour_herbalaug.value = '88';
+				labour_seeperiod.value = '88';
+
+				$('#labour_occured_fieldset').hide();
+
+			} else {
+				$('#labour_occured_fieldset').show();
+
+				labour_complications.value = '';
+				labour_startmode.value = '';
+				//labour_seedatetime_notstated.checked = false;
+				labour_herbalaug.value = '';
+				labour_seeperiod.value = '';
+			}
+
+			changeLabourComplicationOtherToNA(labour_complications);
+			changeLabourStartmodeOtherToNA(labour_startmode);
+			//changeLabourSeeDateTimeToREADONLYDynamic(labour_seedatetime_notstated);
+
+		}
+
+
+	</script>
+
+	<script>
+
+		function changeDeliveryDateTimeToREADONLY() {
+			var objCombo = document.getElementById("delivery_datetime_notstated");
+			var rdate = document.getElementById("delivery_date");
+			var rtime = document.getElementById("delivery_time");
+
+			if (objCombo.checked) {
+				rdate.disabled = true;
+				rtime.disabled = true;
+			} else {
+				rdate.disabled = false;
+				rtime.disabled = false;
+			}
+		}
+
+		function changeDeliveryStatus() {
+			var objCombo = document.getElementById("delivery_occured");
+
+			if (objCombo.value != '1') {
+
+				$('#delivery_occured_fieldset').hide();
+
+			} else {
+				$('#delivery_occured_fieldset').show();
+			}
+			
+			if (objCombo.value == '0') {
+				
+				$('#delivery_abortion_fieldset').show();
+				
+			} else {
+				
+				$('#delivery_abortion_fieldset').hide();
+			}
+
+		}
+
+
+		changeDeliveryDateTimeToREADONLY();
+		changeDeliveryStatus();
+	</script>
+
+	<script>
+
+		function changeDeliveryDateTimeToREADONLYDynamic(objCombo) {
+			var rdate = document.getElementById("delivery_date");
+			var rtime = document.getElementById("delivery_time");
+
+			rdate.value = "";
+			rtime.value = "";
+
+			if (objCombo.checked) {
+				rdate.disabled = true;
+				rtime.disabled = true;
+			} else {
+				rdate.disabled = false;
+				rtime.disabled = false;
+			}
+		}
+
+		function changeDeliveryViewDynamic(objCombo) {
+
+			var delivery_occured_facility = document.getElementById("delivery_occured_facility");
+			var delivery_datetime_notstated = document.getElementById("delivery_datetime_notstated");
+			var delivery_period = document.getElementById("delivery_period");
+			var delivery_weight = document.getElementById("delivery_weight");
+
+			var delivery_abortion = document.getElementById("delivery_abortion");
+
+			if (objCombo.value != '1') {
+				delivery_occured_facility.value = '88';
+				delivery_datetime_notstated.checked = true;
+				delivery_period.value = '88';
+				delivery_weight.value = '0.9';
+
+				$('#delivery_occured_fieldset').hide();
+
+				
+			} else {
+				$('#delivery_occured_fieldset').show();
+
+				delivery_occured_facility.value = '';
+				delivery_datetime_notstated.checked = false;
+				delivery_period.value = '';
+				delivery_weight.value = '';
+				
+			}
+
+			if (objCombo.value == '0') {
+				
+				$('#delivery_abortion_fieldset').show();
+				delivery_abortion.value = '';
+				
+			} else {
+				
+				$('#delivery_abortion_fieldset').hide();
+				delivery_abortion.value = '88';
+			}
+
+
+			changeDeliveryDateTimeToREADONLYDynamic(objCombo)
+		}
+
+
+	</script>
+
+	<script>
+		function changeBirthInsistnormalView() {
+			var objCombo = document.getElementById("birth_insistnormal");
+			var cstime = document.getElementById("birth_csproposetime");
+			var csdate = document.getElementById("birth_csproposedate");
+
+			if (objCombo.value != '1') {
+				$('#insistnormal_div').hide();
+
+			} else {
+				$('#insistnormal_div').show();
+			}
+		}
+		changeBirthInsistnormalView();
+
+		function changeBirthBirthmodeView() {
+			var objCombo = document.getElementById("birth_mode");
+
+			if (objCombo.value != '0' && objCombo.value != '1') {
+				$('#birth_mode_fieldset').hide();
+
+			} else {
+				$('#birth_mode_fieldset').show();
+			}
+		}
+		changeBirthBirthmodeView();
+
+	</script>
+	<script>
+		function changeBirthBirthModeOtherToNA(objCombo) {
+			var insist = document.getElementById("birth_insistnormal");
+			var cstime = document.getElementById("birth_csproposetime");
+			var csdate = document.getElementById("birth_csproposedate");
+
+			if (objCombo.value != '0' && objCombo.value != '1') {
+				insist.value = '99';
+				cstime.value = '';
+				csdate.value = '';
+
+				$('#insistnormal_div').hide();
+				$('#birth_mode_fieldset').hide('fade');
+
+			} else {
+				insist.value = '';
+				cstime.value = '';
+				csdate.value = '';
+
+				$('#birth_mode_fieldset').show('fade');
+
+			}
+		}
+	</script>
+	<script>
+		function changeBirthInsistnormalOtherToNA(objCombo) {
+			var cstime = document.getElementById("birth_csproposetime");
+			var csdate = document.getElementById("birth_csproposedate");
+
+			if (objCombo.value != '1') {
+				cstime.value = '';
+				csdate.value = '';
+
+				$('#insistnormal_div').hide('fade');
+
+			} else {
+				cstime.value = '';
+				csdate.value = '';
+				$('#insistnormal_div').show('fade');
+
+			}
+		}
+	</script>
+	<script>
+		function changeBirthAbnormalityView() {
+			var objCombo = document.getElementById("birth_abnormalities");
+
+			if (objCombo.value != '1') {
+				$('#birth_abnormalities_fieldset').hide();
+
+			} else {
+				$('#birth_abnormalities_fieldset').show();
+			}
+		}
+		changeBirthAbnormalityView();
+	</script>
+	<script>
+		function changeBirthAbnormalityOtherToNA(objCombo) {
+			var rskopt = document.getElementsByClassName("abnormality_options");
+			var nwrsks = document.getElementById("new_abnormalities");
+
+			if (objCombo.value != '1') {
+
+				for (var i = 0; i < rskopt.length; i++) {
+					if (rskopt[i].type == 'checkbox') {
+						rskopt[i].checked = false;
+					}
+				}
+
+				nwrsks.value = "";
+
+				$('#birth_abnormalities_fieldset').hide('fade');
+
+			} else {
+				$('#birth_abnormalities_fieldset').show('fade');
+
+			}
+		}
+	</script>
+	<script>
+		function changeBirthCordfaultView() {
+			var objCombo = document.getElementById("birth_cordfaults");
+
+			if (objCombo.value != '1') {
+				$('#birth_cordfaults_fieldset').hide();
+
+			} else {
+				$('#birth_cordfaults_fieldset').show();
+			}
+		}
+		changeBirthCordfaultView();
+	</script>
+	<script>
+		function changeBirthCordfaultOtherToNA(objCombo) {
+			var rskopt = document.getElementsByClassName("cordfault_options");
+			var nwrsks = document.getElementById("new_cordfaults");
+
+			if (objCombo.value != '1') {
+
+				for (var i = 0; i < rskopt.length; i++) {
+					if (rskopt[i].type == 'checkbox') {
+						rskopt[i].checked = false;
+					}
+				}
+
+				nwrsks.value = "";
+
+				$('#birth_cordfaults_fieldset').hide('fade');
+
+			} else {
+				$('#birth_cordfaults_fieldset').show('fade');
+
+			}
+		}
+	</script>
+	<script>
+		function changeBirthPlacentacheckView() {
+			var objCombo = document.getElementById("birth_placentachecks");
+
+			if (objCombo.value != '1') {
+				$('#birth_placentachecks_fieldset').hide();
+
+			} else {
+				$('#birth_placentachecks_fieldset').show();
+			}
+		}
+		changeBirthPlacentacheckView();
+	</script>
+	<script>
+		function changeBirthPlacentacheckOtherToNA(objCombo) {
+			var rskopt = document.getElementsByClassName("placentacheck_options");
+			var nwrsks = document.getElementById("new_placentachecks");
+
+			if (objCombo.value != '1') {
+
+				for (var i = 0; i < rskopt.length; i++) {
+					if (rskopt[i].type == 'checkbox') {
+						rskopt[i].checked = false;
+					}
+				}
+
+				nwrsks.value = "";
+
+				$('#birth_placentachecks_fieldset').hide('fade');
+
+			} else {
+				$('#birth_placentachecks_fieldset').show('fade');
+
+			}
+		}
+	</script>
+
+	<script>
+		function babyoutcomeView() {
+			var deathtype = document.getElementById("case_death");
+			var outcomesel = document.getElementById("birth_babyoutcome");
+			var outcomeselm = document.getElementById("birth_motheroutcome");
+
+			if (deathtype.value == '2') {
+				$('#birth_babyoutcome_div').hide();
+				outcomesel.value = '99';
+
+			} else {
+				$('#birth_babyoutcome_div').show();
+			}
+
+			if (deathtype.value == '3') {
+				$('#birth_motheroutcome_div').hide();
+				outcomeselm.value = '1';
+
+			} else {
+				$('#birth_motheroutcome_div').show();
+			}
+		}
+		babyoutcomeView();
+	</script>
+	<script>
+		function changeBabyResuscitationView() {
+			var objCombo = document.getElementById("baby_resuscitation");
+
+			if (objCombo.value != '1') {
+				$('#baby_resuscitation_fieldset').hide();
+
+			} else {
+				$('#baby_resuscitation_fieldset').show();
+			}
+		}
+		changeBabyResuscitationView();
+	</script>
+	<script>
+		function changeBabyResuscitationOtherToNA(objCombo) {
+			var rskopt = document.getElementsByClassName("resuscitation_options");
+			var nwrsks = document.getElementById("new_resuscitation");
+
+			if (objCombo.value != '1') {
+
+				for (var i = 0; i < rskopt.length; i++) {
+					if (rskopt[i].type == 'checkbox') {
+						rskopt[i].checked = false;
+					}
+				}
+
+				nwrsks.value = "";
+
+				$('#baby_resuscitation_fieldset').hide('fade');
+
+			} else {
+				$('#baby_resuscitation_fieldset').show('fade');
+
+			}
+		}
+	</script>
+
+	<script>
+		function changeBabyAdmissionView() {
+			var objCombo = document.getElementById("baby_admitted");
+
+			if (objCombo.value != '1') {
+				$('#baby_admitted_fieldset').hide();
+
+			} else {
+				$('#baby_admitted_fieldset').show();
+			}
+		}
+		changeBabyAdmissionView();
+	</script>
+	<script>
+		function changeBabyAdmittedOtherToNA(objCombo) {
+			var rskopt = document.getElementsByClassName("diagnoses_options");
+			var nwrsks = document.getElementById("new_diagnoses");
+
+			if (objCombo.value != '1') {
+
+				for (var i = 0; i < rskopt.length; i++) {
+					if (rskopt[i].type == 'checkbox') {
+						rskopt[i].checked = false;
+					}
+				}
+
+				nwrsks.value = "";
+
+				$('#baby_admitted_fieldset').hide('fade');
+
+			} else {
+				$('#baby_admitted_fieldset').show('fade');
+
+			}
+		}
+	</script>
+	<script>
+		function changeBabydDateTimeToREADONLY() {
+			var objCombo = document.getElementById("baby_ddatetime_notstated");
+			var rdate = document.getElementById("baby_ddate");
+			var rtime = document.getElementById("baby_dtime");
+
+			if (objCombo.checked) {
+				rdate.disabled = true;
+				rtime.disabled = true;
+			} else {
+				rdate.disabled = false;
+				rtime.disabled = false;
+			}
+		}
+		changeBabydDateTimeToREADONLY();
+		function changeBabydDateTimeToREADONLYDynamic(objCombo) {
+			var rdate = document.getElementById("baby_ddate");
+			var rtime = document.getElementById("baby_dtime");
+
+			rdate.value = "";
+			rtime.value = "";
+
+			if (objCombo.checked) {
+				rdate.disabled = true;
+				rtime.disabled = true;
+			} else {
+				rdate.disabled = false;
+				rtime.disabled = false;
+			}
+		}
+
+	</script>
+
+	<script>
+		function changeMdeathDateTimeToREADONLY() {
+			var objCombo = document.getElementById("mdeath_datetime_notstated");
+			var rdate = document.getElementById("mdeath_date");
+			var rtime = document.getElementById("mdeath_time");
+
+			if (objCombo.checked) {
+				rdate.disabled = true;
+				rtime.disabled = true;
+			} else {
+				rdate.disabled = false;
+				rtime.disabled = false;
+			}
+		}
+		changeMdeathDateTimeToREADONLY();
+
+		function changeMdeathDateTimeToREADONLYDynamic(objCombo) {
+			var rdate = document.getElementById("mdeath_date");
+			var rtime = document.getElementById("mdeath_time");
+
+			rdate.value = "";
+			rtime.value = "";
+
+			if (objCombo.checked) {
+				rdate.disabled = true;
+				rtime.disabled = true;
+			} else {
+				rdate.disabled = false;
+				rtime.disabled = false;
+			}
+		}
+
+	</script>
+	<script>
+
+		function changeMdeathAutopsyView() {
+			var objCombo = document.getElementById("mdeath_autopsy");
+			var aupsydate = document.getElementById("mdeath_autopsy_date");
+			var aupsyloc = document.getElementById("mdeath_autopsy_location");
+			var aupsyby = document.getElementById("mdeath_autopsy_by");
+			var aupsyfcod = document.getElementById("mdeath_autopsy_final_cod");
+			var aupsyacod = document.getElementById("mdeath_autopsy_antec_cod");
+			var aupsyocod = document.getElementById("mdeath_autopsy_ops_cod");
+
+			if (objCombo.value != '1') {
+				aupsydate.value = '';
+				aupsyloc.value = 'NA';
+				aupsyby.value = '99';
+				aupsyfcod.value = 'NA';
+				aupsyacod.value = 'NA';
+				aupsyocod.value = 'NA';
+
+				$('#mdeath_autopsy_fieldset').hide('fade');
+
+			} else {
+				$('#mdeath_autopsy_fieldset').show('fade');
+
+				aupsydate.value = '';
+				aupsyloc.value = '';
+				aupsyby.value = '';
+				aupsyfcod.value = '';
+				aupsyacod.value = '';
+				aupsyocod.value = '';
+			}
+		}
+
+		changeMdeathAutopsyView();
+
+		function changeMdeathAutopsyDynamic(objCombo) {
+			var aupsydate = document.getElementById("mdeath_autopsy_date");
+			var aupsyloc = document.getElementById("mdeath_autopsy_location");
+			var aupsyby = document.getElementById("mdeath_autopsy_by");
+			var aupsyfcod = document.getElementById("mdeath_autopsy_final_cod");
+			var aupsyacod = document.getElementById("mdeath_autopsy_antec_cod");
+			var aupsyocod = document.getElementById("mdeath_autopsy_ops_cod");
+
+			if (objCombo.value != '1') {
+				aupsydate.value = '';
+				aupsyloc.value = 'NA';
+				aupsyby.value = '99';
+				aupsyfcod.value = 'NA';
+				aupsyacod.value = 'NA';
+				aupsyocod.value = 'NA';
+
+				$('#mdeath_autopsy_fieldset').hide('fade');
+
+			} else {
+				$('#mdeath_autopsy_fieldset').show('fade');
+
+				aupsydate.value = '';
+				aupsyloc.value = '';
+				aupsyby.value = '';
+				aupsyfcod.value = '';
+				aupsyacod.value = '';
+				aupsyocod.value = '';
+			}
+		}
+	</script>
+
+
+	<script>
+		$(function () {
+			$(".datepicker").datepicker({
+				dateFormat: 'dd/mm/yy',
+				changeMonth: true,
+				changeYear: true,
+				maxDate: new Date()
+			});
+		});
+	</script>
+	<script>
+		$('.timepicker').timepicker({
+			timeFormat: 'HH:mm',
+			interval: 30,
+			dynamic: false,
+			dropdown: true,
+			scrollbar: true
+		});
+	</script>
+	<script>
+		(function () {
+			'use strict';
+			window.addEventListener('load', function () {
+				// Fetch all the forms we want to apply custom Bootstrap validation styles to
+				var forms = document.getElementsByClassName('needs-validation');
+
+				// Loop over them and prevent submission
+				var validation = Array.prototype.filter.call(forms, function (form) {
+					form.addEventListener('submit', function (event) {
+						if (form.checkValidity() === false) {
+							event.preventDefault();
+							event.stopPropagation();
+						}
+						form.classList.add('was-validated');
+
+					}, false);
+				});
+
+
+			}, false);
+		})();
+	</script>
+</scripts>
+
+</html>
