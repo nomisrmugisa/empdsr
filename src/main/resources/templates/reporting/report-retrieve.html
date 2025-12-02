@@ -8,7 +8,7 @@
 	<hr />
 	<div class="row">
 		<div class="col-md-6">
-			<div class="card">
+			<div class="card mb-3">
 				<div class="card-header text-white" style="background-color: rgb(57, 106, 147);">
 					[[#{visual.caption}]]
 				</div>
@@ -16,6 +16,16 @@
 					<h5 class="card-title">[[#{visual.title}]]</h5>
 					<p class="card-text">[[#{visual.notes}]]</p>
 					<a href="#" class="btn btn-primary" th:href="@{/reporting/search}">[(#{view.visuals})]</a>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-header text-white" style="background-color: rgb(57, 106, 147);">
+					[[#{survey.caption}]]
+				</div>
+				<div class="card-body">
+					<h5 class="card-title">[[#{survey.title}]]</h5>
+					<p class="card-text">[[#{survey.notes}]]</p>
+					<a href="#" class="btn btn-primary" th:href="@{/reporting/survey}">[(#{view.surveys})]</a>
 				</div>
 			</div>
 		</div>
@@ -27,7 +37,7 @@
 				<div class="card-body">
 					<h5 class="card-title">[[#{import.title}]]</h5>
 					<p class="card-text">[(#{import.notes})]
-						<br/><a href="#" th:href="@{/reporting/download/template}">Download Excel Template</a>
+						<br /><a href="#" th:href="@{/reporting/download/template}">Download Excel Template</a>
 					</p>
 					<form class="form-horizontal" action="#" th:object="${selected}" th:action="@{/reporting}"
 						method="POST" enctype="multipart/form-data">

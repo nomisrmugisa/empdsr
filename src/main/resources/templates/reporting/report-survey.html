@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/reporting :: layout(_,~{},~{},~{::content},~{})}">
+<content>
+	<div class="row float-end">
+		<a class="btn btn-primary" href="#">New Assesment</a>
+	</div>
+	<div class="table-responsive mt-3">
+		<table class="table table-sm table-bordered">
+			<thead>
+				<tr>
+					<th class="sticky-left" style="width: 30%;" th:text="#{survey_indicators}"></th>
+					<th th:each="subitem : ${dataset}">
+						<a href="#">[[${subitem[0]}]]</a>
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="item, iterStat : ${indicators}" th:if="${iterStat.index} >= 1 and ${iterStat.index} <= 30">
+					<td class="sticky-left" th:text="|${iterStat.index}. ${item}|"></td>
+					<td th:each="subitem : ${dataset}" th:text="${subitem[iterStat.index]}"
+						th:class="${subitem[iterStat.index]}=='1'?'bg-success':'bg-secondary'"></td>
+				</tr>
+				<tr th:each="item, iterStat : ${indicators}" th:if="${iterStat.index} >= 31">
+					<td class="sticky-left text-muted small" th:text="${item}"></td>
+					<td th:each="subitem : ${dataset}" th:text="${subitem[iterStat.index]}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+</content>
+
+</html>

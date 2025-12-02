@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.pdsr.dhis2.Dhis2Form;
 import org.pdsr.json.DecryptedAuditAudit;
@@ -13,6 +14,7 @@ import org.pdsr.json.DecryptedWeeklyMonitoring;
 import org.pdsr.json.EncryptedMessage;
 import org.pdsr.json.json_redcap;
 import org.pdsr.master.model.facility_table;
+import org.pdsr.master.model.sync_table;
 import org.pdsr.master.repo.SyncTableRepository;
 import org.pdsr.summary.model.big_audit_audit;
 import org.pdsr.summary.model.big_audit_recommendation;
@@ -36,15 +38,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 public class ServiceApi {
 
-	private final String BASE_URL, FAC_CODE;
+	private String BASE_URL, FAC_CODE;
 
 	private final RestTemplateBuilder builder;
 
 	public ServiceApi(final RestTemplateBuilder builder, SyncTableRepository syncRepo) {
 		this.builder = builder;
 
-		BASE_URL = syncRepo.findById(CONSTANTS.LICENSE_ID).get().getSync_url() + "/api";
-		FAC_CODE = syncRepo.findById(CONSTANTS.LICENSE_ID).get().getSync_code();
+		Optional<sync_table> sync = syncRepo.findById(CONSTANTS.LICENSE_ID);
+
+		if (sync.isPresent()) {
+
+			BASE_URL = sync.get().getSync_url() + "/api";
+			FAC_CODE = sync.get().getSync_code();
+		}
 	}
 
 	/////////////// PULL FROM CENTRAL SERVER ////////////////////////////////
@@ -77,7 +84,7 @@ public class ServiceApi {
 
 			final String URL = BASE_URL.concat("/savecases");
 			return builder.build().postForObject(URL, json, EncryptedMessage.class).getMessage();
-			
+
 		} catch (Exception ex) {
 
 			return ex.getLocalizedMessage();
@@ -271,7 +278,8 @@ public class ServiceApi {
 	}
 
 	/// REDCAP DATA
-	public List<json_redcap> extractRedCapIdentifiers(Date startDate, Date endDate, String REDCAP_API_URL, String REDCAP_API_TOKEN) {
+	public List<json_redcap> extractRedCapIdentifiers(Date startDate, Date endDate, String REDCAP_API_URL,
+			String REDCAP_API_TOKEN) {
 
 		try {
 

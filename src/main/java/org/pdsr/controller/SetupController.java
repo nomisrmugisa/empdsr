@@ -105,11 +105,8 @@ public class SetupController {
 	@PostMapping("")
 	public String sync(Principal principal, @ModelAttribute("selected") sync_table selected, BindingResult results) {
 
-		syncRepo.save(selected);
-
 		try {
 			List<facilities> table = loadFromCsv("facilities.csv", facilities.class);
-			System.err.println(table.size());
 
 			for (facilities elem : table) {
 
@@ -136,6 +133,13 @@ public class SetupController {
 			e.printStackTrace();
 			return "controls/dashboard";
 		}
+		
+		//check if my facility is in list, then pull name of facility and replace, else save stated facility name
+		Optional<facility_table> checkMyFacility = facilityRepo.findByFacility_code(selected.getSync_code());
+		if(checkMyFacility.isPresent()) {
+			selected.setSync_name(checkMyFacility.get().getFacility_name());
+		}
+		syncRepo.save(selected);
 
 		try {
 			List<icd_codes> table = loadFromCsv("icd_code.csv", icd_codes.class);

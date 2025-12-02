@@ -23,12 +23,14 @@ import org.pdsr.CONSTANTS;
 import org.pdsr.ReportExcelExporter;
 import org.pdsr.master.model.audit_recommendation;
 import org.pdsr.master.model.monitoring_table;
+import org.pdsr.master.model.monitoring_tool;
 import org.pdsr.master.model.sync_table;
 import org.pdsr.master.model.weekly_monitoring;
 import org.pdsr.master.model.weekly_table;
 import org.pdsr.master.model.wmPK;
 import org.pdsr.master.repo.AuditRecommendRepository;
 import org.pdsr.master.repo.MonitoringTableRepository;
+import org.pdsr.master.repo.MonitoringToolRepository;
 import org.pdsr.master.repo.SyncTableRepository;
 import org.pdsr.master.repo.WeeklyMonitoringTableRepository;
 import org.pdsr.master.repo.WeeklyTableRepository;
@@ -62,6 +64,9 @@ public class ReportController {
 
 	@Autowired
 	private MonitoringTableRepository monRepo;
+
+	@Autowired
+	private MonitoringToolRepository toolRepo;
 
 	@Autowired
 	private WeeklyTableRepository weekRepo;
@@ -666,6 +671,112 @@ public class ReportController {
 		model.addAttribute("mdeath_array", mdeath_array);
 
 		return "reporting/report-search";
+	}
+
+	@GetMapping("/survey")
+	public String survey(Principal principal, Model model) {
+
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
+			model.addAttribute("activated", "0");
+			return "home";
+		}
+
+		final String[] indicators = new String[36];
+		indicators[0] = "";
+		indicators[1] = "MPDSR coordinator";
+		indicators[2] = "External subnational supervision";
+		indicators[3] = "Leadership engagement";
+		indicators[4] = "Accessible guidelines";
+		indicators[5] = "MPDSR-maternal committee exists";
+		indicators[6] = "MPDSR-perinatal committee exists";
+		indicators[7] = "Multidisciplinary MPDSR committee";
+		indicators[8] = "Formalised committee structure";
+		indicators[9] = "Committee meets";
+		indicators[10] = "Committee meets routinely";
+		indicators[11] = "Maternal tools available";
+		indicators[12] = "Perinatal tools available";
+		indicators[13] = "Maternal tools used";
+		indicators[14] = "Perinatal tools used";
+		indicators[15] = "Maternal tools completed correctly";
+		indicators[16] = "Perinatal tools completed correctly";
+		indicators[17] = "Any MPDSR training";
+		indicators[18] = "Recent MPDSR training";
+		indicators[19] = "MPDSR embedded as part of work expectations";
+		indicators[20] = "Facility supports MPDSR processes";
+		indicators[21] = "Resource mobilisation";
+		indicators[22] = "Resource expenditure";
+		indicators[23] = "Community structure exists";
+		indicators[24] = "Community feedback loop for MPDSR";
+		indicators[25] = "Purpose reinforcement";
+		indicators[26] = "Confidentiality";
+		indicators[27] = "Inclusive participation";
+		indicators[28] = "< 50% recommendations implemented";
+		indicators[29] = "50-79% recommendations implemented";
+		indicators[30] = "> 80% recommendations implemented";
+		
+		indicators[31] = "Survey date";
+		indicators[32] = "Entered by";
+		indicators[33] = "Entry date";
+		indicators[34] = "Validation date";
+		indicators[35] = "Validated by";
+		
+		model.addAttribute("indicators", indicators);
+		
+		SimpleDateFormat f = new SimpleDateFormat("dd-MMM-yyyy");
+		List<String[]> data = new ArrayList<>();
+		for (monitoring_tool elem : toolRepo.findAll()) {
+			String[] d = new String[36];
+			d[0] = elem.getSurvey_id();
+
+			d[1] = "" + elem.getLead_coordinator();
+			d[2] = "" + elem.getLead_supervision();
+			d[3] = "" + elem.getLead_engagement();
+			d[4] = "" + elem.getPolicy_guidlines();
+			d[5] = "" + elem.getStruct_mat_committee();
+			d[6] = "" + elem.getStruct_peri_committee();
+			d[7] = "" + elem.getStruct_multi_committee();
+			d[8] = "" + elem.getStruct_formal_committee();
+			d[9] = "" + elem.getMeet_exists();
+			d[10] = "" + elem.getMeet_routine();
+			d[11] = "" + elem.getTools_mat_available();
+			d[12] = "" + elem.getTools_peri_available();
+			d[13] = "" + elem.getTools_mat_used();
+			d[14] = "" + elem.getTools_peri_used();
+			d[15] = "" + elem.getTools_mat_correctly();
+			d[16] = "" + elem.getTools_peri_correctly();
+			d[17] = "" + elem.getTrain_any_done();
+			d[18] = "" + elem.getTrain_recent_done();
+			d[19] = "" + elem.getTrain_embed_work();
+			d[20] = "" + elem.getRes_processes();
+			d[21] = "" + elem.getRes_mobilisation();
+			d[22] = "" + elem.getRes_expenditure();
+			d[23] = "" + elem.getCommunity_structure();
+			d[24] = "" + elem.getCommunity_feedback();
+			d[25] = "" + elem.getImpl_reinforcement();
+			d[26] = "" + elem.getImpl_confidentiality();
+			d[27] = "" + elem.getImpl_participation();
+			d[28] = "" + elem.getTrack_rec_low();
+			d[29] = "" + elem.getTrack_rec_mid();
+			d[30] = "" + elem.getTrack_rec_high();
+
+			d[31] = f.format(elem.getSurvey_date());
+			d[32] = elem.getSurvey_author();
+			d[33] = f.format(elem.getEntry_date());
+
+			if ((elem.getSurvey_review_date() != null)) {
+				d[34] = f.format(elem.getSurvey_review_date());
+				d[35] = elem.getSurvey_reviewer();
+			} else {
+				d[34] = "Not validated";
+				d[35] = "Not validated";
+			}
+
+			data.add(d);
+
+		}
+		model.addAttribute("dataset", data);
+
+		return "reporting/report-survey";
 	}
 
 	@GetMapping("/export/excel/{wyear}/{wmonth}")
