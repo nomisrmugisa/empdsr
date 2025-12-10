@@ -6,10 +6,12 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
@@ -713,15 +715,15 @@ public class ReportController {
 		indicators[28] = "< 50% recommendations implemented";
 		indicators[29] = "50-79% recommendations implemented";
 		indicators[30] = "> 80% recommendations implemented";
-		
+
 		indicators[31] = "Survey date";
 		indicators[32] = "Entered by";
 		indicators[33] = "Entry date";
 		indicators[34] = "Validation date";
 		indicators[35] = "Validated by";
-		
+
 		model.addAttribute("indicators", indicators);
-		
+
 		SimpleDateFormat f = new SimpleDateFormat("dd-MMM-yyyy");
 		List<String[]> data = new ArrayList<>();
 		for (monitoring_tool elem : toolRepo.findAll()) {
@@ -777,6 +779,47 @@ public class ReportController {
 		model.addAttribute("dataset", data);
 
 		return "reporting/report-survey";
+	}
+
+	@GetMapping("/survey/tool")
+	public String surveytool(Principal principal, Model model, @RequestParam(required = false) String id,
+			@RequestParam(required = false) String success) {
+
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
+			model.addAttribute("activated", "0");
+			return "home";
+		}
+
+		monitoring_tool selected = new monitoring_tool();
+
+		if (id != null) {
+			Optional<monitoring_tool> tool = toolRepo.findById(id);
+			if (tool.isPresent()) {
+				selected = tool.get();
+			}
+		}
+
+		model.addAttribute("selected", selected);
+
+		if (success != null) {
+			model.addAttribute("success", "Saved Successfully");
+		}
+
+		return "reporting/report-tool";
+	}
+
+	@PostMapping("/survey/tool")
+	public String surveytool(Principal principal, @ModelAttribute monitoring_tool selected,
+			@RequestParam(required = false) String id) {
+
+		final String survey_id = new SimpleDateFormat("dd-MMM-yyyy").format(selected.getSurvey_date());
+		selected.setSurvey_id(survey_id);
+		selected.setSurvey_author(principal.getName());
+		selected.setEntry_date(new Date());
+
+		toolRepo.save(selected);
+
+		return "redirect:/reporting/survey/tool?id=" + selected.getSurvey_id() + "&success=yes";
 	}
 
 	@GetMapping("/export/excel/{wyear}/{wmonth}")

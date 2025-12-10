@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html th:fragment="layout(title, links, scripts, content)" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head>
+	<title th:replace="${title}" th:text="#{app.title}">MPDRSv2</title>
+	<base href="/">
+	<!-- common links -->
+	<link rel="stylesheet" href="css/select/jquery-editable-select.min.css" />
+	<link rel="stylesheet" href="css/fontawesome-free/css/all.min.css" />
+	<link rel="stylesheet" href="webjars/bootstrap/5.1.3/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css" />
+
+	<th:block th:replace="${links}" />
+
+	<style>
+		body {
+			background-color: rgb(57, 106, 147);
+		}
+
+		.sticky-top {
+			background-color: rgb(33, 63, 86) !important;
+		}
+
+		.table-bordered {
+			border-color: rgb(57, 106, 147) !important;
+		}
+	</style>
+	<style>
+		.dataTables_wrapper .dataTables_length select {
+			background-color: rgb(49, 92, 128);
+		}
+
+		[x-cloak] {
+			display: none !important;
+		}
+	</style>
+
+</head>
+
+<body class="me-5 ms-5 mt-1">
+	<div th:if="${exceptionMsg}" class="alert alert-danger" th:text="${exceptionMsg}"></div>
+
+	<div th:insert="fragments/current-user"></div>
+	<div class="m-1 small"></div>
+	</div>
+
+	<div class="mx-auto box-shadow">
+		<div th:replace="${content}">
+			<p>Content Layout</p>
+		</div>
+	</div>
+
+	</div>
+	<div class="clearfix"></div>
+	<footer class="text-light text-center mb-4">
+		<!-- common scripts -->
+		<div th:utext="#{app.version}"></div>
+		<script src="//unpkg.com/alpinejs" defer></script>
+		<script src="//code.jquery.com/jquery-latest.min.js"></script>
+		<script src="js/select/jquery-editable-select.js"></script>
+		<script src="webjars/jquery/3.6.0/jquery.min.js"></script>
+		<script src="webjars/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+		<script src="webjars/bootstrap/5.1.3/js/bootstrap.min.js"></script>
+		<script src="webjars/jquery-ui/1.13.0/jquery-ui.js"></script>
+
+		<th:block th:replace="${scripts}" />
+
+		<script>
+			(function () {
+				'use strict';
+				window.addEventListener('load', function () {
+					// Fetch all the forms we want to apply custom Bootstrap validation styles to
+					var forms = document.getElementsByClassName('needs-validation');
+
+					// Loop over them and prevent submission
+					var validation = Array.prototype.filter.call(forms, function (form) {
+						form.addEventListener('submit', function (event) {
+							if (form.checkValidity() === false) {
+								event.preventDefault();
+								event.stopPropagation();
+							}
+							form.classList.add('was-validated');
+
+						}, false);
+					});
+				}, false);
+			})();
+		</script>
+
+	</footer>
+
+</body>
+
+</html>
