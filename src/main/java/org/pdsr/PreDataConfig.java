@@ -721,6 +721,7 @@ public class PreDataConfig {
 			res.add(new datamap("icd10mm_options",7,"Non obstetric complication"));
 			res.add(new datamap("icd10mm_options",8,"Unknown"));
 			res.add(new datamap("icd10mm_options",9,"Coincidental/Accidental"));
+			
 			dmapRepo.saveAll(res);
 
 		}

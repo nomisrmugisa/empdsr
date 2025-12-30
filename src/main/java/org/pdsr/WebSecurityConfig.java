@@ -12,54 +12,48 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-    @Qualifier("userDetailsServiceImpl")
-    @Autowired
-    private UserDetailsServiceImpl userDetailsServiceImpl;
+	@Qualifier("userDetailsServiceImpl")
+	@Autowired
+	private UserDetailsServiceImpl userDetailsServiceImpl;
 
-    @Bean
-    BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+	@Bean
+	BCryptPasswordEncoder bCryptPasswordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 
-    @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
+	@Bean
+	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		
+//		http.requiresChannel(channel -> channel.anyRequest().requiresSecure());// ssl code
 
-//        .requiresChannel().anyRequest().requiresSecure()//ssl
-//        .and()//ssl
-//        .csrf().disable()//ssl
-        
-                .authorizeRequests(requests -> requests
-                        //.antMatchers( "/img/**", "/webjars/**").permitAll()
-                        .antMatchers("/controls/**").hasRole("SETUP")//can only setup controls
-                        .antMatchers("/registry/**").hasRole("ENTRY")//can only enter data
-                        .antMatchers("/auditing").hasAnyRole("AUDIT", "TASKS")//can view audits
-                        .antMatchers("/auditing/cstatus/**").hasRole("TASKS")//changing of status
-                        .antMatchers("/auditing/**").hasRole("AUDIT")//can audit and change status
-                        .anyRequest().authenticated()).formLogin(login -> login
-                .loginPage("/login")
-                .failureUrl("/login?error")
-                .permitAll()).logout(logout -> logout.permitAll());
+		http.authorizeRequests(requests -> requests
+				// .antMatchers( "/img/**", "/webjars/**").permitAll()
+				.antMatchers("/controls/**").hasRole("SETUP")// can only setup controls
+				.antMatchers("/registry/**").hasRole("ENTRY")// can only enter data
+				.antMatchers("/auditing").hasAnyRole("AUDIT", "TASKS")// can view audits
+				.antMatchers("/auditing/cstatus/**").hasRole("TASKS")// changing of status
+				.antMatchers("/auditing/**").hasRole("AUDIT")// can audit and change status
+				.anyRequest().authenticated())
+				.formLogin(login -> login.loginPage("/login").failureUrl("/login?error").permitAll())
+				.logout(logout -> logout.permitAll());
 
-        http.csrf().disable();//for h2-console
-        http.headers().frameOptions().disable();
-        return http.build();
+		http.csrf().disable();// for h2-console
+		http.headers().frameOptions().disable();
+		return http.build();
 
-    }
+	}
 
-    //for h2 console
-    @Bean
-    WebSecurityCustomizer webSecurityCustomizer() throws Exception {
-        return (web) -> {
-            web.ignoring().antMatchers("/h2-console/**", "/img/**", "/webjars/**", "/api/**");
-        };
-    }
-
+	// for h2 console
+	@Bean
+	WebSecurityCustomizer webSecurityCustomizer() throws Exception {
+		return (web) -> {
+			web.ignoring().antMatchers("/h2-console/**", "/img/**", "/webjars/**", "/api/**");
+		};
+	}
 
 //    @Bean
 //    public AuthenticationManager customAuthenticationManager() throws Exception {
@@ -73,21 +67,23 @@ public class WebSecurityConfig {
 				.passwordEncoder(bCryptPasswordEncoder).and().build();
 	}
 
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsServiceImpl).passwordEncoder(bCryptPasswordEncoder());
-    }
+	@Autowired
+	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(userDetailsServiceImpl).passwordEncoder(bCryptPasswordEncoder());
+	}
 
-    // @Bean
-    // @Override
-    // public UserDetailsService userDetailsService() {
-    //     UserDetails olinc = User.withDefaultPasswordEncoder().username("user").password("pass").roles("USER").build();
+	// @Bean
+	// @Override
+	// public UserDetailsService userDetailsService() {
+	// UserDetails olinc =
+	// User.withDefaultPasswordEncoder().username("user").password("pass").roles("USER").build();
 
-    //     InMemoryUserDetailsManager userDetailsManager = new InMemoryUserDetailsManager();
+	// InMemoryUserDetailsManager userDetailsManager = new
+	// InMemoryUserDetailsManager();
 
-    //     userDetailsManager.createUser(olinc);
+	// userDetailsManager.createUser(olinc);
 
-    //     return userDetailsManager;
-    // }
+	// return userDetailsManager;
+	// }
 
 }
