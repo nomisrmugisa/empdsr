@@ -18,9 +18,9 @@ public class CONSTANTS {
 	public static final String IMAGE_TAG = "XZYimageXZY";
 	
 	public static final String DHIS2_MATERNAL_NOTIFICATION_PROGRAM = "ZJRDIb1joXP";
-	public static final String DHIS2_PERINATAL_NOTIFICATION_PROGRAM = "gMC8hUMD4Zi";
-	public static final String DHIS2_MATERNAL_REVIEW_PROGRAM = "k7i7qPFQV5n";
-	public static final String DHIS2_PERINATAL_REVIEW_PROGRAM = "HjkGOlFiGij";
+	public static final String DHIS2_PERINATAL_NOTIFICATION_PROGRAM = "vic5CfG1122";
+	public static final String DHIS2_MATERNAL_REVIEW_PROGRAM = "ucCZOBcEqma";
+	public static final String DHIS2_PERINATAL_REVIEW_PROGRAM = "k8dOLgiWpiI";
 	public static final String DHIS2_FORM_STATUS = "COMPLETED";
 	
 	public static final String DHIS2_ATTRIBUTECOMBO_NATIONAL = "Lf2Axb9E6B4";
