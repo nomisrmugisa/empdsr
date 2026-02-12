@@ -82,12 +82,59 @@ public class case_antenatal implements Serializable {
 
 	@Column
 	private Integer antenatal_folicacid3m;// first visit
-
-	@Column
-	private Integer antenatal_tetanus;// first visit
-
+	
 	@Column
 	private Integer antenatal_malprophy;// firisit
+	
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "antenatal_malprophy", joinColumns = @JoinColumn(name = "antenatal_uuid"), inverseJoinColumns = @JoinColumn(name = "ipt_name"))
+	private List<ipts_table> antenatal_ipt = new ArrayList<>();
+	
+	@Column
+	private Integer antenatal_tetanus;// first visit
+	
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "antenatal_tetanus", joinColumns = @JoinColumn(name = "antenatal_uuid"), inverseJoinColumns = @JoinColumn(name = "td_name"))
+	private List<ttdp_table> antenatal_tetdip = new ArrayList<>();	
+	
+	@Column
+	private Integer antenatal_syphtest; 
+	
+	@Column
+	private Integer antenatal_hbtest; 
+	
+	@Column
+	@Size(max = 80)
+	private String antenatal_hbtestres;
+	
+	@Column
+	private Integer antenatal_hepatitis; 
+	
+	@Column
+	private Integer antenatal_bloodgrp; 
+	
+	@Column
+	private Integer antenatal_bloodrhesus; 
+	
+	@Column
+	private Integer antenatal_bloodtransf; 
+	
+	@Column
+	private Integer antenatal_maltest; 
+	
+	@Column
+	private Integer antenatal_maltestres; 
+		
+	@Column
+	private Integer antenatal_syphtestres; 
+	
+	@Column
+	private Integer antenatal_urintest; 
+	
+	@Column
+	private Integer antenatal_utrasdtest; 
+
+
 
 	@Column
 	private Integer antenatal_risks;// firisit
@@ -204,6 +251,22 @@ public class case_antenatal implements Serializable {
 		this.antenatal_hiv = antenatal_hivpos;
 	}
 
+	public Integer getAntenatal_malprophy() {
+		return antenatal_malprophy;
+	}
+
+	public void setAntenatal_malprophy(Integer antenatal_malprophy) {
+		this.antenatal_malprophy = antenatal_malprophy;
+	}
+
+	public Integer getAntenatal_tetanus() {
+		return antenatal_tetanus;
+	}
+
+	public void setAntenatal_tetanus(Integer antenatal_tetanus) {
+		this.antenatal_tetanus = antenatal_tetanus;
+	}
+
 	public Integer getAntenatal_alcohol() {
 		return antenatal_alcohol;
 	}
@@ -244,6 +307,118 @@ public class case_antenatal implements Serializable {
 		this.antenatal_folicacid3m = antenatal_folicacid3m;
 	}
 
+	public List<ipts_table> getAntenatal_ipt() {
+		return antenatal_ipt;
+	}
+
+	public void setAntenatal_ipt(List<ipts_table> antenatal_ipt) {
+		this.antenatal_ipt = antenatal_ipt;
+	}
+
+	public List<ttdp_table> getAntenatal_tetdip() {
+		return antenatal_tetdip;
+	}
+
+	public void setAntenatal_tetdip(List<ttdp_table> antenatal_tetdip) {
+		this.antenatal_tetdip = antenatal_tetdip;
+	}
+
+	public Integer getAntenatal_syphtest() {
+		return antenatal_syphtest;
+	}
+
+	public void setAntenatal_syphtest(Integer antenatal_syphtest) {
+		this.antenatal_syphtest = antenatal_syphtest;
+	}
+
+	public Integer getAntenatal_hbtest() {
+		return antenatal_hbtest;
+	}
+
+	public void setAntenatal_hbtest(Integer antenatal_hbtest) {
+		this.antenatal_hbtest = antenatal_hbtest;
+	}
+
+	public String getAntenatal_hbtestres() {
+		return antenatal_hbtestres;
+	}
+
+	public void setAntenatal_hbtestres(String antenatal_hbtestres) {
+		this.antenatal_hbtestres = antenatal_hbtestres;
+	}
+
+	public Integer getAntenatal_hepatitis() {
+		return antenatal_hepatitis;
+	}
+
+	public void setAntenatal_hepatitis(Integer antenatal_hepatitis) {
+		this.antenatal_hepatitis = antenatal_hepatitis;
+	}
+
+	public Integer getAntenatal_bloodgrp() {
+		return antenatal_bloodgrp;
+	}
+
+	public void setAntenatal_bloodgrp(Integer antenatal_bloodgrp) {
+		this.antenatal_bloodgrp = antenatal_bloodgrp;
+	}
+
+	public Integer getAntenatal_bloodrhesus() {
+		return antenatal_bloodrhesus;
+	}
+
+	public void setAntenatal_bloodrhesus(Integer antenatal_bloodrhesus) {
+		this.antenatal_bloodrhesus = antenatal_bloodrhesus;
+	}
+
+	public Integer getAntenatal_bloodtransf() {
+		return antenatal_bloodtransf;
+	}
+
+	public void setAntenatal_bloodtransf(Integer antenatal_bloodtransf) {
+		this.antenatal_bloodtransf = antenatal_bloodtransf;
+	}
+
+	public Integer getAntenatal_maltest() {
+		return antenatal_maltest;
+	}
+
+	public void setAntenatal_maltest(Integer antenatal_maltest) {
+		this.antenatal_maltest = antenatal_maltest;
+	}
+
+	public Integer getAntenatal_maltestres() {
+		return antenatal_maltestres;
+	}
+
+	public void setAntenatal_maltestres(Integer antenatal_maltestres) {
+		this.antenatal_maltestres = antenatal_maltestres;
+	}
+
+	public Integer getAntenatal_syphtestres() {
+		return antenatal_syphtestres;
+	}
+
+	public void setAntenatal_syphtestres(Integer antenatal_syphtestres) {
+		this.antenatal_syphtestres = antenatal_syphtestres;
+	}
+
+	public Integer getAntenatal_urintest() {
+		return antenatal_urintest;
+	}
+
+	public void setAntenatal_urintest(Integer antenatal_urintest) {
+		this.antenatal_urintest = antenatal_urintest;
+	}
+
+	public Integer getAntenatal_utrasdtest() {
+		return antenatal_utrasdtest;
+	}
+
+	public void setAntenatal_utrasdtest(Integer antenatal_utrasdtest) {
+		this.antenatal_utrasdtest = antenatal_utrasdtest;
+	}
+
 	public Integer getAntenatal_risks() {
 		return antenatal_risks;
 	}
@@ -252,21 +427,7 @@ public class case_antenatal implements Serializable {
 		this.antenatal_risks = antenatal_risks;
 	}
 
-	public Integer getAntenatal_tetanus() {
-		return antenatal_tetanus;
-	}
 
-	public void setAntenatal_tetanus(Integer antenatal_tetanus) {
-		this.antenatal_tetanus = antenatal_tetanus;
-	}
-
-	public Integer getAntenatal_malprophy() {
-		return antenatal_malprophy;
-	}
-
-	public void setAntenatal_malprophy(Integer antenatal_malprophy) {
-		this.antenatal_malprophy = antenatal_malprophy;
-	}
 
 	public List<risk_table> getRisks() {
 		return risks;

@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -54,6 +55,13 @@ public class case_identifiers implements Serializable {
 	@Column
 	@Size(min = 1, max = 80)
 	private String case_mname;
+	
+	@Column   //(unique = true)
+	@Size(min = 1, max = 80)
+	private String case_nin;
+	
+	@Column
+	private Integer case_nationality;
 
 	@NotNull
 	@Column
@@ -65,6 +73,12 @@ public class case_identifiers implements Serializable {
 
 	@Column
 	private Integer data_sent;
+	
+	@Transient
+	private String cluster_uuid;//cluster mapping based on canopy algorithm
+	
+	@Transient
+	private Double similarity_score;// similarity strength based on fellegi-stunter model
 	
 	@JsonIgnore
 	@ManyToOne(optional = false)
@@ -144,6 +158,22 @@ public class case_identifiers implements Serializable {
 		this.case_mname = case_mname;
 	}
 
+	public String getCase_nin() {
+		return case_nin;
+	}
+
+	public void setCase_nin(String case_nin) {
+		this.case_nin = case_nin;
+	}
+
+	public Integer getCase_nationality() {
+		return case_nationality;
+	}
+
+	public void setCase_nationality(Integer case_nationality) {
+		this.case_nationality = case_nationality;
+	}
+
 	public Integer getCase_death() {
 		return case_death;
 	}
@@ -158,6 +188,22 @@ public class case_identifiers implements Serializable {
 
 	public void setData_sent(Integer data_sent) {
 		this.data_sent = data_sent;
+	}
+
+	public String getCluster_uuid() {
+		return cluster_uuid;
+	}
+
+	public void setCluster_uuid(String cluster_uuid) {
+		this.cluster_uuid = cluster_uuid;
+	}
+
+	public Double getSimilarity_score() {
+		return similarity_score;
+	}
+
+	public void setSimilarity_score(Double similarity_score) {
+		this.similarity_score = similarity_score;
 	}
 
 	public case_biodata getBiodata() {

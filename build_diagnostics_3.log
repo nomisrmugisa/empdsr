@@ -1,0 +1,41 @@
+﻿[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------------< org.unicef:pdsr >---------------------------
+[INFO] Building pdsr 2.5.1
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.1.0:clean (default-clean) @ pdsr ---
+[INFO] Deleting C:\Users\SK\Documents\empdsr\new_main_empdsr\pdsr\target
+[INFO] 
+[INFO] --- resources:3.2.0:resources (default-resources) @ pdsr ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Using 'UTF-8' encoding to copy filtered properties files.
+[INFO] Copying 1 resource
+[INFO] Copying 134 resources
+[INFO] 
+[INFO] --- compiler:3.8.1:compile (default-compile) @ pdsr ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 219 source files to C:\Users\SK\Documents\empdsr\new_main_empdsr\pdsr\target\classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CaseEntryController.java:[2913,37] method podOptionsSelectOne() is already defined in class org.pdsr.controller.CaseEntryController
+[INFO] 1 error
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  31.185 s
+[INFO] Finished at: 2026-02-12T06:19:14+03:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.8.1:compile (default-compile) on project pdsr: Compilation failure
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CaseEntryController.java:[2913,37] method podOptionsSelectOne() is already defined in class org.pdsr.controller.CaseEntryController
+[ERROR] 
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

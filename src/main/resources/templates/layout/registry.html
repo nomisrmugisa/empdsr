@@ -54,6 +54,17 @@
 		<script src="webjars/jquery-ui/1.13.0/jquery-ui.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
 		<th:block th:replace="${scripts}" />
+		<script>
+			// Color all asterisks (*) in labels red
+			$(document).ready(function () {
+				$('label').each(function () {
+					var html = $(this).html();
+					if (html.indexOf('*') !== -1) {
+						$(this).html(html.replace(/\*/g, '<span class="text-danger">*</span>'));
+					}
+				});
+			});
+		</script>
 	</footer>
 
 </body>

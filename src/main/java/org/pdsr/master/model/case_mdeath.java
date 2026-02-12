@@ -84,6 +84,9 @@ public class case_mdeath implements Serializable {
 
 	@Column
 	private Integer mdeath_ante_hysterotomy;
+	
+	@Column
+	private Integer mdeath_ante_anticonvulsants;
 
 	@Lob
 	@Column
@@ -112,6 +115,9 @@ public class case_mdeath implements Serializable {
 
 	@Column
 	private Integer mdeath_intra_diazepam;
+	
+	@Column
+	private Integer mdeath_intra_uterotonics;
 
 	@Lob
 	@Column
@@ -149,6 +155,12 @@ public class case_mdeath implements Serializable {
 
 	@Column
 	private Integer mdeath_postpart_diazepam;
+	
+	@Column
+	private Integer mdeath_postpart_repairuterus;
+	
+	@Column
+	private Integer mdeath_postpart_perinealrepair;
 
 	@Lob
 	@Column
@@ -174,10 +186,21 @@ public class case_mdeath implements Serializable {
 
 	@Column
 	private Integer mdeath_other_icuventilation;
+	
+	@Column
+	private Integer mdeath_other_hdu;
 
 	@Lob
 	@Column
 	private String mdeath_new_intervention;
+	
+	@Lob
+	@Column
+	private String mdeath_summary_intervention;
+	
+	@Lob
+	@Column
+	private String mdeath_outcome_intervention;
 
 	@Column
 	@Temporal(TemporalType.DATE)
@@ -189,6 +212,9 @@ public class case_mdeath implements Serializable {
 
 	@Column
 	private Integer mdeath_minute;
+	
+	@Column
+	private String mdeath_possible_cause;
 
 	@Column
 	@Temporal(TemporalType.TIME)
@@ -199,7 +225,10 @@ public class case_mdeath implements Serializable {
 	private Integer mdeath_datetime_notstated;
 
 	@Column
-	private Integer mdeath_autopsy;// yes no
+	private Integer mdeath_autopsy;
+
+	@Column
+	private Integer mdeath_place;// yes no
 
 	@Column
 	@Temporal(TemporalType.TIME)
@@ -475,6 +504,14 @@ public class case_mdeath implements Serializable {
 		this.mdeath_ante_hysterotomy = mdeath_ante_hysterotomy;
 	}
 
+	public Integer getMdeath_ante_anticonvulsants() {
+		return mdeath_ante_anticonvulsants;
+	}
+
+	public void setMdeath_ante_anticonvulsants(Integer mdeath_ante_anticonvulsants) {
+		this.mdeath_ante_anticonvulsants = mdeath_ante_anticonvulsants;
+	}
+
 	public String getMdeath_ante_other() {
 		return mdeath_ante_other;
 	}
@@ -545,6 +582,14 @@ public class case_mdeath implements Serializable {
 
 	public void setMdeath_intra_diazepam(Integer mdeath_intra_diazepam) {
 		this.mdeath_intra_diazepam = mdeath_intra_diazepam;
+	}
+
+	public Integer getMdeath_intra_uterotonics() {
+		return mdeath_intra_uterotonics;
+	}
+
+	public void setMdeath_intra_uterotonics(Integer mdeath_intra_uterotonics) {
+		this.mdeath_intra_uterotonics = mdeath_intra_uterotonics;
 	}
 
 	public String getMdeath_intra_other() {
@@ -627,6 +672,22 @@ public class case_mdeath implements Serializable {
 		this.mdeath_postpart_diazepam = mdeath_postpart_diazepam;
 	}
 
+	public Integer getMdeath_postpart_repairuterus() {
+		return mdeath_postpart_repairuterus;
+	}
+
+	public void setMdeath_postpart_repairuterus(Integer mdeath_postpart_repairuterus) {
+		this.mdeath_postpart_repairuterus = mdeath_postpart_repairuterus;
+	}
+
+	public Integer getMdeath_postpart_perinealrepair() {
+		return mdeath_postpart_perinealrepair;
+	}
+
+	public void setMdeath_postpart_perinealrepair(Integer mdeath_postpart_perinealrepair) {
+		this.mdeath_postpart_perinealrepair = mdeath_postpart_perinealrepair;
+	}
+
 	public String getMdeath_postpart_other() {
 		return mdeath_postpart_other;
 	}
@@ -689,6 +750,46 @@ public class case_mdeath implements Serializable {
 
 	public void setMdeath_other_icuventilation(Integer mdeath_other_icuventilation) {
 		this.mdeath_other_icuventilation = mdeath_other_icuventilation;
+	}
+
+	public Integer getMdeath_other_hdu() {
+		return mdeath_other_hdu;
+	}
+
+	public void setMdeath_other_hdu(Integer mdeath_other_hdu) {
+		this.mdeath_other_hdu = mdeath_other_hdu;
+	}
+
+	public String getMdeath_summary_intervention() {
+		return mdeath_summary_intervention;
+	}
+
+	public void setMdeath_summary_intervention(String mdeath_summary_intervention) {
+		this.mdeath_summary_intervention = mdeath_summary_intervention;
+	}
+
+	public String getMdeath_outcome_intervention() {
+		return mdeath_outcome_intervention;
+	}
+
+	public void setMdeath_outcome_intervention(String mdeath_outcome_intervention) {
+		this.mdeath_outcome_intervention = mdeath_outcome_intervention;
+	}
+
+	public String getMdeath_possible_cause() {
+		return mdeath_possible_cause;
+	}
+
+	public void setMdeath_possible_cause(String mdeath_possible_cause) {
+		this.mdeath_possible_cause = mdeath_possible_cause;
+	}
+
+	public Integer getMdeath_place() {
+		return mdeath_place;
+	}
+
+	public void setMdeath_place(Integer mdeath_place) {
+		this.mdeath_place = mdeath_place;
 	}
 
 	public String getMdeath_new_intervention() {

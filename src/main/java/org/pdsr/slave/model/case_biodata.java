@@ -69,10 +69,17 @@ public class case_biodata implements Serializable {
 	private Integer biodata_marital;
 	
 	@Column
-	private Integer biodata_religion;
-	
-	@Column
 	private Integer biodata_ethnic;
+
+	@Column
+	private Integer biodata_religion;
+
+	@Lob
+	@Column
+	private String biodata_nok;
+
+	@Column
+	private Integer biodata_rnok;
 		
 	@Column
 	private Integer data_complete;
@@ -184,6 +191,22 @@ public class case_biodata implements Serializable {
 
 	public void setBiodata_ethic(Integer biodata_ethnic) {
 		this.biodata_ethnic = biodata_ethnic;
+	}
+
+	public String getBiodata_nok() {
+		return biodata_nok;
+	}
+
+	public void setBiodata_nok(String biodata_nok) {
+		this.biodata_nok = biodata_nok;
+	}
+
+	public Integer getBiodata_rnok() {
+		return biodata_rnok;
+	}
+
+	public void setBiodata_rnok(Integer biodata_rnok) {
+		this.biodata_rnok = biodata_rnok;
 	}
 
 	public Integer getData_complete() {

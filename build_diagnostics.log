@@ -1,0 +1,140 @@
+﻿[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------------< org.unicef:pdsr >---------------------------
+[INFO] Building pdsr 2.5.1
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.1.0:clean (default-clean) @ pdsr ---
+[INFO] Deleting C:\Users\SK\Documents\empdsr\new_main_empdsr\pdsr\target
+[INFO] 
+[INFO] --- resources:3.2.0:resources (default-resources) @ pdsr ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Using 'UTF-8' encoding to copy filtered properties files.
+[INFO] Copying 1 resource
+[INFO] Copying 134 resources
+[INFO] 
+[INFO] --- compiler:3.8.1:compile (default-compile) @ pdsr ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 219 source files to C:\Users\SK\Documents\empdsr\new_main_empdsr\pdsr\target\classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CaseEntryController.java:[180,17] cannot find symbol
+  symbol:   class IptsTableRepository
+  location: class org.pdsr.controller.CaseEntryController
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CaseEntryController.java:[183,17] cannot find symbol
+  symbol:   class TtdpTableRepository
+  location: class org.pdsr.controller.CaseEntryController
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CaseEntryController.java:[2923,37] method graviparaOptionsSelectOne() is already defined in class org.pdsr.controller.CaseEntryController
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CaseEntryController.java:[2950,37] method minuteOptionsSelectOne() is already defined in class org.pdsr.controller.CaseEntryController
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CaseEntryController.java:[2981,21] cannot find symbol
+  symbol:   class ipts_table
+  location: class org.pdsr.controller.CaseEntryController
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CaseEntryController.java:[2986,21] cannot find symbol
+  symbol:   class ttdp_table
+  location: class org.pdsr.controller.CaseEntryController
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CaseEntryController.java:[3021,37] method apgarOptionsSelectOne() is already defined in class org.pdsr.controller.CaseEntryController
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/master/model/case_identifiers.java:[76,10] cannot find symbol
+  symbol:   class Transient
+  location: class org.pdsr.master.model.case_identifiers
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/master/model/case_identifiers.java:[79,10] cannot find symbol
+  symbol:   class Transient
+  location: class org.pdsr.master.model.case_identifiers
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/SlaveMergeController.java:[481,46] cannot find symbol
+  symbol:   method setAntenatal_malprophy(java.lang.Integer)
+  location: variable mcase of type org.pdsr.master.model.case_antenatal
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/SlaveMergeController.java:[497,46] cannot find symbol
+  symbol:   method setAntenatal_tetanus(java.lang.Integer)
+  location: variable mcase of type org.pdsr.master.model.case_antenatal
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CentralPushController.java:[203,78] cannot find symbol
+  symbol:   method getAntenatal_tetanus()
+  location: class org.pdsr.master.model.case_antenatal
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CentralPushController.java:[204,80] cannot find symbol
+  symbol:   method getAntenatal_malprophy()
+  location: class org.pdsr.master.model.case_antenatal
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CaseEntryController.java:[358,38] cannot find symbol
+  symbol:   method setAntenatal_tetanus(java.lang.Integer)
+  location: variable page5 of type org.pdsr.master.model.case_antenatal
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CaseEntryController.java:[359,38] cannot find symbol
+  symbol:   method setAntenatal_malprophy(java.lang.Integer)
+  location: variable page5 of type org.pdsr.master.model.case_antenatal
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CaseEntryController.java:[1003,85] cannot find symbol
+  symbol:   method getAntenatal_malprophy()
+  location: variable o of type org.pdsr.master.model.case_antenatal
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CaseEntryController.java:[1005,88] cannot find symbol
+  symbol:   method getAntenatal_tetanus()
+  location: variable o of type org.pdsr.master.model.case_antenatal
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CaseEntryController.java:[2299,79] cannot find symbol
+  symbol:   method getAntenatal_tetanus()
+  location: variable o of type org.pdsr.master.model.case_antenatal
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CaseEntryController.java:[2301,79] cannot find symbol
+  symbol:   method getAntenatal_malprophy()
+  location: variable o of type org.pdsr.master.model.case_antenatal
+[INFO] 19 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  36.196 s
+[INFO] Finished at: 2026-02-12T01:06:50+03:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.8.1:compile (default-compile) on project pdsr: Compilation failure: Compilation failure: 
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CaseEntryController.java:[180,17] cannot find symbol
+[ERROR]   symbol:   class IptsTableRepository
+[ERROR]   location: class org.pdsr.controller.CaseEntryController
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CaseEntryController.java:[183,17] cannot find symbol
+[ERROR]   symbol:   class TtdpTableRepository
+[ERROR]   location: class org.pdsr.controller.CaseEntryController
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CaseEntryController.java:[2923,37] method graviparaOptionsSelectOne() is already defined in class org.pdsr.controller.CaseEntryController
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CaseEntryController.java:[2950,37] method minuteOptionsSelectOne() is already defined in class org.pdsr.controller.CaseEntryController
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CaseEntryController.java:[2981,21] cannot find symbol
+[ERROR]   symbol:   class ipts_table
+[ERROR]   location: class org.pdsr.controller.CaseEntryController
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CaseEntryController.java:[2986,21] cannot find symbol
+[ERROR]   symbol:   class ttdp_table
+[ERROR]   location: class org.pdsr.controller.CaseEntryController
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CaseEntryController.java:[3021,37] method apgarOptionsSelectOne() is already defined in class org.pdsr.controller.CaseEntryController
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/master/model/case_identifiers.java:[76,10] cannot find symbol
+[ERROR]   symbol:   class Transient
+[ERROR]   location: class org.pdsr.master.model.case_identifiers
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/master/model/case_identifiers.java:[79,10] cannot find symbol
+[ERROR]   symbol:   class Transient
+[ERROR]   location: class org.pdsr.master.model.case_identifiers
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/SlaveMergeController.java:[481,46] cannot find symbol
+[ERROR]   symbol:   method setAntenatal_malprophy(java.lang.Integer)
+[ERROR]   location: variable mcase of type org.pdsr.master.model.case_antenatal
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/SlaveMergeController.java:[497,46] cannot find symbol
+[ERROR]   symbol:   method setAntenatal_tetanus(java.lang.Integer)
+[ERROR]   location: variable mcase of type org.pdsr.master.model.case_antenatal
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CentralPushController.java:[203,78] cannot find symbol
+[ERROR]   symbol:   method getAntenatal_tetanus()
+[ERROR]   location: class org.pdsr.master.model.case_antenatal
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CentralPushController.java:[204,80] cannot find symbol
+[ERROR]   symbol:   method getAntenatal_malprophy()
+[ERROR]   location: class org.pdsr.master.model.case_antenatal
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CaseEntryController.java:[358,38] cannot find symbol
+[ERROR]   symbol:   method setAntenatal_tetanus(java.lang.Integer)
+[ERROR]   location: variable page5 of type org.pdsr.master.model.case_antenatal
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CaseEntryController.java:[359,38] cannot find symbol
+[ERROR]   symbol:   method setAntenatal_malprophy(java.lang.Integer)
+[ERROR]   location: variable page5 of type org.pdsr.master.model.case_antenatal
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CaseEntryController.java:[1003,85] cannot find symbol
+[ERROR]   symbol:   method getAntenatal_malprophy()
+[ERROR]   location: variable o of type org.pdsr.master.model.case_antenatal
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CaseEntryController.java:[1005,88] cannot find symbol
+[ERROR]   symbol:   method getAntenatal_tetanus()
+[ERROR]   location: variable o of type org.pdsr.master.model.case_antenatal
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CaseEntryController.java:[2299,79] cannot find symbol
+[ERROR]   symbol:   method getAntenatal_tetanus()
+[ERROR]   location: variable o of type org.pdsr.master.model.case_antenatal
+[ERROR] /C:/Users/SK/Documents/empdsr/new_main_empdsr/pdsr/src/main/java/org/pdsr/controller/CaseEntryController.java:[2301,79] cannot find symbol
+[ERROR]   symbol:   method getAntenatal_malprophy()
+[ERROR]   location: variable o of type org.pdsr.master.model.case_antenatal
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

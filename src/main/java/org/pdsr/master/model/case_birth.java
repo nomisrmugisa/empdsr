@@ -47,6 +47,9 @@ public class case_birth implements Serializable {
 
 	@Column
 	private Integer birth_mode;
+	
+	@Column
+	private Integer birth_decision;
 
 	@Column
 	private Integer birth_insistnormal;
@@ -170,6 +173,14 @@ public class case_birth implements Serializable {
 
 	public void setBirth_mode(Integer birth_mode) {
 		this.birth_mode = birth_mode;
+	}
+
+	public Integer getBirth_decision() {
+		return birth_decision;
+	}
+
+	public void setBirth_decision(Integer birth_decision) {
+		this.birth_decision = birth_decision;
 	}
 
 	public Integer getBirth_insistnormal() {

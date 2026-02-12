@@ -76,6 +76,38 @@ public class case_labour implements Serializable {
 	@Column
 	private Integer labour_seeperiod;
 	
+	@Column
+	private Integer labour_admission;
+	
+	@Column
+	private Integer labour_admission_cond;
+	
+	@Column
+	@Size(max = 80)
+	private String labour_blood_pressure;
+	
+	@Column
+	@Size(max = 80)
+	private String labour_pulsebp;
+	
+	@Column
+	@Size(max = 80)
+	private String labour_temptr;
+	
+	@Column
+	@Size(max = 80)
+	private String labour_respr;	
+	
+	@Column
+	private Integer labour_lvlcons;
+	
+	@Column
+	@Size(max = 65535)
+	private String labour_whyadmiss;
+	
+	@Column
+	@Size(max = 65535)
+	private String labour_admiss_diag;	
 	
 	@Column
 	private Integer labour_herbalind;
@@ -91,6 +123,19 @@ public class case_labour implements Serializable {
 	@Column
 	private Integer labour_partograph;
 	
+	@Column
+	private Integer labour_partograph_yes;
+	
+	@Lob
+	@Column
+	private String labour_partograph_no;
+	
+	@Column
+	private Integer labour_lasthour0;
+	
+	
+	@Column
+	private Integer labour_lastminute0;
 	
 	@Column
 	private Integer labour_lasthour1;
@@ -106,6 +151,12 @@ public class case_labour implements Serializable {
 	
 	@Column
 	private Integer labour_lastminute2;
+	
+	@Column
+	private Integer labour_lasthour3;	
+	
+	@Column
+	private Integer labour_lastminute3;
 	
 	
 	@Column
@@ -245,6 +296,126 @@ public class case_labour implements Serializable {
 
 	public void setLabour_lastminute2(Integer labour_lastminute2) {
 		this.labour_lastminute2 = labour_lastminute2;
+	}
+
+	public Integer getLabour_lasthour0() {
+		return labour_lasthour0;
+	}
+
+	public void setLabour_lasthour0(Integer labour_lasthour0) {
+		this.labour_lasthour0 = labour_lasthour0;
+	}
+
+	public Integer getLabour_lastminute0() {
+		return labour_lastminute0;
+	}
+
+	public void setLabour_lastminute0(Integer labour_lastminute0) {
+		this.labour_lastminute0 = labour_lastminute0;
+	}
+
+	public Integer getLabour_lasthour3() {
+		return labour_lasthour3;
+	}
+
+	public void setLabour_lasthour3(Integer labour_lasthour3) {
+		this.labour_lasthour3 = labour_lasthour3;
+	}
+
+	public Integer getLabour_lastminute3() {
+		return labour_lastminute3;
+	}
+
+	public void setLabour_lastminute3(Integer labour_lastminute3) {
+		this.labour_lastminute3 = labour_lastminute3;
+	}
+
+	public Integer getLabour_admission() {
+		return labour_admission;
+	}
+
+	public void setLabour_admission(Integer labour_admission) {
+		this.labour_admission = labour_admission;
+	} 
+
+	public Integer getLabour_admission_cond() {
+		return labour_admission_cond;
+	}
+
+	public void setLabour_admission_cond(Integer labour_admission_cond) {
+		this.labour_admission_cond = labour_admission_cond;
+	}	
+
+	public String getLabour_blood_pressure() {
+		return labour_blood_pressure;
+	}
+
+	public void setLabour_blood_pressure(String labour_blood_pressure) {
+		this.labour_blood_pressure = labour_blood_pressure;
+	}
+
+	public String getLabour_pulsebp() {
+		return labour_pulsebp;
+	}
+
+	public void setLabour_pulsebp(String labour_pulsebp) {
+		this.labour_pulsebp = labour_pulsebp;
+	}
+
+	public String getLabour_temptr() {
+		return labour_temptr;
+	}
+
+	public void setLabour_temptr(String labour_temptr) {
+		this.labour_temptr = labour_temptr;
+	}
+
+	public String getLabour_respr() {
+		return labour_respr;
+	}
+
+	public void setLabour_respr(String labour_respr) {
+		this.labour_respr = labour_respr;
+	}
+
+	public Integer getLabour_lvlcons() {
+		return labour_lvlcons;
+	}
+
+	public void setLabour_lvlcons(Integer labour_lvlcons) {
+		this.labour_lvlcons = labour_lvlcons;
+	}
+
+	public String getLabour_whyadmiss() {
+		return labour_whyadmiss;
+	}
+
+	public void setLabour_whyadmiss(String labour_whyadmiss) {
+		this.labour_whyadmiss = labour_whyadmiss;
+	}
+
+	public String getLabour_admiss_diag() {
+		return labour_admiss_diag;
+	}
+
+	public void setLabour_admiss_diag(String labour_admiss_diag) {
+		this.labour_admiss_diag = labour_admiss_diag;
+	}
+
+	public Integer getLabour_partograph_yes() {
+		return labour_partograph_yes;
+	}
+
+	public void setLabour_partograph_yes(Integer labour_partograph_yes) {
+		this.labour_partograph_yes = labour_partograph_yes;
+	}
+
+	public String getLabour_partograph_no() {
+		return labour_partograph_no;
+	}
+
+	public void setLabour_partograph_no(String labour_partograph_no) {
+		this.labour_partograph_no = labour_partograph_no;
 	}
 
 	public Date getLabour_seetime() {

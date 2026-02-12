@@ -63,6 +63,12 @@ public class case_babydeath implements Serializable {
 
 	
 	@Column
+	private Integer baby_resuscitation_done;
+	
+	@Column
+	private Integer baby_resuscitation_warmth;
+	
+	@Column
 	private Integer baby_apgar1;
 
 	
@@ -109,6 +115,9 @@ public class case_babydeath implements Serializable {
 
 	@Column
 	private Integer baby_medicalcod;
+
+	@Column
+	private String baby_possible_cause;
 
 	@JsonIgnore
 	@Lob
@@ -173,6 +182,22 @@ public class case_babydeath implements Serializable {
 
 	public void setNew_resuscitation(String new_resuscitation) {
 		this.new_resuscitation = new_resuscitation;
+	}
+
+	public Integer getBaby_resuscitation_done() {
+		return baby_resuscitation_done;
+	}
+
+	public void setBaby_resuscitation_done(Integer baby_resuscitation_done) {
+		this.baby_resuscitation_done = baby_resuscitation_done;
+	}
+
+	public Integer getBaby_resuscitation_warmth() {
+		return baby_resuscitation_warmth;
+	}
+
+	public void setBaby_resuscitation_warmth(Integer baby_resuscitation_warmth) {
+		this.baby_resuscitation_warmth = baby_resuscitation_warmth;
 	}
 
 	public Integer getBaby_apgar1() {
@@ -261,6 +286,14 @@ public class case_babydeath implements Serializable {
 
 	public void setBaby_medicalcod(Integer baby_medicalcod) {
 		this.baby_medicalcod = baby_medicalcod;
+	}
+
+	public String getBaby_possible_cause() {
+		return baby_possible_cause;
+	}
+
+	public void setBaby_possible_cause(String baby_possible_cause) {
+		this.baby_possible_cause = baby_possible_cause;
 	}
 
 	public String getBaby_json() {
