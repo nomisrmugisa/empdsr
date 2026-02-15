@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/registry :: layout(_,~{},~{::scripts},~{::content},~{})}">
+
+<content>
+    <div class="float-end" th:text="${myf}"></div>
+    <div class="col-md-12 py-3 my-3 mx-auto p-5 rounded box-shadow" style="background-color: #92c7f2;">
+        <form action="#" th:action="@{/registry/dhis2}" th:object="${dhis2}" method="POST" class="needs-validation"
+            novalidate th:unless="${isNowActive}">
+
+            <div class="row">
+                <div class="col-auto">
+                    <label class="control-label" th:text="#{dhis2_username}"></label>
+                    <input class="form-control form-control-sm" th:field="*{dhis2_username}" required />
+                </div>
+                <div class="col-auto">
+                    <label class="control-label" th:text="#{dhis2_password}"></label>
+                    <input type="password" class="form-control form-control-sm" th:field="*{dhis2_password}" required />
+                </div>
+            </div>
+            <hr class="mb-2 bg-secondary">
+            <div class="">
+                <button class="btn btn-primary" type="submit" th:utext="#{dhis2.button}"></button>
+            </div>
+
+            <div class="row mt-3">
+                <div th:each="item: ${errorlist}">
+                    <a class="text-danger" href="#"
+                        th:href="@{/registry/edit/{id}?page={page}(id=${item[1]}, page=${item[2]})}">
+                        [[${item[0]}]]
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</content>
+
+<scripts>
+    <script>
+        $(function () {
+            $(".datepicker").datepicker({
+                dateFormat: 'dd/mm/yy',
+                changeMonth: true,
+                changeYear: true
+            });
+        });
+    </script>
+    <script>
+        $('.timepicker').timepicker({
+            timeFormat: 'h:mm p',
+            interval: 30,
+            minTime: '12:00am',
+            maxTime: '11:59pm',
+            startTime: '01:00am',
+            dynamic: false,
+            dropdown: true,
+            scrollbar: true
+        });
+    </script>
+    <script>
+        (function () {
+            'use strict';
+            window.addEventListener('load', function () {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+</scripts>
+
+</html>

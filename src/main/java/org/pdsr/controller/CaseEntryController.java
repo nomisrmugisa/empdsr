@@ -30,7 +30,10 @@ import org.pdsr.EmailService;
 import org.pdsr.InternetAvailabilityChecker;
 import org.pdsr.ServiceApi;
 import org.pdsr.json.json_data;
+import org.pdsr.json.json_dhis2_dataValues;
+import org.pdsr.json.json_dhis2_form;
 import org.pdsr.json.json_redcap;
+import org.pdsr.pojos.Dhis2Authorisation;
 import org.pdsr.master.model.abnormality_table;
 import org.pdsr.master.model.case_antenatal;
 import org.pdsr.master.model.case_babydeath;
@@ -590,6 +593,542 @@ public class CaseEntryController {
 		headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=pdsr-sample.xlsx");
 
 		return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+	}
+
+	@GetMapping("/dhis2")
+	public String dhis2(Principal principal, Model model) {
+
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
+			model.addAttribute("activated", "0");
+			return "home";
+		}
+
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", synctable.getSync_name());
+
+		Dhis2Authorisation dhis2 = new Dhis2Authorisation();
+		model.addAttribute("dhis2", dhis2);
+
+		return "registry/case-dhis2";
+	}
+
+	@Transactional
+	@PostMapping("/dhis2")
+	public String dhis2(Principal principal, Model model, @ModelAttribute Dhis2Authorisation dhis2) {
+
+		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
+			model.addAttribute("activated", "0");
+			return "home";
+		}
+
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", synctable.getSync_name());
+
+		List<case_identifiers> entered_cases = caseRepo.findByDraftCases();// find cases not yet submitted
+		entered_cases.addAll(caseRepo.findByPendingCase_status(1));// find cases just entered and pending review
+		List<Object[]> errorList = new ArrayList<Object[]>();
+
+		for (case_identifiers item : entered_cases) {
+
+			// Check that all identifiers are
+			boolean hasError = false;
+			boolean isMaternalDeath = item.getCase_death() == CONSTANTS.MATERNAL_DEATH;
+			boolean isPerinatalDeath = item.getCase_death() == CONSTANTS.STILL_BIRTH
+					|| item.getCase_death() == CONSTANTS.NEONATAL_DEATH;
+			boolean isNeonatalDeath = item.getCase_death() == CONSTANTS.NEONATAL_DEATH;
+
+			boolean nameMissing = item.getCase_mname() == null || item.getCase_mname().trim().isEmpty();
+			hasError = hasError || nameMissing;
+			if (nameMissing) {
+				errorList.add(
+						new Object[] { "Mother's name is missing under Case Entry section.", item.getCase_uuid(), 0 });
+			}
+
+			boolean ipnMissing = item.getCase_mid() == null || item.getCase_mid().trim().isEmpty();
+			hasError = hasError || ipnMissing;
+			if (ipnMissing) {
+				errorList.add(
+						new Object[] { "Inpatient Number missing under Case Entry section.", item.getCase_uuid(), 0 });
+			}
+
+			boolean subcountyMissing = item.getBiodata() == null || item.getBiodata().getBiodata_location() == null
+					|| item.getBiodata().getBiodata_location().trim().isEmpty();
+			hasError = hasError || subcountyMissing;
+			if (subcountyMissing) {
+				errorList.add(new Object[] { "Sub-county is missing under Profile section.", item.getCase_uuid(), 1 });
+			}
+
+			boolean villageMissing = item.getBiodata() == null || item.getBiodata().getBiodata_village() == null
+					|| item.getBiodata().getBiodata_village().trim().isEmpty();
+			hasError = hasError || villageMissing;
+			if (villageMissing) {
+				errorList.add(new Object[] { "Village is missing under Profile section.", item.getCase_uuid(), 1 });
+			}
+
+			boolean nokMissing = item.getBiodata() == null || item.getBiodata().getBiodata_nok() == null
+					|| item.getBiodata().getBiodata_nok().trim().isEmpty();
+			hasError = hasError || nokMissing;
+			if (nokMissing) {
+				errorList
+						.add(new Object[] { "Next of Kin  is missing under Profile section.", item.getCase_uuid(), 1 });
+			}
+
+			boolean nokrMissing = item.getBiodata() == null || item.getBiodata().getBiodata_rnok() == null;
+			hasError = hasError || nokrMissing;
+			if (nokrMissing) {
+				errorList.add(new Object[] { "Relation to Next of Kin is missing under Profile section.",
+						item.getCase_uuid(), 1 });
+			}
+
+			boolean contactMissing = item.getBiodata() == null || item.getBiodata().getBiodata_contact() == null
+					|| item.getBiodata().getBiodata_contact().trim().isEmpty();
+			hasError = hasError || contactMissing;
+			if (contactMissing) {
+				errorList.add(new Object[] { "Telephone contact of mother/NOK is missing under Profile section.",
+						item.getCase_uuid(), 1 });
+			}
+
+			boolean gestationwksMissing = item.getPregnancy() == null
+					|| item.getPregnancy().getPregnancy_weeks() == null;
+			hasError = hasError || gestationwksMissing;
+			if (gestationwksMissing) {
+				errorList.add(new Object[] { "Gestation Age (Weeks) is missing under Pregnancy section.",
+						item.getCase_uuid(), 3 });
+			}
+
+			boolean gestationdaysMissing = item.getPregnancy() == null
+					|| item.getPregnancy().getPregnancy_days() == null;
+			hasError = hasError || gestationdaysMissing;
+			if (gestationdaysMissing) {
+				errorList.add(new Object[] { "Gestation Age (Days) is missing under Pregnancy section.",
+						item.getCase_uuid(), 3 });
+			}
+
+			boolean dateMDeathMissing = isMaternalDeath
+					&& (item.getMdeath() == null || item.getMdeath().getMdeath_date() == null);
+			hasError = hasError || dateMDeathMissing;
+			if (dateMDeathMissing) {
+				errorList.add(new Object[] { "Date of Maternal Death is missing under Mother's Death section.",
+						item.getCase_uuid(), 8 });
+			}
+
+			boolean timeMDeathMissing = isMaternalDeath
+					&& (item.getMdeath() == null || item.getMdeath().getMdeath_time() == null);
+			hasError = hasError || timeMDeathMissing;
+			if (timeMDeathMissing) {
+				errorList.add(new Object[] { "Time of Maternal Death is missing under Mother's Death section.",
+						item.getCase_uuid(), 8 });
+			}
+
+			boolean dateNeoDeathMissing = isNeonatalDeath
+					&& (item.getBabydeath() == null || item.getBabydeath().getBaby_ddate() == null);
+			hasError = hasError || dateNeoDeathMissing;
+			if (dateNeoDeathMissing) {
+				errorList.add(new Object[] { "Date of Neonatal Death is missing under Baby's Death section.",
+						item.getCase_uuid(), 8 });
+			}
+
+			boolean timeNeoDeathMissing = isNeonatalDeath
+					&& (item.getBabydeath() == null || item.getBabydeath().getBaby_dtime() == null);
+			hasError = hasError || timeNeoDeathMissing;
+			if (timeNeoDeathMissing) {
+				errorList.add(new Object[] { "Time of Neonatal Death is missing under Baby's Death section.",
+						item.getCase_uuid(), 8 });
+			}
+
+			boolean placeDeathMissing = item.getBiodata() == null || item.getBiodata().getBiodata_pod() == null;
+			hasError = hasError || placeDeathMissing;
+			if (placeDeathMissing) {
+				errorList.add(
+						new Object[] { "Place of Death is missing under Profile section.", item.getCase_uuid(), 1 });
+			}
+
+			boolean ageDeceasedMissing = isMaternalDeath
+					&& (item.getBiodata() == null || item.getBiodata().getBiodata_mage() == null);
+			hasError = hasError || ageDeceasedMissing;
+			if (ageDeceasedMissing) {
+				errorList
+						.add(new Object[] { "Mother's Age is missing under Profile section.", item.getCase_uuid(), 1 });
+			}
+
+			boolean weightDeceasedMissing = isNeonatalDeath
+					&& (item.getDelivery() == null || item.getDelivery().getDelivery_weight() == null);
+			hasError = hasError || weightDeceasedMissing;
+			if (weightDeceasedMissing) {
+				errorList.add(new Object[] { "Weight of Neonate is missing under Delivery section.",
+						item.getCase_uuid(), 6 });
+			}
+
+			boolean dateDeliveryMissing = isPerinatalDeath
+					&& (item.getDelivery() == null || item.getDelivery().getDelivery_date() == null);
+			hasError = hasError || dateDeliveryMissing;
+			if (dateDeliveryMissing) {
+				errorList.add(
+						new Object[] { "Date of Delivery is missing under Delivery section.", item.getCase_uuid(), 6 });
+			}
+
+			boolean timeDeliveryMissing = isPerinatalDeath
+					&& (item.getDelivery() == null || item.getDelivery().getDelivery_time() == null);
+			hasError = hasError || timeDeliveryMissing;
+			if (timeDeliveryMissing) {
+				errorList.add(
+						new Object[] { "Time of Delivery is missing under Delivery section.", item.getCase_uuid(), 6 });
+			}
+
+			boolean dateAdmissionMissing = item.getLabour() == null || item.getLabour().getLabour_seedate() == null;
+			hasError = hasError || dateAdmissionMissing;
+			if (dateAdmissionMissing) {
+				errorList.add(
+						new Object[] { "Date of Admission is missing under Labour section..", item.getCase_uuid(), 5 });
+			}
+
+			boolean timeAdmissionMissing = item.getLabour() == null || item.getLabour().getLabour_seetime() == null;
+			hasError = hasError || timeAdmissionMissing;
+			if (timeAdmissionMissing) {
+				errorList.add(
+						new Object[] { "Time of Admission is missing under Labour section..", item.getCase_uuid(), 5 });
+			}
+
+			boolean stateBabyMissing = item.getBirth() == null || item.getBirth().getBirth_babyoutcome() == null;
+			hasError = hasError || stateBabyMissing;
+			if (stateBabyMissing) {
+				errorList.add(new Object[] { "The State of the Baby after Delivery is missing under Birth section.",
+						item.getCase_uuid(), 7 });
+			}
+
+			boolean causeMDeathMissing = isMaternalDeath
+					&& (item.getMdeath() == null || item.getMdeath().getMdeath_possible_cause() == null
+							|| item.getMdeath().getMdeath_possible_cause().trim().isEmpty());
+			hasError = hasError || causeMDeathMissing;
+			if (causeMDeathMissing) {
+				errorList.add(new Object[] { "Possible Cause of Death is missing under Mother's Death section.",
+						item.getCase_uuid(), 8 });
+			}
+
+			boolean causeNeoDeathMissing = isNeonatalDeath
+					&& (item.getBabydeath() == null || item.getBabydeath().getBaby_possible_cause() == null
+							|| item.getBabydeath().getBaby_possible_cause().trim().isEmpty());
+			hasError = hasError || causeNeoDeathMissing;
+			if (causeNeoDeathMissing) {
+				errorList.add(new Object[] { "Possible Cause of Death is missing under Baby's Death section.",
+						item.getCase_uuid(), 8 });
+			}
+
+			boolean dateDispatchMissing = item.getNotes() == null || item.getNotes().getNotes_dispdate() == null;
+			hasError = hasError || dateDispatchMissing;
+			if (dateDispatchMissing) {
+				errorList.add(
+						new Object[] { "Date of Dispatch is missing under Notes section.", item.getCase_uuid(), 9 });
+			}
+
+			boolean deliveredByMissing = item.getNotes() == null || item.getNotes().getNotes_dlvby() == null
+					|| item.getNotes().getNotes_dlvby().trim().isEmpty();
+			hasError = hasError || deliveredByMissing;
+			if (deliveredByMissing) {
+				errorList.add(new Object[] { "Delivered by is missing under Notes section.", item.getCase_uuid(), 9 });
+			}
+
+			boolean deliveredContactMissing = item.getNotes() == null || item.getNotes().getNotes_dlvcontact() == null
+					|| item.getNotes().getNotes_dlvcontact().trim().isEmpty();
+			hasError = hasError || deliveredContactMissing;
+			if (deliveredContactMissing) {
+				errorList.add(new Object[] { "Delivered by Contact is missing under Notes section.",
+						item.getCase_uuid(), 9 });
+			}
+
+			boolean deliveredDateMissing = item.getNotes() == null || item.getNotes().getNotes_dlvdate() == null;
+			hasError = hasError || deliveredDateMissing;
+			if (deliveredDateMissing) {
+				errorList.add(
+						new Object[] { "Delivered by Date is missing under Notes section.", item.getCase_uuid(), 9 });
+			}
+
+			boolean receivedByMissing = item.getNotes() == null || item.getNotes().getNotes_rcvby() == null
+					|| item.getNotes().getNotes_rcvby().trim().isEmpty();
+			hasError = hasError || receivedByMissing;
+			if (receivedByMissing) {
+				errorList.add(new Object[] { "Received by is missing under Notes section.", item.getCase_uuid(), 9 });
+			}
+
+			boolean receivedDateMissing = item.getNotes() == null || item.getNotes().getNotes_rcvdate() == null;
+			hasError = hasError || receivedDateMissing;
+			if (receivedDateMissing) {
+				errorList.add(
+						new Object[] { "Received by Date is missing under Notes section.", item.getCase_uuid(), 9 });
+			}
+
+			boolean notifiedByMissing = item.getNotes() == null || item.getNotes().getNotes_ntfby() == null
+					|| item.getNotes().getNotes_ntfby().trim().isEmpty();
+			hasError = hasError || notifiedByMissing;
+			if (notifiedByMissing) {
+				errorList.add(new Object[] { "Notified by is missing under Notes section.", item.getCase_uuid(), 9 });
+			}
+
+			boolean notifiedContactMissing = item.getNotes() == null || item.getNotes().getNotes_ntfcontact() == null
+					|| item.getNotes().getNotes_ntfcontact().trim().isEmpty();
+			hasError = hasError || notifiedContactMissing;
+			if (notifiedContactMissing) {
+				errorList.add(
+						new Object[] { "Notified by Contact is missing under Notes section.", item.getCase_uuid(), 9 });
+			}
+
+			// Assigning DHIS2 Values -------------------------------
+			json_dhis2_form d = new json_dhis2_form();
+			int uuidLength = item.getCase_uuid().length();
+			d.setEvent(item.getCase_uuid().substring(uuidLength - 11));
+			SimpleDateFormat utcFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+			if (item.getCase_death() == CONSTANTS.STILL_BIRTH) {
+				d.setProgram(CONSTANTS.DHIS2_PERINATAL_NOTIFICATION_PROGRAM);
+
+			} else if (item.getCase_death() == CONSTANTS.NEONATAL_DEATH) {
+				d.setProgram(CONSTANTS.DHIS2_PERINATAL_NOTIFICATION_PROGRAM);
+
+			} else if (item.getCase_death() == CONSTANTS.MATERNAL_DEATH) {
+				d.setProgram(CONSTANTS.DHIS2_MATERNAL_NOTIFICATION_PROGRAM);
+
+			} else {
+				// Throw error - type of death has not been selected
+				hasError = hasError || true;
+				errorList.add(new Object[] { "Type of Death has not been selected.", item.getCase_uuid(), 0 });
+			}
+
+			d.setOrgUnit(synctable.getSync_code());
+			d.setEventDate(dateFormat.format(item.getCase_date()));
+			d.setStatus(CONSTANTS.DHIS2_FORM_STATUS);
+			d.setStoredBy(dhis2.getDhis2_username());
+
+			// AttributeOptionCombo
+			if (item.getCase_nationality() == CONSTANTS.DHIS2_NATIONAL) {
+				d.setAttributeOptionCombo(CONSTANTS.DHIS2_ATTRIBUTECOMBO_NATIONAL);
+			} else if (item.getCase_nationality() == CONSTANTS.DHIS2_REFUGEE) {
+				d.setAttributeOptionCombo(CONSTANTS.DHIS2_ATTRIBUTECOMBO_REFUGEE);
+			} else if (item.getCase_nationality() == CONSTANTS.DHIS2_FOREIGNER) {
+				d.setAttributeOptionCombo(CONSTANTS.DHIS2_ATTRIBUTECOMBO_FOREIGNER);
+			} else {
+				// Throw error - Nationality has not been selected
+				hasError = hasError || true;
+				errorList.add(new Object[] { "Nationality has not been selected.", item.getCase_uuid(), 0 });
+			}
+
+			if (hasError) {
+				model.addAttribute("dhis2", dhis2);
+				model.addAttribute("errorlist", errorList);
+
+				return "registry/case-dhis2";
+			}
+
+			d.getCoordinate().setLongitude(50.7); // synctable.getSync_dhis2_longitude()
+			d.getCoordinate().setLatitude(10.5); // synctable.getSync_dhis2_latitude()
+
+			// MOH Case Number
+			d.getDataValues().add(new json_dhis2_dataValues("ZKBE8Xm9DJG", item.getCase_id()));
+
+			// Perinatal & Maternal Death Notification DataValues
+			d.getDataValues().add(new json_dhis2_dataValues(
+					isPerinatalDeath ? "ARHfUa6Z9qs" : (isMaternalDeath ? "HCbRydAAt1T" : ""), item.getCase_mname()));
+
+			if (isMaternalDeath) {
+				d.getDataValues().add(new json_dhis2_dataValues("j9euMjl5QGc", item.getCase_nin()));
+			}
+
+			d.getDataValues().add(new json_dhis2_dataValues(
+					isPerinatalDeath ? "XYcqirdNu2m" : (isMaternalDeath ? "YNXzLwM2R6p" : ""), item.getCase_mid()));
+
+			d.getDataValues()
+					.add(new json_dhis2_dataValues(
+							isPerinatalDeath ? "WH6mqVqUyjY" : (isMaternalDeath ? "WFSWhrHOUFl" : ""),
+							item.getBiodata().getBiodata_village()));
+
+			d.getDataValues()
+					.add(new json_dhis2_dataValues(
+							isPerinatalDeath ? "VRVt0LjRQvb" : (isMaternalDeath ? "xQoLDOeMANl" : ""),
+							item.getBiodata().getBiodata_location()));
+
+			d.getDataValues()
+					.add(new json_dhis2_dataValues(
+							isPerinatalDeath ? "ro2ycn9f2UP" : (isMaternalDeath ? "MwBfsz2pc0j" : ""),
+							item.getCase_sync().getSync_name()));
+
+			if (isMaternalDeath) {
+				d.getDataValues().add(new json_dhis2_dataValues("rXcIphzS2GV", item.getBiodata().getBiodata_mage()));
+			}
+
+			d.getDataValues()
+					.add(new json_dhis2_dataValues(
+							isPerinatalDeath ? "yy6fkRMHXuv" : (isMaternalDeath ? "IBlMJxS9Qe7" : ""),
+							item.getBiodata().getBiodata_nok()));
+
+			d.getDataValues().add(new json_dhis2_dataValues((isPerinatalDeath ? "Svg1CaephM3" : ""),
+					item.getBiodata().getBiodata_contact()));
+
+			if (isPerinatalDeath) {
+				Integer ageDays = 0, ageHours = 0;
+				if (isNeonatalDeath) {
+					Date dateDelv = item.getDelivery().getDelivery_date();
+					Integer hourDelv = item.getDelivery().getDelivery_hour();
+
+					Date dateDeath = item.getBabydeath().getBaby_ddate();
+					Integer hourDeath = item.getBabydeath().getBaby_dhour();
+
+					ageDays = (int) CONSTANTS.calculateAgeInDays(dateDelv, dateDeath);
+					ageHours = (ageDays == 0) ? (hourDeath - hourDelv) : hourDeath;
+				}
+
+				d.getDataValues().add(new json_dhis2_dataValues((isPerinatalDeath ? "tVHwoNnaTmj" : ""), ageDays));
+
+				d.getDataValues().add(new json_dhis2_dataValues((isPerinatalDeath ? "LRRZJWsh5p0" : ""), ageHours));
+
+				d.getDataValues().add(new json_dhis2_dataValues((isPerinatalDeath ? "x8dzSqL6DfQ" : ""),
+						(int) (1000.0 * item.getDelivery().getDelivery_weight())));
+			}
+
+			d.getDataValues()
+					.add(new json_dhis2_dataValues(
+							isPerinatalDeath ? "h9MKKyiH6Ar" : (isMaternalDeath ? "jhisgRfr13C" : ""),
+							item.getPregnancy().getPregnancy_weeks()));
+
+			if (isPerinatalDeath) {
+				Integer durDays = 0, durHours = 0, durMins = 0;
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(item.getDelivery().getDelivery_date());
+				cal.set(Calendar.HOUR, item.getDelivery().getDelivery_hour());
+				cal.set(Calendar.MINUTE, item.getDelivery().getDelivery_minute());
+				String dateTimeDelv = utcFormat.format(cal.getTime());
+
+				d.getDataValues().add(new json_dhis2_dataValues((isPerinatalDeath ? "f4iqSVSIif1" : ""), dateTimeDelv));
+
+				Date dateAdmission = item.getLabour().getLabour_seedate();
+				Integer hourAdmission = item.getLabour().getLabour_seehour();
+
+				if (isNeonatalDeath) {
+					Date dateDeath = item.getBabydeath().getBaby_ddate();
+					Integer hourDeath = item.getBabydeath().getBaby_dhour();
+					Integer minDeath = item.getBabydeath().getBaby_dminute();
+
+					durDays = (int) CONSTANTS.calculateAgeInDays(dateAdmission, dateDeath);
+					durHours = (durDays == 0) ? (hourDeath - hourAdmission) : hourDeath;
+
+					d.getDataValues().add(new json_dhis2_dataValues("LfoSGxsRASi", minDeath));
+
+					d.getDataValues().add(new json_dhis2_dataValues("lN4hzVULEdF", dateFormat.format(dateDeath)));
+				} else {
+					d.getDataValues()
+							.add(new json_dhis2_dataValues("LfoSGxsRASi", item.getDelivery().getDelivery_minute()));
+
+					d.getDataValues().add(new json_dhis2_dataValues("lN4hzVULEdF",
+							dateFormat.format(item.getDelivery().getDelivery_date())));
+
+				}
+
+				d.getDataValues().add(new json_dhis2_dataValues("Gz95Yv0DaHm", durDays));
+
+				d.getDataValues().add(new json_dhis2_dataValues("oeaDOmhm0CS", durHours));
+
+				String typeDeath = "";
+				if (item.getBirth().getBirth_babyoutcome() == 0) {
+					typeDeath = CONSTANTS.DHIS2_FSB;
+				} else if (item.getBirth().getBirth_babyoutcome() == 1) {
+					typeDeath = CONSTANTS.DHIS2_MSB;
+				} else if (item.getBirth().getBirth_babyoutcome() == 2) {
+					if (durDays <= 7) {
+						typeDeath = CONSTANTS.DHIS2_END;
+					}
+				}
+				d.getDataValues().add(new json_dhis2_dataValues("gBhV2LXen0l", typeDeath));
+
+				// Possible Cause of Death
+				if (isNeonatalDeath) {
+					d.getDataValues().add(
+							new json_dhis2_dataValues("ikWjwp2LnoN", item.getBabydeath().getBaby_possible_cause()));
+				} else {
+					d.getDataValues().add(new json_dhis2_dataValues("ikWjwp2LnoN", "Still Birth"));
+				}
+
+			}
+
+			if (isMaternalDeath) {
+				{
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(item.getLabour().getLabour_seedate());
+					cal.set(Calendar.HOUR, item.getLabour().getLabour_seehour());
+					cal.set(Calendar.MINUTE, item.getLabour().getLabour_seeminute());
+					String dateTimeAdmission = utcFormat.format(cal.getTime());
+					d.getDataValues().add(new json_dhis2_dataValues("r6tDKOx4iVL", dateTimeAdmission));
+				}
+				{
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(item.getMdeath().getMdeath_date());
+					cal.set(Calendar.HOUR, item.getMdeath().getMdeath_hour());
+					cal.set(Calendar.MINUTE, item.getMdeath().getMdeath_minute());
+					String dateTimeDeath = utcFormat.format(cal.getTime());
+					d.getDataValues().add(new json_dhis2_dataValues("qWAqTjmR6Dj", dateTimeDeath));
+				}
+
+				String died = "";
+				if (item.getLabour().getLabour_occured() == 0) {
+					died = CONSTANTS.DHIS2_DIED_UNDELIVERED;
+				} else if (item.getLabour().getLabour_occured() == 1) {
+					died = CONSTANTS.DHIS2_DIED_INLABOUR;
+					if (item.getDelivery().getDelivery_occured() == 1) {
+						died = CONSTANTS.DHIS2_DIED_AFTERDELIVERY;
+					}
+				}
+				if (item.getBirth().getBirth_mode() == 1 || item.getBirth().getBirth_mode() == 2) {
+					died = CONSTANTS.DHIS2_DIED_INTHEATRE;
+				}
+				d.getDataValues().add(new json_dhis2_dataValues("FvHDEzD1M0A", died));
+
+				d.getDataValues()
+						.add(new json_dhis2_dataValues("cdAirZ9dQKj", item.getMdeath().getMdeath_possible_cause()));
+			}
+
+			d.getDataValues().add(new json_dhis2_dataValues("BMGZD6w3tid", dateFormat.format(item.getCase_date())));
+
+			d.getDataValues().add(
+					new json_dhis2_dataValues("MTfPUIoVmKT", dateFormat.format(item.getNotes().getNotes_dispdate())));
+
+			d.getDataValues()
+					.add(new json_dhis2_dataValues(
+							isPerinatalDeath ? "m4RxzRUvdG2" : (isMaternalDeath ? "ZmbVtTXyG29" : ""),
+							item.getNotes().getNotes_dlvby()));
+
+			d.getDataValues()
+					.add(new json_dhis2_dataValues(
+							isPerinatalDeath ? "UX4BsvcuDUS" : (isMaternalDeath ? "jVfTrVzuRoP" : ""),
+							item.getNotes().getNotes_dlvcontact()));
+
+			d.getDataValues().add(
+					new json_dhis2_dataValues("yow1Falsvhe", dateFormat.format(item.getNotes().getNotes_dlvdate())));
+
+			d.getDataValues()
+					.add(new json_dhis2_dataValues(
+							isPerinatalDeath ? "HKsuTxhq0TP" : (isMaternalDeath ? "YP7LbXgv1c8" : ""),
+							item.getNotes().getNotes_rcvby()));
+
+			d.getDataValues().add(
+					new json_dhis2_dataValues("x3RuFJLnC37", dateFormat.format(item.getNotes().getNotes_rcvdate())));
+
+			d.getDataValues()
+					.add(new json_dhis2_dataValues(
+							isPerinatalDeath ? "D0IBmvQLA2Q" : (isMaternalDeath ? "v7mt2RBEWEq" : ""),
+							item.getNotes().getNotes_ntfby()));
+
+			d.getDataValues()
+					.add(new json_dhis2_dataValues(
+							isPerinatalDeath ? "wWZ4b4m281F" : (isMaternalDeath ? "HRWIjaS9i4M" : ""),
+							item.getNotes().getNotes_ntfcontact()));
+
+			System.err.println(d.toString());
+			final json_dhis2_form msg = api.saveForm(d, synctable.getSync_url(), dhis2.getDhis2_username(),
+					dhis2.getDhis2_password());
+		} // end for loop
+
+		model.addAttribute("dhis2", dhis2);
+		model.addAttribute("back", "back");
+
+		return "registry/case-dhis2";
 	}
 
 	@GetMapping("/add")

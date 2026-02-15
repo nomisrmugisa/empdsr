@@ -12,6 +12,7 @@ import org.pdsr.json.DecryptedAuditRecommendation;
 import org.pdsr.json.DecryptedCaseIdentifiers;
 import org.pdsr.json.DecryptedWeeklyMonitoring;
 import org.pdsr.json.EncryptedMessage;
+import org.pdsr.json.json_dhis2_form;
 import org.pdsr.json.json_redcap;
 import org.pdsr.master.model.facility_table;
 import org.pdsr.master.model.sync_table;
@@ -261,20 +262,21 @@ public class ServiceApi {
 	}
 
 	/// DHIS2 SAVE FORM
-	public Dhis2Form saveForm(Dhis2Form json, String dhis2_url, String dhis2_username, String dhis2_password) {
+	public json_dhis2_form saveForm(json_dhis2_form json, String dhis2_url, String dhis2_username,
+			String dhis2_password) {
 
 		try {
 
 			RestTemplate rt = builder.basicAuthentication(dhis2_username, dhis2_password).build();
 
-			rt.postForObject(dhis2_url, json, Dhis2Form.class);
+			rt.postForObject(dhis2_url, json, json_dhis2_form.class);
 
 		} catch (RestClientException ex) {
 			System.err.println("Error is " + ex.getMessage());
 			ex.printStackTrace();
 		}
 
-		return new Dhis2Form();
+		return new json_dhis2_form();
 	}
 
 	/// REDCAP DATA
