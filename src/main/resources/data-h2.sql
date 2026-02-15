@@ -657,3 +657,143 @@ MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) v
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('icd10mm_options',7,'Non obstetric complication');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('icd10mm_options',8,'Unknown');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('icd10mm_options',9,'Coincidental/Accidental');
+
+-- Missing Options from Master
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('posneg_options',0,'Negative(-ve)');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('posneg_options',1,'Positive(+ve)');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('posneg_options',77,'Unknown');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('posneg_options',88,'Not Stated');
+
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('bldgrp_options',0,'A');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('bldgrp_options',1,'B');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('bldgrp_options',2,'AB');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('bldgrp_options',3,'O');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('bldgrp_options',77,'Unknown');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('bldgrp_options',88,'Not Stated');
+
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('patient_options',0,'Mother');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('patient_options',1,'Baby');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('patient_options',2,'Mother and Baby');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('patient_options',88,'Not Stated');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('patient_options',99,'Not Applicable');
+
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('source_options',0,'Hospital');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('source_options',1,'Health Center');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('source_options',2,'Private Maternity/Clinic');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('source_options',3,'VHT');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('source_options',4,'TBA');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('source_options',88,'Not Stated');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('source_options',99,'Not Applicable');
+
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('edu_options',1,'No Education');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('edu_options',2,'Non-formal');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('edu_options',3,'Basic/Primary');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('edu_options',4,'Secondary');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('edu_options',5,'Post Secondary/Vocation');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('edu_options',6,'Tertiary');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('edu_options',88,'Not Stated');
+
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('work_options',0,'Unemployed');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('work_options',1,'House wife');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('work_options',2,'Farming');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('work_options',3,'Trading');	
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('work_options',4,'Artisan (hairdresser, seamstress, etc)');	
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('work_options',5,'Civil/Public service');	
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('work_options',66,'Other work');	
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('work_options',88,'Not Stated');
+
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('marital_options',0,'Never married');	
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('marital_options',1,'Married');	
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('marital_options',2,'Living together');	
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('marital_options',3,'Divorced/Separated');	
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('marital_options',4,'Widowed');	
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('marital_options',88,'Not Stated');
+
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('religion_options',1,'Christian');	
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('religion_options',2,'Moslem');	
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('religion_options',3,'Traditionalist/Spiritualist');	
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('religion_options',4,'Other');	
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('religion_options',88,'Not Stated');
+
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('ethnic_options',1,'Akan');	
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('ethnic_options',2,'Ga/Dangme');	
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('ethnic_options',3,'Ewe');	
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('ethnic_options',4,'Guan');	
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('ethnic_options',5,'Mole/Dagbani');	
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('ethnic_options',6,'Grussi');	
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('ethnic_options',7,'Gruma');	
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('ethnic_options',8,'Other');	
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('ethnic_options',88,'Not Stated');
+
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',0,'to 11 years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',12,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',13,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',14,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',15,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',16,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',17,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',18,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',19,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',20,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',21,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',22,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',23,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',24,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',25,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',26,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',27,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',28,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',29,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',30,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',31,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',32,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',33,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',34,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',35,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',36,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',37,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',38,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',39,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',40,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',41,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',42,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',43,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',44,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',45,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',46,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',47,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',48,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',49,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',50,'years');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',51,'years and above');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',88,'Not Stated');
+
+-- User and Role Initialization
+MERGE INTO user_table(username, enabled, password, usercontact, useremail, userfullname, alerted) KEY(username) 
+VALUES (
+    'webadmin'
+    , true
+    , '$2a$10$SLlNbnvkIqatweZxewyZUeF6yrGexjppQpJgntGXCxWMQCaT3ORdi'
+    , '233246926396'
+    , 'webadmin@kintampo-hrc.org'
+    , 'ROOT ADMINISTRATOR',false
+);
+
+MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_ENTRY', 'Enter cases into the system');
+MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_AUDIT', 'Review and recommend actions on submitted cases');
+MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_TASKS', 'Monitor and change action status');
+MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_SETUP', 'Manage users, facility code from the controls section');
+MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_VIEWS', 'View analysis and reports');
+MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_NATIONAL', 'National level viewing');
+MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_REGIONAL', 'Regional level viewing');
+MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_DISTRICT', 'District level viewing');
+
+DELETE FROM user_group WHERE username='webadmin';
+MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_ENTRY');
+MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_AUDIT');
+MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_TASKS');
+MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_VIEWS');
+MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_SETUP');
+MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_NATIONAL');
+MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_REGIONAL');
+MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_DISTRICT');

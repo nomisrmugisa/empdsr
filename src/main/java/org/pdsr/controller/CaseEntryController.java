@@ -736,7 +736,9 @@ public class CaseEntryController {
 				data.setCase_uuid(selected);
 				selected.setAntenatal(data);
 			}
-			model.addAttribute("risk_options", riskRepo.findAll());
+			// model.addAttribute("risk_options", riskRepo.findAll());
+			// model.addAttribute("ipt_options", iptsRepo.findAll());
+			// model.addAttribute("dp_options", ttdpRepo.findAll());
 			break;
 		}
 
@@ -1986,8 +1988,8 @@ public class CaseEntryController {
 	public Map<Integer, String> pweeksOptionsSelectOne() {
 		final Map<Integer, String> map = new LinkedHashMap<>();
 
-		for (datamap elem : mapRepo.findByMap_feature("pweeks_options")) {
-			map.put(elem.getMap_value(), elem.getMap_value() + " " + elem.getMap_label());
+		for (int i = 0; i <= 45; i++) {
+			map.put(i, i + " week(s)");
 		}
 
 		return new TreeMap<Integer, String>(map);
@@ -1997,8 +1999,8 @@ public class CaseEntryController {
 	public Map<Integer, String> pdaysOptionsSelectOne() {
 		final Map<Integer, String> map = new HashMap<>();
 
-		for (datamap elem : mapRepo.findByMap_feature("pdays_options")) {
-			map.put(elem.getMap_value(), elem.getMap_value() + " " + elem.getMap_label());
+		for (int i = 0; i <= 6; i++) {
+			map.put(i, i + " day(s)");
 		}
 
 		return new TreeMap<Integer, String>(map);
@@ -2019,9 +2021,10 @@ public class CaseEntryController {
 		final Map<Integer, String> map = new LinkedHashMap<>();
 
 		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("gravipara_options")) {
-			map.put(elem.getMap_value(), elem.getMap_label());
+		for (int i = 1; i < 25; i++) {
+			map.put(i, i + "");
 		}
+		map.put(88, "Not stated");
 
 		return map;
 	}
@@ -2034,6 +2037,36 @@ public class CaseEntryController {
 		for (datamap elem : mapRepo.findByMap_feature("ptype_options")) {
 			map.put(elem.getMap_value(), elem.getMap_label());
 		}
+
+		return map;
+	}
+
+
+
+	@ModelAttribute("attendno_options")
+	public Map<Integer, String> attendnoOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (int i = 1; i < 25; i++) {
+			map.put(i, i + "");
+		}
+		map.put(88, "Not stated");
+		map.put(99, "Not Applicable");
+
+		return map;
+	}
+
+	@ModelAttribute("hour_options")
+	public Map<Integer, String> hourOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (int i = 0; i < 25; i++) {
+			map.put(i, i + " hour(s)");
+		}
+		map.put(88, "Not stated");
+		map.put(99, "Not Applicable");
 
 		return map;
 	}
@@ -2053,6 +2086,26 @@ public class CaseEntryController {
 		return map;
 	}
 
+
+
+
+	@ModelAttribute("posneg_options")
+	public Map<Integer, String> posnegOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		map.put(0, "Negative(-ve)");
+		map.put(1, "Positive(+ve)");
+		map.put(77, "Unknown");
+		map.put(88, "Not Stated");
+
+		return map;
+	}
+
+	@ModelAttribute("hiv_options")
+	public Map<Integer, String> hivOptionsAlias() {
+		return posnegOptionsSelectOne();
+	}
 
 
 	@ModelAttribute("liqourodour_options")
@@ -2735,219 +2788,6 @@ public class CaseEntryController {
 		return map;
 	}
 
-	@ModelAttribute("yesnodkna_options")
-	public Map<Integer, String> yesnodknaOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("yesnodkna_options")) {
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
-
-		return map;
-	}
-
-	@ModelAttribute("posneg_options")
-	public Map<Integer, String> posnegOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("posneg_options")) {
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
-
-		return map;
-	}
-
-	@ModelAttribute("hiv_options")
-	public Map<Integer, String> hivOptionsAlias() {
-		return posnegOptionsSelectOne();
-	}
-
-	@ModelAttribute("patient_options")
-	public Map<Integer, String> patientOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("patient_options")) {
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
-
-		return map;
-	}
-
-	@ModelAttribute("source_options")
-	public Map<Integer, String> sourceOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("source_options")) {
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
-
-		return map;
-	}
-
-	@ModelAttribute("trans_options")
-	public Map<Integer, String> transOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("trans_options")) {
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
-
-		return map;
-	}
-
-	@ModelAttribute("period_options")
-	public Map<Integer, String> periodOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		map.put(1, msg.getMessage("shift.morning", null, Locale.getDefault()));
-		map.put(3, msg.getMessage("shift.afternoon", null, Locale.getDefault()));
-		map.put(6, msg.getMessage("shift.night", null, Locale.getDefault()));
-		map.put(88, "Not Stated");
-
-		return map;
-	}
-
-	@ModelAttribute("mode_options")
-	public Map<Integer, String> modeOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("mode_options")) {
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
-
-		return map;
-	}
-
-	@ModelAttribute("startmode_options")
-	public Map<Integer, String> startmodeOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("startmode_options")) {
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
-
-		return map;
-	}
-
-	@ModelAttribute("provider_options")
-	public Map<Integer, String> providerOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("provider_options")) {
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
-
-		return map;
-	}
-
-	@ModelAttribute("birthloc_options")
-	public Map<Integer, String> birthlocOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("birthloc_options")) {
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
-
-		return map;
-	}
-
-	@ModelAttribute("liqourvolume_options")
-	public Map<Integer, String> liqourvolumeOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("liqourvolume_options")) {
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
-
-		return map;
-	}
-
-	@ModelAttribute("liqourcolor_options")
-	public Map<Integer, String> liqourcolorOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("liqourcolor_options")) {
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
-
-		return map;
-	}
-
-	@ModelAttribute("bldgrp_options")
-	public Map<Integer, String> bldgrpOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("bldgrp_options")) {
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
-
-		return map;
-	}
-
-	@ModelAttribute("dthplace_options")
-	public Map<Integer, String> dthplaceOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("dthplace_options")) {
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
-
-		return map;
-	}
-
-	@ModelAttribute("attendno_options")
-	public Map<Integer, String> attendnoOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		for (int i = 1; i < 25; i++) {
-			map.put(i, i + "");
-		}
-		map.put(88, "Not stated");
-		map.put(99, "Not Applicable");
-
-		return map;
-	}
-
-	@ModelAttribute("hour_options")
-	public Map<Integer, String> hourOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		for (int i = 0; i < 25; i++) {
-			map.put(i, i + " hour(s)");
-		}
-		map.put(88, "Not stated");
-		map.put(99, "Not Applicable");
-
-		return map;
-	}
-
-	@ModelAttribute("decision_options")
-	public Map<Integer, String> decisionOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("decision_options")) {
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
-
-		return map;
-	}
 
 	@ModelAttribute("risk_options")
 	public List<risk_table> riskOptions() {
@@ -3018,6 +2858,53 @@ public class CaseEntryController {
 
 		return map;
 	}
+
+	@ModelAttribute("bldgrp_options")
+	public Map<Integer, String> bldgrpOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("bldgrp_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("patient_options")
+	public Map<Integer, String> patientOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("patient_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("source_options")
+	public Map<Integer, String> sourceOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("source_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("death_options")
+	public Map<Integer, String> deathOptions() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+		map.put(77, "Still Birth");
+		map.put(88, "Early Neonatal Death");
+		map.put(99, "Maternal Death");
+		return map;
+	}
+
+
 
 }
 // end class

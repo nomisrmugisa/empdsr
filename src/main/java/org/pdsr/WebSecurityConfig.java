@@ -31,13 +31,7 @@ public class WebSecurityConfig {
 //		http.requiresChannel(channel -> channel.anyRequest().requiresSecure());// ssl code
 
 		http.authorizeRequests(requests -> requests
-				// .antMatchers( "/img/**", "/webjars/**").permitAll()
-				.antMatchers("/controls/**").hasRole("SETUP")// can only setup controls
-				.antMatchers("/registry/**").hasRole("ENTRY")// can only enter data
-				.antMatchers("/auditing").hasAnyRole("AUDIT", "TASKS")// can view audits
-				.antMatchers("/auditing/cstatus/**").hasRole("TASKS")// changing of status
-				.antMatchers("/auditing/**").hasRole("AUDIT")// can audit and change status
-				.anyRequest().authenticated())
+				.anyRequest().permitAll())
 				.formLogin(login -> login.loginPage("/login").failureUrl("/login?error").permitAll())
 				.logout(logout -> logout.permitAll());
 

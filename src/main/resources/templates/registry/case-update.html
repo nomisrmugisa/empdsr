@@ -2,6 +2,7 @@
 <html th:replace="~{layout/registry :: layout(_,~{::links},~{::scripts},~{::content},~{})}">
 <links>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" />
+
 </links>
 
 <content>
@@ -69,7 +70,7 @@
 			method="POST" class="needs-validation" novalidate>
 			<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
 
-			<div th:if="${page==0}" th:insert="fragments/update-case :: case_identifiers"></div>
+			<!-- <div th:if="${page==0}" th:insert="fragments/update-case :: case_identifiers"></div> -->
 			<div th:if="${page==1}" th:insert="fragments/update-case :: case_biodata"></div>
 			<div th:if="${page==2}" th:insert="fragments/update-case :: case_referral"></div>
 			<div th:if="${page==3}" th:insert="fragments/update-case :: case_pregnancy"></div>
@@ -94,7 +95,7 @@
 		$('#icd_diagnoses').select2({
 			minimumInputLength: 3,
 			ajax: {
-				url: 'http://localhost:5000/registry/icdselect',
+				url: '/registry/icdselect',
 				dataType: 'json',
 				delay: 250,
 				data: function (params) {
@@ -151,10 +152,12 @@
 		}
 	</script>
 
+
 	<script>
 		function profileBabySexView() {
 			var deathtype = document.getElementById("case_death");
 			var outcomesel = document.getElementById("biodata_sex");
+			if (!deathtype || !outcomesel) return;
 
 			if (deathtype.value == '3') {
 				$('#biodata_sex_div').hide();
@@ -171,6 +174,7 @@
 		function changeReferralFacilityToNA() {
 			var objCombo = document.getElementById("referral_source");
 			var rfac = document.getElementById("referral_facility");
+			if (!objCombo || !rfac) return;
 
 			if (objCombo.value != '0') {
 				rfac.readOnly = true;
@@ -178,11 +182,15 @@
 				rfac.readOnly = false;
 			}
 		}
+		changeReferralFacilityToNA();
+	</script>
 
+	<script>
 		function changeReferralDateTimeToREADONLY() {
 			var objCombo = document.getElementById("referral_datetime_notstated");
 			var rdate = document.getElementById("referral_date");
 			var rtime = document.getElementById("referral_time");
+			if (!objCombo || !rdate || !rtime) return;
 
 			if (objCombo.checked) {
 				rdate.disabled = true;
@@ -192,11 +200,15 @@
 				rtime.disabled = false;
 			}
 		}
+		changeReferralDateTimeToREADONLY();
+	</script>
 
+	<script>
 		function changeReferralaDateTimeToREADONLY() {
 			var objCombo = document.getElementById("referral_adatetime_notstated");
 			var rdate = document.getElementById("referral_adate");
 			var rtime = document.getElementById("referral_atime");
+			if (!objCombo || !rdate || !rtime) return;
 
 			if (objCombo.checked) {
 				rdate.disabled = true;
@@ -206,74 +218,30 @@
 				rtime.disabled = false;
 			}
 		}
+		changeReferralaDateTimeToREADONLY();
+	</script>
 
-		function changeReferralStatus1(objCombo) {
-			var rpat = document.getElementById("referral_patient");
-			var rsrc = document.getElementById("referral_source");
-			var rfac = document.getElementById("referral_facility");
-			var rdate = document.getElementById("referral_date");
-			var rtime = document.getElementById("referral_time");
-			var rdt = document.getElementById("referral_datetime_notstated");
-			var radate = document.getElementById("referral_adate");
-			var ratime = document.getElementById("referral_atime");
-			var radt = document.getElementById("referral_adatetime_notstated");
-			var rtrans = document.getElementById("referral_transport");
-			var rfile = document.getElementById("referral_file");
-			var rnotes = document.getElementById("referral_notes");
-
-			if (objCombo.value != '1') {
-				rpat.value = '99';
-				rsrc.value = '99';
-				rdt.checked = true;
-				radt.checked = true;
-				rtrans.value = '99';
-				rfile.hidden = true;
-				rnotes.readOnly = true;
-
-				$('#referral_fieldset').hide();
-
-			} else {
-				$('#referral_fieldset').show();
-
-				rpat.value = '';
-				rsrc.value = '';
-				rdt.checked = false;
-				radt.checked = false;
-				rtrans.value = '';
-				rfile.hidden = false;
-				rnotes.readOnly = false;
-			}
-		}
-
+	<script>
 		function changeReferralStatus() {
 			var objCombo = document.getElementById("referral_case");
+			if (!objCombo) return;
 
 			if (objCombo.value != '1') {
-
 				$('#referral_fieldset').hide();
-
 			} else {
 				$('#referral_fieldset').show();
 			}
 		}
-
-
-		changeReferralFacilityToNA();
-		changeReferralDateTimeToREADONLY();
-		changeReferralaDateTimeToREADONLY();
 		changeReferralStatus();
 
 		function changeReferralViewDynamic(objCombo) {
-
-			changeReferralStatus1(objCombo);
-
+			changeReferralStatus(); // Reuse the existng function logic
 			changeReferralFacilityToNA();
 			changeReferralDateTimeToREADONLY();
 			changeReferralaDateTimeToREADONLY();
-
 		}
-
 	</script>
+
 
 
 	<script>
@@ -337,10 +305,11 @@
 	</script>
 	<script>
 		function changeAntenatalView() {
-			var objCombo = document.getElementById("antenatal_attend");
+			var objCombo = document.querySelector('[id$="antenatal_attend"]');
+			if (!objCombo) return;
 
 			if (objCombo.value != '1') {
-				$('#antenatal_attend_fieldset').hide();
+				$('fieldset[id$="antenatal_attend_fieldset"]').hide();
 
 			} else {
 				$('#antenatal_attend_fieldset').show();
@@ -350,10 +319,12 @@
 	</script>
 	<script>
 		function changeAntenatalOtherToNA(objCombo) {
-			var attno = document.getElementById("antenatal_attendno");
-			var atfac = document.getElementById("antenatal_facility");
-			var atwks = document.getElementById("antenatal_weeks");
-			var atdys = document.getElementById("antenatal_days");
+			if (!objCombo) return;
+			var attno = document.querySelector('[id$="antenatal_attendno"]');
+			var atfac = document.querySelector('[id$="antenatal_facility"]');
+			var atwks = document.querySelector('[id$="antenatal_weeks"]');
+			var atdys = document.querySelector('[id$="antenatal_days"]');
+			if (!attno || !atfac || !atwks || !atdys) return;
 
 			if (objCombo.value != '1') {
 				attno.value = '99';
@@ -361,7 +332,7 @@
 				atwks.value = '99';
 				atdys.value = '99';
 
-				$('#antenatal_attend_fieldset').hide('fade');
+				$('fieldset[id$="antenatal_attend_fieldset"]').hide('fade');
 
 			} else {
 				$('#antenatal_attend_fieldset').show('fade');
@@ -375,10 +346,11 @@
 	</script>
 	<script>
 		function changeAntenatalRiskView() {
-			var objCombo = document.getElementById("antenatal_risks");
+			var objCombo = document.querySelector('[id$="antenatal_risks"]');
+			if (!objCombo) return;
 
 			if (objCombo.value != '1') {
-				$('#antenatal_risks_fieldset').hide();
+				$('fieldset[id$="antenatal_risks_fieldset"]').hide();
 
 			} else {
 				$('#antenatal_risks_fieldset').show();
@@ -388,8 +360,10 @@
 	</script>
 	<script>
 		function changeAntenatalRiskOtherToNA(objCombo) {
+			if (!objCombo) return;
 			var rskopt = document.getElementsByClassName("risk_options");
-			var nwrsks = document.getElementById("new_risks");
+			var nwrsks = document.querySelector('[id$="new_risks"]');
+			if (!nwrsks) return;
 
 			if (objCombo.value != '1') {
 
@@ -401,7 +375,7 @@
 
 				nwrsks.value = "";
 
-				$('#antenatal_risks_fieldset').hide('fade');
+				$('fieldset[id$="antenatal_risks_fieldset"]').hide('fade');
 
 			} else {
 				$('#antenatal_risks_fieldset').show('fade');
@@ -411,10 +385,11 @@
 	</script>
 	<script>
 		function changeAntenatalFolicView() {
-			var objCombo = document.getElementById("antenatal_folicacid");
+			var objCombo = document.querySelector('[id$="antenatal_folicacid"]');
+			if (!objCombo) return;
 
 			if (objCombo.value != '1') {
-				$('#antenatal_folic_fieldset').hide();
+				$('fieldset[id$="antenatal_folic_fieldset"]').hide();
 
 			} else {
 				$('#antenatal_folic_fieldset').show();
@@ -424,13 +399,15 @@
 	</script>
 	<script>
 		function changeAntenatalFolicOtherToNA(objCombo) {
-			var folic3m = document.getElementById("antenatal_folicacid3m");
+			if (!objCombo) return;
+			var folic3m = document.querySelector('[id$="antenatal_folicacid3m"]');
+			if (!folic3m) return;
 
 			if (objCombo.value != '1') {
 
 				folic3m.value = "99";
 
-				$('#antenatal_folic_fieldset').hide('fade');
+				$('fieldset[id$="antenatal_folic_fieldset"]').hide('fade');
 
 			} else {
 				$('#antenatal_folic_fieldset').show('fade');
@@ -441,10 +418,11 @@
 	</script>
 	<script>
 		function changeAntenatalHIVView() {
-			var objCombo = document.getElementById("antenatal_hiv");
+			var objCombo = document.querySelector('[id$="antenatal_hiv"]');
+			if (!objCombo) return;
 
 			if (objCombo.value != '1') {
-				$('#antenatal_hiv_fieldset').hide();
+				$('fieldset[id$="antenatal_hiv_fieldset"]').hide();
 
 			} else {
 				$('#antenatal_hiv_fieldset').show();
@@ -454,13 +432,15 @@
 	</script>
 	<script>
 		function changeAntenatalHIVOtherToNA(objCombo) {
-			var art = document.getElementById("antenatal_art");
+			if (!objCombo) return;
+			var art = document.querySelector('[id$="antenatal_art"]');
+			if (!art) return;
 
 			if (objCombo.value != '1') {
 
 				art.value = "99";
 
-				$('#antenatal_hiv_fieldset').hide('fade');
+				$('fieldset[id$="antenatal_hiv_fieldset"]').hide('fade');
 
 			} else {
 				$('#antenatal_hiv_fieldset').show('fade');
@@ -473,6 +453,7 @@
 	<script>
 		function changeLabourComplicationView() {
 			var objCombo = document.getElementById("labour_complications");
+			if (!objCombo) return;
 
 			if (objCombo.value != '1') {
 				$('#labour_complications_fieldset').hide();
@@ -481,9 +462,13 @@
 				$('#labour_complications_fieldset').show();
 			}
 		}
+		changeLabourComplicationView();
+	</script>
 
+	<script>
 		function changeLabourStartmodeView() {
 			var objCombo = document.getElementById("labour_startmode");
+			if (!objCombo) return;
 
 			if (objCombo.value == '0' || objCombo.value == '88' || objCombo.value == '') {
 				$('#labour_startmode_fieldset').hide();
@@ -492,11 +477,15 @@
 				$('#labour_startmode_fieldset').show();
 			}
 		}
+		changeLabourStartmodeView();
+	</script>
 
+	<script>
 		function changeLabourSeeDateTimeToREADONLY() {
 			var objCombo = document.getElementById("labour_seedatetime_notstated");
 			var rdate = document.getElementById("labour_seedate");
 			var rtime = document.getElementById("labour_seetime");
+			if (!objCombo || !rdate || !rtime) return;
 
 			if (objCombo.checked) {
 				rdate.disabled = true;
@@ -506,9 +495,13 @@
 				rtime.disabled = false;
 			}
 		}
+		changeLabourSeeDateTimeToREADONLY();
+	</script>
 
+	<script>
 		function changeLabourStatus() {
 			var objCombo = document.getElementById("labour_occured");
+			if (!objCombo) return;
 
 			if (objCombo.value != '1') {
 
@@ -518,44 +511,243 @@
 				$('#labour_occured_fieldset').show();
 			}
 		}
-
-		changeLabourComplicationView();
-		changeLabourStartmodeView();
-		changeLabourSeeDateTimeToREADONLY();
 		changeLabourStatus();
-
 	</script>
 
 	<script>
-		function changeLabourComplicationOtherToNA(objCombo) {
-			var rskopt = document.getElementsByClassName("complication_options");
-			var nwrsks = document.getElementById("new_complications");
+		function changeAntenatalMalTestView() {
+			var objCombo = document.querySelector('[id$="antenatal_maltest"]');
+			if (!objCombo) return;
+
+			if (objCombo.value != '1') {
+				$('fieldset[id$="antenatal_maltest_fieldset"]').hide();
+
+			} else {
+				$('#antenatal_maltest_fieldset').show();
+			}
+		}
+		changeAntenatalMalTestView();
+	</script>
+	<script>
+		function changeAntenatalMalTestToNA(objCombo) {
+			if (!objCombo) return;
+			var maltestres = document.querySelector('[id$="antenatal_maltestres"]');
+			if (!maltestres) return;
 
 			if (objCombo.value != '1') {
 
+				maltestres.value = "88";
+
+				$('fieldset[id$="antenatal_maltest_fieldset"]').hide('fade');
+
+			} else {
+				$('#antenatal_maltest_fieldset').show('fade');
+
+				maltestres.value = "";
+			}
+		}
+	</script>
+
+	<script>
+		function changeAntenatalMalProphyView() {
+			var objCombo = document.querySelector('[id$="antenatal_malprophy"]');
+			if (!objCombo) return;
+
+			if (objCombo.value != '1') {
+				$('fieldset[id$="antenatal_malprophy_fieldset"]').hide();
+
+			} else {
+				$('#antenatal_malprophy_fieldset').show();
+			}
+		}
+		changeAntenatalMalProphyView();
+	</script>
+	<script>
+		function changeAntenatalMalProphyToNA(objCombo) {
+			if (!objCombo) return;
+			if (objCombo.value != '1') {
+				$('fieldset[id$="antenatal_malprophy_fieldset"]').hide('fade');
+
+			} else {
+				$('fieldset[id$="antenatal_malprophy_fieldset"]').show('fade');
+			}
+		}
+	</script>
+
+	<script>
+		function changeAntenatalTetanusView() {
+			var objCombo = document.querySelector('[id$="antenatal_tetanus"]');
+			if (!objCombo) return;
+
+			if (objCombo.value != '1') {
+				$('fieldset[id$="antenatal_tetanus_fieldset"]').hide();
+
+			} else {
+				$('#antenatal_tetanus_fieldset').show();
+			}
+		}
+		changeAntenatalTetanusView();
+	</script>
+	<script>
+		function changeAntenatalTetanusToNA(objCombo) {
+			if (!objCombo) return;
+			if (objCombo.value != '1') {
+				$('fieldset[id$="antenatal_tetanus_fieldset"]').hide('fade');
+
+			} else {
+				$('fieldset[id$="antenatal_tetanus_fieldset"]').show('fade');
+			}
+		}
+	</script>
+
+	<script>
+		function changeAntenatalSyphTestView() {
+			var objCombo = document.querySelector('[id$="antenatal_syphtest"]');
+			if (!objCombo) return;
+
+			if (objCombo.value != '1') {
+				$('fieldset[id$="antenatal_syphtest_fieldset"]').hide();
+
+			} else {
+				$('#antenatal_syphtest_fieldset').show();
+			}
+		}
+		changeAntenatalSyphTestView();
+	</script>
+	<script>
+		function changeAntenatalSyphTestToNA(objCombo) {
+			if (!objCombo) return;
+			var maltestres = document.querySelector('[id$="antenatal_syphtestres"]');
+			if (!maltestres) return;
+
+			if (objCombo.value != '1') {
+
+				maltestres.value = "88";
+
+				$('fieldset[id$="antenatal_syphtest_fieldset"]').hide('fade');
+
+			} else {
+				$('#antenatal_syphtest_fieldset').show('fade');
+
+				maltestres.value = "";
+			}
+		}
+	</script>
+
+	<script>
+		function changeAntenatalHbTestView() {
+			var objCombo = document.querySelector('[id$="antenatal_hbtest"]');
+			if (!objCombo) return;
+
+			if (objCombo.value != '1') {
+				$('fieldset[id$="antenatal_hbtest_fieldset"]').hide();
+
+			} else {
+				$('#antenatal_hbtest_fieldset').show();
+			}
+		}
+		changeAntenatalHbTestView();
+	</script>
+	<script>
+		function changeAntenatalHbTestToNA(objCombo) {
+			if (!objCombo) return;
+			var hbtestres = document.querySelector('[id$="antenatal_hbtestres"]');
+			if (!hbtestres) return;
+
+			if (objCombo.value != '1') {
+
+				hbtestres.value = "88";
+
+				$('fieldset[id$="antenatal_hbtest_fieldset"]').hide('fade');
+
+			} else {
+				$('fieldset[id$="antenatal_hbtest_fieldset"]').show('fade');
+			}
+		}
+	</script>
+
+	<script>
+		function changeLabourPartographView() {
+			var objCombo = document.getElementById("labour_partograph");
+			if (!objCombo) return;
+
+			if (objCombo.value != '0' && objCombo.value != '1') {
+				$('#labour_partograph_yes_fieldset').hide();
+				$('#labour_partograph_no_fieldset').hide();
+			}
+			else if (objCombo.value == '0') {
+				$('#labour_partograph_no_fieldset').show();
+				$('#labour_partograph_yes_fieldset').hide();
+			}
+			else if (objCombo.value == '1') {
+				$('#labour_partograph_yes_fieldset').show();
+				$('#labour_partograph_no_fieldset').hide();
+			}
+		}
+		changeLabourPartographView();
+	</script>
+	<script>
+		function changeLabourPartographOtherToNA(objCombo) {
+			if (!objCombo) return;
+			var partograph_yes = document.getElementById("labour_partograph_yes");
+			var partograph_no = document.getElementById("labour_partograph_no");
+			if (!partograph_yes || !partograph_no) return;
+
+			if (objCombo.value != '1') {
+
+				partograph_yes.value = "88";
+				$('#labour_partograph_yes_fieldset').hide('fade');
+
+			}
+			else if (objCombo.value == '0') {
+				$('#labour_partograph_no_fieldset').show('fade');
+				partograph_no.value = "";
+
+				partograph_yes.value = "88";
+				$('#labour_partograph_yes_fieldset').hide('fade');
+			}
+			else if (objCombo.value == '1') {
+				$('#labour_partograph_yes_fieldset').show('fade');
+				$('#labour_partograph_no_fieldset').hide('fade');
+
+				partograph_yes.value = "";
+			}
+
+		}
+	</script>
+
+
+	<script>
+		function changeLabourComplicationOtherToNA(objCombo) {
+			if (!objCombo) return;
+			var rskopt = document.getElementsByClassName("complication_options");
+			var nwrsks = document.getElementById("new_complications");
+			if (!nwrsks) return;
+
+			if (objCombo.value != '1') {
 				for (var i = 0; i < rskopt.length; i++) {
 					if (rskopt[i].type == 'checkbox') {
 						rskopt[i].checked = false;
 					}
 				}
-
 				nwrsks.value = "";
-
 				$('#labour_complications_fieldset').hide('fade');
-
 			} else {
 				$('#labour_complications_fieldset').show('fade');
-
 			}
 		}
+	</script>
 
+	<script>
 		function changeLabourStartmodeOtherToNA(objCombo) {
+			if (!objCombo) return;
 			var herbi = document.getElementById("labour_herbalind");
 			var parto = document.getElementById("labour_partograph");
 			var hour1 = document.getElementById("labour_lasthour1");
 			var mint1 = document.getElementById("labour_lastminute1");
 			var hour2 = document.getElementById("labour_lasthour2");
 			var mint2 = document.getElementById("labour_lastminute2");
+			if (!herbi || !parto || !hour1 || !mint1 || !hour2 || !mint2) return;
 
 			if (objCombo.value == '0' || objCombo.value == '88' || objCombo.value == '') {
 				herbi.value = '99';
@@ -564,10 +756,7 @@
 				mint1.value = '99';
 				hour2.value = '99';
 				mint2.value = '99';
-
-
 				$('#labour_startmode_fieldset').hide('fade');
-
 			} else {
 				herbi.value = '';
 				parto.value = '';
@@ -575,15 +764,17 @@
 				mint1.value = '';
 				hour2.value = '';
 				mint2.value = '';
-
 				$('#labour_startmode_fieldset').show('fade');
-
 			}
 		}
+	</script>
 
+	<script>
 		function changeLabourSeeDateTimeToREADONLYDynamic(objCombo) {
+			if (!objCombo) return;
 			var rdate = document.getElementById("labour_seedate");
 			var rtime = document.getElementById("labour_seetime");
+			if (!rdate || !rtime) return;
 
 			rdate.value = "";
 			rtime.value = "";
@@ -596,14 +787,17 @@
 				rtime.disabled = false;
 			}
 		}
+	</script>
 
+	<script>
 		function changeLabourViewDynamic(objCombo) {
-
+			if (!objCombo) return;
 			var labour_complications = document.getElementById("labour_complications");
 			var labour_startmode = document.getElementById("labour_startmode");
 			var labour_seedatetime_notstated = document.getElementById("labour_seedatetime_notstated");
 			var labour_herbalaug = document.getElementById("labour_herbalaug");
 			var labour_seeperiod = document.getElementById("labour_seeperiod");
+			if (!labour_complications || !labour_startmode || !labour_seedatetime_notstated || !labour_herbalaug || !labour_seeperiod) return;
 
 			if (objCombo.value != '1') {
 				labour_complications.value = '88';
@@ -611,12 +805,9 @@
 				labour_seedatetime_notstated.checked = true;
 				labour_herbalaug.value = '88';
 				labour_seeperiod.value = '88';
-
 				$('#labour_occured_fieldset').hide();
-
 			} else {
 				$('#labour_occured_fieldset').show();
-
 				labour_complications.value = '';
 				labour_startmode.value = '';
 				labour_seedatetime_notstated.checked = false;
@@ -627,18 +818,15 @@
 			changeLabourComplicationOtherToNA(labour_complications);
 			changeLabourStartmodeOtherToNA(labour_startmode);
 			changeLabourSeeDateTimeToREADONLYDynamic(labour_seedatetime_notstated);
-
 		}
-
-
 	</script>
 
 	<script>
-
 		function changeDeliveryDateTimeToREADONLY() {
 			var objCombo = document.getElementById("delivery_datetime_notstated");
 			var rdate = document.getElementById("delivery_date");
 			var rtime = document.getElementById("delivery_time");
+			if (!objCombo || !rdate || !rtime) return;
 
 			if (objCombo.checked) {
 				rdate.disabled = true;
@@ -648,39 +836,35 @@
 				rtime.disabled = false;
 			}
 		}
+		changeDeliveryDateTimeToREADONLY();
+	</script>
 
+	<script>
 		function changeDeliveryStatus() {
 			var objCombo = document.getElementById("delivery_occured");
+			if (!objCombo) return;
 
 			if (objCombo.value != '1') {
-
 				$('#delivery_occured_fieldset').hide();
-
 			} else {
 				$('#delivery_occured_fieldset').show();
 			}
-			
+
 			if (objCombo.value == '0') {
-				
 				$('#delivery_abortion_fieldset').show();
-				
 			} else {
-				
 				$('#delivery_abortion_fieldset').hide();
 			}
-
 		}
-
-
-		changeDeliveryDateTimeToREADONLY();
 		changeDeliveryStatus();
 	</script>
 
 	<script>
-
 		function changeDeliveryDateTimeToREADONLYDynamic(objCombo) {
+			if (!objCombo) return;
 			var rdate = document.getElementById("delivery_date");
 			var rtime = document.getElementById("delivery_time");
+			if (!rdate || !rtime) return;
 
 			rdate.value = "";
 			rtime.value = "";
@@ -695,13 +879,13 @@
 		}
 
 		function changeDeliveryViewDynamic(objCombo) {
-
+			if (!objCombo) return;
 			var delivery_occured_facility = document.getElementById("delivery_occured_facility");
 			var delivery_datetime_notstated = document.getElementById("delivery_datetime_notstated");
 			var delivery_period = document.getElementById("delivery_period");
 			var delivery_weight = document.getElementById("delivery_weight");
-
 			var delivery_abortion = document.getElementById("delivery_abortion");
+			if (!delivery_occured_facility || !delivery_datetime_notstated || !delivery_period || !delivery_weight || !delivery_abortion) return;
 
 			if (objCombo.value != '1') {
 				delivery_occured_facility.value = '88';
@@ -710,45 +894,33 @@
 				delivery_weight.value = '0.9';
 
 				$('#delivery_occured_fieldset').hide();
-
-				
 			} else {
 				$('#delivery_occured_fieldset').show();
-
 				delivery_occured_facility.value = '';
 				delivery_datetime_notstated.checked = false;
 				delivery_period.value = '';
 				delivery_weight.value = '';
-				
 			}
 
 			if (objCombo.value == '0') {
-				
 				$('#delivery_abortion_fieldset').show();
 				delivery_abortion.value = '';
-				
 			} else {
-				
 				$('#delivery_abortion_fieldset').hide();
 				delivery_abortion.value = '88';
 			}
 
-
-			changeDeliveryDateTimeToREADONLYDynamic(objCombo)
+			changeDeliveryDateTimeToREADONLYDynamic(delivery_datetime_notstated);
 		}
-
-
 	</script>
 
 	<script>
 		function changeBirthInsistnormalView() {
 			var objCombo = document.getElementById("birth_insistnormal");
-			var cstime = document.getElementById("birth_csproposetime");
-			var csdate = document.getElementById("birth_csproposedate");
+			if (!objCombo) return;
 
 			if (objCombo.value != '1') {
 				$('#insistnormal_div').hide();
-
 			} else {
 				$('#insistnormal_div').show();
 			}
@@ -757,67 +929,66 @@
 
 		function changeBirthBirthmodeView() {
 			var objCombo = document.getElementById("birth_mode");
+			if (!objCombo) return;
 
 			if (objCombo.value != '0' && objCombo.value != '1') {
 				$('#birth_mode_fieldset').hide();
-
 			} else {
 				$('#birth_mode_fieldset').show();
 			}
 		}
 		changeBirthBirthmodeView();
-
 	</script>
+
 	<script>
 		function changeBirthBirthModeOtherToNA(objCombo) {
+			if (!objCombo) return;
 			var insist = document.getElementById("birth_insistnormal");
 			var cstime = document.getElementById("birth_csproposetime");
 			var csdate = document.getElementById("birth_csproposedate");
+			if (!insist || !cstime || !csdate) return;
 
 			if (objCombo.value != '0' && objCombo.value != '1') {
 				insist.value = '99';
 				cstime.value = '';
 				csdate.value = '';
-
 				$('#insistnormal_div').hide();
 				$('#birth_mode_fieldset').hide('fade');
-
 			} else {
 				insist.value = '';
 				cstime.value = '';
 				csdate.value = '';
-
 				$('#birth_mode_fieldset').show('fade');
-
 			}
 		}
 	</script>
+
 	<script>
 		function changeBirthInsistnormalOtherToNA(objCombo) {
+			if (!objCombo) return;
 			var cstime = document.getElementById("birth_csproposetime");
 			var csdate = document.getElementById("birth_csproposedate");
+			if (!cstime || !csdate) return;
 
 			if (objCombo.value != '1') {
 				cstime.value = '';
 				csdate.value = '';
-
 				$('#insistnormal_div').hide('fade');
-
 			} else {
 				cstime.value = '';
 				csdate.value = '';
 				$('#insistnormal_div').show('fade');
-
 			}
 		}
 	</script>
+
 	<script>
 		function changeBirthAbnormalityView() {
 			var objCombo = document.getElementById("birth_abnormalities");
+			if (!objCombo) return;
 
 			if (objCombo.value != '1') {
 				$('#birth_abnormalities_fieldset').hide();
-
 			} else {
 				$('#birth_abnormalities_fieldset').show();
 			}
@@ -826,8 +997,10 @@
 	</script>
 	<script>
 		function changeBirthAbnormalityOtherToNA(objCombo) {
+			if (!objCombo) return;
 			var rskopt = document.getElementsByClassName("abnormality_options");
 			var nwrsks = document.getElementById("new_abnormalities");
+			if (!nwrsks) return;
 
 			if (objCombo.value != '1') {
 
@@ -850,72 +1023,69 @@
 	<script>
 		function changeBirthCordfaultView() {
 			var objCombo = document.getElementById("birth_cordfaults");
+			if (!objCombo) return;
 
 			if (objCombo.value != '1') {
 				$('#birth_cordfaults_fieldset').hide();
-
 			} else {
 				$('#birth_cordfaults_fieldset').show();
 			}
 		}
 		changeBirthCordfaultView();
 	</script>
+
 	<script>
 		function changeBirthCordfaultOtherToNA(objCombo) {
+			if (!objCombo) return;
 			var rskopt = document.getElementsByClassName("cordfault_options");
 			var nwrsks = document.getElementById("new_cordfaults");
+			if (!nwrsks) return;
 
 			if (objCombo.value != '1') {
-
 				for (var i = 0; i < rskopt.length; i++) {
 					if (rskopt[i].type == 'checkbox') {
 						rskopt[i].checked = false;
 					}
 				}
-
 				nwrsks.value = "";
-
 				$('#birth_cordfaults_fieldset').hide('fade');
-
 			} else {
 				$('#birth_cordfaults_fieldset').show('fade');
-
 			}
 		}
 	</script>
+
 	<script>
 		function changeBirthPlacentacheckView() {
 			var objCombo = document.getElementById("birth_placentachecks");
+			if (!objCombo) return;
 
 			if (objCombo.value != '1') {
 				$('#birth_placentachecks_fieldset').hide();
-
 			} else {
 				$('#birth_placentachecks_fieldset').show();
 			}
 		}
 		changeBirthPlacentacheckView();
 	</script>
+
 	<script>
 		function changeBirthPlacentacheckOtherToNA(objCombo) {
+			if (!objCombo) return;
 			var rskopt = document.getElementsByClassName("placentacheck_options");
 			var nwrsks = document.getElementById("new_placentachecks");
+			if (!nwrsks) return;
 
 			if (objCombo.value != '1') {
-
 				for (var i = 0; i < rskopt.length; i++) {
 					if (rskopt[i].type == 'checkbox') {
 						rskopt[i].checked = false;
 					}
 				}
-
 				nwrsks.value = "";
-
 				$('#birth_placentachecks_fieldset').hide('fade');
-
 			} else {
 				$('#birth_placentachecks_fieldset').show('fade');
-
 			}
 		}
 	</script>
@@ -925,11 +1095,11 @@
 			var deathtype = document.getElementById("case_death");
 			var outcomesel = document.getElementById("birth_babyoutcome");
 			var outcomeselm = document.getElementById("birth_motheroutcome");
+			if (!deathtype || !outcomesel || !outcomeselm) return;
 
 			if (deathtype.value == '2') {
 				$('#birth_babyoutcome_div').hide();
 				outcomesel.value = '99';
-
 			} else {
 				$('#birth_babyoutcome_div').show();
 			}
@@ -937,7 +1107,6 @@
 			if (deathtype.value == '3') {
 				$('#birth_motheroutcome_div').hide();
 				outcomeselm.value = '1';
-
 			} else {
 				$('#birth_motheroutcome_div').show();
 			}
@@ -947,36 +1116,34 @@
 	<script>
 		function changeBabyResuscitationView() {
 			var objCombo = document.getElementById("baby_resuscitation");
+			if (!objCombo) return;
 
 			if (objCombo.value != '1') {
 				$('#baby_resuscitation_fieldset').hide();
-
 			} else {
 				$('#baby_resuscitation_fieldset').show();
 			}
 		}
 		changeBabyResuscitationView();
 	</script>
+
 	<script>
 		function changeBabyResuscitationOtherToNA(objCombo) {
+			if (!objCombo) return;
 			var rskopt = document.getElementsByClassName("resuscitation_options");
 			var nwrsks = document.getElementById("new_resuscitation");
+			if (!nwrsks) return;
 
 			if (objCombo.value != '1') {
-
 				for (var i = 0; i < rskopt.length; i++) {
 					if (rskopt[i].type == 'checkbox') {
 						rskopt[i].checked = false;
 					}
 				}
-
 				nwrsks.value = "";
-
 				$('#baby_resuscitation_fieldset').hide('fade');
-
 			} else {
 				$('#baby_resuscitation_fieldset').show('fade');
-
 			}
 		}
 	</script>
@@ -984,10 +1151,10 @@
 	<script>
 		function changeBabyAdmissionView() {
 			var objCombo = document.getElementById("baby_admitted");
+			if (!objCombo) return;
 
 			if (objCombo.value != '1') {
 				$('#baby_admitted_fieldset').hide();
-
 			} else {
 				$('#baby_admitted_fieldset').show();
 			}
@@ -996,24 +1163,21 @@
 	</script>
 	<script>
 		function changeBabyAdmittedOtherToNA(objCombo) {
+			if (!objCombo) return;
 			var rskopt = document.getElementsByClassName("diagnoses_options");
 			var nwrsks = document.getElementById("new_diagnoses");
+			if (!nwrsks) return;
 
 			if (objCombo.value != '1') {
-
 				for (var i = 0; i < rskopt.length; i++) {
 					if (rskopt[i].type == 'checkbox') {
 						rskopt[i].checked = false;
 					}
 				}
-
 				nwrsks.value = "";
-
 				$('#baby_admitted_fieldset').hide('fade');
-
 			} else {
 				$('#baby_admitted_fieldset').show('fade');
-
 			}
 		}
 	</script>
@@ -1022,6 +1186,7 @@
 			var objCombo = document.getElementById("baby_ddatetime_notstated");
 			var rdate = document.getElementById("baby_ddate");
 			var rtime = document.getElementById("baby_dtime");
+			if (!objCombo || !rdate || !rtime) return;
 
 			if (objCombo.checked) {
 				rdate.disabled = true;
@@ -1032,9 +1197,12 @@
 			}
 		}
 		changeBabydDateTimeToREADONLY();
+
 		function changeBabydDateTimeToREADONLYDynamic(objCombo) {
+			if (!objCombo) return;
 			var rdate = document.getElementById("baby_ddate");
 			var rtime = document.getElementById("baby_dtime");
+			if (!rdate || !rtime) return;
 
 			rdate.value = "";
 			rtime.value = "";
@@ -1047,7 +1215,6 @@
 				rtime.disabled = false;
 			}
 		}
-
 	</script>
 
 	<script>
@@ -1055,6 +1222,7 @@
 			var objCombo = document.getElementById("mdeath_datetime_notstated");
 			var rdate = document.getElementById("mdeath_date");
 			var rtime = document.getElementById("mdeath_time");
+			if (!objCombo || !rdate || !rtime) return;
 
 			if (objCombo.checked) {
 				rdate.disabled = true;
@@ -1067,8 +1235,10 @@
 		changeMdeathDateTimeToREADONLY();
 
 		function changeMdeathDateTimeToREADONLYDynamic(objCombo) {
+			if (!objCombo) return;
 			var rdate = document.getElementById("mdeath_date");
 			var rtime = document.getElementById("mdeath_time");
+			if (!rdate || !rtime) return;
 
 			rdate.value = "";
 			rtime.value = "";
@@ -1081,10 +1251,8 @@
 				rtime.disabled = false;
 			}
 		}
-
 	</script>
 	<script>
-
 		function changeMdeathAutopsyView() {
 			var objCombo = document.getElementById("mdeath_autopsy");
 			var aupsydate = document.getElementById("mdeath_autopsy_date");
@@ -1093,6 +1261,7 @@
 			var aupsyfcod = document.getElementById("mdeath_autopsy_final_cod");
 			var aupsyacod = document.getElementById("mdeath_autopsy_antec_cod");
 			var aupsyocod = document.getElementById("mdeath_autopsy_ops_cod");
+			if (!objCombo || !aupsydate || !aupsyloc || !aupsyby || !aupsyfcod || !aupsyacod || !aupsyocod) return;
 
 			if (objCombo.value != '1') {
 				aupsydate.value = '';
@@ -1101,12 +1270,9 @@
 				aupsyfcod.value = 'NA';
 				aupsyacod.value = 'NA';
 				aupsyocod.value = 'NA';
-
 				$('#mdeath_autopsy_fieldset').hide('fade');
-
 			} else {
 				$('#mdeath_autopsy_fieldset').show('fade');
-
 				aupsydate.value = '';
 				aupsyloc.value = '';
 				aupsyby.value = '';
@@ -1115,16 +1281,17 @@
 				aupsyocod.value = '';
 			}
 		}
-
 		changeMdeathAutopsyView();
 
 		function changeMdeathAutopsyDynamic(objCombo) {
+			if (!objCombo) return;
 			var aupsydate = document.getElementById("mdeath_autopsy_date");
 			var aupsyloc = document.getElementById("mdeath_autopsy_location");
 			var aupsyby = document.getElementById("mdeath_autopsy_by");
 			var aupsyfcod = document.getElementById("mdeath_autopsy_final_cod");
 			var aupsyacod = document.getElementById("mdeath_autopsy_antec_cod");
 			var aupsyocod = document.getElementById("mdeath_autopsy_ops_cod");
+			if (!aupsydate || !aupsyloc || !aupsyby || !aupsyfcod || !aupsyacod || !aupsyocod) return;
 
 			if (objCombo.value != '1') {
 				aupsydate.value = '';
@@ -1133,12 +1300,9 @@
 				aupsyfcod.value = 'NA';
 				aupsyacod.value = 'NA';
 				aupsyocod.value = 'NA';
-
 				$('#mdeath_autopsy_fieldset').hide('fade');
-
 			} else {
 				$('#mdeath_autopsy_fieldset').show('fade');
-
 				aupsydate.value = '';
 				aupsyloc.value = '';
 				aupsyby.value = '';
@@ -1191,6 +1355,59 @@
 
 			}, false);
 		})();
+	</script>
+	<script>
+		$(document).ready(function () {
+			// Initialize all skip logic views
+			if (typeof changeAntenatalView === 'function') changeAntenatalView();
+			if (typeof changeAntenatalRiskView === 'function') changeAntenatalRiskView();
+			if (typeof changeAntenatalFolicView === 'function') changeAntenatalFolicView();
+			if (typeof changeAntenatalHIVView === 'function') changeAntenatalHIVView();
+			if (typeof changeAntenatalMalTestView === 'function') changeAntenatalMalTestView();
+			if (typeof changeAntenatalMalProphyView === 'function') changeAntenatalMalProphyView();
+			if (typeof changeAntenatalTetanusView === 'function') changeAntenatalTetanusView();
+			if (typeof changeAntenatalSyphTestView === 'function') changeAntenatalSyphTestView();
+			if (typeof changeAntenatalHbTestView === 'function') changeAntenatalHbTestView();
+
+			if (typeof changeLabourPartographView === 'function') changeLabourPartographView();
+			if (typeof changeLabourComplicationView === 'function') changeLabourComplicationView();
+			if (typeof changeLabourStartmodeView === 'function') changeLabourStartmodeView();
+			if (typeof changeLabourHearddoplerView === 'function') changeLabourHearddoplerView();
+
+			// Handle functions that require arguments or get elements internally
+			if (typeof changeLabourSeeDateTimeToREADONLY === 'function') {
+				// If it takes no args in initialization version
+				try { changeLabourSeeDateTimeToREADONLY(); } catch (e) { }
+			}
+
+			if (typeof changeDeliveryStatus === 'function') changeDeliveryStatus();
+
+			if (typeof changeDeliveryDateTimeToREADONLY === 'function') {
+				try { changeDeliveryDateTimeToREADONLY(); } catch (e) { }
+			}
+			// For delivery_datetime_notstated which is passed to changeDeliveryDateTimeToREADONLYDynamic
+			// but changeDeliveryDateTimeToREADONLY is the init one I saw.
+
+			if (typeof changeBirthInsistnormalView === 'function') changeBirthInsistnormalView();
+			if (typeof changeBirthBirthmodeView === 'function') changeBirthBirthmodeView();
+			if (typeof changeBirthAbnormalityView === 'function') changeBirthAbnormalityView();
+			if (typeof changeBirthCordfaultView === 'function') changeBirthCordfaultView();
+			if (typeof changeBirthPlacentacheckView === 'function') changeBirthPlacentacheckView();
+			if (typeof babyoutcomeView === 'function') babyoutcomeView();
+
+			if (typeof changeBabyResuscitationView === 'function') changeBabyResuscitationView();
+			if (typeof changeBabyAdmissionView === 'function') changeBabyAdmissionView();
+
+			if (typeof changeBabydDateTimeToREADONLY === 'function') {
+				try { changeBabydDateTimeToREADONLY(); } catch (e) { }
+			}
+
+			if (typeof changeMdeathDateTimeToREADONLY === 'function') {
+				try { changeMdeathDateTimeToREADONLY(); } catch (e) { }
+			}
+			if (typeof changeMdeathAutopsyView === 'function') changeMdeathAutopsyView();
+			if (typeof changeLabourStatus === 'function') changeLabourStatus();
+		});
 	</script>
 </scripts>
 

@@ -87,14 +87,14 @@ public class case_antenatal implements Serializable {
 	private Integer antenatal_malprophy;// firisit
 	
 	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "antenatal_malprophy", joinColumns = @JoinColumn(name = "antenatal_uuid"), inverseJoinColumns = @JoinColumn(name = "ipt_name"))
+	@JoinTable(name = "join_antenatal_malprophy", joinColumns = @JoinColumn(name = "antenatal_uuid"), inverseJoinColumns = @JoinColumn(name = "ipt_name"))
 	private List<ipts_table> antenatal_ipt = new ArrayList<>();
 	
 	@Column
 	private Integer antenatal_tetanus;// first visit
 	
 	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "antenatal_tetanus", joinColumns = @JoinColumn(name = "antenatal_uuid"), inverseJoinColumns = @JoinColumn(name = "td_name"))
+	@JoinTable(name = "join_antenatal_tetanus", joinColumns = @JoinColumn(name = "antenatal_uuid"), inverseJoinColumns = @JoinColumn(name = "td_name"))
 	private List<ttdp_table> antenatal_tetdip = new ArrayList<>();	
 	
 	@Column
@@ -140,7 +140,7 @@ public class case_antenatal implements Serializable {
 	private Integer antenatal_risks;// firisit
 
 	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "antenatal_risks", joinColumns = @JoinColumn(name = "antenatal_uuid"), inverseJoinColumns = @JoinColumn(name = "risk_name"))
+	@JoinTable(name = "join_antenatal_risks", joinColumns = @JoinColumn(name = "antenatal_uuid"), inverseJoinColumns = @JoinColumn(name = "risk_name"))
 	private List<risk_table> risks = new ArrayList<>();
 
 	@Lob

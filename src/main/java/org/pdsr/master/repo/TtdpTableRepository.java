@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TtdpTableRepository extends JpaRepository<ttdp_table, Integer> {
+public interface TtdpTableRepository extends JpaRepository<ttdp_table, String> {
 
 }

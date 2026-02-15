@@ -5,10 +5,10 @@
 	<div class="m-1 small"></div>
 </subnav>
 
-<content> 
-	
+<content>
+
 	<a class="btn btn-success" href="#" th:href="@{/registry/add}" th:utext="#{add.case.button}"></a>
-	<a class="btn btn-dark" href="#" th:href="@{/registry/redcap}" th:utext="#{redcap.button}" hidden></a>		
+	<a class="btn btn-dark" href="#" th:href="@{/registry/redcap}" th:utext="#{redcap.button}" hidden></a>
 	<div class="table-responsive mt-2">
 		<table class="table table-hover table-bordered table-sm table-responsive-sm small">
 			<thead>
@@ -22,11 +22,13 @@
 			</thead>
 			<tbody>
 				<tr th:each="item : ${items}">
-					<th><a href="#" th:href="@{/registry/edit/{id}?page=0(id=${item.case_uuid})}"
+					<th><a href="#" th:href="@{/registry/edit/{id}?page=1(id=${item.case_uuid})}"
 							th:text="#{edit.link}"></a></th>
 					<td th:text="${item.case_date}"></td>
 					<td th:text="${item.case_mname}"></td>
-					<td th:text="${item.case_death == 1}?#{label.still.birth}:(${item.case_death == 2}?#{label.neonatal.death}:#{label.maternal.death})"></td>
+					<td
+						th:text="${item.case_death == 1}?#{label.still.birth}:(${item.case_death == 2}?#{label.neonatal.death}:#{label.maternal.death})">
+					</td>
 					<td>
 						<a th:href="@{/registry/edit/{id}?page=1(id=${item.case_uuid})}">
 							<span class="badge"

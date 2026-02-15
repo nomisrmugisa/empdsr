@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface IptsTableRepository extends JpaRepository<ipts_table, Integer> {
+public interface IptsTableRepository extends JpaRepository<ipts_table, String> {
 
 }
