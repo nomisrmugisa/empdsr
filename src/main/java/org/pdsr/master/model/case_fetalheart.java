@@ -36,17 +36,17 @@ public class case_fetalheart implements Serializable {
 	@JoinColumn(name = "case_uuid", referencedColumnName = "case_uuid", insertable = true, updatable = true)
 	private case_identifiers case_uuid;
 
-	
 	@Column
 	private Integer fetalheart_refered;
 
-	
 	@Column
 	private Integer fetalheart_arrival;
 
-	
 	@Column
 	private Integer fetalheart_lastheard;
+
+	@Column
+	private String fetalheart_abnormal;
 
 	@JsonIgnore
 	@Lob
@@ -112,6 +112,14 @@ public class case_fetalheart implements Serializable {
 		this.fetalheart_lastheard = fetalheart_lastheard;
 	}
 
+	public String getFetalheart_abnormal() {
+		return fetalheart_abnormal;
+	}
+
+	public void setFetalheart_abnormal(String fetalheart_abnormal) {
+		this.fetalheart_abnormal = fetalheart_abnormal;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -136,6 +144,5 @@ public class case_fetalheart implements Serializable {
 			return false;
 		return true;
 	}
-
 
 }

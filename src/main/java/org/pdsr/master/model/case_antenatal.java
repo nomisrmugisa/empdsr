@@ -66,6 +66,12 @@ public class case_antenatal implements Serializable {
 	private Integer antenatal_hiv;// first visit
 
 	@Column
+	private String antenatal_hiv_viral_load;
+
+	@Column
+	private String antenatal_reduced_fm_specify;
+
+	@Column
 	private Integer antenatal_art;// first visit
 
 	@Column
@@ -82,59 +88,57 @@ public class case_antenatal implements Serializable {
 
 	@Column
 	private Integer antenatal_folicacid3m;// first visit
-	
+
 	@Column
 	private Integer antenatal_malprophy;// firisit
-	
+
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "join_antenatal_malprophy", joinColumns = @JoinColumn(name = "antenatal_uuid"), inverseJoinColumns = @JoinColumn(name = "ipt_name"))
 	private List<ipts_table> antenatal_ipt = new ArrayList<>();
-	
+
 	@Column
 	private Integer antenatal_tetanus;// first visit
-	
+
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "join_antenatal_tetanus", joinColumns = @JoinColumn(name = "antenatal_uuid"), inverseJoinColumns = @JoinColumn(name = "td_name"))
-	private List<ttdp_table> antenatal_tetdip = new ArrayList<>();	
-	
+	private List<ttdp_table> antenatal_tetdip = new ArrayList<>();
+
 	@Column
-	private Integer antenatal_syphtest; 
-	
+	private Integer antenatal_syphtest;
+
 	@Column
-	private Integer antenatal_hbtest; 
-	
+	private Integer antenatal_hbtest;
+
 	@Column
 	@Size(max = 80)
 	private String antenatal_hbtestres;
-	
-	@Column
-	private Integer antenatal_hepatitis; 
-	
-	@Column
-	private Integer antenatal_bloodgrp; 
-	
-	@Column
-	private Integer antenatal_bloodrhesus; 
-	
-	@Column
-	private Integer antenatal_bloodtransf; 
-	
-	@Column
-	private Integer antenatal_maltest; 
-	
-	@Column
-	private Integer antenatal_maltestres; 
-		
-	@Column
-	private Integer antenatal_syphtestres; 
-	
-	@Column
-	private Integer antenatal_urintest; 
-	
-	@Column
-	private Integer antenatal_utrasdtest; 
 
+	@Column
+	private Integer antenatal_hepatitis;
 
+	@Column
+	private Integer antenatal_bloodgrp;
+
+	@Column
+	private Integer antenatal_bloodrhesus;
+
+	@Column
+	private Integer antenatal_bloodtransf;
+
+	@Column
+	private Integer antenatal_maltest;
+
+	@Column
+	private Integer antenatal_maltestres;
+
+	@Column
+	private Integer antenatal_syphtestres;
+
+	@Column
+	private Integer antenatal_urintest;
+
+	@Column
+	private Integer antenatal_utrasdtest;
 
 	@Column
 	private Integer antenatal_risks;// firisit
@@ -249,6 +253,22 @@ public class case_antenatal implements Serializable {
 
 	public void setAntenatal_hiv(Integer antenatal_hivpos) {
 		this.antenatal_hiv = antenatal_hivpos;
+	}
+
+	public String getAntenatal_hiv_viral_load() {
+		return antenatal_hiv_viral_load;
+	}
+
+	public void setAntenatal_hiv_viral_load(String antenatal_hiv_viral_load) {
+		this.antenatal_hiv_viral_load = antenatal_hiv_viral_load;
+	}
+
+	public String getAntenatal_reduced_fm_specify() {
+		return antenatal_reduced_fm_specify;
+	}
+
+	public void setAntenatal_reduced_fm_specify(String antenatal_reduced_fm_specify) {
+		this.antenatal_reduced_fm_specify = antenatal_reduced_fm_specify;
 	}
 
 	public Integer getAntenatal_malprophy() {
@@ -426,8 +446,6 @@ public class case_antenatal implements Serializable {
 	public void setAntenatal_risks(Integer antenatal_risks) {
 		this.antenatal_risks = antenatal_risks;
 	}
-
-
 
 	public List<risk_table> getRisks() {
 		return risks;

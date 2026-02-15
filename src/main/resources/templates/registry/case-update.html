@@ -1409,6 +1409,30 @@
 			if (typeof changeLabourStatus === 'function') changeLabourStatus();
 		});
 	</script>
+	<script>
+		function generateChildInitials() {
+			var mname = document.getElementById("case_mname");
+			var sexsel = document.getElementById("biodata_sex");
+			var initfield = document.getElementById("biodata_initials");
+			if (!mname || !sexsel || !initfield) return;
+
+			var names = mname.value.trim().split(/\s+/);
+			var initials = "";
+			for (var i = 0; i < names.length; i++) {
+				if (names[i].length > 0) {
+					initials += names[i].charAt(0).toUpperCase();
+				}
+			}
+
+			var sexChar = "";
+			if (sexsel.value == '1') sexChar = "M";
+			else if (sexsel.value == '2') sexChar = "F";
+			else if (sexsel.value == '3') sexChar = "I";
+			else if (sexsel.value == '77') sexChar = "U";
+
+			initfield.value = initials + (sexChar ? " " + sexChar : "");
+		}
+	</script>
 </scripts>
 
 </html>

@@ -45,11 +45,9 @@ public class case_babydeath implements Serializable {
 	@JoinColumn(name = "case_uuid", referencedColumnName = "case_uuid", insertable = true, updatable = true)
 	private case_identifiers case_uuid;
 
-	
 	@Column
 	private Integer baby_cry;
 
-	
 	@Column
 	private Integer baby_resuscitation;
 
@@ -61,21 +59,18 @@ public class case_babydeath implements Serializable {
 	@Column
 	private String new_resuscitation;
 
-	
 	@Column
 	private Integer baby_resuscitation_done;
-	
+
 	@Column
 	private Integer baby_resuscitation_warmth;
-	
+
 	@Column
 	private Integer baby_apgar1;
 
-	
 	@Column
 	private Integer baby_apgar5;
 
-	
 	@Column
 	private Integer baby_admitted;
 
@@ -86,29 +81,29 @@ public class case_babydeath implements Serializable {
 	@Lob
 	@Column
 	private String new_diagnoses;
-	
+
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "baby_icd", joinColumns = @JoinColumn(name = "icd_uuid"), inverseJoinColumns = @JoinColumn(name = "icd_code"))
 	private List<icd_diagnoses> icd_diagnoses;
-	
+
 	@Column
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date baby_ddate;
 
-	
 	@Column
 	private Integer baby_dhour;
 
-	
 	@Column
 	private Integer baby_dminute;
 
-	
 	@Column
 	@Temporal(TemporalType.TIME)
 	@DateTimeFormat(pattern = "HH:mm")
 	private Date baby_dtime;
+
+	@Column
+	private Double baby_weight;
 
 	@Column
 	private Integer baby_ddatetime_notstated;
@@ -124,7 +119,6 @@ public class case_babydeath implements Serializable {
 	@Column
 	private String baby_json;
 
-	
 	@Column
 	private Integer data_complete;
 
@@ -278,6 +272,14 @@ public class case_babydeath implements Serializable {
 
 	public void setBaby_dtime(Date baby_dtime) {
 		this.baby_dtime = baby_dtime;
+	}
+
+	public Double getBaby_weight() {
+		return baby_weight;
+	}
+
+	public void setBaby_weight(Double baby_weight) {
+		this.baby_weight = baby_weight;
 	}
 
 	public Integer getBaby_medicalcod() {

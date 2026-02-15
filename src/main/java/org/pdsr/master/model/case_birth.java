@@ -47,7 +47,7 @@ public class case_birth implements Serializable {
 
 	@Column
 	private Integer birth_mode;
-	
+
 	@Column
 	private Integer birth_decision;
 
@@ -126,6 +126,18 @@ public class case_birth implements Serializable {
 
 	@Column
 	private Integer birth_mbabyoutcome;// show if maternal death
+
+	@Column
+	private String birth_multiple_ipnos;
+
+	@Column
+	private Integer birth_referred;
+
+	@Column
+	private String birth_referral_reason;
+
+	@Column
+	private String birth_referral_time_spent;
 
 	@JsonIgnore
 	@Lob
@@ -357,6 +369,38 @@ public class case_birth implements Serializable {
 
 	public void setBirth_mbabyoutcome(Integer birth_mbabyoutcome) {
 		this.birth_mbabyoutcome = birth_mbabyoutcome;
+	}
+
+	public String getBirth_multiple_ipnos() {
+		return birth_multiple_ipnos;
+	}
+
+	public void setBirth_multiple_ipnos(String birth_multiple_ipnos) {
+		this.birth_multiple_ipnos = birth_multiple_ipnos;
+	}
+
+	public Integer getBirth_referred() {
+		return birth_referred;
+	}
+
+	public void setBirth_referred(Integer birth_referred) {
+		this.birth_referred = birth_referred;
+	}
+
+	public String getBirth_referral_reason() {
+		return birth_referral_reason;
+	}
+
+	public void setBirth_referral_reason(String birth_referral_reason) {
+		this.birth_referral_reason = birth_referral_reason;
+	}
+
+	public String getBirth_referral_time_spent() {
+		return birth_referral_time_spent;
+	}
+
+	public void setBirth_referral_time_spent(String birth_referral_time_spent) {
+		this.birth_referral_time_spent = birth_referral_time_spent;
 	}
 
 	@Override

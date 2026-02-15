@@ -49,6 +49,12 @@ public class case_pregnancy implements Serializable {
 	private Integer pregnancy_type;
 	
 	@Column
+	private Integer pregnancy_gravida;
+	
+	@Column
+	private Integer pregnancy_para;
+	
+	@Column
 	private Integer data_complete;
 
 	@JsonIgnore
@@ -96,6 +102,22 @@ public class case_pregnancy implements Serializable {
 
 	public void setPregnancy_type(Integer pregnancy_type) {
 		this.pregnancy_type = pregnancy_type;
+	}
+
+	public Integer getPregnancy_gravida() {
+		return pregnancy_gravida;
+	}
+
+	public void setPregnancy_gravida(Integer pregnancy_gravida) {
+		this.pregnancy_gravida = pregnancy_gravida;
+	}
+
+	public Integer getPregnancy_para() {
+		return pregnancy_para;
+	}
+
+	public void setPregnancy_para(Integer pregnancy_para) {
+		this.pregnancy_para = pregnancy_para;
 	}
 
 	public Integer getData_complete() {

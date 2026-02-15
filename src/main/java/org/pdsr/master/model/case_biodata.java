@@ -45,6 +45,9 @@ public class case_biodata implements Serializable {
 	private Integer biodata_sex;
 
 	@Column
+	private String biodata_initials;
+
+	@Column
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date biodata_mdob;
@@ -54,7 +57,7 @@ public class case_biodata implements Serializable {
 
 	@Column
 	private Integer biodata_medu;
-	
+
 	@Lob
 	@Column
 	private String biodata_maddress;
@@ -62,23 +65,23 @@ public class case_biodata implements Serializable {
 	@Lob
 	@Column
 	private String biodata_location;
-	
+
 	@Column
 	private String biodata_village;
-	
+
 	@Lob
 	@Column
 	private String biodata_contact;
-	
+
 	@Column
 	private Integer biodata_work;
-	
+
 	@Column
 	private Integer biodata_marital;
-	
+
 	@Column
 	private Integer biodata_religion;
-	
+
 	@Column
 	private Integer biodata_ethnic;
 
@@ -91,7 +94,7 @@ public class case_biodata implements Serializable {
 
 	@Column
 	private Integer biodata_rnok;
-		
+
 	@Column
 	private Integer data_complete;
 
@@ -100,7 +103,6 @@ public class case_biodata implements Serializable {
 	@Column
 	private String biodata_json;
 
-	
 	public String getBiodata_uuid() {
 		return biodata_uuid;
 	}
@@ -125,6 +127,14 @@ public class case_biodata implements Serializable {
 		this.biodata_sex = biodata_sex;
 	}
 
+	public String getBiodata_initials() {
+		return biodata_initials;
+	}
+
+	public void setBiodata_initials(String biodata_initials) {
+		this.biodata_initials = biodata_initials;
+	}
+
 	public Integer getBiodata_mage() {
 		return biodata_mage;
 	}
@@ -140,7 +150,7 @@ public class case_biodata implements Serializable {
 	public void setBiodata_medu(Integer biodata_medu) {
 		this.biodata_medu = biodata_medu;
 	}
-	
+
 	public String getBiodata_location() {
 		return biodata_location;
 	}

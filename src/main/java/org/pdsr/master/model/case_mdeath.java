@@ -84,7 +84,7 @@ public class case_mdeath implements Serializable {
 
 	@Column
 	private Integer mdeath_ante_hysterotomy;
-	
+
 	@Column
 	private Integer mdeath_ante_anticonvulsants;
 
@@ -115,7 +115,7 @@ public class case_mdeath implements Serializable {
 
 	@Column
 	private Integer mdeath_intra_diazepam;
-	
+
 	@Column
 	private Integer mdeath_intra_uterotonics;
 
@@ -155,10 +155,10 @@ public class case_mdeath implements Serializable {
 
 	@Column
 	private Integer mdeath_postpart_diazepam;
-	
+
 	@Column
 	private Integer mdeath_postpart_repairuterus;
-	
+
 	@Column
 	private Integer mdeath_postpart_perinealrepair;
 
@@ -186,18 +186,18 @@ public class case_mdeath implements Serializable {
 
 	@Column
 	private Integer mdeath_other_icuventilation;
-	
+
 	@Column
 	private Integer mdeath_other_hdu;
 
 	@Lob
 	@Column
 	private String mdeath_new_intervention;
-	
+
 	@Lob
 	@Column
 	private String mdeath_summary_intervention;
-	
+
 	@Lob
 	@Column
 	private String mdeath_outcome_intervention;
@@ -212,7 +212,46 @@ public class case_mdeath implements Serializable {
 
 	@Column
 	private Integer mdeath_minute;
-	
+
+	@Column
+	private Integer mdeath_rnok_rel;
+
+	@Column
+	private Integer mdeath_referred;
+
+	@Column
+	private String mdeath_referred_hf;
+
+	@Column
+	private Integer mdeath_bp_unrecordable;
+
+	@Column
+	private String mdeath_pulse;
+
+	@Column
+	private String mdeath_hiv_viral_load;
+
+	@Column
+	private String mdeath_cs_decision_incision;
+
+	@Column
+	private String mdeath_cs_decision_delivery;
+
+	@Column
+	private String mdeath_outcome_bp;
+
+	@Column
+	private String mdeath_outcome_gcs;
+
+	@Column
+	private String mdeath_outcome_spo2;
+
+	@Column
+	private String mdeath_outcome_pr;
+
+	@Column
+	private String mdeath_outcome_rr;
+
 	@Column
 	private String mdeath_possible_cause;
 
@@ -310,6 +349,110 @@ public class case_mdeath implements Serializable {
 
 	public void setMdeath_minute(Integer mdeath_minute) {
 		this.mdeath_minute = mdeath_minute;
+	}
+
+	public Integer getMdeath_rnok_rel() {
+		return mdeath_rnok_rel;
+	}
+
+	public void setMdeath_rnok_rel(Integer mdeath_rnok_rel) {
+		this.mdeath_rnok_rel = mdeath_rnok_rel;
+	}
+
+	public Integer getMdeath_referred() {
+		return mdeath_referred;
+	}
+
+	public void setMdeath_referred(Integer mdeath_referred) {
+		this.mdeath_referred = mdeath_referred;
+	}
+
+	public String getMdeath_referred_hf() {
+		return mdeath_referred_hf;
+	}
+
+	public void setMdeath_referred_hf(String mdeath_referred_hf) {
+		this.mdeath_referred_hf = mdeath_referred_hf;
+	}
+
+	public Integer getMdeath_bp_unrecordable() {
+		return mdeath_bp_unrecordable;
+	}
+
+	public void setMdeath_bp_unrecordable(Integer mdeath_bp_unrecordable) {
+		this.mdeath_bp_unrecordable = mdeath_bp_unrecordable;
+	}
+
+	public String getMdeath_pulse() {
+		return mdeath_pulse;
+	}
+
+	public void setMdeath_pulse(String mdeath_pulse) {
+		this.mdeath_pulse = mdeath_pulse;
+	}
+
+	public String getMdeath_hiv_viral_load() {
+		return mdeath_hiv_viral_load;
+	}
+
+	public void setMdeath_hiv_viral_load(String mdeath_hiv_viral_load) {
+		this.mdeath_hiv_viral_load = mdeath_hiv_viral_load;
+	}
+
+	public String getMdeath_cs_decision_incision() {
+		return mdeath_cs_decision_incision;
+	}
+
+	public void setMdeath_cs_decision_incision(String mdeath_cs_decision_incision) {
+		this.mdeath_cs_decision_incision = mdeath_cs_decision_incision;
+	}
+
+	public String getMdeath_cs_decision_delivery() {
+		return mdeath_cs_decision_delivery;
+	}
+
+	public void setMdeath_cs_decision_delivery(String mdeath_cs_decision_delivery) {
+		this.mdeath_cs_decision_delivery = mdeath_cs_decision_delivery;
+	}
+
+	public String getMdeath_outcome_bp() {
+		return mdeath_outcome_bp;
+	}
+
+	public void setMdeath_outcome_bp(String mdeath_outcome_bp) {
+		this.mdeath_outcome_bp = mdeath_outcome_bp;
+	}
+
+	public String getMdeath_outcome_gcs() {
+		return mdeath_outcome_gcs;
+	}
+
+	public void setMdeath_outcome_gcs(String mdeath_outcome_gcs) {
+		this.mdeath_outcome_gcs = mdeath_outcome_gcs;
+	}
+
+	public String getMdeath_outcome_spo2() {
+		return mdeath_outcome_spo2;
+	}
+
+	public void setMdeath_outcome_spo2(String mdeath_outcome_spo2) {
+		this.mdeath_outcome_spo2 = mdeath_outcome_spo2;
+	}
+
+	public String getMdeath_outcome_pr() {
+		return mdeath_outcome_pr;
+	}
+
+	public void setMdeath_outcome_pr(String mdeath_outcome_pr) {
+		this.mdeath_outcome_pr = mdeath_outcome_pr;
+	}
+
+	public String getMdeath_outcome_rr() {
+		return mdeath_outcome_rr;
+	}
+
+	public void setMdeath_outcome_rr(String mdeath_outcome_rr) {
+		this.mdeath_outcome_rr = mdeath_outcome_rr;
 	}
 
 	public Date getMdeath_time() {

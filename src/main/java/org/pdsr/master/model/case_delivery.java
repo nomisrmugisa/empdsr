@@ -78,6 +78,8 @@ public class case_delivery implements Serializable {
 	@Column
 	private Integer delivery_period;//dawn,morning,afternoon,evening,night
 	
+	@Column
+	private String delivery_mode;
 	
 	@Column
 	private Integer data_complete;
@@ -197,6 +199,14 @@ public class case_delivery implements Serializable {
 
 	public void setDelivery_abortion(Integer delivery_abortion) {
 		this.delivery_abortion = delivery_abortion;
+	}
+
+	public String getDelivery_mode() {
+		return delivery_mode;
+	}
+
+	public void setDelivery_mode(String delivery_mode) {
+		this.delivery_mode = delivery_mode;
 	}
 
 	@Override

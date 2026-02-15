@@ -1,14 +1,11 @@
 package org.pdsr.controller;
 
-import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.pdsr.CONSTANTS;
-import org.pdsr.InternetAvailabilityChecker;
 import org.pdsr.ServiceApi;
 import org.pdsr.master.model.abnormality_table;
 import org.pdsr.master.model.audit_audit;
@@ -405,7 +402,7 @@ public class CentralPushController {
 		}
 
 		if (jsons != null && !jsons.isEmpty()) {
-			
+
 			final String msg = api.postCases(jsons);
 
 			if ("success".equals(msg)) {
