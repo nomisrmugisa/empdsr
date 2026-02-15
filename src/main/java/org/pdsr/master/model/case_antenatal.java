@@ -66,12 +66,6 @@ public class case_antenatal implements Serializable {
 	private Integer antenatal_hiv;// first visit
 
 	@Column
-	private String antenatal_hiv_viral_load;
-
-	@Column
-	private String antenatal_reduced_fm_specify;
-
-	@Column
 	private Integer antenatal_art;// first visit
 
 	@Column
@@ -150,6 +144,9 @@ public class case_antenatal implements Serializable {
 	@Lob
 	@Column
 	private String new_risks;
+
+	@Column
+	private Integer antenatal_viral_load;
 
 	@JsonIgnore
 	@Lob
@@ -253,22 +250,6 @@ public class case_antenatal implements Serializable {
 
 	public void setAntenatal_hiv(Integer antenatal_hivpos) {
 		this.antenatal_hiv = antenatal_hivpos;
-	}
-
-	public String getAntenatal_hiv_viral_load() {
-		return antenatal_hiv_viral_load;
-	}
-
-	public void setAntenatal_hiv_viral_load(String antenatal_hiv_viral_load) {
-		this.antenatal_hiv_viral_load = antenatal_hiv_viral_load;
-	}
-
-	public String getAntenatal_reduced_fm_specify() {
-		return antenatal_reduced_fm_specify;
-	}
-
-	public void setAntenatal_reduced_fm_specify(String antenatal_reduced_fm_specify) {
-		this.antenatal_reduced_fm_specify = antenatal_reduced_fm_specify;
 	}
 
 	public Integer getAntenatal_malprophy() {
@@ -469,6 +450,14 @@ public class case_antenatal implements Serializable {
 
 	public void setAntenatal_art(Integer antenatal_art) {
 		this.antenatal_art = antenatal_art;
+	}
+
+	public Integer getAntenatal_viral_load() {
+		return antenatal_viral_load;
+	}
+
+	public void setAntenatal_viral_load(Integer antenatal_viral_load) {
+		this.antenatal_viral_load = antenatal_viral_load;
 	}
 
 	@Override

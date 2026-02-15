@@ -43,30 +43,27 @@ public class case_delivery implements Serializable {
 
 	@Column
 	private Integer delivery_occured;
-	
+
 	@Column
 	private Integer delivery_abortion;
-	
+
 	@Column
 	private Integer delivery_occured_facility;
-	
+
 	@Column
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date delivery_date;
 
-	
 	@Column
 	private Integer delivery_hour;
-	
-	
+
 	@Column
 	private Integer delivery_minute;
-	
+
 	@Column
 	private Double delivery_weight;
-	
-	
+
 	@Column
 	@Temporal(TemporalType.TIME)
 	@DateTimeFormat(pattern = "HH:mm")
@@ -74,13 +71,10 @@ public class case_delivery implements Serializable {
 
 	@Column
 	private Integer delivery_datetime_notstated;
-	
+
 	@Column
-	private Integer delivery_period;//dawn,morning,afternoon,evening,night
-	
-	@Column
-	private String delivery_mode;
-	
+	private Integer delivery_period;// dawn,morning,afternoon,evening,night
+
 	@Column
 	private Integer data_complete;
 
@@ -88,7 +82,7 @@ public class case_delivery implements Serializable {
 	@Lob
 	@Column
 	private String delivery_json;
-		
+
 	public String getDelivery_json() {
 		return delivery_json;
 	}
@@ -201,14 +195,6 @@ public class case_delivery implements Serializable {
 		this.delivery_abortion = delivery_abortion;
 	}
 
-	public String getDelivery_mode() {
-		return delivery_mode;
-	}
-
-	public void setDelivery_mode(String delivery_mode) {
-		this.delivery_mode = delivery_mode;
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -233,6 +219,5 @@ public class case_delivery implements Serializable {
 			return false;
 		return true;
 	}
-		
 
 }

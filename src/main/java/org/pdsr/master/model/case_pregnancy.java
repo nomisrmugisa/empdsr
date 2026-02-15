@@ -36,24 +36,15 @@ public class case_pregnancy implements Serializable {
 	@JoinColumn(name = "case_uuid", referencedColumnName = "case_uuid", insertable = true, updatable = true)
 	private case_identifiers case_uuid;
 
-	
 	@Column
 	private Integer pregnancy_weeks;
 
-	
 	@Column
 	private Integer pregnancy_days;
 
-	
 	@Column
 	private Integer pregnancy_type;
-	
-	@Column
-	private Integer pregnancy_gravida;
-	
-	@Column
-	private Integer pregnancy_para;
-	
+
 	@Column
 	private Integer data_complete;
 
@@ -61,7 +52,6 @@ public class case_pregnancy implements Serializable {
 	@Lob
 	@Column
 	private String pregnancy_json;
-
 
 	public String getPregnancy_uuid() {
 		return pregnancy_uuid;
@@ -95,29 +85,12 @@ public class case_pregnancy implements Serializable {
 		this.pregnancy_days = pregnancy_days;
 	}
 
-	
 	public Integer getPregnancy_type() {
 		return pregnancy_type;
 	}
 
 	public void setPregnancy_type(Integer pregnancy_type) {
 		this.pregnancy_type = pregnancy_type;
-	}
-
-	public Integer getPregnancy_gravida() {
-		return pregnancy_gravida;
-	}
-
-	public void setPregnancy_gravida(Integer pregnancy_gravida) {
-		this.pregnancy_gravida = pregnancy_gravida;
-	}
-
-	public Integer getPregnancy_para() {
-		return pregnancy_para;
-	}
-
-	public void setPregnancy_para(Integer pregnancy_para) {
-		this.pregnancy_para = pregnancy_para;
 	}
 
 	public Integer getData_complete() {
@@ -160,6 +133,5 @@ public class case_pregnancy implements Serializable {
 			return false;
 		return true;
 	}
-	
 
 }

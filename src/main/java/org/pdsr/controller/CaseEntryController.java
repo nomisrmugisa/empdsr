@@ -255,7 +255,7 @@ public class CaseEntryController {
 
 			List<String> uploadErrors = new ArrayList<>();
 
-//			int counter = 1;
+			// int counter = 1;
 			a: for (json_redcap elem : redcap_cases) {
 
 				if (elem.getCase_date() == null || elem.getCase_date() instanceof Date || elem.getCase_death() == null
@@ -363,6 +363,7 @@ public class CaseEntryController {
 				page5.setAntenatal_malprophy(elem.getAntenatal_malprophy());
 				page5.setAntenatal_risks(elem.getAntenatal_risks());
 				page5.setNew_risks(elem.getNew_risks());
+				page5.setAntenatal_viral_load(elem.getAntenatal_viral_load());
 				page5.setData_complete(elem.getCase_antenatal_form_complete());
 				antRepo.save(page5);
 
@@ -435,6 +436,7 @@ public class CaseEntryController {
 				page8.setNew_abnormalities(elem.getNew_abnormalities());
 				page8.setBirth_cordfaults(elem.getBirth_cordfaults());
 				page8.setNew_cordfaults(elem.getNew_cordfaults());
+				page8.setBirth_ipno_multi(elem.getBirth_ipno_multi());
 				page8.setBirth_placentachecks(elem.getBirth_placentachecks());
 				page8.setNew_placentachecks(elem.getNew_placentachecks());
 				page8.setBirth_liqourvolume(elem.getBirth_liqourvolume());
@@ -691,154 +693,154 @@ public class CaseEntryController {
 		}
 
 		switch (page) {
-		case 1: {
-			model.addAttribute("bioactive", "active");
-			if (selected.getBiodata() == null) {
-				case_biodata data = new case_biodata();
-				data.setBiodata_uuid(selected.getCase_uuid());
-				data.setCase_uuid(selected);
-				data.setBiodata_ethnic(8);
-				selected.setBiodata(data);
-			}
-			break;
-		}
-
-		case 2: {
-			model.addAttribute("refactive", "active");
-			if (selected.getReferral() == null) {
-				case_referral data = new case_referral();
-				data.setReferral_uuid(selected.getCase_uuid());
-				data.setCase_uuid(selected);
-
-				selected.setReferral(data);
-			}
-			final String encodedImage = convertBinImageToString(selected.getReferral().getReferral_file());
-			selected.getReferral().setBase64image(encodedImage);
-			break;
-		}
-
-		case 3: {
-			model.addAttribute("preactive", "active");
-			if (selected.getPregnancy() == null) {
-				case_pregnancy data = new case_pregnancy();
-				data.setPregnancy_uuid(selected.getCase_uuid());
-				data.setCase_uuid(selected);
-				selected.setPregnancy(data);
-			}
-			break;
-		}
-
-		case 4: {
-			model.addAttribute("antactive", "active");
-			if (selected.getAntenatal() == null) {
-				case_antenatal data = new case_antenatal();
-				data.setAntenatal_uuid(selected.getCase_uuid());
-				data.setCase_uuid(selected);
-				selected.setAntenatal(data);
-			}
-			// model.addAttribute("risk_options", riskRepo.findAll());
-			// model.addAttribute("ipt_options", iptsRepo.findAll());
-			// model.addAttribute("dp_options", ttdpRepo.findAll());
-			break;
-		}
-
-		case 5: {
-			model.addAttribute("labactive", "active");
-			if (selected.getLabour() == null) {
-				case_labour data = new case_labour();
-				data.setLabour_uuid(selected.getCase_uuid());
-				data.setCase_uuid(selected);
-				selected.setLabour(data);
-			}
-			model.addAttribute("complication_options", compRepo.findAll());
-			break;
-		}
-
-		case 6: {
-			model.addAttribute("delactive", "active");
-			if (selected.getDelivery() == null) {
-				case_delivery data = new case_delivery();
-				data.setDelivery_uuid(selected.getCase_uuid());
-				data.setCase_uuid(selected);
-				selected.setDelivery(data);
-			}
-			break;
-		}
-
-		case 7: {
-
-			model.addAttribute("biractive", "active");
-			if (selected.getBirth() == null) {
-				case_birth data = new case_birth();
-				data.setBirth_uuid(selected.getCase_uuid());
-				data.setCase_uuid(selected);
-				selected.setBirth(data);
-			}
-
-			if (selected.getDelivery() == null || selected.getDelivery().getDelivery_occured() != 1) {
-
-				model.addAttribute("no_birth", "active");
-
-			} else {
-
-				model.addAttribute("abnormality_options", abnoRepo.findAll());
-				model.addAttribute("cordfault_options", cordRepo.findAll());
-				model.addAttribute("placentacheck_options", placRepo.findAll());
-
-			}
-
-			break;
-		}
-
-		case 8: {
-			if (selected.getCase_death() == CONSTANTS.STILL_BIRTH) {
-				model.addAttribute("fetactive", "active");
-				if (selected.getFetalheart() == null) {
-					case_fetalheart data = new case_fetalheart();
-					data.setFetalheart_uuid(selected.getCase_uuid());
+			case 1: {
+				model.addAttribute("bioactive", "active");
+				if (selected.getBiodata() == null) {
+					case_biodata data = new case_biodata();
+					data.setBiodata_uuid(selected.getCase_uuid());
 					data.setCase_uuid(selected);
-					selected.setFetalheart(data);
+					data.setBiodata_ethnic(8);
+					selected.setBiodata(data);
+				}
+				break;
+			}
+
+			case 2: {
+				model.addAttribute("refactive", "active");
+				if (selected.getReferral() == null) {
+					case_referral data = new case_referral();
+					data.setReferral_uuid(selected.getCase_uuid());
+					data.setCase_uuid(selected);
+
+					selected.setReferral(data);
+				}
+				final String encodedImage = convertBinImageToString(selected.getReferral().getReferral_file());
+				selected.getReferral().setBase64image(encodedImage);
+				break;
+			}
+
+			case 3: {
+				model.addAttribute("preactive", "active");
+				if (selected.getPregnancy() == null) {
+					case_pregnancy data = new case_pregnancy();
+					data.setPregnancy_uuid(selected.getCase_uuid());
+					data.setCase_uuid(selected);
+					selected.setPregnancy(data);
+				}
+				break;
+			}
+
+			case 4: {
+				model.addAttribute("antactive", "active");
+				if (selected.getAntenatal() == null) {
+					case_antenatal data = new case_antenatal();
+					data.setAntenatal_uuid(selected.getCase_uuid());
+					data.setCase_uuid(selected);
+					selected.setAntenatal(data);
+				}
+				// model.addAttribute("risk_options", riskRepo.findAll());
+				// model.addAttribute("ipt_options", iptsRepo.findAll());
+				// model.addAttribute("dp_options", ttdpRepo.findAll());
+				break;
+			}
+
+			case 5: {
+				model.addAttribute("labactive", "active");
+				if (selected.getLabour() == null) {
+					case_labour data = new case_labour();
+					data.setLabour_uuid(selected.getCase_uuid());
+					data.setCase_uuid(selected);
+					selected.setLabour(data);
+				}
+				model.addAttribute("complication_options", compRepo.findAll());
+				break;
+			}
+
+			case 6: {
+				model.addAttribute("delactive", "active");
+				if (selected.getDelivery() == null) {
+					case_delivery data = new case_delivery();
+					data.setDelivery_uuid(selected.getCase_uuid());
+					data.setCase_uuid(selected);
+					selected.setDelivery(data);
+				}
+				break;
+			}
+
+			case 7: {
+
+				model.addAttribute("biractive", "active");
+				if (selected.getBirth() == null) {
+					case_birth data = new case_birth();
+					data.setBirth_uuid(selected.getCase_uuid());
+					data.setCase_uuid(selected);
+					selected.setBirth(data);
+				}
+
+				if (selected.getDelivery() == null || selected.getDelivery().getDelivery_occured() != 1) {
+
+					model.addAttribute("no_birth", "active");
+
+				} else {
+
+					model.addAttribute("abnormality_options", abnoRepo.findAll());
+					model.addAttribute("cordfault_options", cordRepo.findAll());
+					model.addAttribute("placentacheck_options", placRepo.findAll());
 
 				}
-			} else if (selected.getCase_death() == CONSTANTS.NEONATAL_DEATH) {
 
-				model.addAttribute("babactive", "active");
-				if (selected.getBabydeath() == null) {
-					case_babydeath data = new case_babydeath();
-					data.setBaby_uuid(selected.getCase_uuid());
-					data.setCase_uuid(selected);
-					selected.setBabydeath(data);
-				}
-				model.addAttribute("diagnoses_options", diagRepo.findAll());
-				model.addAttribute("resuscitation_options", resusRepo.findAll());
-
-			} else if (selected.getCase_death() == CONSTANTS.MATERNAL_DEATH) {
-
-				model.addAttribute("itvactive", "active");
-				if (selected.getMdeath() == null) {
-					case_mdeath data = new case_mdeath();
-					data.setMdeath_uuid(selected.getCase_uuid());
-					data.setCase_uuid(selected);
-					selected.setMdeath(data);
-				}
-			}
-			break;
-		}
-
-		case 9: {
-			model.addAttribute("notactive", "active");
-			if (selected.getNotes() == null) {
-				case_notes data = new case_notes();
-				data.setNotes_uuid(selected.getCase_uuid());
-				data.setCase_uuid(selected);
-				selected.setNotes(data);
+				break;
 			}
 
-			final String encodedImage = convertBinImageToString(selected.getNotes().getNotes_file());
-			selected.getNotes().setBase64image(encodedImage);
+			case 8: {
+				if (selected.getCase_death() == CONSTANTS.STILL_BIRTH) {
+					model.addAttribute("fetactive", "active");
+					if (selected.getFetalheart() == null) {
+						case_fetalheart data = new case_fetalheart();
+						data.setFetalheart_uuid(selected.getCase_uuid());
+						data.setCase_uuid(selected);
+						selected.setFetalheart(data);
 
-			break;
-		}
+					}
+				} else if (selected.getCase_death() == CONSTANTS.NEONATAL_DEATH) {
+
+					model.addAttribute("babactive", "active");
+					if (selected.getBabydeath() == null) {
+						case_babydeath data = new case_babydeath();
+						data.setBaby_uuid(selected.getCase_uuid());
+						data.setCase_uuid(selected);
+						selected.setBabydeath(data);
+					}
+					model.addAttribute("diagnoses_options", diagRepo.findAll());
+					model.addAttribute("resuscitation_options", resusRepo.findAll());
+
+				} else if (selected.getCase_death() == CONSTANTS.MATERNAL_DEATH) {
+
+					model.addAttribute("itvactive", "active");
+					if (selected.getMdeath() == null) {
+						case_mdeath data = new case_mdeath();
+						data.setMdeath_uuid(selected.getCase_uuid());
+						data.setCase_uuid(selected);
+						selected.setMdeath(data);
+					}
+				}
+				break;
+			}
+
+			case 9: {
+				model.addAttribute("notactive", "active");
+				if (selected.getNotes() == null) {
+					case_notes data = new case_notes();
+					data.setNotes_uuid(selected.getCase_uuid());
+					data.setCase_uuid(selected);
+					selected.setNotes(data);
+				}
+
+				final String encodedImage = convertBinImageToString(selected.getNotes().getNotes_file());
+				selected.getNotes().setBase64image(encodedImage);
+
+				break;
+			}
 
 		}
 
@@ -875,612 +877,629 @@ public class CaseEntryController {
 		selected.setCase_status(0);// reset the submission status to not submitted (incomplete)
 
 		switch (page) {
-		case 1: {
+			case 1: {
 
-			try {
-				case_biodata o = selected.getBiodata();
-				if (o.getBiodata_mage() == null || o.getBiodata_medu() == null || o.getBiodata_sex() == null) {
-					o.setData_complete(0);
-				} else {
-					o.setData_complete(1);
-					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getBiodata()));
-					selected.getBiodata().setBiodata_json(arrayToJson);
+				try {
+					case_biodata o = selected.getBiodata();
+					if (o.getBiodata_mage() == null || o.getBiodata_medu() == null || o.getBiodata_sex() == null) {
+						o.setData_complete(0);
+					} else {
+						o.setData_complete(1);
+						final String arrayToJson = objectMapper
+								.writeValueAsString(processListOf(selected.getBiodata()));
+						selected.getBiodata().setBiodata_json(arrayToJson);
 
+					}
+					bioRepo.save(o);
+				} catch (JsonProcessingException e) {
+					e.printStackTrace();
 				}
-				bioRepo.save(o);
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
+
+				break;
 			}
+			case 2: {
+				try {
 
-			break;
-		}
-		case 2: {
-			try {
+					if (selected.getReferral().getReferral_case() != null
+							&& selected.getReferral().getReferral_case() == 1) {
 
-				if (selected.getReferral().getReferral_case() != null
-						&& selected.getReferral().getReferral_case() == 1) {
+						Date time = selected.getReferral().getReferral_time();
+						if (time != null) {
+							Calendar cal = Calendar.getInstance();
+							cal.setTime(time);
+							selected.getReferral().setReferral_hour(cal.get(Calendar.HOUR_OF_DAY));
+							selected.getReferral().setReferral_minute(cal.get(Calendar.MINUTE));
+						}
 
-					Date time = selected.getReferral().getReferral_time();
+						Date atime = selected.getReferral().getReferral_atime();
+						if (atime != null) {
+							Calendar cal = Calendar.getInstance();
+							cal.setTime(atime);
+							selected.getReferral().setReferral_ahour(cal.get(Calendar.HOUR_OF_DAY));
+							selected.getReferral().setReferral_aminute(cal.get(Calendar.MINUTE));
+						}
+
+						validateTheTimesOnReferralPage(model, results, selected, existing);
+
+						MultipartFile file = selected.getReferral().getFile();
+						selected.getReferral().setBase64image(null);
+
+						try {
+							if (file != null && file.getBytes() != null && file.getBytes().length > 0) {
+								selected.getReferral().setReferral_file(file.getBytes());
+								selected.getReferral().setReferral_filetype(file.getContentType());
+							}
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+
+						if (results.hasErrors()) {
+							model.addAttribute("selected", selected);
+							model.addAttribute("page", page);
+							return "registry/case-update";
+						}
+
+					}
+
+					case_referral o = selected.getReferral();
+
+					boolean referral_adatetime_expected = (o.getReferral_adatetime_notstated() == null
+							|| o.getReferral_adatetime_notstated() == 0);
+
+					boolean referral_adatetime_any_specified = o.getReferral_ahour() != null
+							|| o.getReferral_adate() != null || o.getReferral_aminute() != null
+							|| o.getReferral_atime() != null;
+
+					boolean referral_adatetime_any_missing = o.getReferral_ahour() == null
+							|| o.getReferral_adate() == null
+							|| o.getReferral_aminute() == null || o.getReferral_atime() == null;
+
+					boolean referral_datetime_expected = (o.getReferral_datetime_notstated() == null
+							|| o.getReferral_datetime_notstated() == 0);
+
+					boolean referral_datetime_any_specified = o.getReferral_hour() != null
+							|| o.getReferral_date() != null
+							|| o.getReferral_minute() != null || o.getReferral_time() != null;
+
+					boolean referral_datetime_any_missing = o.getReferral_hour() == null || o.getReferral_date() == null
+							|| o.getReferral_minute() == null || o.getReferral_time() == null;
+
+					if ((referral_adatetime_expected && referral_adatetime_any_missing)
+							|| (!referral_adatetime_expected && referral_adatetime_any_specified)
+							|| o.getReferral_case() == null
+							|| (referral_datetime_expected && referral_datetime_any_missing)
+							|| (!referral_datetime_expected && referral_datetime_any_specified)
+							|| o.getReferral_facility() == null || o.getReferral_facility().trim() == ""
+							|| o.getReferral_patient() == null || o.getReferral_source() == null
+							|| o.getReferral_transport() == null) {
+
+						o.setData_complete(0);
+					} else {
+						o.setData_complete(1);
+						final String arrayToJson = objectMapper
+								.writeValueAsString(processListOf(selected.getReferral()));
+						selected.getReferral().setReferral_json(arrayToJson);
+					}
+
+					refRepo.save(selected.getReferral());
+				} catch (JsonProcessingException e) {
+					e.printStackTrace();
+				}
+				break;
+			}
+			case 3: {
+				try {
+
+					case_pregnancy o = selected.getPregnancy();
+					if (o.getPregnancy_days() == null || o.getPregnancy_type() == null
+							|| o.getPregnancy_weeks() == null) {
+						o.setData_complete(0);
+					} else {
+						o.setData_complete(1);
+						final String arrayToJson = objectMapper
+								.writeValueAsString(processListOf(selected.getPregnancy()));
+						selected.getPregnancy().setPregnancy_json(arrayToJson);
+					}
+					preRepo.save(o);
+				} catch (JsonProcessingException e) {
+					e.printStackTrace();
+				}
+				break;
+			}
+			case 4: {
+				try {
+
+					case_antenatal o = selected.getAntenatal();
+					if (o.getAntenatal_alcohol() == null || o.getAntenatal_attend() == null
+							|| o.getAntenatal_attendno() == null || o.getAntenatal_days() == null
+							|| o.getAntenatal_facility() == null || o.getAntenatal_facility().trim() == ""
+							|| o.getAntenatal_folicacid() == null || o.getAntenatal_folicacid3m() == null
+							|| o.getAntenatal_gravida() == null || o.getAntenatal_herbal() == null
+							|| o.getAntenatal_hiv() == null || o.getAntenatal_malprophy() == null
+							|| o.getAntenatal_para() == null || o.getAntenatal_risks() == null
+							|| o.getAntenatal_smoker() == null || o.getAntenatal_tetanus() == null
+							|| o.getAntenatal_weeks() == null) {
+						o.setData_complete(0);
+					} else {
+						o.setData_complete(1);
+						final String arrayToJson = objectMapper
+								.writeValueAsString(processListOf(selected.getAntenatal()));
+						selected.getAntenatal().setAntenatal_json(arrayToJson);
+					}
+
+					antRepo.save(selected.getAntenatal());
+				} catch (JsonProcessingException e) {
+					e.printStackTrace();
+				}
+
+				break;
+			}
+			case 5: {
+				try {
+
+					Date seetime = selected.getLabour().getLabour_seetime();
+					if (seetime != null) {
+						Calendar cal = Calendar.getInstance();
+						cal.setTime(seetime);
+						selected.getLabour().setLabour_seehour(cal.get(Calendar.HOUR_OF_DAY));
+						selected.getLabour().setLabour_seeminute(cal.get(Calendar.MINUTE));
+					}
+
+					final Integer period = selected.getLabour().getLabour_seeperiod();
+					final Integer hour = selected.getLabour().getLabour_seehour();
+
+					if (period != null && hour != null) {
+						boolean morning = (hour >= 8 && hour < 14);
+						boolean afternoon = (hour >= 14 && hour < 20);
+						boolean night = (hour >= 20 || hour < 8);
+
+						if (period == 88 && (morning || afternoon || night)) {
+							results.rejectValue("labour.labour_seeperiod", "error.nostated");
+						} else if (period == 1 && !morning) {
+							results.rejectValue("labour.labour_seeperiod", "error.morning");
+						} else if (period == 3 && !afternoon) {
+							results.rejectValue("labour.labour_seeperiod", "error.afternoon");
+						} else if (period == 6 && !night) {
+							results.rejectValue("labour.labour_seeperiod", "error.night");
+						}
+
+						if (results.hasErrors()) {
+							model.addAttribute("selected", selected);
+							model.addAttribute("page", page);
+							return "registry/case-update";
+						}
+					}
+
+					if (existing.getReferral() != null && existing.getReferral().getReferral_case() == 1) {
+
+						validateTheTimesOnLabourPage(model, results, selected, existing);
+
+						if (results.hasErrors()) {
+							model.addAttribute("selected", selected);
+							model.addAttribute("page", page);
+							return "registry/case-update";
+						}
+
+					}
+
+					case_labour o = selected.getLabour();
+
+					boolean labour_seedatetime_expected = (o.getLabour_seedatetime_notstated() == null
+							|| o.getLabour_seedatetime_notstated() == 0);
+
+					boolean labour_seedatetime_any_specified = o.getLabour_seehour() != null
+							|| o.getLabour_seedate() != null || o.getLabour_seeminute() != null
+							|| o.getLabour_seetime() != null;
+
+					boolean labour_seedatetime_any_missing = o.getLabour_seehour() == null
+							|| o.getLabour_seedate() == null
+							|| o.getLabour_seeminute() == null || o.getLabour_seetime() == null;
+
+					if (o.getLabour_complications() == null || o.getLabour_herbalaug() == null
+							|| o.getLabour_lasthour1() == null || o.getLabour_lasthour2() == null
+							|| o.getLabour_lastminute1() == null || o.getLabour_lastminute2() == null
+							|| o.getLabour_partograph() == null
+							|| (labour_seedatetime_expected && labour_seedatetime_any_missing)
+							|| (!labour_seedatetime_expected && labour_seedatetime_any_specified)
+							|| o.getLabour_seeperiod() == null || o.getLabour_startmode() == null) {
+						o.setData_complete(0);
+					} else {
+						final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getLabour()));
+						selected.getLabour().setLabour_json(arrayToJson);
+						o.setData_complete(1);
+					}
+
+					labRepo.save(selected.getLabour());
+				} catch (JsonProcessingException e) {
+					e.printStackTrace();
+				}
+				break;
+			}
+			case 6: {
+				try {
+
+					Date time = selected.getDelivery().getDelivery_time();
 					if (time != null) {
 						Calendar cal = Calendar.getInstance();
 						cal.setTime(time);
-						selected.getReferral().setReferral_hour(cal.get(Calendar.HOUR_OF_DAY));
-						selected.getReferral().setReferral_minute(cal.get(Calendar.MINUTE));
+						selected.getDelivery().setDelivery_hour(cal.get(Calendar.HOUR_OF_DAY));
+						selected.getDelivery().setDelivery_minute(cal.get(Calendar.MINUTE));
+					}
+					final Integer period = selected.getDelivery().getDelivery_period();
+					final Integer hour = selected.getDelivery().getDelivery_hour();
+
+					if (period != null && hour != null) {
+						boolean morning = (hour >= 8 && hour < 14);
+						boolean afternoon = (hour >= 14 && hour < 20);
+						boolean night = (hour >= 20 || hour < 8);
+
+						if (period == 88 && (morning || afternoon || night)) {
+							results.rejectValue("delivery.delivery_period", "error.nostated");
+						} else if (period == 1 && !morning) {
+							results.rejectValue("delivery.delivery_period", "error.morning");
+						} else if (period == 3 && !afternoon) {
+							results.rejectValue("delivery.delivery_period", "error.afternoon");
+						} else if (period == 6 && !night) {
+							results.rejectValue("delivery.delivery_period", "error.night");
+						}
+
+						if (results.hasErrors()) {
+							model.addAttribute("selected", selected);
+							model.addAttribute("page", page);
+							return "registry/case-update";
+						}
 					}
 
-					Date atime = selected.getReferral().getReferral_atime();
-					if (atime != null) {
+					if (existing.getLabour() != null && existing.getLabour().getLabour_occured() == 1) {
+						validateTheTimesOnArrivalAndDelivery(model, results, selected, existing);
+
+						if (results.hasErrors()) {
+							model.addAttribute("selected", selected);
+							model.addAttribute("page", page);
+							return "registry/case-update";
+						}
+
+					}
+
+					if (existing.getBirth() != null) {
+
+						validateTheTimesOnDeliveryPage(model, results, selected, existing);
+
+						if (results.hasErrors()) {
+							model.addAttribute("selected", selected);
+							model.addAttribute("page", page);
+							return "registry/case-update";
+						}
+
+					}
+
+					case_delivery o = selected.getDelivery();
+					boolean delivery_not_answered = o.getDelivery_occured() == null;
+
+					boolean delivery_abortion_expected = (o.getDelivery_occured() != null
+							&& o.getDelivery_occured() == 0
+							&& o.getDelivery_abortion() == null);
+
+					boolean delivery_datetime_expected = (o.getDelivery_datetime_notstated() == null
+							|| o.getDelivery_datetime_notstated() == 0);
+
+					boolean delivery_datetime_any_specified = o.getDelivery_hour() != null
+							|| o.getDelivery_date() != null
+							|| o.getDelivery_minute() != null || o.getDelivery_time() != null;
+
+					boolean delivery_datetime_any_missing = o.getDelivery_hour() == null || o.getDelivery_date() == null
+							|| o.getDelivery_minute() == null || o.getDelivery_time() == null;
+
+					if (delivery_not_answered || delivery_abortion_expected
+							|| (delivery_datetime_expected && delivery_datetime_any_missing)
+							|| (!delivery_datetime_expected && delivery_datetime_any_specified)
+							|| o.getDelivery_occured_facility() == null || o.getDelivery_period() == null
+							|| o.getDelivery_weight() == null) {
+						o.setData_complete(0);
+					} else {
+
+						o.setData_complete(1);
+						final String arrayToJson = objectMapper
+								.writeValueAsString(processListOf(selected.getDelivery()));
+						selected.getDelivery().setDelivery_json(arrayToJson);
+					}
+
+					delRepo.save(selected.getDelivery());
+
+					if (o.getDelivery_occured() != 1) {
+
+						case_birth data = new case_birth();
+						data.setBirth_uuid(selected.getCase_uuid());
+						data.setCase_uuid(selected);
+						selected.setBirth(data);
+
+						data.setData_complete(1);
+
+						birRepo.save(data);
+
+					} else {
+						case_birth data = selected.getBirth();
+						if (data == null) {
+							data = new case_birth();
+							data.setBirth_uuid(selected.getCase_uuid());
+							data.setCase_uuid(selected);
+							selected.setBirth(data);
+
+						}
+
+						data.setData_complete(0);
+						birRepo.save(data);
+
+					}
+
+				} catch (JsonProcessingException e) {
+					e.printStackTrace();
+				}
+				break;
+			}
+			case 7: {
+				try {
+					Date cstime = selected.getBirth().getBirth_csproposetime();
+
+					if (cstime != null) {
 						Calendar cal = Calendar.getInstance();
-						cal.setTime(atime);
-						selected.getReferral().setReferral_ahour(cal.get(Calendar.HOUR_OF_DAY));
-						selected.getReferral().setReferral_aminute(cal.get(Calendar.MINUTE));
+						cal.setTime(cstime);
+						selected.getBirth().setBirth_csproposehour(cal.get(Calendar.HOUR_OF_DAY));
+						selected.getBirth().setBirth_csproposeminute(cal.get(Calendar.MINUTE));
 					}
 
-					validateTheTimesOnReferralPage(model, results, selected, existing);
+					if (existing.getDelivery() != null) {
 
-					MultipartFile file = selected.getReferral().getFile();
-					selected.getReferral().setBase64image(null);
+						validateTheTimesOnBirthPage(model, results, selected, existing);
+
+						if (results.hasErrors()) {
+							model.addAttribute("selected", selected);
+							model.addAttribute("page", page);
+							return "registry/case-update";
+						}
+
+					}
+
+					case_birth o = selected.getBirth();
+
+					boolean insistnormal_notselected = (o.getBirth_mode() != null
+							&& (o.getBirth_mode() == 0 || o.getBirth_mode() == 1)) && o.getBirth_insistnormal() == null;
+
+					boolean insistnormal_selected_but_any_cs_datetime_missing = (o.getBirth_mode() != null
+							&& (o.getBirth_mode() == 0 || o.getBirth_mode() == 1)) && o.getBirth_insistnormal() != null
+							&& o.getBirth_insistnormal() == 1
+							&& (o.getBirth_csproposehour() == null || o.getBirth_csproposedate() == null
+									|| o.getBirth_csproposeminute() == null || o.getBirth_csproposetime() == null);
+
+					if (o.getBirth_abnormalities() == null || o.getBirth_babyoutcome() == null
+							|| o.getBirth_cordfaults() == null || o.getBirth_mode() == null || insistnormal_notselected
+							|| insistnormal_selected_but_any_cs_datetime_missing || o.getBirth_facility() == null
+							|| o.getBirth_insistnormal() == null || o.getBirth_liqourcolor() == null
+							|| o.getBirth_liqourodour() == null || o.getBirth_liqourvolume() == null
+							|| o.getBirth_motheroutcome() == null || o.getBirth_placentachecks() == null
+							|| o.getBirth_provider() == null) {
+
+						o.setData_complete(0);
+					} else {
+						o.setData_complete(1);
+						final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getBirth()));
+						selected.getBirth().setBirth_json(arrayToJson);
+					}
+
+					birRepo.save(selected.getBirth());
+				} catch (JsonProcessingException e) {
+					e.printStackTrace();
+				}
+				break;
+			}
+			case 8: {
+				if (selected.getCase_death() == CONSTANTS.STILL_BIRTH) {
+					try {
+
+						case_fetalheart o = selected.getFetalheart();
+						if (o.getFetalheart_arrival() == null || o.getFetalheart_lastheard() == null
+								|| o.getFetalheart_refered() == null) {
+							o.setData_complete(0);
+						} else {
+							o.setData_complete(1);
+							final String arrayToJson = objectMapper
+									.writeValueAsString(processListOf(selected.getFetalheart()));
+							selected.getFetalheart().setFetalheart_json(arrayToJson);
+						}
+
+						fetRepo.save(selected.getFetalheart());
+					} catch (JsonProcessingException e) {
+						e.printStackTrace();
+					}
+
+				} else if (selected.getCase_death() == CONSTANTS.NEONATAL_DEATH) {
+					try {
+						Date time = selected.getBabydeath().getBaby_dtime();
+						if (time != null) {
+							Calendar cal = Calendar.getInstance();
+							cal.setTime(time);
+							selected.getBabydeath().setBaby_dhour(cal.get(Calendar.HOUR_OF_DAY));
+							selected.getBabydeath().setBaby_dminute(cal.get(Calendar.MINUTE));
+						}
+
+						if (existing.getDelivery() != null) {
+
+							validateTheTimesOnBabydeathPage(model, results, selected, existing);
+
+							if (results.hasErrors()) {
+								model.addAttribute("selected", selected);
+								model.addAttribute("page", page);
+								return "registry/case-update";
+							}
+
+						}
+
+						case_babydeath o = selected.getBabydeath();
+						boolean baby_ddatetime_expected = (o.getBaby_ddatetime_notstated() == null
+								|| o.getBaby_ddatetime_notstated() == 0);
+
+						boolean baby_ddatetime_any_specified = o.getBaby_dhour() != null || o.getBaby_ddate() != null
+								|| o.getBaby_dminute() != null || o.getBaby_dtime() != null;
+
+						boolean baby_ddatetime_any_missing = o.getBaby_dhour() == null || o.getBaby_ddate() == null
+								|| o.getBaby_dminute() == null || o.getBaby_dtime() == null;
+
+						if (o.getBaby_admitted() == null || o.getBaby_apgar1() == null || o.getBaby_apgar5() == null
+								|| o.getBaby_cry() == null || (baby_ddatetime_expected && baby_ddatetime_any_missing)
+								|| (!baby_ddatetime_expected && baby_ddatetime_any_specified)
+								|| o.getBaby_medicalcod() == null || o.getBaby_resuscitation() == null) {
+							o.setData_complete(0);
+						} else {
+							o.setData_complete(1);
+							final String arrayToJson = objectMapper
+									.writeValueAsString(processListOf(selected.getBabydeath()));
+							selected.getBabydeath().setBaby_json(arrayToJson);
+						}
+
+						babyRepo.save(selected.getBabydeath());
+					} catch (JsonProcessingException e) {
+						e.printStackTrace();
+					}
+
+				} else if (selected.getCase_death() == CONSTANTS.MATERNAL_DEATH) {
+					try {
+						Date time = selected.getMdeath().getMdeath_time();
+						if (time != null) {
+							Calendar cal = Calendar.getInstance();
+							cal.setTime(time);
+							selected.getMdeath().setMdeath_hour(cal.get(Calendar.HOUR_OF_DAY));
+							selected.getMdeath().setMdeath_minute(cal.get(Calendar.MINUTE));
+						}
+
+						if (existing.getDelivery() != null) {
+
+							validateTheTimesOnMdeathPage(model, results, selected, existing);
+
+							if (results.hasErrors()) {
+								model.addAttribute("selected", selected);
+								model.addAttribute("page", page);
+								return "registry/case-update";
+							}
+
+						}
+
+						case_mdeath o = selected.getMdeath();
+
+						boolean mdeath_early_interv_missing = o.getMdeath_early_evacuation() == null
+								&& o.getMdeath_early_antibiotic() == null && o.getMdeath_early_laparotomy() == null
+								&& o.getMdeath_early_hysterectomy() == null && o.getMdeath_early_transfusion() == null
+								&& o.getMdeath_early_antihyper() == null
+								&& (o.getMdeath_early_other() == null || o.getMdeath_early_other().trim().isEmpty());
+
+						boolean mdeath_ante_interv_missing = o.getMdeath_ante_transfusion() == null
+								&& o.getMdeath_ante_antibiotic() == null && o.getMdeath_ante_externalv() == null
+								&& o.getMdeath_ante_magsulphate() == null && o.getMdeath_ante_diazepam() == null
+								&& o.getMdeath_ante_antihyper() == null && o.getMdeath_ante_hysterotomy() == null
+								&& (o.getMdeath_ante_other() == null || o.getMdeath_ante_other().trim().isEmpty());
+
+						boolean mdeath_intra_interv_missing = o.getMdeath_intra_instrumental() == null
+								&& o.getMdeath_intra_antibiotic() == null && o.getMdeath_intra_caesarian() == null
+								&& o.getMdeath_intra_hysterectomy() == null && o.getMdeath_intra_transfusion() == null
+								&& o.getMdeath_intra_magsulphate() == null && o.getMdeath_intra_antihyper() == null
+								&& o.getMdeath_intra_diazepam() == null
+								&& (o.getMdeath_intra_other() == null || o.getMdeath_intra_other().trim().isEmpty());
+
+						boolean mdeath_postpart_interv_missing = o.getMdeath_postpart_evacuation() == null
+								&& o.getMdeath_postpart_antibiotic() == null
+								&& o.getMdeath_postpart_laparotomy() == null
+								&& o.getMdeath_postpart_hysterectomy() == null
+								&& o.getMdeath_postpart_transfusion() == null
+								&& o.getMdeath_postpart_magsulphate() == null
+								&& o.getMdeath_postpart_placentaremoval() == null
+								&& o.getMdeath_postpart_antihyper() == null && o.getMdeath_postpart_diazepam() == null
+								&& (o.getMdeath_postpart_other() == null
+										|| o.getMdeath_postpart_other().trim().isEmpty());
+
+						boolean mdeath_other_interv_missing = o.getMdeath_other_anaesthga() == null
+								&& o.getMdeath_other_epidural() == null && o.getMdeath_other_spinal() == null
+								&& o.getMdeath_other_local() == null && o.getMdeath_other_invasive() == null
+								&& o.getMdeath_other_antihyper() == null && o.getMdeath_other_icuventilation() == null
+								&& (o.getMdeath_new_intervention() == null
+										|| o.getMdeath_new_intervention().trim().isEmpty());
+
+						boolean mdeath_datetime_expected = (o.getMdeath_datetime_notstated() == null
+								|| o.getMdeath_datetime_notstated() == 0);
+
+						boolean mdeath_datetime_any_specified = o.getMdeath_hour() != null || o.getMdeath_date() != null
+								|| o.getMdeath_minute() != null || o.getMdeath_time() != null;
+
+						boolean mdeath_datetime_any_missing = o.getMdeath_hour() == null || o.getMdeath_date() == null
+								|| o.getMdeath_minute() == null || o.getMdeath_time() == null;
+
+						boolean mdeath_autopsy_missing = o.getMdeath_autopsy() == null;
+
+						boolean mdeath_autopsy_expected = (o.getMdeath_autopsy() != null && o.getMdeath_autopsy() == 1)
+								&& (o.getMdeath_autopsy_date() == null || o.getMdeath_autopsy_location() == null
+										|| o.getMdeath_autopsy_location().trim().isEmpty()
+										|| o.getMdeath_autopsy_by() == null || o.getMdeath_autopsy_final_cod() == null
+										|| o.getMdeath_autopsy_final_cod().trim().isEmpty()
+										|| o.getMdeath_autopsy_antec_cod() == null
+										|| o.getMdeath_autopsy_antec_cod().trim().isEmpty()
+										|| o.getMdeath_autopsy_ops_cod() == null
+										|| o.getMdeath_autopsy_ops_cod().trim().isEmpty());
+						// || o.getMdeath_autopsy_icd_mm() == null);
+
+						if ((mdeath_datetime_expected && mdeath_datetime_any_missing)
+								|| (!mdeath_datetime_expected && mdeath_datetime_any_specified)
+								|| (mdeath_early_interv_missing || mdeath_ante_interv_missing
+										|| mdeath_intra_interv_missing
+										|| mdeath_postpart_interv_missing || mdeath_other_interv_missing
+										|| mdeath_autopsy_missing || mdeath_autopsy_expected)) {
+
+							System.err.println("" + mdeath_early_interv_missing + " " + mdeath_ante_interv_missing + " "
+									+ mdeath_intra_interv_missing + " " + mdeath_postpart_interv_missing + " "
+									+ mdeath_other_interv_missing + " " + mdeath_autopsy_missing + " "
+									+ mdeath_autopsy_expected);
+							o.setData_complete(0);
+						} else {
+							o.setData_complete(1);
+							final String arrayToJson = objectMapper
+									.writeValueAsString(processListOf(selected.getMdeath()));
+							selected.getMdeath().setMdeath_json(arrayToJson);
+						}
+
+						mdeathRepo.save(selected.getMdeath());
+					} catch (JsonProcessingException e) {
+						e.printStackTrace();
+					}
+
+				}
+				break;
+			}
+			case 9: {
+
+				try {
+					MultipartFile file = selected.getNotes().getFile();
+					selected.getNotes().setBase64image(null);
 
 					try {
 						if (file != null && file.getBytes() != null && file.getBytes().length > 0) {
-							selected.getReferral().setReferral_file(file.getBytes());
-							selected.getReferral().setReferral_filetype(file.getContentType());
+							selected.getNotes().setNotes_file(file.getBytes());
+							selected.getNotes().setNotes_filetype(file.getContentType());
 						}
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
 
-					if (results.hasErrors()) {
-						model.addAttribute("selected", selected);
-						model.addAttribute("page", page);
-						return "registry/case-update";
-					}
+					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getNotes()));
+					selected.getNotes().setNotes_json(arrayToJson);
 
-				}
-
-				case_referral o = selected.getReferral();
-
-				boolean referral_adatetime_expected = (o.getReferral_adatetime_notstated() == null
-						|| o.getReferral_adatetime_notstated() == 0);
-
-				boolean referral_adatetime_any_specified = o.getReferral_ahour() != null
-						|| o.getReferral_adate() != null || o.getReferral_aminute() != null
-						|| o.getReferral_atime() != null;
-
-				boolean referral_adatetime_any_missing = o.getReferral_ahour() == null || o.getReferral_adate() == null
-						|| o.getReferral_aminute() == null || o.getReferral_atime() == null;
-
-				boolean referral_datetime_expected = (o.getReferral_datetime_notstated() == null
-						|| o.getReferral_datetime_notstated() == 0);
-
-				boolean referral_datetime_any_specified = o.getReferral_hour() != null || o.getReferral_date() != null
-						|| o.getReferral_minute() != null || o.getReferral_time() != null;
-
-				boolean referral_datetime_any_missing = o.getReferral_hour() == null || o.getReferral_date() == null
-						|| o.getReferral_minute() == null || o.getReferral_time() == null;
-
-				if ((referral_adatetime_expected && referral_adatetime_any_missing)
-						|| (!referral_adatetime_expected && referral_adatetime_any_specified)
-						|| o.getReferral_case() == null || (referral_datetime_expected && referral_datetime_any_missing)
-						|| (!referral_datetime_expected && referral_datetime_any_specified)
-						|| o.getReferral_facility() == null || o.getReferral_facility().trim() == ""
-						|| o.getReferral_patient() == null || o.getReferral_source() == null
-						|| o.getReferral_transport() == null) {
-
-					o.setData_complete(0);
-				} else {
-					o.setData_complete(1);
-					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getReferral()));
-					selected.getReferral().setReferral_json(arrayToJson);
-				}
-
-				refRepo.save(selected.getReferral());
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
-			break;
-		}
-		case 3: {
-			try {
-
-				case_pregnancy o = selected.getPregnancy();
-				if (o.getPregnancy_days() == null || o.getPregnancy_type() == null || o.getPregnancy_weeks() == null) {
-					o.setData_complete(0);
-				} else {
-					o.setData_complete(1);
-					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getPregnancy()));
-					selected.getPregnancy().setPregnancy_json(arrayToJson);
-				}
-				preRepo.save(o);
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
-			break;
-		}
-		case 4: {
-			try {
-
-				case_antenatal o = selected.getAntenatal();
-				if (o.getAntenatal_alcohol() == null || o.getAntenatal_attend() == null
-						|| o.getAntenatal_attendno() == null || o.getAntenatal_days() == null
-						|| o.getAntenatal_facility() == null || o.getAntenatal_facility().trim() == ""
-						|| o.getAntenatal_folicacid() == null || o.getAntenatal_folicacid3m() == null
-						|| o.getAntenatal_gravida() == null || o.getAntenatal_herbal() == null
-						|| o.getAntenatal_hiv() == null || o.getAntenatal_malprophy() == null
-						|| o.getAntenatal_para() == null || o.getAntenatal_risks() == null
-						|| o.getAntenatal_smoker() == null || o.getAntenatal_tetanus() == null
-						|| o.getAntenatal_weeks() == null) {
-					o.setData_complete(0);
-				} else {
-					o.setData_complete(1);
-					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getAntenatal()));
-					selected.getAntenatal().setAntenatal_json(arrayToJson);
-				}
-
-				antRepo.save(selected.getAntenatal());
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
-
-			break;
-		}
-		case 5: {
-			try {
-
-				Date seetime = selected.getLabour().getLabour_seetime();
-				if (seetime != null) {
-					Calendar cal = Calendar.getInstance();
-					cal.setTime(seetime);
-					selected.getLabour().setLabour_seehour(cal.get(Calendar.HOUR_OF_DAY));
-					selected.getLabour().setLabour_seeminute(cal.get(Calendar.MINUTE));
-				}
-
-				final Integer period = selected.getLabour().getLabour_seeperiod();
-				final Integer hour = selected.getLabour().getLabour_seehour();
-
-				if (period != null && hour != null) {
-					boolean morning = (hour >= 8 && hour < 14);
-					boolean afternoon = (hour >= 14 && hour < 20);
-					boolean night = (hour >= 20 || hour < 8);
-
-					if (period == 88 && (morning || afternoon || night)) {
-						results.rejectValue("labour.labour_seeperiod", "error.nostated");
-					} else if (period == 1 && !morning) {
-						results.rejectValue("labour.labour_seeperiod", "error.morning");
-					} else if (period == 3 && !afternoon) {
-						results.rejectValue("labour.labour_seeperiod", "error.afternoon");
-					} else if (period == 6 && !night) {
-						results.rejectValue("labour.labour_seeperiod", "error.night");
-					}
-
-					if (results.hasErrors()) {
-						model.addAttribute("selected", selected);
-						model.addAttribute("page", page);
-						return "registry/case-update";
-					}
-				}
-
-				if (existing.getReferral() != null && existing.getReferral().getReferral_case() == 1) {
-
-					validateTheTimesOnLabourPage(model, results, selected, existing);
-
-					if (results.hasErrors()) {
-						model.addAttribute("selected", selected);
-						model.addAttribute("page", page);
-						return "registry/case-update";
-					}
-
-				}
-
-				case_labour o = selected.getLabour();
-
-				boolean labour_seedatetime_expected = (o.getLabour_seedatetime_notstated() == null
-						|| o.getLabour_seedatetime_notstated() == 0);
-
-				boolean labour_seedatetime_any_specified = o.getLabour_seehour() != null
-						|| o.getLabour_seedate() != null || o.getLabour_seeminute() != null
-						|| o.getLabour_seetime() != null;
-
-				boolean labour_seedatetime_any_missing = o.getLabour_seehour() == null || o.getLabour_seedate() == null
-						|| o.getLabour_seeminute() == null || o.getLabour_seetime() == null;
-
-				if (o.getLabour_complications() == null || o.getLabour_herbalaug() == null
-						|| o.getLabour_lasthour1() == null || o.getLabour_lasthour2() == null
-						|| o.getLabour_lastminute1() == null || o.getLabour_lastminute2() == null
-						|| o.getLabour_partograph() == null
-						|| (labour_seedatetime_expected && labour_seedatetime_any_missing)
-						|| (!labour_seedatetime_expected && labour_seedatetime_any_specified)
-						|| o.getLabour_seeperiod() == null || o.getLabour_startmode() == null) {
-					o.setData_complete(0);
-				} else {
-					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getLabour()));
-					selected.getLabour().setLabour_json(arrayToJson);
-					o.setData_complete(1);
-				}
-
-				labRepo.save(selected.getLabour());
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
-			break;
-		}
-		case 6: {
-			try {
-
-				Date time = selected.getDelivery().getDelivery_time();
-				if (time != null) {
-					Calendar cal = Calendar.getInstance();
-					cal.setTime(time);
-					selected.getDelivery().setDelivery_hour(cal.get(Calendar.HOUR_OF_DAY));
-					selected.getDelivery().setDelivery_minute(cal.get(Calendar.MINUTE));
-				}
-				final Integer period = selected.getDelivery().getDelivery_period();
-				final Integer hour = selected.getDelivery().getDelivery_hour();
-
-				if (period != null && hour != null) {
-					boolean morning = (hour >= 8 && hour < 14);
-					boolean afternoon = (hour >= 14 && hour < 20);
-					boolean night = (hour >= 20 || hour < 8);
-
-					if (period == 88 && (morning || afternoon || night)) {
-						results.rejectValue("delivery.delivery_period", "error.nostated");
-					} else if (period == 1 && !morning) {
-						results.rejectValue("delivery.delivery_period", "error.morning");
-					} else if (period == 3 && !afternoon) {
-						results.rejectValue("delivery.delivery_period", "error.afternoon");
-					} else if (period == 6 && !night) {
-						results.rejectValue("delivery.delivery_period", "error.night");
-					}
-
-					if (results.hasErrors()) {
-						model.addAttribute("selected", selected);
-						model.addAttribute("page", page);
-						return "registry/case-update";
-					}
-				}
-
-				if (existing.getLabour() != null && existing.getLabour().getLabour_occured() == 1) {
-					validateTheTimesOnArrivalAndDelivery(model, results, selected, existing);
-
-					if (results.hasErrors()) {
-						model.addAttribute("selected", selected);
-						model.addAttribute("page", page);
-						return "registry/case-update";
-					}
-
-				}
-
-				if (existing.getBirth() != null) {
-
-					validateTheTimesOnDeliveryPage(model, results, selected, existing);
-
-					if (results.hasErrors()) {
-						model.addAttribute("selected", selected);
-						model.addAttribute("page", page);
-						return "registry/case-update";
-					}
-
-				}
-
-				case_delivery o = selected.getDelivery();
-				boolean delivery_not_answered = o.getDelivery_occured() == null;
-
-				boolean delivery_abortion_expected = (o.getDelivery_occured() != null && o.getDelivery_occured() == 0
-						&& o.getDelivery_abortion() == null);
-
-				boolean delivery_datetime_expected = (o.getDelivery_datetime_notstated() == null
-						|| o.getDelivery_datetime_notstated() == 0);
-
-				boolean delivery_datetime_any_specified = o.getDelivery_hour() != null || o.getDelivery_date() != null
-						|| o.getDelivery_minute() != null || o.getDelivery_time() != null;
-
-				boolean delivery_datetime_any_missing = o.getDelivery_hour() == null || o.getDelivery_date() == null
-						|| o.getDelivery_minute() == null || o.getDelivery_time() == null;
-
-				if (delivery_not_answered || delivery_abortion_expected
-						|| (delivery_datetime_expected && delivery_datetime_any_missing)
-						|| (!delivery_datetime_expected && delivery_datetime_any_specified)
-						|| o.getDelivery_occured_facility() == null || o.getDelivery_period() == null
-						|| o.getDelivery_weight() == null) {
-					o.setData_complete(0);
-				} else {
-
-					o.setData_complete(1);
-					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getDelivery()));
-					selected.getDelivery().setDelivery_json(arrayToJson);
-				}
-
-				delRepo.save(selected.getDelivery());
-
-				if (o.getDelivery_occured() != 1) {
-
-					case_birth data = new case_birth();
-					data.setBirth_uuid(selected.getCase_uuid());
-					data.setCase_uuid(selected);
-					selected.setBirth(data);
-
-					data.setData_complete(1);
-
-					birRepo.save(data);
-
-				} else {
-					case_birth data = selected.getBirth();
-					if (data == null) {
-						data = new case_birth();
-						data.setBirth_uuid(selected.getCase_uuid());
-						data.setCase_uuid(selected);
-						selected.setBirth(data);
-
-					}
-					
-					data.setData_complete(0);
-					birRepo.save(data);
-
-				}
-
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
-			break;
-		}
-		case 7: {
-			try {
-				Date cstime = selected.getBirth().getBirth_csproposetime();
-
-				if (cstime != null) {
-					Calendar cal = Calendar.getInstance();
-					cal.setTime(cstime);
-					selected.getBirth().setBirth_csproposehour(cal.get(Calendar.HOUR_OF_DAY));
-					selected.getBirth().setBirth_csproposeminute(cal.get(Calendar.MINUTE));
-				}
-
-				if (existing.getDelivery() != null) {
-
-					validateTheTimesOnBirthPage(model, results, selected, existing);
-
-					if (results.hasErrors()) {
-						model.addAttribute("selected", selected);
-						model.addAttribute("page", page);
-						return "registry/case-update";
-					}
-
-				}
-
-				case_birth o = selected.getBirth();
-
-				boolean insistnormal_notselected = (o.getBirth_mode() != null
-						&& (o.getBirth_mode() == 0 || o.getBirth_mode() == 1)) && o.getBirth_insistnormal() == null;
-
-				boolean insistnormal_selected_but_any_cs_datetime_missing = (o.getBirth_mode() != null
-						&& (o.getBirth_mode() == 0 || o.getBirth_mode() == 1)) && o.getBirth_insistnormal() != null
-						&& o.getBirth_insistnormal() == 1
-						&& (o.getBirth_csproposehour() == null || o.getBirth_csproposedate() == null
-								|| o.getBirth_csproposeminute() == null || o.getBirth_csproposetime() == null);
-
-				if (o.getBirth_abnormalities() == null || o.getBirth_babyoutcome() == null
-						|| o.getBirth_cordfaults() == null || o.getBirth_mode() == null || insistnormal_notselected
-						|| insistnormal_selected_but_any_cs_datetime_missing || o.getBirth_facility() == null
-						|| o.getBirth_insistnormal() == null || o.getBirth_liqourcolor() == null
-						|| o.getBirth_liqourodour() == null || o.getBirth_liqourvolume() == null
-						|| o.getBirth_motheroutcome() == null || o.getBirth_placentachecks() == null
-						|| o.getBirth_provider() == null) {
-
-					o.setData_complete(0);
-				} else {
-					o.setData_complete(1);
-					final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getBirth()));
-					selected.getBirth().setBirth_json(arrayToJson);
-				}
-
-				birRepo.save(selected.getBirth());
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
-			break;
-		}
-		case 8: {
-			if (selected.getCase_death() == CONSTANTS.STILL_BIRTH) {
-				try {
-
-					case_fetalheart o = selected.getFetalheart();
-					if (o.getFetalheart_arrival() == null || o.getFetalheart_lastheard() == null
-							|| o.getFetalheart_refered() == null) {
-						o.setData_complete(0);
-					} else {
-						o.setData_complete(1);
-						final String arrayToJson = objectMapper
-								.writeValueAsString(processListOf(selected.getFetalheart()));
-						selected.getFetalheart().setFetalheart_json(arrayToJson);
-					}
-
-					fetRepo.save(selected.getFetalheart());
+					notRepo.save(selected.getNotes());
 				} catch (JsonProcessingException e) {
 					e.printStackTrace();
 				}
-
-			} else if (selected.getCase_death() == CONSTANTS.NEONATAL_DEATH) {
-				try {
-					Date time = selected.getBabydeath().getBaby_dtime();
-					if (time != null) {
-						Calendar cal = Calendar.getInstance();
-						cal.setTime(time);
-						selected.getBabydeath().setBaby_dhour(cal.get(Calendar.HOUR_OF_DAY));
-						selected.getBabydeath().setBaby_dminute(cal.get(Calendar.MINUTE));
-					}
-
-					if (existing.getDelivery() != null) {
-
-						validateTheTimesOnBabydeathPage(model, results, selected, existing);
-
-						if (results.hasErrors()) {
-							model.addAttribute("selected", selected);
-							model.addAttribute("page", page);
-							return "registry/case-update";
-						}
-
-					}
-
-					case_babydeath o = selected.getBabydeath();
-					boolean baby_ddatetime_expected = (o.getBaby_ddatetime_notstated() == null
-							|| o.getBaby_ddatetime_notstated() == 0);
-
-					boolean baby_ddatetime_any_specified = o.getBaby_dhour() != null || o.getBaby_ddate() != null
-							|| o.getBaby_dminute() != null || o.getBaby_dtime() != null;
-
-					boolean baby_ddatetime_any_missing = o.getBaby_dhour() == null || o.getBaby_ddate() == null
-							|| o.getBaby_dminute() == null || o.getBaby_dtime() == null;
-
-					if (o.getBaby_admitted() == null || o.getBaby_apgar1() == null || o.getBaby_apgar5() == null
-							|| o.getBaby_cry() == null || (baby_ddatetime_expected && baby_ddatetime_any_missing)
-							|| (!baby_ddatetime_expected && baby_ddatetime_any_specified)
-							|| o.getBaby_medicalcod() == null || o.getBaby_resuscitation() == null) {
-						o.setData_complete(0);
-					} else {
-						o.setData_complete(1);
-						final String arrayToJson = objectMapper
-								.writeValueAsString(processListOf(selected.getBabydeath()));
-						selected.getBabydeath().setBaby_json(arrayToJson);
-					}
-
-					babyRepo.save(selected.getBabydeath());
-				} catch (JsonProcessingException e) {
-					e.printStackTrace();
-				}
-
-			} else if (selected.getCase_death() == CONSTANTS.MATERNAL_DEATH) {
-				try {
-					Date time = selected.getMdeath().getMdeath_time();
-					if (time != null) {
-						Calendar cal = Calendar.getInstance();
-						cal.setTime(time);
-						selected.getMdeath().setMdeath_hour(cal.get(Calendar.HOUR_OF_DAY));
-						selected.getMdeath().setMdeath_minute(cal.get(Calendar.MINUTE));
-					}
-
-					if (existing.getDelivery() != null) {
-
-						validateTheTimesOnMdeathPage(model, results, selected, existing);
-
-						if (results.hasErrors()) {
-							model.addAttribute("selected", selected);
-							model.addAttribute("page", page);
-							return "registry/case-update";
-						}
-
-					}
-
-					case_mdeath o = selected.getMdeath();
-
-					boolean mdeath_early_interv_missing = o.getMdeath_early_evacuation() == null
-							&& o.getMdeath_early_antibiotic() == null && o.getMdeath_early_laparotomy() == null
-							&& o.getMdeath_early_hysterectomy() == null && o.getMdeath_early_transfusion() == null
-							&& o.getMdeath_early_antihyper() == null
-							&& (o.getMdeath_early_other() == null || o.getMdeath_early_other().trim().isEmpty());
-
-					boolean mdeath_ante_interv_missing = o.getMdeath_ante_transfusion() == null
-							&& o.getMdeath_ante_antibiotic() == null && o.getMdeath_ante_externalv() == null
-							&& o.getMdeath_ante_magsulphate() == null && o.getMdeath_ante_diazepam() == null
-							&& o.getMdeath_ante_antihyper() == null && o.getMdeath_ante_hysterotomy() == null
-							&& (o.getMdeath_ante_other() == null || o.getMdeath_ante_other().trim().isEmpty());
-
-					boolean mdeath_intra_interv_missing = o.getMdeath_intra_instrumental() == null
-							&& o.getMdeath_intra_antibiotic() == null && o.getMdeath_intra_caesarian() == null
-							&& o.getMdeath_intra_hysterectomy() == null && o.getMdeath_intra_transfusion() == null
-							&& o.getMdeath_intra_magsulphate() == null && o.getMdeath_intra_antihyper() == null
-							&& o.getMdeath_intra_diazepam() == null
-							&& (o.getMdeath_intra_other() == null || o.getMdeath_intra_other().trim().isEmpty());
-
-					boolean mdeath_postpart_interv_missing = o.getMdeath_postpart_evacuation() == null
-							&& o.getMdeath_postpart_antibiotic() == null && o.getMdeath_postpart_laparotomy() == null
-							&& o.getMdeath_postpart_hysterectomy() == null && o.getMdeath_postpart_transfusion() == null
-							&& o.getMdeath_postpart_magsulphate() == null
-							&& o.getMdeath_postpart_placentaremoval() == null
-							&& o.getMdeath_postpart_antihyper() == null && o.getMdeath_postpart_diazepam() == null
-							&& (o.getMdeath_postpart_other() == null || o.getMdeath_postpart_other().trim().isEmpty());
-
-					boolean mdeath_other_interv_missing = o.getMdeath_other_anaesthga() == null
-							&& o.getMdeath_other_epidural() == null && o.getMdeath_other_spinal() == null
-							&& o.getMdeath_other_local() == null && o.getMdeath_other_invasive() == null
-							&& o.getMdeath_other_antihyper() == null && o.getMdeath_other_icuventilation() == null
-							&& (o.getMdeath_new_intervention() == null
-									|| o.getMdeath_new_intervention().trim().isEmpty());
-
-					boolean mdeath_datetime_expected = (o.getMdeath_datetime_notstated() == null
-							|| o.getMdeath_datetime_notstated() == 0);
-
-					boolean mdeath_datetime_any_specified = o.getMdeath_hour() != null || o.getMdeath_date() != null
-							|| o.getMdeath_minute() != null || o.getMdeath_time() != null;
-
-					boolean mdeath_datetime_any_missing = o.getMdeath_hour() == null || o.getMdeath_date() == null
-							|| o.getMdeath_minute() == null || o.getMdeath_time() == null;
-
-					boolean mdeath_autopsy_missing = o.getMdeath_autopsy() == null;
-
-					boolean mdeath_autopsy_expected = (o.getMdeath_autopsy() != null && o.getMdeath_autopsy() == 1)
-							&& (o.getMdeath_autopsy_date() == null || o.getMdeath_autopsy_location() == null
-									|| o.getMdeath_autopsy_location().trim().isEmpty()
-									|| o.getMdeath_autopsy_by() == null || o.getMdeath_autopsy_final_cod() == null
-									|| o.getMdeath_autopsy_final_cod().trim().isEmpty()
-									|| o.getMdeath_autopsy_antec_cod() == null
-									|| o.getMdeath_autopsy_antec_cod().trim().isEmpty()
-									|| o.getMdeath_autopsy_ops_cod() == null
-									|| o.getMdeath_autopsy_ops_cod().trim().isEmpty());
-//									|| o.getMdeath_autopsy_icd_mm() == null);
-
-					if ((mdeath_datetime_expected && mdeath_datetime_any_missing)
-							|| (!mdeath_datetime_expected && mdeath_datetime_any_specified)
-							|| (mdeath_early_interv_missing || mdeath_ante_interv_missing || mdeath_intra_interv_missing
-									|| mdeath_postpart_interv_missing || mdeath_other_interv_missing
-									|| mdeath_autopsy_missing || mdeath_autopsy_expected)) {
-
-						System.err.println("" + mdeath_early_interv_missing + " " + mdeath_ante_interv_missing + " "
-								+ mdeath_intra_interv_missing + " " + mdeath_postpart_interv_missing + " "
-								+ mdeath_other_interv_missing + " " + mdeath_autopsy_missing + " "
-								+ mdeath_autopsy_expected);
-						o.setData_complete(0);
-					} else {
-						o.setData_complete(1);
-						final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getMdeath()));
-						selected.getMdeath().setMdeath_json(arrayToJson);
-					}
-
-					mdeathRepo.save(selected.getMdeath());
-				} catch (JsonProcessingException e) {
-					e.printStackTrace();
-				}
-
+				break;
 			}
-			break;
-		}
-		case 9: {
-
-			try {
-				MultipartFile file = selected.getNotes().getFile();
-				selected.getNotes().setBase64image(null);
-
-				try {
-					if (file != null && file.getBytes() != null && file.getBytes().length > 0) {
-						selected.getNotes().setNotes_file(file.getBytes());
-						selected.getNotes().setNotes_filetype(file.getContentType());
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
-				final String arrayToJson = objectMapper.writeValueAsString(processListOf(selected.getNotes()));
-				selected.getNotes().setNotes_json(arrayToJson);
-
-				notRepo.save(selected.getNotes());
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
+			default: {
+				selected.setCase_status(0);
+				caseRepo.save(selected);
+				break;
 			}
-			break;
-		}
-		default: {
-			selected.setCase_status(0);
-			caseRepo.save(selected);
-			break;
-		}
 		}
 
 		return "redirect:/registry/edit/" + selected.getCase_uuid() + "?page="
@@ -2041,8 +2060,6 @@ public class CaseEntryController {
 		return map;
 	}
 
-
-
 	@ModelAttribute("attendno_options")
 	public Map<Integer, String> attendnoOptionsSelectOne() {
 		final Map<Integer, String> map = new LinkedHashMap<>();
@@ -2071,7 +2088,6 @@ public class CaseEntryController {
 		return map;
 	}
 
-
 	@ModelAttribute("minute_options")
 	public Map<Integer, String> minuteOptionsSelectOne() {
 		final Map<Integer, String> map = new LinkedHashMap<>();
@@ -2085,9 +2101,6 @@ public class CaseEntryController {
 
 		return map;
 	}
-
-
-
 
 	@ModelAttribute("posneg_options")
 	public Map<Integer, String> posnegOptionsSelectOne() {
@@ -2106,7 +2119,6 @@ public class CaseEntryController {
 	public Map<Integer, String> hivOptionsAlias() {
 		return posnegOptionsSelectOne();
 	}
-
 
 	@ModelAttribute("liqourodour_options")
 	public Map<Integer, String> liqourodourOptionsSelectOne() {
@@ -2788,7 +2800,6 @@ public class CaseEntryController {
 		return map;
 	}
 
-
 	@ModelAttribute("risk_options")
 	public List<risk_table> riskOptions() {
 		return riskRepo.findAll();
@@ -2834,7 +2845,6 @@ public class CaseEntryController {
 		return resusRepo.findAll();
 	}
 
-
 	@ModelAttribute("autopsyby_options")
 	public Map<Integer, String> autopsybyOptionsSelectOne() {
 		final Map<Integer, String> map = new LinkedHashMap<>();
@@ -2845,6 +2855,15 @@ public class CaseEntryController {
 		}
 
 		return map;
+	}
+
+	@ModelAttribute("dthplace_options")
+	public Map<Integer, String> getDthplace_options() {
+		Map<Integer, String> dthplace_options = new TreeMap<Integer, String>();
+		for (datamap elem : mapRepo.findByMap_feature("dthplace_options")) {
+			dthplace_options.put(elem.getMap_value(), elem.getMap_label());
+		}
+		return dthplace_options;
 	}
 
 	@ModelAttribute("icd10mm_options")
@@ -2903,8 +2922,6 @@ public class CaseEntryController {
 		map.put(99, "Maternal Death");
 		return map;
 	}
-
-
 
 }
 // end class

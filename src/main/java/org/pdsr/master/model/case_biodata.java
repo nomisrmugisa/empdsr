@@ -45,9 +45,6 @@ public class case_biodata implements Serializable {
 	private Integer biodata_sex;
 
 	@Column
-	private String biodata_initials;
-
-	@Column
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date biodata_mdob;
@@ -125,14 +122,6 @@ public class case_biodata implements Serializable {
 
 	public void setBiodata_sex(Integer biodata_sex) {
 		this.biodata_sex = biodata_sex;
-	}
-
-	public String getBiodata_initials() {
-		return biodata_initials;
-	}
-
-	public void setBiodata_initials(String biodata_initials) {
-		this.biodata_initials = biodata_initials;
 	}
 
 	public Integer getBiodata_mage() {

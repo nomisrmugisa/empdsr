@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 
-
 @Entity
 public class mcondition_table implements Serializable {
 
@@ -24,14 +23,12 @@ public class mcondition_table implements Serializable {
 	@Lob
 	@Column
 	private String icdm_name;
-	
-	
+
 	public mcondition_table() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	
-	
+
 	public mcondition_table(String icdm, String icdmgroup, String icdm_name) {
 		super();
 		this.icdm = icdm;
@@ -39,29 +36,35 @@ public class mcondition_table implements Serializable {
 		this.icdm_name = icdm_name;
 	}
 
-
 	public String getIcdm() {
 		return icdm;
 	}
+
 	public void setIcdm(String icdm) {
 		this.icdm = icdm;
 	}
+
 	public String getIcdmgroup() {
 		return icdmgroup;
 	}
+
 	public void setIcdmgroup(String icdmgroup) {
 		this.icdmgroup = icdmgroup;
 	}
+
 	public String getIcdm_name() {
 		return icdm_name;
 	}
+
 	public void setIcdm_name(String icdm_name) {
 		this.icdm_name = icdm_name;
 	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(icdm);
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -73,5 +76,5 @@ public class mcondition_table implements Serializable {
 		mcondition_table other = (mcondition_table) obj;
 		return Objects.equals(icdm, other.icdm);
 	}
-	
+
 }

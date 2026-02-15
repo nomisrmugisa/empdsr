@@ -24,13 +24,12 @@ public class cfactor_table implements Serializable {
 	private Integer idgroup;
 	@Column
 	private String cfactor_name;
-	
-	
+
 	public cfactor_table() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	public cfactor_table(Integer id, Integer idgroup, String cfactor_name) {
 		super();
 		this.id = id;
@@ -41,25 +40,32 @@ public class cfactor_table implements Serializable {
 	public Integer getId() {
 		return id;
 	}
+
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
 	public Integer getIdgroup() {
 		return idgroup;
 	}
+
 	public void setIdgroup(Integer idgroup) {
 		this.idgroup = idgroup;
 	}
+
 	public String getCfactor_name() {
 		return cfactor_name;
 	}
+
 	public void setCfactor_name(String cfactor_name) {
 		this.cfactor_name = cfactor_name;
 	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -71,5 +77,5 @@ public class cfactor_table implements Serializable {
 		cfactor_table other = (cfactor_table) obj;
 		return Objects.equals(id, other.id);
 	}
-	
+
 }

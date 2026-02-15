@@ -17,7 +17,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-
 @Entity
 public class big_audit_recommendation implements Serializable {
 
@@ -25,10 +24,10 @@ public class big_audit_recommendation implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	@EmbeddedId
 	private SummaryPK summaryPk;
-	
+
 	@Column
 	private String audit_uuid;
 
@@ -37,7 +36,7 @@ public class big_audit_recommendation implements Serializable {
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private java.util.Date recommendation_date;
-		
+
 	@Column
 	@NotNull
 	@Size(min = 1, max = 80)
@@ -68,15 +67,15 @@ public class big_audit_recommendation implements Serializable {
 	@NotNull
 	@Size(min = 1, max = 80)
 	private String recommendation_resources;
-	
+
 	@Column
 	@NotNull
-	private Integer recommendation_status;//0 not started 1 started 2 completed
+	private Integer recommendation_status;// 0 not started 1 started 2 completed
 
 	@Lob
 	@Column
 	private String recommendation_comments;
-	
+
 	@Transient
 	private String rec_color;
 
@@ -204,7 +203,4 @@ public class big_audit_recommendation implements Serializable {
 		return Objects.equals(summaryPk, other.summaryPk);
 	}
 
-	
-	
-	
 }

@@ -103,9 +103,6 @@ public class case_babydeath implements Serializable {
 	private Date baby_dtime;
 
 	@Column
-	private Double baby_weight;
-
-	@Column
 	private Integer baby_ddatetime_notstated;
 
 	@Column
@@ -272,14 +269,6 @@ public class case_babydeath implements Serializable {
 
 	public void setBaby_dtime(Date baby_dtime) {
 		this.baby_dtime = baby_dtime;
-	}
-
-	public Double getBaby_weight() {
-		return baby_weight;
-	}
-
-	public void setBaby_weight(Double baby_weight) {
-		this.baby_weight = baby_weight;
 	}
 
 	public Integer getBaby_medicalcod() {

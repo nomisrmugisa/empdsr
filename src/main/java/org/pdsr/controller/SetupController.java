@@ -112,7 +112,7 @@ public class SetupController {
 
 				Optional<facility_table> checkFacility = facilityRepo.findByFacility_code(elem.getFacility_code());
 				if (!checkFacility.isPresent()) {
-					
+
 					Optional<facility_table> parent = facilityRepo.findByFacility_code(elem.getParent_code());
 
 					if (parent.isPresent()) {
@@ -127,16 +127,17 @@ public class SetupController {
 					}
 				}
 			}
-			
+
 		} catch (IOException e) {
 			results.rejectValue("sync_code", "invalid.icds");
 			e.printStackTrace();
 			return "controls/dashboard";
 		}
-		
-		//check if my facility is in list, then pull name of facility and replace, else save stated facility name
+
+		// check if my facility is in list, then pull name of facility and replace, else
+		// save stated facility name
 		Optional<facility_table> checkMyFacility = facilityRepo.findByFacility_code(selected.getSync_code());
-		if(checkMyFacility.isPresent()) {
+		if (checkMyFacility.isPresent()) {
 			selected.setSync_name(checkMyFacility.get().getFacility_name());
 		}
 		syncRepo.save(selected);
@@ -172,7 +173,6 @@ public class SetupController {
 		return "controls/setup-countries";
 	}
 
-
 	@GetMapping("/deletecase")
 	public String deletecase(Principal principal, Model model, @RequestParam(required = false) String success,
 			@RequestParam(required = false) String case_uuid) {
@@ -191,7 +191,7 @@ public class SetupController {
 		return "controls/delete-case";
 	}
 
-//	@Transactional
+	// @Transactional
 	@PostMapping("/deletecase")
 	public String deletecaseconfirm(Principal principal, Model model,
 			@ModelAttribute("selected") casedeleter selected) {

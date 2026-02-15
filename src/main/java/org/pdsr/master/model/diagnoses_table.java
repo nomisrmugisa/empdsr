@@ -75,7 +75,5 @@ public class diagnoses_table implements Serializable {
 		diagnoses_table other = (diagnoses_table) obj;
 		return Objects.equals(diagnosis_name, other.diagnosis_name);
 	}
-	
-	
-	
+
 }

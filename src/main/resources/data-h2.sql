@@ -19,7 +19,8 @@ MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) v
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('rnok_options',2,'Parent');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('rnok_options',3,'Sibling');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('rnok_options',4,'Relative');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('rnok_options',5,'Other');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('rnok_options',5,'Friend');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('rnok_options',6,'Non Relative');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('rnok_options',88,'Not Stated');
 
 -- Core Lookup Tables Restoration
@@ -125,7 +126,7 @@ MERGE INTO diagnoses_table KEY(diagnosis_name) values('Hypoglycaemia','Hypoglyca
 MERGE INTO diagnoses_table KEY(diagnosis_name) values('Poor feeding','Poor feeding');
 MERGE INTO diagnoses_table KEY(diagnosis_name) values('Infection','Infection');
 MERGE INTO diagnoses_table KEY(diagnosis_name) values('Congenital anomalies','Congenital anomalies');
-MERGE INTO diagnoses_table KEY(diagnosis_name) values('CMeconium aspiration','Meconium aspiration');
+MERGE INTO diagnoses_table KEY(diagnosis_name) values('Meconium aspiration','Meconium aspiration');
 MERGE INTO diagnoses_table KEY(diagnosis_name) values('Septicaemia','Septicaemia');
 MERGE INTO diagnoses_table KEY(diagnosis_name) values('Respiratory Distress Syndrome (RDS)','Respiratory Distress Syndrome (RDS)');
 MERGE INTO diagnoses_table KEY(diagnosis_name) values('Cardiac Abnormalities','Cardiac Abnormalities');
@@ -270,6 +271,25 @@ MERGE INTO monitoring_table(gindex,glabel,mindex,mlabel,mdesc,gitem) KEY(mindex)
 MERGE INTO monitoring_table(gindex,glabel,mindex,mlabel,mdesc,gitem) KEY(mindex) values(15,'Neonatal deaths','152','Late Neonatal Deaths (8-28 days)','none',0);
 MERGE INTO monitoring_table(gindex,glabel,mindex,mlabel,mdesc,gitem) KEY(mindex) values(16,'Maternal deaths','161','Maternal deaths','women who died in pregnancy or around child birth',1);
 
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('apgar_options',10,'Not Done');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('apgar_options',88,'Not Stated');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('apgar_options',99,'Not Applicable');
+
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('cstatus_options',0,'Not Started');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('cstatus_options',1,'Started');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('cstatus_options',2,'Completed');
+
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',1,'Birth Asphyxia');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',2,'Birth trauma');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',3,'Preterm birth complications');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',4,'Infections');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',5,'Septicaemia');	
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',6,'Congenital anomalies');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',7,'Special case');	
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',8,'Meconium aspiration');	
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',9,'Respiratory Distress Syndrome (RDS)');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',10,'Extreme prematurity (<1000g)');
+
 -- Datamap Restoration Part 1
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('typefacility_options',1,'National Referral Hospital');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('typefacility_options',2,'Regional Referral Hospital');
@@ -294,7 +314,8 @@ MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) v
 
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('sex_options',1,'Male');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('sex_options',2,'Female');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('sex_options',3,'Ambiguous genitalia');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('sex_options',3,'Indeterminate');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('sex_options',4,'Ambiguous genitalia');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('sex_options',77,'Unknown');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('sex_options',88,'Not Stated');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('sex_options',99,'Not Applicable (maternal death)');
@@ -386,13 +407,11 @@ MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) v
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pod_options',2,'On arrival');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pod_options',3,'In transit');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pod_options',4,'Community death');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pod_options',5,'Other');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pod_options',88,'Not Stated');
 
 -- Datamap Restoration Part 2
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pweeks_options',4,'Weeks');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pweeks_options',45,'Weeks');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pweeks_options',77,'Unknown');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pweeks_options',88,'Not Stated');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pweeks_options',99,'Not Applicable');
 
@@ -441,7 +460,6 @@ MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) v
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pweeks_options',43,'Weeks');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pweeks_options',44,'Weeks');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pweeks_options',45,'Weeks');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pweeks_options',77,'Unknown');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pweeks_options',88,'Not Stated');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('pweeks_options',99,'Not Applicable');
 
@@ -493,7 +511,7 @@ MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) v
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('source_options',0,'Hospital');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('source_options',1,'Health Center');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('source_options',2,'Private Maternity/Clinic');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('source_options',3,'CHW');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('source_options',3,'VHT');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('source_options',4,'TBA');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('source_options',88,'Not Stated');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('source_options',99,'Not Applicable');
@@ -527,7 +545,7 @@ MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) v
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('admissioncond_options',1,'Stable');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('admissioncond_options',2,'Abnormal vital signs');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('admissioncond_options',3,'Unconscious');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('admissioncond_options',4,'Dead on Arrival (DOA)');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('admissioncond_options',4,'Dead on arrival');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('admissioncond_options',88,'Not Stated');
 
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('levelconsc_options',1,'Conscious');
@@ -598,11 +616,6 @@ MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) v
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('motheroutcome_options',77,'Unknown');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('motheroutcome_options',88,'Not Stated');
 
--- Maternal Death Categorization
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('died_mdeath_options',1,'Ectopic');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('died_mdeath_options',2,'Due to abortion');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('died_mdeath_options',3,'Other');
-
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('lastheard_options',0,'Antepartum');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('lastheard_options',1,'Intrapartum (first stage)');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('lastheard_options',2,'Intrapartum (second stage)');
@@ -617,7 +630,7 @@ MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) v
 
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('resctwarmth_options',0,'Drying');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('resctwarmth_options',1,'Radiant warmer');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('resctwarmth_options',2,'Skin to skin');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('resctwarmth_options',2,'SKin to skin');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('resctwarmth_options',88,'Not Stated');
 
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('apgar_options',0,'0');
@@ -630,8 +643,7 @@ MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) v
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('apgar_options',7,'7');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('apgar_options',8,'8');	
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('apgar_options',9,'9');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('apgar_options',10,'10');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('apgar_options',88,'Not Done');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('apgar_options',88,'Not Stated');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('apgar_options',99,'Not Applicable');
 
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('cstatus_options',0,'Not Started');
@@ -646,11 +658,13 @@ MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) v
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',6,'Congenital anomalies');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',7,'Special case');	
 
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('dthplace_options',1,'At Health Facility');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('dthplace_options',1,'In transit');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('dthplace_options',2,'On arrival');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('dthplace_options',3,'In transit');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('dthplace_options',4,'Community death');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('dthplace_options',5,'Other');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('dthplace_options',3,'Community death');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('dthplace_options',4,'Other');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('dthplace_options',5,'Before arrival');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('dthplace_options',6,'At H/F before admission');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('dthplace_options',7,'At H/F after admission');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('dthplace_options',88,'Not Stated');
 
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('autopsyby_options',1,'Pathologist');
@@ -666,11 +680,6 @@ MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) v
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('icd10mm_options',7,'Non obstetric complication');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('icd10mm_options',8,'Unknown');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('icd10mm_options',9,'Coincidental/Accidental');
-
--- New Death Categorization (Maternal Notification)
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('died_mdeath_options',1,'Ectopic');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('died_mdeath_options',2,'Due to abortion');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('died_mdeath_options',3,'Other');
 
 -- Missing Options from Master
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('posneg_options',0,'Negative(-ve)');
@@ -694,7 +703,7 @@ MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) v
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('source_options',0,'Hospital');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('source_options',1,'Health Center');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('source_options',2,'Private Maternity/Clinic');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('source_options',3,'CHW');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('source_options',3,'VHT');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('source_options',4,'TBA');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('source_options',88,'Not Stated');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('source_options',99,'Not Applicable');

@@ -45,9 +45,6 @@ public class case_fetalheart implements Serializable {
 	@Column
 	private Integer fetalheart_lastheard;
 
-	@Column
-	private String fetalheart_abnormal;
-
 	@JsonIgnore
 	@Lob
 	@Column
@@ -110,14 +107,6 @@ public class case_fetalheart implements Serializable {
 
 	public void setFetalheart_lastheard(Integer fetalheart_lastheard) {
 		this.fetalheart_lastheard = fetalheart_lastheard;
-	}
-
-	public String getFetalheart_abnormal() {
-		return fetalheart_abnormal;
-	}
-
-	public void setFetalheart_abnormal(String fetalheart_abnormal) {
-		this.fetalheart_abnormal = fetalheart_abnormal;
 	}
 
 	@Override

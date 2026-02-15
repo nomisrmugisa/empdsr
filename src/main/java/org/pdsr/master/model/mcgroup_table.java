@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 
-
 @Entity
 public class mcgroup_table implements Serializable {
 
@@ -22,37 +21,39 @@ public class mcgroup_table implements Serializable {
 	@Lob
 	@Column
 	private String icdmgroup_name;
-	
-	
+
 	public mcgroup_table() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	
-	
+
 	public mcgroup_table(String icdmgroup, String icdmgroup_name) {
 		super();
 		this.icdmgroup = icdmgroup;
 		this.icdmgroup_name = icdmgroup_name;
 	}
 
-
 	public String getIcdmgroup() {
 		return icdmgroup;
 	}
+
 	public void setIcdmgroup(String icdmgroup) {
 		this.icdmgroup = icdmgroup;
 	}
+
 	public String getIcdmgroup_name() {
 		return icdmgroup_name;
 	}
+
 	public void setIcdmgroup_name(String icdmgroup_name) {
 		this.icdmgroup_name = icdmgroup_name;
 	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(icdmgroup);
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -64,5 +65,5 @@ public class mcgroup_table implements Serializable {
 		mcgroup_table other = (mcgroup_table) obj;
 		return Objects.equals(icdmgroup, other.icdmgroup);
 	}
-	
+
 }

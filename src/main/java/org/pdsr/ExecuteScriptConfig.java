@@ -13,17 +13,18 @@ import org.springframework.jdbc.datasource.init.ScriptUtils;
 @Configuration
 public class ExecuteScriptConfig {
 	private final String SQL_SCRIPT = "classpath:my_data_h2.sql";
-	
+
 	@Autowired
 	@Qualifier("jdbcTemplate")
 	private JdbcTemplate datasource;
-	
+
 	@Autowired
 	private ResourceLoader resourceLoader;
 
 	@PostConstruct
 	public void executeSQLScript() throws Exception {
-//		Resource resource = resourceLoader.getResource(SQL_SCRIPT);
-//		ScriptUtils.executeSqlScript(datasource.getDataSource().getConnection(), resource);
+		// Resource resource = resourceLoader.getResource(SQL_SCRIPT);
+		// ScriptUtils.executeSqlScript(datasource.getDataSource().getConnection(),
+		// resource);
 	}
 }
