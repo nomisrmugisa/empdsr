@@ -141,12 +141,21 @@ public class case_antenatal implements Serializable {
 	@JoinTable(name = "join_antenatal_risks", joinColumns = @JoinColumn(name = "antenatal_uuid"), inverseJoinColumns = @JoinColumn(name = "risk_name"))
 	private List<risk_table> risks = new ArrayList<>();
 
+	@Column
+	@Size(max = 50)
+	private String antenatal_viralload;
+
+	public String getAntenatal_viralload() {
+		return antenatal_viralload;
+	}
+
+	public void setAntenatal_viralload(String antenatal_viralload) {
+		this.antenatal_viralload = antenatal_viralload;
+	}
+
 	@Lob
 	@Column
 	private String new_risks;
-
-	@Column
-	private Integer antenatal_viral_load;
 
 	@JsonIgnore
 	@Lob
@@ -450,14 +459,6 @@ public class case_antenatal implements Serializable {
 
 	public void setAntenatal_art(Integer antenatal_art) {
 		this.antenatal_art = antenatal_art;
-	}
-
-	public Integer getAntenatal_viral_load() {
-		return antenatal_viral_load;
-	}
-
-	public void setAntenatal_viral_load(Integer antenatal_viral_load) {
-		this.antenatal_viral_load = antenatal_viral_load;
 	}
 
 	@Override

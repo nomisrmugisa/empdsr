@@ -98,10 +98,6 @@ public class case_birth implements Serializable {
 	@Column
 	private String new_cordfaults;
 
-	@Lob
-	@Column
-	private String birth_ipno_multi;
-
 	@Column
 	private Integer birth_placentachecks;
 
@@ -281,14 +277,6 @@ public class case_birth implements Serializable {
 
 	public void setNew_cordfaults(String new_cordfaults) {
 		this.new_cordfaults = new_cordfaults;
-	}
-
-	public String getBirth_ipno_multi() {
-		return birth_ipno_multi;
-	}
-
-	public void setBirth_ipno_multi(String birth_ipno_multi) {
-		this.birth_ipno_multi = birth_ipno_multi;
 	}
 
 	public Integer getBirth_placentachecks() {

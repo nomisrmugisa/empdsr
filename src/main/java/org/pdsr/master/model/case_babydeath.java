@@ -51,6 +51,52 @@ public class case_babydeath implements Serializable {
 	@Column
 	private Integer baby_resuscitation;
 
+	@Lob
+	@Column
+	private String baby_referral_reason;
+
+	@Column
+	@Size(max = 50)
+	private String baby_referral_time;
+
+	@Column
+	private Integer baby_fetal_movements; // 1=Yes, 0=No
+
+	@Column
+	private Integer baby_weight_taken; // 1=Yes, 0=No
+
+	public String getBaby_referral_reason() {
+		return baby_referral_reason;
+	}
+
+	public void setBaby_referral_reason(String baby_referral_reason) {
+		this.baby_referral_reason = baby_referral_reason;
+	}
+
+	public String getBaby_referral_time() {
+		return baby_referral_time;
+	}
+
+	public void setBaby_referral_time(String baby_referral_time) {
+		this.baby_referral_time = baby_referral_time;
+	}
+
+	public Integer getBaby_fetal_movements() {
+		return baby_fetal_movements;
+	}
+
+	public void setBaby_fetal_movements(Integer baby_fetal_movements) {
+		this.baby_fetal_movements = baby_fetal_movements;
+	}
+
+	public Integer getBaby_weight_taken() {
+		return baby_weight_taken;
+	}
+
+	public void setBaby_weight_taken(Integer baby_weight_taken) {
+		this.baby_weight_taken = baby_weight_taken;
+	}
+
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "baby_resuscitation", joinColumns = @JoinColumn(name = "resuscitation_uuid"), inverseJoinColumns = @JoinColumn(name = "resuscitation_name"))
 	private List<resuscitation_table> resuscitations;

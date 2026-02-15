@@ -566,6 +566,12 @@
 					</select>
 				</div>
 			</div>
+			<div class="row mb-3">
+				<label class="col-md-4 col-form-label border-bottom">Viral Load (copies/ml)</label>
+				<div class="col-md-6">
+					<input class="form-control form-control-sm" th:field="*{antenatal.antenatal_viralload}" />
+				</div>
+			</div>
 		</fieldset>
 		<div class="row mb-3">
 			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.antenatal_alcohol}"></label>
@@ -1233,6 +1239,20 @@
 					th:field="*{delivery.delivery_weight}" />
 			</div>
 		</div>
+		<div class="row mb-3">
+			<label class="col-md-4 col-form-label border-bottom">Decision directly to incision interval (min)</label>
+			<div class="col-auto">
+				<input type="number" min="0" class="form-control form-control-sm"
+					th:field="*{delivery.delivery_decision_incision}" />
+			</div>
+		</div>
+		<div class="row mb-3">
+			<label class="col-md-4 col-form-label border-bottom">Decision directly to delivery interval (min)</label>
+			<div class="col-auto">
+				<input type="number" min="0" class="form-control form-control-sm"
+					th:field="*{delivery.delivery_decision_delivery}" />
+			</div>
+		</div>
 	</fieldset>
 
 	<fieldset hidden=true>
@@ -1262,15 +1282,10 @@
 			<label class="col-md-4 col-form-label border-bottom" th:text="#{label.birth_mode}"></label>
 			<div class="col-auto">
 				<select id="birth_mode" class="form-control form-control-sm" th:field="*{birth.birth_mode}"
-					onchange="changeBirthModeToNA(this)">
-					<option th:each="option : ${birthmode_options}" th:value="${option.key}" th:text="${option.value}">
+					onchange="changeBirthBirthModeOtherToNA(this)">
+					<option th:each="option : ${mode_options}" th:value="${option.key}" th:text="${option.value}">
 					</option>
 				</select>
-			</div>
-			<label class="col-md-2 col-form-label border-bottom  d-none multi_ipno_div">IPNOs (comma separated)</label>
-			<div class="col-auto  d-none multi_ipno_div">
-				<input type="text" id="birth_ipno_multi" class="form-control form-control-sm"
-					th:field="*{birth.birth_ipno_multi}" />
 			</div>
 		</div>
 		<fieldset id="birth_mode_fieldset">
@@ -1555,6 +1570,38 @@
 <div th:fragment="case_babydeath">
 	<h4 th:text="#{title.baby}" class="text-light p-1 rounded" style="background-color: rgb(57, 106, 147)"></h4>
 	<div th:insert="fragments/update-case :: core_data"></div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom">Reason for referral</label>
+		<div class="col-md-8">
+			<textarea rows="3" class="form-control form-control-sm"
+				th:field="*{babydeath.baby_referral_reason}"></textarea>
+		</div>
+	</div>
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom">Time spent at facility before referral</label>
+		<div class="col-md-6">
+			<input class="form-control form-control-sm" th:field="*{babydeath.baby_referral_time}" />
+		</div>
+	</div>
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom">Reduced fetal movements</label>
+		<div class="col-auto">
+			<select class="form-control form-control-sm" th:field="*{babydeath.baby_fetal_movements}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom">Baby weight taken</label>
+		<div class="col-auto">
+			<select class="form-control form-control-sm" th:field="*{babydeath.baby_weight_taken}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.baby_cry}"></label>
 		<div class="col-auto">
@@ -1738,6 +1785,16 @@
 <div th:fragment="case_mdeath">
 	<h4 th:text="#{title.mdeath}" class="text-light p-1 rounded" style="background-color: rgb(57, 106, 147)"></h4>
 	<div th:insert="fragments/update-case :: core_data"></div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom">Condition on admission</label>
+		<div class="col-auto">
+			<select class="form-control form-control-sm" th:field="*{mdeath.mdeath_condition_admission}">
+				<option th:each="option : ${admission_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
 
 
 	<h4>[[#{label.mdeath_early}]]</h4>
@@ -2321,11 +2378,8 @@
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_possible_cause}"></label>
 		<div class="col-md-6">
-			<select class="form-control form-control-sm" th:field="*{mdeath.mdeath_possible_cause}">
-				<!-- <option value="">Select one</option> -->
-				<option th:each="option : ${icd10mm_options}" th:value="${option.key}" th:text="${option.value}">
-				</option>
-			</select>
+			<textarea rows="4" class="form-control form-control-sm" th:field="*{mdeath.mdeath_possible_cause}">
+						</textarea>
 		</div>
 	</div>
 

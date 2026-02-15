@@ -62,6 +62,28 @@ public class case_delivery implements Serializable {
 	private Integer delivery_minute;
 
 	@Column
+	private Integer delivery_decision_incision;
+
+	@Column
+	private Integer delivery_decision_delivery;
+
+	public Integer getDelivery_decision_incision() {
+		return delivery_decision_incision;
+	}
+
+	public void setDelivery_decision_incision(Integer delivery_decision_incision) {
+		this.delivery_decision_incision = delivery_decision_incision;
+	}
+
+	public Integer getDelivery_decision_delivery() {
+		return delivery_decision_delivery;
+	}
+
+	public void setDelivery_decision_delivery(Integer delivery_decision_delivery) {
+		this.delivery_decision_delivery = delivery_decision_delivery;
+	}
+
+	@Column
 	private Double delivery_weight;
 
 	@Column

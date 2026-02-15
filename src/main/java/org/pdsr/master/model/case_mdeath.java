@@ -231,6 +231,17 @@ public class case_mdeath implements Serializable {
 	private Integer mdeath_place;// yes no
 
 	@Column
+	private Integer mdeath_condition_admission;
+
+	public Integer getMdeath_condition_admission() {
+		return mdeath_condition_admission;
+	}
+
+	public void setMdeath_condition_admission(Integer mdeath_condition_admission) {
+		this.mdeath_condition_admission = mdeath_condition_admission;
+	}
+
+	@Column
 	@Temporal(TemporalType.TIME)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date mdeath_autopsy_date;

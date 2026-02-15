@@ -106,6 +106,10 @@ MERGE INTO resuscitation_table KEY(resuscitation_name) values('IPPV bag and mask
 MERGE INTO resuscitation_table KEY(resuscitation_name) values('Oxygen','Oxygen');
 MERGE INTO resuscitation_table KEY(resuscitation_name) values('Intubation','Intubation');
 MERGE INTO resuscitation_table KEY(resuscitation_name) values('Medication','Medication');
+MERGE INTO resuscitation_table KEY(resuscitation_name) values('Drying','Drying');
+MERGE INTO resuscitation_table KEY(resuscitation_name) values('Radiant warmer','Radiant warmer');
+MERGE INTO resuscitation_table KEY(resuscitation_name) values('Skin to skin','Skin to skin');
+MERGE INTO resuscitation_table KEY(resuscitation_name) values('Antibiotics','Antibiotics');
 MERGE INTO resuscitation_table KEY(resuscitation_name) values('Chest compression','Chest compression');
 MERGE INTO resuscitation_table KEY(resuscitation_name) values('Advanced resuscitation with adrenaline','Chest compression');
 MERGE INTO resuscitation_table KEY(resuscitation_name) values('Endotracheal and Positive pressure ventilation','Endotracheal and Positive pressure ventilation');
@@ -126,7 +130,7 @@ MERGE INTO diagnoses_table KEY(diagnosis_name) values('Hypoglycaemia','Hypoglyca
 MERGE INTO diagnoses_table KEY(diagnosis_name) values('Poor feeding','Poor feeding');
 MERGE INTO diagnoses_table KEY(diagnosis_name) values('Infection','Infection');
 MERGE INTO diagnoses_table KEY(diagnosis_name) values('Congenital anomalies','Congenital anomalies');
-MERGE INTO diagnoses_table KEY(diagnosis_name) values('Meconium aspiration','Meconium aspiration');
+MERGE INTO diagnoses_table KEY(diagnosis_name) values('CMeconium aspiration','Meconium aspiration');
 MERGE INTO diagnoses_table KEY(diagnosis_name) values('Septicaemia','Septicaemia');
 MERGE INTO diagnoses_table KEY(diagnosis_name) values('Respiratory Distress Syndrome (RDS)','Respiratory Distress Syndrome (RDS)');
 MERGE INTO diagnoses_table KEY(diagnosis_name) values('Cardiac Abnormalities','Cardiac Abnormalities');
@@ -270,25 +274,6 @@ MERGE INTO monitoring_table(gindex,glabel,mindex,mlabel,mdesc,gitem) KEY(mindex)
 MERGE INTO monitoring_table(gindex,glabel,mindex,mlabel,mdesc,gitem) KEY(mindex) values(15,'Neonatal deaths','151','Early Neonatal Deaths (1-7 days)','none',0);
 MERGE INTO monitoring_table(gindex,glabel,mindex,mlabel,mdesc,gitem) KEY(mindex) values(15,'Neonatal deaths','152','Late Neonatal Deaths (8-28 days)','none',0);
 MERGE INTO monitoring_table(gindex,glabel,mindex,mlabel,mdesc,gitem) KEY(mindex) values(16,'Maternal deaths','161','Maternal deaths','women who died in pregnancy or around child birth',1);
-
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('apgar_options',10,'Not Done');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('apgar_options',88,'Not Stated');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('apgar_options',99,'Not Applicable');
-
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('cstatus_options',0,'Not Started');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('cstatus_options',1,'Started');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('cstatus_options',2,'Completed');
-
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',1,'Birth Asphyxia');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',2,'Birth trauma');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',3,'Preterm birth complications');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',4,'Infections');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',5,'Septicaemia');	
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',6,'Congenital anomalies');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',7,'Special case');	
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',8,'Meconium aspiration');	
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',9,'Respiratory Distress Syndrome (RDS)');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('neocod_options',10,'Extreme prematurity (<1000g)');
 
 -- Datamap Restoration Part 1
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('typefacility_options',1,'National Referral Hospital');
@@ -662,9 +647,6 @@ MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) v
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('dthplace_options',2,'On arrival');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('dthplace_options',3,'Community death');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('dthplace_options',4,'Other');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('dthplace_options',5,'Before arrival');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('dthplace_options',6,'At H/F before admission');
-MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('dthplace_options',7,'At H/F after admission');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('dthplace_options',88,'Not Stated');
 
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('autopsyby_options',1,'Pathologist');

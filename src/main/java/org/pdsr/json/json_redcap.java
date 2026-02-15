@@ -14,7 +14,7 @@ public class json_redcap implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-// IDENTIFICATION
+	// IDENTIFICATION
 	private String record_id;
 
 	private Date case_date;
@@ -31,7 +31,7 @@ public class json_redcap implements Serializable {
 								// complete
 	private Integer case_identification_complete;
 
-//BIODATA
+	// BIODATA
 	private Integer biodata_sex;
 
 	private Integer biodata_mage;
@@ -40,7 +40,7 @@ public class json_redcap implements Serializable {
 
 	private Integer case_demographic_form_complete;
 
-//REFERAL	
+	// REFERAL
 
 	private Integer referral_case;
 
@@ -1653,7 +1653,6 @@ public class json_redcap implements Serializable {
 	public void setCase_mdeath_complete(Integer case_mdeath_complete) {
 		this.case_mdeath_complete = case_mdeath_complete;
 	}
-
 
 	public String getNotes_text() {
 		return notes_text;
