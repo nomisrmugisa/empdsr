@@ -27,11 +27,12 @@ public class WebSecurityConfig {
 
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		
-//		http.requiresChannel(channel -> channel.anyRequest().requiresSecure());// ssl code
+
+		// http.requiresChannel(channel -> channel.anyRequest().requiresSecure());// ssl
+		// code
 
 		http.authorizeRequests(requests -> requests
-				.anyRequest().permitAll())
+				.anyRequest().authenticated())
 				.formLogin(login -> login.loginPage("/login").failureUrl("/login?error").permitAll())
 				.logout(logout -> logout.permitAll());
 
@@ -49,10 +50,10 @@ public class WebSecurityConfig {
 		};
 	}
 
-//    @Bean
-//    public AuthenticationManager customAuthenticationManager() throws Exception {
-//        return authenticationManager();
-//    }
+	// @Bean
+	// public AuthenticationManager customAuthenticationManager() throws Exception {
+	// return authenticationManager();
+	// }
 
 	@Bean
 	AuthenticationManager authenticationManager(HttpSecurity http, BCryptPasswordEncoder bCryptPasswordEncoder,

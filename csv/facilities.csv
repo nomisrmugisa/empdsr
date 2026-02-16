@@ -1,4 +1,4 @@
 ﻿id,facility_code,facility_name,facility_type,parent_code
-1,ASH,Ashanti Region,1,MPDRSGHANA
-2,EJISU,Ejisu District,2,ASH
-3,TEST001,Ejisu Hospital,3,EJISU
+1,ASH,Ashanti Region,1,MPDRSUganda
+2,Mulago,Mulago District,2,ASH
+3,TEST001,Mulago Hospital,3,Mulago

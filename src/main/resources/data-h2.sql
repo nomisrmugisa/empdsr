@@ -1,14 +1,14 @@
--- Activation script for new_main_empdsr (Ghana Version)
+-- Activation script for new_main_empdsr (Uganda Version)
 -- This script inserts the required license record to activate the application
 
--- Insert the MPDRSGHANA license record into sync_table
+-- Insert the MPDRSUganda license record into sync_table
 -- This will prevent the "Not Activated" message from appearing
 MERGE INTO sync_table (sync_id, sync_code, sync_name, sync_email, sync_url, sync_json) 
 KEY(sync_id) 
 VALUES (
-    'MPDRSGHANA',           -- sync_id (LICENSE_ID)
+    'MPDRSUganda',           -- sync_id (LICENSE_ID)
     'TEST001',              -- sync_code (FACILITY_ID from facilities.csv)
-    'Ejisu Hospital',       -- sync_name (facility name from facilities.csv)
+    'Mulago Hospital',       -- sync_name (facility name from facilities.csv)
     'admin@example.com',    -- sync_email
     'https://olincgroup.com/pdsr/mytest',  -- sync_url
     null                    -- sync_json

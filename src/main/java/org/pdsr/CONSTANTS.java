@@ -13,8 +13,8 @@ import java.util.Date;
 
 public class CONSTANTS {
 
-	public static final String LICENSE_ID = "MPDRSGHANA";
-	public static final String LICENSE_COUNTRY = "Ghana";
+	public static final String LICENSE_ID = "MPDRSUganda";
+	public static final String LICENSE_COUNTRY = "Uganda";
 	public static final String WEBADMIN_ID = "webadmin";
 	public static final String ROOT_LOCATION = "attachments";
 	public static final String IMAGE_TAG = "XZYimageXZY";
@@ -45,8 +45,8 @@ public class CONSTANTS {
 	public static final String DHIS2_MSB = "MSB (Macerated Stillbirth)";
 	public static final String DHIS2_END = "Neonatal Death (0-7 days)";
 
-	// public static final String BASE_URL_GHANA =
-	// "https://olincgroup.com/pdsr/ghana";
+	// public static final String BASE_URL_Uganda =
+	// "https://olincgroup.com/pdsr/Uganda";
 	// public static final String BASE_URL_NAMIBIA =
 	// "https://olincgroup.com/pdsr/namibia";
 	// P final String BASE_URL = "https://olincgroup.com/pdsr/sierraleone";
