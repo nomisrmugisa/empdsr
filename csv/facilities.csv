@@ -1,4 +1,4 @@
 ﻿id,facility_code,facility_name,facility_type,parent_code
-1,ASH,Ashanti Region,1,MPDRSUganda
-2,Mulago,Mulago District,2,ASH
-3,TEST001,Mulago Hospital,3,Mulago
+1,KLA,Central Region,1,MPDRSUganda
+2,KLA,Kampala District,2,KLA
+3,MUG,Mulago Hospital,3,KLA
