@@ -13,6 +13,9 @@ public class Dhis2Authorisation implements Serializable {
 
     private String dhis2_password;
 
+    /** Base URL of the DHIS2 instance, e.g. https://ug.sk-engine.online/hmis */
+    private String dhis2_url;
+
     public String getDhis2_username() {
         return dhis2_username;
     }
@@ -27,6 +30,14 @@ public class Dhis2Authorisation implements Serializable {
 
     public void setDhis2_password(String dhis2_password) {
         this.dhis2_password = dhis2_password;
+    }
+
+    public String getDhis2_url() {
+        return dhis2_url;
+    }
+
+    public void setDhis2_url(String dhis2_url) {
+        this.dhis2_url = dhis2_url;
     }
 
 }
