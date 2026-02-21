@@ -639,13 +639,13 @@ public class CaseEntryController {
 		List<case_identifiers> entered_cases = caseRepo.findByDraftCases();
 		entered_cases.addAll(caseRepo.findByPendingCase_status(1));
 
-		// Delegate full sync to Dhis2SyncService (3-step API chain + POST)
-		List<String> syncErrors = dhis2SyncService.syncCases(entered_cases, dhis2, synctable);
+		// Delegate full sync to Dhis2SyncService (pre-flight validation + 3-step API
+		// chain + POST)
+		List<Object[]> syncErrors = dhis2SyncService.syncCases(entered_cases, dhis2, synctable);
 
 		model.addAttribute("dhis2", dhis2);
-		if (!syncErrors.isEmpty()) {
-			model.addAttribute("errorlist", syncErrors);
-		} else {
+		model.addAttribute("errorlist", syncErrors);
+		if (syncErrors.isEmpty()) {
 			model.addAttribute("back", "back");
 		}
 

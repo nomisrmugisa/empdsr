@@ -22,12 +22,25 @@ import org.springframework.web.client.RestTemplate;
 
 /**
  * Orchestrates the 3-step DHIS2 sync workflow:
- * 1. GET program stages from /api/programs/{uid}
- * 2. GET data elements from /api/programStages/{stageId}
- * 3. Build json_dhis2_form and POST via ServiceApi.saveForm()
+ * 1. Validate all required fields (pre-flight check)
+ * 2. GET program stages / data elements from DHIS2 API
+ * 3. Build json_dhis2_form and POST via ServiceApi
+ *
+ * Errors are returned as List<Object[]> = { message, caseUuid, tabIndex }
+ * matching the format expected by registry/case-dhis2.html.
  */
 @Service
 public class Dhis2SyncService {
+
+    // Tab index constants (match ?page= parameter in edit URLs)
+    private static final int TAB_CASE_ENTRY = 0;
+    private static final int TAB_PROFILE = 1;
+    private static final int TAB_PREGNANCY = 3;
+    private static final int TAB_LABOUR = 5;
+    private static final int TAB_DELIVERY = 6;
+    private static final int TAB_BIRTH = 7;
+    private static final int TAB_DEATH = 8;
+    private static final int TAB_NOTES = 9;
 
     private final RestTemplateBuilder builder;
     private final ServiceApi serviceApi;
@@ -38,72 +51,38 @@ public class Dhis2SyncService {
     }
 
     // ---------------------------------------------------------------
-    // Step 1 — get the programStage ID for a program UID
+    // Main entry point — called by CaseEntryController on Sync button
+    // Returns list of Object[] errors; empty = all synced successfully
     // ---------------------------------------------------------------
-    public String getProgramStageId(String programUID, String dhis2Url,
-            String username, String password) {
-        try {
-            String url = dhis2Url + "/api/programs/" + programUID
-                    + ".json?fields=programStages[id,name]";
-
-            RestTemplate rt = builder.basicAuthentication(username, password).build();
-            Dhis2ProgramStagesResponse resp = rt.getForObject(url, Dhis2ProgramStagesResponse.class);
-
-            if (resp != null && resp.getProgramStages() != null
-                    && !resp.getProgramStages().isEmpty()) {
-                return resp.getProgramStages().get(0).getId();
-            }
-        } catch (RestClientException ex) {
-            System.err.println("[DHIS2] getProgramStageId error: " + ex.getMessage());
-        }
-        return null;
-    }
-
-    // ---------------------------------------------------------------
-    // Step 2 — get the set of live data element IDs for a stage
-    // ---------------------------------------------------------------
-    public Set<String> getLiveDataElementIds(String stageId, String dhis2Url,
-            String username, String password) {
-        try {
-            String url = dhis2Url + "/api/programStages/" + stageId
-                    + ".json?fields=name,id,programStageDataElements[dataElement[id,name]]";
-
-            RestTemplate rt = builder.basicAuthentication(username, password).build();
-            Dhis2StageDetailResponse resp = rt.getForObject(url, Dhis2StageDetailResponse.class);
-
-            if (resp != null && resp.getProgramStageDataElements() != null) {
-                return resp.getProgramStageDataElements().stream()
-                        .filter(pde -> pde.getDataElement() != null)
-                        .map(pde -> pde.getDataElement().getId())
-                        .collect(Collectors.toSet());
-            }
-        } catch (RestClientException ex) {
-            System.err.println("[DHIS2] getLiveDataElementIds error: " + ex.getMessage());
-        }
-        return Set.of();
-    }
-
-    // ---------------------------------------------------------------
-    // Step 3 — build and POST one event per case
-    // ---------------------------------------------------------------
-    /**
-     * @return list of error messages; empty = all sent successfully.
-     */
-    public List<String> syncCases(List<case_identifiers> cases,
+    public List<Object[]> syncCases(List<case_identifiers> cases,
             Dhis2Authorisation dhis2,
             sync_table synctable) {
 
-        List<String> errors = new ArrayList<>();
+        List<Object[]> errors = new ArrayList<>();
         String dhis2Url = dhis2.getDhis2_url();
         String username = dhis2.getDhis2_username();
         String password = dhis2.getDhis2_password();
 
         for (case_identifiers item : cases) {
 
-            boolean isMaternalDeath = item.getCase_death() == CONSTANTS.MATERNAL_DEATH;
-            boolean isPerinatalDeath = item.getCase_death() == CONSTANTS.STILL_BIRTH
-                    || item.getCase_death() == CONSTANTS.NEONATAL_DEATH;
-            boolean isNeonatalDeath = item.getCase_death() == CONSTANTS.NEONATAL_DEATH;
+            boolean isMaternalDeath = item.getCase_death() != null
+                    && item.getCase_death() == CONSTANTS.MATERNAL_DEATH;
+            boolean isPerinatalDeath = item.getCase_death() != null
+                    && (item.getCase_death() == CONSTANTS.STILL_BIRTH
+                            || item.getCase_death() == CONSTANTS.NEONATAL_DEATH);
+            boolean isNeonatalDeath = item.getCase_death() != null
+                    && item.getCase_death() == CONSTANTS.NEONATAL_DEATH;
+
+            // -------------------------------------------------------
+            // PRE-FLIGHT VALIDATION
+            // -------------------------------------------------------
+            List<Object[]> caseErrors = validateCase(item,
+                    isMaternalDeath, isPerinatalDeath, isNeonatalDeath);
+
+            if (!caseErrors.isEmpty()) {
+                errors.addAll(caseErrors);
+                continue; // skip this case — do NOT POST to DHIS2
+            }
 
             // Determine program UID
             String programUID;
@@ -112,37 +91,170 @@ public class Dhis2SyncService {
             } else if (isPerinatalDeath) {
                 programUID = CONSTANTS.DHIS2_PERINATAL_NOTIFICATION_PROGRAM;
             } else {
-                errors.add("Case " + item.getCase_id() + ": type of death not selected.");
+                errors.add(new Object[] {
+                        "Type of death not selected — case cannot be synced.",
+                        item.getCase_uuid(), TAB_CASE_ENTRY });
                 continue;
             }
 
             // Step 1 — resolve stage ID
             String stageId = getProgramStageId(programUID, dhis2Url, username, password);
             if (stageId == null) {
-                errors.add("Case " + item.getCase_id()
-                        + ": could not resolve program stage for program " + programUID);
+                errors.add(new Object[] {
+                        "Could not resolve program stage for program " + programUID
+                                + " — check DHIS2 connectivity.",
+                        item.getCase_uuid(), TAB_CASE_ENTRY });
                 continue;
             }
 
-            // Step 2 — get live data element IDs (validate our mapping)
+            // Step 2 — get live data element IDs (validates our mapping)
             Set<String> liveIds = getLiveDataElementIds(stageId, dhis2Url, username, password);
             if (liveIds.isEmpty()) {
-                errors.add("Case " + item.getCase_id()
-                        + ": could not retrieve data elements for stage " + stageId);
+                errors.add(new Object[] {
+                        "Could not retrieve data elements for stage " + stageId + ".",
+                        item.getCase_uuid(), TAB_CASE_ENTRY });
                 continue;
             }
 
-            // Step 3 — build event payload
+            // Step 3 — build event payload and POST
             json_dhis2_form d = buildEvent(item, synctable, dhis2, programUID,
-                    isMaternalDeath, isPerinatalDeath, isNeonatalDeath,
-                    liveIds);
+                    isMaternalDeath, isPerinatalDeath, isNeonatalDeath, liveIds);
 
-            // POST to DHIS2 events endpoint
             String eventsUrl = dhis2Url + "/api/events";
             serviceApi.saveForm(d, eventsUrl, username, password);
         }
 
         return errors;
+    }
+
+    // ---------------------------------------------------------------
+    // PRE-FLIGHT VALIDATION
+    // Three blocks: A = notification, B = maternal review, C = perinatal review
+    // ---------------------------------------------------------------
+    private List<Object[]> validateCase(case_identifiers item,
+            boolean isMaternalDeath,
+            boolean isPerinatalDeath,
+            boolean isNeonatalDeath) {
+
+        List<Object[]> e = new ArrayList<>();
+        String uuid = item.getCase_uuid();
+
+        // ============================================================
+        // BLOCK A — Notification program mandatory fields
+        // (applies to ALL cases, both maternal and perinatal)
+        // ============================================================
+
+        // Tab 0 — Case Entry
+        if (blank(item.getCase_mname()))
+            e.add(err("Mother's name is missing (Case Entry tab).", uuid, TAB_CASE_ENTRY));
+
+        if (blank(item.getCase_mid()))
+            e.add(err("Inpatient number is missing (Case Entry tab).", uuid, TAB_CASE_ENTRY));
+
+        if (item.getCase_death() == null)
+            e.add(err("Type of death has not been selected (Case Entry tab).", uuid, TAB_CASE_ENTRY));
+
+        if (item.getCase_nationality() == null)
+            e.add(err("Nationality has not been selected (Case Entry tab).", uuid, TAB_CASE_ENTRY));
+
+        // Tab 1 — Profile / Biodata
+        if (item.getBiodata() == null) {
+            e.add(err("Profile (biodata) section is missing entirely.", uuid, TAB_PROFILE));
+        } else {
+            if (blank(item.getBiodata().getBiodata_village()))
+                e.add(err("Village of residence is missing (Profile tab).", uuid, TAB_PROFILE));
+            if (blank(item.getBiodata().getBiodata_location()))
+                e.add(err("Sub-county (LC III) is missing (Profile tab).", uuid, TAB_PROFILE));
+            if (blank(item.getBiodata().getBiodata_nok()))
+                e.add(err("Next of kin is missing (Profile tab).", uuid, TAB_PROFILE));
+        }
+
+        // Tab 3 — Pregnancy
+        if (item.getPregnancy() == null || item.getPregnancy().getPregnancy_weeks() == null)
+            e.add(err("Gestational age (weeks) is missing (Pregnancy tab).", uuid, TAB_PREGNANCY));
+
+        // Tab 9 — Notes
+        if (item.getNotes() == null) {
+            e.add(err("Notes section is missing entirely.", uuid, TAB_NOTES));
+        } else {
+            if (item.getNotes().getNotes_dispdate() == null)
+                e.add(err("Dispatch date is missing (Notes tab).", uuid, TAB_NOTES));
+            if (blank(item.getNotes().getNotes_dlvby()))
+                e.add(err("'Delivered/sent by' is missing (Notes tab).", uuid, TAB_NOTES));
+            if (item.getNotes().getNotes_dlvdate() == null)
+                e.add(err("Delivery date of form is missing (Notes tab).", uuid, TAB_NOTES));
+            if (blank(item.getNotes().getNotes_rcvby()))
+                e.add(err("'Form received by' is missing (Notes tab).", uuid, TAB_NOTES));
+            if (item.getNotes().getNotes_rcvdate() == null)
+                e.add(err("Form received date is missing (Notes tab).", uuid, TAB_NOTES));
+            if (blank(item.getNotes().getNotes_ntfby()))
+                e.add(err("'Notified by' (filled by) is missing (Notes tab).", uuid, TAB_NOTES));
+        }
+
+        // ============================================================
+        // BLOCK B — Maternal Death REVIEW program mandatory fields
+        // (only when case_death == MATERNAL_DEATH)
+        // ============================================================
+        if (isMaternalDeath) {
+
+            // Tab 5 — Labour (admission date/time required for maternal review)
+            if (item.getLabour() == null || item.getLabour().getLabour_seedate() == null)
+                e.add(err("Date first seen / admission date is missing (Labour tab).", uuid, TAB_LABOUR));
+
+            // Tab 8 — Maternal Death details
+            if (item.getMdeath() == null) {
+                e.add(err("Maternal Death section is missing entirely (Death tab).", uuid, TAB_DEATH));
+            } else {
+                if (item.getMdeath().getMdeath_date() == null)
+                    e.add(err("Date of maternal death is missing (Death tab).", uuid, TAB_DEATH));
+
+                if (blank(item.getMdeath().getMdeath_possible_cause()))
+                    e.add(err("Possible cause of maternal death is missing (Death tab).", uuid, TAB_DEATH));
+
+                if (item.getMdeath().getMdeath_place() == null)
+                    e.add(err("Place of death has not been selected (Death tab).", uuid, TAB_DEATH));
+
+                if (item.getMdeath().getMdeath_condition_admission() == null)
+                    e.add(err("Condition on admission has not been selected (Death tab).", uuid, TAB_DEATH));
+            }
+        }
+
+        // ============================================================
+        // BLOCK C — Perinatal Death REVIEW program mandatory fields
+        // (only when case_death == STILL_BIRTH or NEONATAL_DEATH)
+        // ============================================================
+        if (isPerinatalDeath) {
+
+            // Tab 6 — Delivery
+            if (item.getDelivery() == null) {
+                e.add(err("Delivery section is missing entirely (Delivery tab).", uuid, TAB_DELIVERY));
+            } else {
+                if (item.getDelivery().getDelivery_date() == null)
+                    e.add(err("Date of delivery is missing (Delivery tab).", uuid, TAB_DELIVERY));
+
+                if (item.getDelivery().getDelivery_weight() == null)
+                    e.add(err("Birth weight is missing (Delivery tab).", uuid, TAB_DELIVERY));
+            }
+
+            // Tab 7 — Birth outcome
+            if (item.getBirth() == null || item.getBirth().getBirth_babyoutcome() == null)
+                e.add(err("Baby outcome (fresh stillbirth / macerated / neonatal) "
+                        + "has not been selected (Birth tab).", uuid, TAB_BIRTH));
+
+            // Tab 8 — Baby / Neonatal death details (neonatal only)
+            if (isNeonatalDeath) {
+                if (item.getBabydeath() == null) {
+                    e.add(err("Neonatal death section is missing entirely (Death tab).", uuid, TAB_DEATH));
+                } else {
+                    if (item.getBabydeath().getBaby_ddate() == null)
+                        e.add(err("Date of neonatal death is missing (Death tab).", uuid, TAB_DEATH));
+                    if (blank(item.getBabydeath().getBaby_possible_cause()))
+                        e.add(err("Possible cause of neonatal death is missing (Death tab).", uuid, TAB_DEATH));
+                }
+            }
+        }
+
+        return e;
     }
 
     // ---------------------------------------------------------------
@@ -184,7 +296,6 @@ public class Dhis2SyncService {
                 d.setAttributeOptionCombo(CONSTANTS.DHIS2_ATTRIBUTECOMBO_FOREIGNER);
         }
 
-        // Helper: only add if the DE is live in DHIS2
         // ---- Tab 0: Case Entry ----
         dv(d, liveIds, "ZKBE8Xm9DJG", item.getCase_id());
 
@@ -261,11 +372,6 @@ public class Dhis2SyncService {
                     typeDeath = CONSTANTS.DHIS2_END;
             }
             dv(d, liveIds, "gBhV2LXen0l", typeDeath);
-
-            // Where died (Maternal) — also needs birth_mode
-            if (isMaternalDeath) {
-                buildWhereDied(d, liveIds, item);
-            }
         }
 
         // ---- Tab 8a: Perinatal — neonatal or still birth ----
@@ -292,7 +398,6 @@ public class Dhis2SyncService {
                     if (minDeath != null)
                         dv(d, liveIds, "LfoSGxsRASi", minDeath);
 
-                    // Duration: admission → death
                     if (item.getLabour() != null && item.getLabour().getLabour_seedate() != null) {
                         int durDays = (int) CONSTANTS.calculateAgeInDays(
                                 item.getLabour().getLabour_seedate(), dateDeath);
@@ -304,16 +409,14 @@ public class Dhis2SyncService {
                         dv(d, liveIds, "oeaDOmhm0CS", durHours);
                     }
 
-                    dv(d, liveIds, "ikWjwp2LnoN",
-                            item.getBabydeath().getBaby_possible_cause());
+                    dv(d, liveIds, "ikWjwp2LnoN", item.getBabydeath().getBaby_possible_cause());
                 }
 
             } else {
                 // Fresh or Macerated Stillbirth
                 dv(d, liveIds, "lN4hzVULEdF", dateFmt.format(dateDelv));
                 if (item.getDelivery().getDelivery_minute() != null)
-                    dv(d, liveIds, "LfoSGxsRASi",
-                            item.getDelivery().getDelivery_minute());
+                    dv(d, liveIds, "LfoSGxsRASi", item.getDelivery().getDelivery_minute());
                 dv(d, liveIds, "tVHwoNnaTmj", 0);
                 dv(d, liveIds, "LRRZJWsh5p0", 0);
                 dv(d, liveIds, "ikWjwp2LnoN", "Still Birth");
@@ -341,7 +444,6 @@ public class Dhis2SyncService {
             dv(d, liveIds, "qWAqTjmR6Dj", utcFmt.format(cal.getTime()));
             dv(d, liveIds, "cdAirZ9dQKj", item.getMdeath().getMdeath_possible_cause());
 
-            // Where died
             buildWhereDied(d, liveIds, item);
         }
 
@@ -401,8 +503,61 @@ public class Dhis2SyncService {
     }
 
     // ---------------------------------------------------------------
+    // Step 1 — get the programStage ID for a program UID
+    // ---------------------------------------------------------------
+    public String getProgramStageId(String programUID, String dhis2Url,
+            String username, String password) {
+        try {
+            String url = dhis2Url + "/api/programs/" + programUID
+                    + ".json?fields=programStages[id,name]";
+            RestTemplate rt = builder.basicAuthentication(username, password).build();
+            Dhis2ProgramStagesResponse resp = rt.getForObject(url, Dhis2ProgramStagesResponse.class);
+            if (resp != null && resp.getProgramStages() != null
+                    && !resp.getProgramStages().isEmpty()) {
+                return resp.getProgramStages().get(0).getId();
+            }
+        } catch (RestClientException ex) {
+            System.err.println("[DHIS2] getProgramStageId error: " + ex.getMessage());
+        }
+        return null;
+    }
+
+    // ---------------------------------------------------------------
+    // Step 2 — get the set of live data element IDs for a stage
+    // ---------------------------------------------------------------
+    public Set<String> getLiveDataElementIds(String stageId, String dhis2Url,
+            String username, String password) {
+        try {
+            String url = dhis2Url + "/api/programStages/" + stageId
+                    + ".json?fields=name,id,programStageDataElements[dataElement[id,name]]";
+            RestTemplate rt = builder.basicAuthentication(username, password).build();
+            Dhis2StageDetailResponse resp = rt.getForObject(url, Dhis2StageDetailResponse.class);
+            if (resp != null && resp.getProgramStageDataElements() != null) {
+                return resp.getProgramStageDataElements().stream()
+                        .filter(pde -> pde.getDataElement() != null)
+                        .map(pde -> pde.getDataElement().getId())
+                        .collect(Collectors.toSet());
+            }
+        } catch (RestClientException ex) {
+            System.err.println("[DHIS2] getLiveDataElementIds error: " + ex.getMessage());
+        }
+        return Set.of();
+    }
+
+    // ---------------------------------------------------------------
     // Helpers
     // ---------------------------------------------------------------
+
+    /** Convenience: build an Object[] error entry */
+    private Object[] err(String message, String caseUuid, int tabIndex) {
+        return new Object[] { message, caseUuid, tabIndex };
+    }
+
+    /** True if string is null or blank */
+    private boolean blank(String s) {
+        return s == null || s.trim().isEmpty();
+    }
+
     /** Only adds a dataValue if deId is in the live set and value is not null */
     private void dv(json_dhis2_form d, Set<String> liveIds, String deId, Object value) {
         if (value == null)
@@ -411,7 +566,7 @@ public class Dhis2SyncService {
             System.err.println("[DHIS2] DE " + deId + " not found in program stage — skipping.");
             return;
         }
-        // Convert to String — DHIS2 event API accepts all values as strings
+        // All DHIS2 values are ultimately strings over the wire
         d.getDataValues().add(new json_dhis2_dataValues(deId, value.toString()));
     }
 
