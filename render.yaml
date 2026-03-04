@@ -5,7 +5,7 @@ services:
     dockerfilePath: ./Dockerfile
     plan: free
     region: oregon
-    branch: main
+    branch: new_main_empdsr
     healthCheckPath: /
     envVars:
       - key: JAVA_OPTS
@@ -14,3 +14,8 @@ services:
         value: "production"
     # Auto-deploy when you push to main branch
     autoDeploy: true
+    # Disk persistence for H2 database
+    disk:
+      name: empdsr-data
+      mountPath: /app/data
+      sizeGB: 1
