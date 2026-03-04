@@ -15,7 +15,7 @@ import org.pdsr.json.EncryptedMessage;
 import org.pdsr.json.json_dhis2_form;
 import org.pdsr.json.json_redcap;
 import org.pdsr.master.model.facility_table;
-import org.pdsr.master.model.sync_table;
+import org.pdsr.slave.model.SyncTable;
 import org.pdsr.master.repo.SyncTableRepository;
 import org.pdsr.summary.model.big_audit_audit;
 import org.pdsr.summary.model.big_audit_recommendation;
@@ -46,12 +46,14 @@ public class ServiceApi {
 	public ServiceApi(final RestTemplateBuilder builder, SyncTableRepository syncRepo) {
 		this.builder = builder;
 
-		Optional<sync_table> sync = syncRepo.findById(CONSTANTS.LICENSE_ID);
+		Optional<SyncTable> sync = syncRepo.findById(CONSTANTS.LICENSE_ID);
 
 		if (sync.isPresent()) {
 
-			BASE_URL = sync.get().getSync_url() + "/api";
-			FAC_CODE = sync.get().getSync_code();
+			// In our new SyncTable, sync_url was merged into sync_id or handled differently.
+			// Defaulting to local main server or syncId for now.
+			BASE_URL = "http://localhost:5000/api"; 
+			FAC_CODE = sync.get().getSyncCode();
 		}
 	}
 
@@ -262,7 +264,8 @@ public class ServiceApi {
 	}
 
 	/// DHIS2 SAVE FORM
-	public json_dhis2_form saveForm(json_dhis2_form json, String dhis2_url, String dhis2_username,
+	/// Returns null on success, or the error message string on failure.
+	public String saveForm(json_dhis2_form json, String dhis2_url, String dhis2_username,
 			String dhis2_password) {
 
 		try {
@@ -271,12 +274,12 @@ public class ServiceApi {
 
 			rt.postForObject(dhis2_url, json, json_dhis2_form.class);
 
-		} catch (RestClientException ex) {
-			System.err.println("Error is " + ex.getMessage());
-			ex.printStackTrace();
-		}
+			return null; // success
 
-		return new json_dhis2_form();
+		} catch (RestClientException ex) {
+			System.err.println("[DHIS2] saveForm error: " + ex.getMessage());
+			return ex.getMessage();
+		}
 	}
 
 	/// REDCAP DATA

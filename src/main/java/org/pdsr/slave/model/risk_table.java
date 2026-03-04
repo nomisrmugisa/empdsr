@@ -9,7 +9,7 @@ import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-@Entity
+@Entity(name = "slave_risk_table")
 public class risk_table implements Serializable {
 
 	/**

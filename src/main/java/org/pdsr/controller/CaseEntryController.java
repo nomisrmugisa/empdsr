@@ -57,7 +57,7 @@ import org.pdsr.master.model.icd_diagnoses;
 import org.pdsr.master.model.placentacheck_table;
 import org.pdsr.master.model.resuscitation_table;
 import org.pdsr.master.model.risk_table;
-import org.pdsr.master.model.sync_table;
+import org.pdsr.slave.model.SyncTable;
 import org.pdsr.master.model.ttdp_table;
 import org.pdsr.master.model.ipts_table;
 import org.pdsr.master.repo.AbnormalityTableRepository;
@@ -207,8 +207,8 @@ public class CaseEntryController {
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", synctable.getSync_name());
+		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", synctable.getSyncName());
 
 		List<case_identifiers> entered_cases = caseRepo.findByDraftCases();// find cases not yet submitted
 		entered_cases.addAll(caseRepo.findByPendingCase_status(1));// find cases just entered and pending review
@@ -230,8 +230,8 @@ public class CaseEntryController {
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", synctable.getSync_name());
+		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", synctable.getSyncName());
 
 		RedcapExtraction redcap = new RedcapExtraction();
 		redcap.setProcessingStage(0);
@@ -250,8 +250,8 @@ public class CaseEntryController {
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", synctable.getSync_name());
+		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", synctable.getSyncName());
 
 		List<case_identifiers> entered_cases = caseRepo.findByDraftCases();// find cases not yet submitted
 		entered_cases.addAll(caseRepo.findByPendingCase_status(1));// find cases just entered and pending review
@@ -607,13 +607,16 @@ public class CaseEntryController {
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", synctable.getSync_name());
+		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", synctable.getSyncName());
 
 		Dhis2Authorisation dhis2 = new Dhis2Authorisation();
 		// Pre-populate URL so the form can submit it back
-		dhis2.setDhis2_url(synctable.getSync_url());
+		dhis2.setDhis2_url(synctable.getSyncJson());
 		model.addAttribute("dhis2", dhis2);
+
+		// Add dataElement mapping for UI display
+		model.addAttribute("dataElementMapping", getDataElementMapping());
 
 		return "registry/case-dhis2";
 	}
@@ -627,13 +630,13 @@ public class CaseEntryController {
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", synctable.getSync_name());
+		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", synctable.getSyncName());
 
 		// Always ensure dhis2_url is set from synctable (fallback if form did not
 		// submit it)
 		if (dhis2.getDhis2_url() == null || dhis2.getDhis2_url().isBlank()) {
-			dhis2.setDhis2_url(synctable.getSync_url());
+			dhis2.setDhis2_url(synctable.getSyncJson());
 		}
 
 		List<case_identifiers> entered_cases = caseRepo.findByDraftCases();
@@ -641,10 +644,13 @@ public class CaseEntryController {
 
 		// Delegate full sync to Dhis2SyncService (pre-flight validation + 3-step API
 		// chain + POST)
-		List<Object[]> syncErrors = dhis2SyncService.syncCases(entered_cases, dhis2, synctable);
+		List<String> payloadList = new ArrayList<>();
+		List<Object[]> syncErrors = dhis2SyncService.syncCases(entered_cases, dhis2, synctable, payloadList);
 
 		model.addAttribute("dhis2", dhis2);
 		model.addAttribute("errorlist", syncErrors);
+		model.addAttribute("syncedCount", entered_cases.size());
+		model.addAttribute("payloadList", payloadList);
 		if (syncErrors.isEmpty()) {
 			model.addAttribute("back", "back");
 		}
@@ -660,13 +666,13 @@ public class CaseEntryController {
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", synctable.getSync_name());
+		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", synctable.getSyncName());
 
 		case_identifiers selected = new case_identifiers();
 		selected.setCase_date(new Date());
 
-		Optional<sync_table> code = syncRepo.findById(CONSTANTS.LICENSE_ID);
+		Optional<SyncTable> code = syncRepo.findById(CONSTANTS.LICENSE_ID);
 		if (code.isPresent()) {
 			selected.setCase_sync(synctable);
 		}
@@ -684,8 +690,8 @@ public class CaseEntryController {
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", synctable.getSync_name());
+		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", synctable.getSyncName());
 
 		selected.setCase_uuid(UUID.randomUUID().toString());
 		selected.setCase_id("T" + selected.getCase_death() + "C" + (new java.util.Date().getTime()));
@@ -707,8 +713,8 @@ public class CaseEntryController {
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", synctable.getSync_name());
+		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", synctable.getSyncName());
 
 		case_identifiers selected = caseRepo.findById(case_uuid).get();
 
@@ -927,8 +933,8 @@ public class CaseEntryController {
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", synctable.getSync_name());
+		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", synctable.getSyncName());
 
 		case_identifiers existing = caseRepo.findById(selected.getCase_uuid()).get();
 		selected.setData_sent(0);// reset the data sending indicator when any record is edited
@@ -1553,6 +1559,19 @@ public class CaseEntryController {
 				}
 				break;
 			}
+			case 0: {
+				// Page 0 (Case Identifiers): copy editable fields onto the existing entity
+				// (which already has valid case_sync, case_date, case_id, case_death)
+				// then save existing to avoid nullifying the ManyToOne case_sync relationship.
+				existing.setCase_mid(selected.getCase_mid());
+				existing.setCase_mname(selected.getCase_mname());
+				existing.setCase_nationality(selected.getCase_nationality());
+				existing.setCase_nin(selected.getCase_nin());
+				existing.setData_sent(0);
+				existing.setCase_status(0);
+				caseRepo.save(existing);
+				break;
+			}
 			default: {
 				selected.setCase_status(0);
 				caseRepo.save(selected);
@@ -1572,8 +1591,8 @@ public class CaseEntryController {
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", synctable.getSync_name());
+		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", synctable.getSyncName());
 
 		case_identifiers selected = caseRepo.findById(case_uuid).get();
 
@@ -1618,11 +1637,11 @@ public class CaseEntryController {
 		try {
 			if (InternetAvailabilityChecker.isInternetAvailable()) {
 
-				sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+				SyncTable sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 				emailService.sendSimpleMessage(getRecipients(), "MPDSR DEATH NOTIFICATION!",
 						"Hello, \nThis is is to notify you of a " + getAnswer("death_options", selected.getCase_death())
 								+ "\nMother's age: " + selected.getBiodata().getBiodata_mage() + datetoShow
-								+ "\nHealth Facility: " + sync.getSync_name() + " - " + sync.getSync_code()
+								+ "\nHealth Facility: " + sync.getSyncName() + " - " + sync.getSyncCode()
 								+ "\nThis is a PILOT IMPLEMENTATION of the Enhanced Automated MPDSR tool developed by Alex and Eliezer");
 			}
 		} catch (IOException e) {
@@ -3021,6 +3040,238 @@ public class CaseEntryController {
 		}
 
 		return map;
+	}
+
+	@ModelAttribute("trans_options")
+	public Map<Integer, String> transOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("trans_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("period_options")
+	public Map<Integer, String> periodOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("period_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("admissioncond_options")
+	public Map<Integer, String> admissionCondOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("admissioncond_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("levelconsc_options")
+	public Map<Integer, String> levelConscOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("levelconsc_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("provider_options")
+	public Map<Integer, String> providerOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("provider_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("decision_options")
+	public Map<Integer, String> decisionOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("decision_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("birthloc_options")
+	public Map<Integer, String> birthlocOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("birthloc_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("liqourvolume_options")
+	public Map<Integer, String> liqourvolumeOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("liqourvolume_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("liqourcolor_options")
+	public Map<Integer, String> liqourcolorOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("liqourcolor_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	/**
+	 * Generate dataElement mapping information for UI display
+	 */
+	private Map<String, Object> getDataElementMapping() {
+		Map<String, Object> mapping = new LinkedHashMap<>();
+
+		// Programs
+		Map<String, String> programs = new LinkedHashMap<>();
+		programs.put("MATERNAL_NOTIFICATION", CONSTANTS.DHIS2_MATERNAL_NOTIFICATION_PROGRAM);
+		programs.put("PERINATAL_NOTIFICATION", CONSTANTS.DHIS2_PERINATAL_NOTIFICATION_PROGRAM);
+		programs.put("MATERNAL_REVIEW", CONSTANTS.DHIS2_MATERNAL_REVIEW_PROGRAM);
+		programs.put("PERINATAL_REVIEW", CONSTANTS.DHIS2_PERINATAL_REVIEW_PROGRAM);
+		mapping.put("programs", programs);
+
+		// DataElements by category
+		Map<String, List<Map<String, Object>>> categories = new LinkedHashMap<>();
+
+		// Tab 0: Case Entry
+		List<Map<String, Object>> caseEntry = new ArrayList<>();
+		caseEntry.add(createDE("ZKBE8Xm9DJG", "Case ID", "MOH Case Number", "All"));
+		caseEntry.add(createDE("ARHfUa6Z9qs", "Mother Name", "Mother's Name", "Perinatal"));
+		caseEntry.add(createDE("HCbRydAAt1T", "Mother Name", "Mother's Name", "Maternal"));
+		caseEntry.add(createDE("j9euMjl5QGc", "NIN", "National ID Number", "Maternal"));
+		caseEntry.add(createDE("XYcqirdNu2m", "Inpatient Number", "Medical Record Number", "Perinatal"));
+		caseEntry.add(createDE("YNXzLwM2R6p", "Inpatient Number", "Medical Record Number", "Maternal"));
+		caseEntry.add(createDE("BMGZD6w3tid", "Case Date", "Date of Case", "All"));
+		categories.put("Case Entry", caseEntry);
+
+		// Tab 1: Profile/Biodata
+		List<Map<String, Object>> profile = new ArrayList<>();
+		profile.add(createDE("WH6mqVqUyjY", "Village", "Village of Residence", "Perinatal"));
+		profile.add(createDE("WFSWhrHOUFl", "Village", "Village of Residence", "Maternal"));
+		profile.add(createDE("VRVt0LjRQvb", "Sub-county", "Sub-county (LC III)", "Perinatal"));
+		profile.add(createDE("xQoLDOeMANl", "Sub-county", "Sub-county (LC III)", "Maternal"));
+		profile.add(createDE("ro2ycn9f2UP", "District", "District", "Perinatal"));
+		profile.add(createDE("MwBfsz2pc0j", "District", "District", "Maternal"));
+		profile.add(createDE("yy6fkRMHXuv", "Next of Kin", "Next of Kin", "Perinatal"));
+		profile.add(createDE("IBlMJxS9Qe7", "Next of Kin", "Next of Kin", "Maternal"));
+		profile.add(createDE("rXcIphzS2GV", "Mother Age", "Mother's Age", "Maternal"));
+		profile.add(createDE("Svg1CaephM3", "Contact", "Contact Info", "Perinatal"));
+		categories.put("Profile/Biodata", profile);
+
+		// Tab 3: Pregnancy
+		List<Map<String, Object>> pregnancy = new ArrayList<>();
+		pregnancy.add(createDE("h9MKKyiH6Ar", "Gestational Age", "Gestational Age (weeks)", "Perinatal"));
+		pregnancy.add(createDE("jhisgRfr13C", "Gestational Age", "Gestational Age (weeks)", "Maternal"));
+		categories.put("Pregnancy", pregnancy);
+
+		// Tab 5: Labour
+		List<Map<String, Object>> labour = new ArrayList<>();
+		labour.add(createDE("r6tDKOx4iVL", "Admission Date/Time", "Date first seen/admission", "Maternal"));
+		categories.put("Labour", labour);
+
+		// Tab 6: Delivery
+		List<Map<String, Object>> delivery = new ArrayList<>();
+		delivery.add(createDE("f4iqSVSIif1", "Delivery Date/Time", "Date and time of delivery", "Perinatal"));
+		delivery.add(createDE("x8dzSqL6DfQ", "Birth Weight", "Birth weight (in grams)", "Perinatal"));
+		categories.put("Delivery", delivery);
+
+		// Tab 7: Birth
+		List<Map<String, Object>> birth = new ArrayList<>();
+		birth.add(createDE("gBhV2LXen0l", "Type of Death", "FSB/MSB/Neonatal Death", "Perinatal"));
+		categories.put("Birth", birth);
+
+		// Death Details
+		List<Map<String, Object>> deathDetails = new ArrayList<>();
+		deathDetails.add(createDE("tVHwoNnaTmj", "Age at Death (Days)", "Age at death in days", "Perinatal"));
+		deathDetails.add(createDE("LRRZJWsh5p0", "Age at Death (Hours)", "Age at death in hours", "Perinatal"));
+		deathDetails.add(createDE("lN4hzVULEdF", "Date of Death", "Date of death", "Perinatal"));
+		deathDetails.add(createDE("LfoSGxsRASi", "Minute of Death", "Minute of death", "Perinatal"));
+		deathDetails.add(createDE("Gz95Yv0DaHm", "Duration from Admission (Days)", "Duration from admission in days", "Perinatal"));
+		deathDetails.add(createDE("oeaDOmhm0CS", "Duration from Admission (Hours)", "Duration from admission in hours", "Perinatal"));
+		deathDetails.add(createDE("ikWjwp2LnoN", "Possible Cause", "Possible cause of death", "Perinatal"));
+		deathDetails.add(createDE("qWAqTjmR6Dj", "Date/Time of Death", "Date and time of maternal death", "Maternal"));
+		deathDetails.add(createDE("cdAirZ9dQKj", "Possible Cause", "Possible cause of maternal death", "Maternal"));
+		deathDetails.add(createDE("FvHDEzD1M0A", "Where Died", "Where the mother died", "Maternal"));
+		categories.put("Death Details", deathDetails);
+
+		// Tab 9: Notes
+		List<Map<String, Object>> notes = new ArrayList<>();
+		notes.add(createDE("MTfPUIoVmKT", "Dispatch Date", "Form dispatch date", "All"));
+		notes.add(createDE("m4RxzRUvdG2", "Delivered By", "Form delivered by", "Perinatal"));
+		notes.add(createDE("ZmbVtTXyG29", "Delivered By", "Form delivered by", "Maternal"));
+		notes.add(createDE("UX4BsvcuDUS", "Delivery Contact", "Delivery contact info", "Perinatal"));
+		notes.add(createDE("jVfTrVzuRoP", "Delivery Contact", "Delivery contact info", "Maternal"));
+		notes.add(createDE("yow1Falsvhe", "Delivery Date", "Form delivery date", "All"));
+		notes.add(createDE("HKsuTxhq0TP", "Received By", "Form received by", "Perinatal"));
+		notes.add(createDE("YP7LbXgv1c8", "Received By", "Form received by", "Maternal"));
+		notes.add(createDE("x3RuFJLnC37", "Received Date", "Form received date", "All"));
+		notes.add(createDE("D0IBmvQLA2Q", "Notified By", "Notified by (filled by)", "Perinatal"));
+		notes.add(createDE("v7mt2RBEWEq", "Notified By", "Notified by (filled by)", "Maternal"));
+		notes.add(createDE("wWZ4b4m281F", "Notified Contact", "Notified contact info", "Perinatal"));
+		notes.add(createDE("HRWIjaS9i4M", "Notified Contact", "Notified contact info", "Maternal"));
+		categories.put("Notes", notes);
+
+		mapping.put("categories", categories);
+
+		// Fixed values
+		Map<String, String> fixedValues = new LinkedHashMap<>();
+		fixedValues.put("orgUnit", "MJu9Pwi3twb");
+		fixedValues.put("status", "COMPLETED");
+		fixedValues.put("longitude", "50.7");
+		fixedValues.put("latitude", "10.5");
+		mapping.put("fixedValues", fixedValues);
+
+		// Attribute Option Combos
+		Map<String, String> attributeCombos = new LinkedHashMap<>();
+		attributeCombos.put("National", CONSTANTS.DHIS2_ATTRIBUTECOMBO_NATIONAL);
+		attributeCombos.put("Refugee", CONSTANTS.DHIS2_ATTRIBUTECOMBO_REFUGEE);
+		attributeCombos.put("Foreigner", CONSTANTS.DHIS2_ATTRIBUTECOMBO_FOREIGNER);
+		mapping.put("attributeCombos", attributeCombos);
+
+		return mapping;
+	}
+
+	private Map<String, Object> createDE(String id, String field, String description, String programs) {
+		Map<String, Object> de = new LinkedHashMap<>();
+		de.put("id", id);
+		de.put("field", field);
+		de.put("description", description);
+		de.put("programs", programs);
+		return de;
 	}
 
 }

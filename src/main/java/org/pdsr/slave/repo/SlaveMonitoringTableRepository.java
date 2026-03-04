@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SlaveMonitoringTableRepository extends JpaRepository<monitoring_table, Integer> {
 
-	@Query("select m FROM monitoring_table m WHERE m.gitem=?1")
+	@Query("select m FROM slave_monitoring_table m WHERE m.gitem=?1")
 	List<monitoring_table> findGlabels(boolean gitem);
 	
 }

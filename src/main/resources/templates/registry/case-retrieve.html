@@ -22,7 +22,7 @@
 			</thead>
 			<tbody>
 				<tr th:each="item : ${items}">
-					<th><a href="#" th:href="@{/registry/edit/{id}?page=1(id=${item.case_uuid})}"
+					<th><a href="#" th:href="@{/registry/edit/{id}?page=0(id=${item.case_uuid})}"
 							th:text="#{edit.link}"></a></th>
 					<td th:text="${item.case_date}"></td>
 					<td th:text="${item.case_mname}"></td>

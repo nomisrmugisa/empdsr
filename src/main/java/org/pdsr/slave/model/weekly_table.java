@@ -15,7 +15,7 @@ import javax.persistence.TemporalType;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-@Entity
+@Entity(name = "slave_weekly_table")
 public class weekly_table implements Serializable {
 
 	/**

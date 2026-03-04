@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SlaveCaseAntenatalRepository extends JpaRepository<case_antenatal, String> {
 	
-	@Query("select a.risks from case_antenatal a where a.antenatal_uuid=?1")
+	@Query("select a.risks from slave_case_antenatal a where a.antenatal_uuid=?1")
 	List<risk_table> findRiskByAntenatalUuid(String uuid);
 
 

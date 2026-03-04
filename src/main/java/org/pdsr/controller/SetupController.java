@@ -17,7 +17,7 @@ import org.pdsr.master.model.case_identifiers;
 import org.pdsr.master.model.facility_table;
 import org.pdsr.master.model.icd_codes;
 import org.pdsr.master.model.icd_diagnoses;
-import org.pdsr.master.model.sync_table;
+import org.pdsr.slave.model.SyncTable;
 import org.pdsr.master.repo.AuditAuditRepository;
 import org.pdsr.master.repo.AuditRecommendRepository;
 import org.pdsr.master.repo.CaseRepository;
@@ -82,14 +82,14 @@ public class SetupController {
 	@GetMapping("")
 	public String sync(Principal principal, Model model, @RequestParam(required = false) String success) {
 
-		Optional<sync_table> object = syncRepo.findById(CONSTANTS.LICENSE_ID);
+		Optional<SyncTable> object = syncRepo.findById(CONSTANTS.LICENSE_ID);
 		if (object.isPresent()) {
 
 			model.addAttribute("selected", object.get());
 
 		} else {
-			sync_table selected = new sync_table();
-			selected.setSync_id(CONSTANTS.LICENSE_ID);
+			SyncTable selected = new SyncTable();
+			selected.setSyncId(CONSTANTS.LICENSE_ID);
 			model.addAttribute("selected", selected);
 		}
 
@@ -103,7 +103,7 @@ public class SetupController {
 	}
 
 	@PostMapping("")
-	public String sync(Principal principal, @ModelAttribute("selected") sync_table selected, BindingResult results) {
+	public String sync(Principal principal, @ModelAttribute("selected") SyncTable selected, BindingResult results) {
 
 		try {
 			List<facilities> table = loadFromCsv("facilities.csv", facilities.class);
@@ -136,9 +136,9 @@ public class SetupController {
 
 		// check if my facility is in list, then pull name of facility and replace, else
 		// save stated facility name
-		Optional<facility_table> checkMyFacility = facilityRepo.findByFacility_code(selected.getSync_code());
+		Optional<facility_table> checkMyFacility = facilityRepo.findByFacility_code(selected.getSyncCode());
 		if (checkMyFacility.isPresent()) {
-			selected.setSync_name(checkMyFacility.get().getFacility_name());
+			selected.setSyncName(checkMyFacility.get().getFacility_name());
 		}
 		syncRepo.save(selected);
 
@@ -146,7 +146,7 @@ public class SetupController {
 			List<icd_codes> table = loadFromCsv("icd_code.csv", icd_codes.class);
 			icdRepo.saveAll(table);
 		} catch (IOException e) {
-			results.rejectValue("sync_code", "invalid.icds");
+			results.rejectValue("syncCode", "invalid.icds");
 			e.printStackTrace();
 			return "controls/dashboard";
 		}
@@ -155,7 +155,7 @@ public class SetupController {
 			List<icd_diagnoses> table = loadFromCsv("icd_diagnoses.csv", icd_diagnoses.class);
 			icddRepo.saveAll(table);
 		} catch (IOException e) {
-			results.rejectValue("sync_code", "invalid.icds");
+			results.rejectValue("syncCode", "invalid.icds");
 			e.printStackTrace();
 			return "controls/dashboard";
 		}
@@ -228,9 +228,9 @@ public class SetupController {
 
 				// delete locally cached data summaries related to case data from 3 databases
 
-				sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+				SyncTable sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 
-				facility_table facility = facilityRepo.findByFacility_code(sync.getSync_code()).get();
+				facility_table facility = facilityRepo.findByFacility_code(sync.getSyncCode()).get();
 
 				final String country = facility.getParent().getParent().getParent().getFacility_name();
 				final String region = facility.getParent().getParent().getFacility_name();

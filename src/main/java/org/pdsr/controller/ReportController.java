@@ -26,7 +26,7 @@ import org.pdsr.ReportExcelExporter;
 import org.pdsr.master.model.audit_recommendation;
 import org.pdsr.master.model.monitoring_table;
 import org.pdsr.master.model.monitoring_tool;
-import org.pdsr.master.model.sync_table;
+import org.pdsr.slave.model.SyncTable;
 import org.pdsr.master.model.weekly_monitoring;
 import org.pdsr.master.model.weekly_table;
 import org.pdsr.master.model.wmPK;
@@ -91,8 +91,8 @@ public class ReportController {
 
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", synctable.getSync_name());
+		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", synctable.getSyncName());
 
 		List<Object[]> weeklist = weekRepo.findAllWeeklyYearAndMonth();
 
@@ -128,8 +128,8 @@ public class ReportController {
 			return "reporting/report-retrieve";
 		}
 
-		final sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", sync.getSync_name());
+		final SyncTable sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", sync.getSyncName());
 
 		Calendar cal = Calendar.getInstance();
 		cal.set(selected.getDatayear(), selected.getDatamonth(), 1);
@@ -139,48 +139,43 @@ public class ReportController {
 		List<weekly_monitoring> datagrid = new ArrayList<>();
 		try (Workbook workbook = new XSSFWorkbook(selected.getFile().getInputStream())) {
 
-			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 1, 100, sync.getSync_code()));// total
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 1, 100, sync.getSyncCode()));// total
 																											// deliveries
-			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 2, 101, sync.getSync_code()));// Vaginal
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 2, 101, sync.getSyncCode()));// Vaginal
 																											// deliveries
-			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 3, 102, sync.getSync_code()));// Assited
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 3, 102, sync.getSyncCode()));// Assited
 																											// deliveries
-			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 4, 103, sync.getSync_code()));// Caesarean
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 4, 103, sync.getSyncCode()));// Caesarean
 																											// deliveries
-
-			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 5, 110, sync.getSync_code()));// total
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 5, 110, sync.getSyncCode()));// total
 																											// births
-			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 6, 111, sync.getSync_code()));// singleton
-			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 7, 112, sync.getSync_code()));// multiple
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 6, 111, sync.getSyncCode()));// singleton
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 7, 112, sync.getSyncCode()));// multiple
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 8, 120, sync.getSyncCode()));// stillbirths
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 9, 121, sync.getSyncCode()));// antepartum
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 10, 122, sync.getSyncCode()));// intrapartum
 
-			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 8, 120, sync.getSync_code()));// stillbirths
-			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 9, 121, sync.getSync_code()));// antepartum
-			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 10, 122, sync.getSync_code()));// intrapartum
-
-			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 11, 130, sync.getSync_code()));// livebirths
-			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 12, 131, sync.getSync_code()));// term
-			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 13, 132, sync.getSync_code()));// preterm
-			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 14, 133, sync.getSync_code()));// very
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 11, 130, sync.getSyncCode()));// livebirths
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 12, 131, sync.getSyncCode()));// term
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 13, 132, sync.getSyncCode()));// preterm
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 14, 133, sync.getSyncCode()));// very
 																											// preterm
-
-			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 15, 136, sync.getSync_code()));// normal
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 15, 136, sync.getSyncCode()));// normal
 																											// birthwght
-			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 16, 137, sync.getSync_code()));// low
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 16, 137, sync.getSyncCode()));// low
 																											// birthwght
-			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 17, 138, sync.getSync_code()));// very low
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 17, 138, sync.getSyncCode()));// very low
 																											// birthwght
-			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 18, 139, sync.getSync_code()));// extremely
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 18, 139, sync.getSyncCode()));// extremely
 																											// low
 																											// birthwght
-
-			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 19, 150, sync.getSync_code()));// neonatal
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 19, 150, sync.getSyncCode()));// neonatal
 																											// deaths
-			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 20, 151, sync.getSync_code()));// early
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 20, 151, sync.getSyncCode()));// early
 																											// deaths
-			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 21, 152, sync.getSync_code()));// late
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 21, 152, sync.getSyncCode()));// late
 																											// deaths
-
-			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 22, 161, sync.getSync_code()));// maternal
+			datagrid.addAll(importRow(selected, workbook, maxNumberOfWeeks, 22, 161, sync.getSyncCode()));// maternal
 																											// deaths
 
 		} catch (Exception ex) {
@@ -195,7 +190,7 @@ public class ReportController {
 		selected.setFilelocation(
 				"MONTHLYREPORT_" + (new java.util.Date().getTime()) + "_" + selected.getFile().getOriginalFilename());
 		try {
-			CONSTANTS.writeToDisk("FACILITY_" + sync.getSync_code(),
+			CONSTANTS.writeToDisk("FACILITY_" + sync.getSyncCode(),
 					"PERIOD_" + selected.getDatamonth() + "_" + selected.getDatayear(), selected.getFilelocation(),
 					selected.getFile().getBytes());
 
@@ -289,7 +284,7 @@ public class ReportController {
 			return "home";
 		}
 
-		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		SyncTable sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		List<monitoring_table> monlist = monRepo.findGlabels(true);
 		List<weekly_monitoring> headlist = new ArrayList<>();
 		for (monitoring_table elem : monlist) {
@@ -377,7 +372,7 @@ public class ReportController {
 				week.setWeekly_month(monthid);
 				week.setWeekly_mdesc(msg.getMessage("month" + monthid, null, Locale.getDefault()));
 				week.setWeekly_week(i);
-				week.setCase_sync(sync.getSync_code());
+				week.setCase_sync(sync.getSyncCode());
 
 				week.setWeekly_id(Integer.valueOf(yearid + "" + monthid + "" + week.getWeekly_week()));
 

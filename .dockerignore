@@ -1,0 +1,38 @@
+# Build artifacts
+target/
+*.jar
+*.war
+*.ear
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+app.log
+new_app*.log
+build*.log
+compile_error.txt
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+README.md
+
+# Test data
+data/
+slave/
+attachments/
+
+# CSV files (if not needed for deployment)
+csv/

@@ -14,7 +14,7 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-@Entity
+@Entity(name = "slave_region_table")
 public class region_table implements Serializable {
 
 	/**

@@ -16,7 +16,7 @@ import javax.validation.constraints.Size;
 
 import org.springframework.web.multipart.MultipartFile;
 
-@Entity
+@Entity(name = "slave_case_notes")
 public class case_notes implements Serializable {
 
 	

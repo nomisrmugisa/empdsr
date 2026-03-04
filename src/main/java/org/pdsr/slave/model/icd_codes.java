@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import com.opencsv.bean.CsvBindByName;
 import com.sun.istack.NotNull;
 
-@Entity
+@Entity(name = "slave_icd_codes")
 public class icd_codes implements Serializable {
 
 	

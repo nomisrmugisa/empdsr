@@ -70,7 +70,7 @@
 			method="POST" class="needs-validation" novalidate>
 			<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
 
-			<!-- <div th:if="${page==0}" th:insert="fragments/update-case :: case_identifiers"></div> -->
+			<div th:if="${page==0}" th:insert="fragments/update-case :: case_identifiers"></div>
 			<div th:if="${page==1}" th:insert="fragments/update-case :: case_biodata"></div>
 			<div th:if="${page==2}" th:insert="fragments/update-case :: case_referral"></div>
 			<div th:if="${page==3}" th:insert="fragments/update-case :: case_pregnancy"></div>
@@ -176,7 +176,7 @@
 			var rfac = document.getElementById("referral_facility");
 			if (!objCombo || !rfac) return;
 
-			if (objCombo.value != '0') {
+			if (objCombo.value != '0' && objCombo.value != '1') {
 				rfac.readOnly = true;
 			} else {
 				rfac.readOnly = false;
@@ -248,7 +248,7 @@
 		function changeReferralFacilityToNADynamic(objCombo) {
 			var rfac = document.getElementById("referral_facility");
 
-			if (objCombo.value != '0') {
+			if (objCombo.value != '0' && objCombo.value != '1') {
 				rfac.value = "NA";
 				rfac.readOnly = true;
 			} else {
@@ -844,7 +844,8 @@
 			var objCombo = document.getElementById("delivery_occured");
 			if (!objCombo) return;
 
-			if (objCombo.value != '1') {
+			// Hide only when explicitly answered No/Unknown/Not Stated; show by default (empty/Yes)
+			if (objCombo.value === '0' || objCombo.value === '77' || objCombo.value === '88') {
 				$('#delivery_occured_fieldset').hide();
 			} else {
 				$('#delivery_occured_fieldset').show();

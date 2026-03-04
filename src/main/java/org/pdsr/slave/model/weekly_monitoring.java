@@ -10,7 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 
-@Entity
+@Entity(name = "slave_weekly_monitoring")
 public class weekly_monitoring implements Serializable {
 
 	/**

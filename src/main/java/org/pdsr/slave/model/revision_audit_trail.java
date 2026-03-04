@@ -8,13 +8,10 @@ import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.envers.RevisionEntity;
 import org.hibernate.envers.RevisionNumber;
 import org.hibernate.envers.RevisionTimestamp;
-import org.pdsr.AuditListener;
 
-@Entity
-@RevisionEntity(AuditListener.class)
+@Entity(name = "slave_revision_audit_trail")
 public class revision_audit_trail implements Serializable {
 
 	/**

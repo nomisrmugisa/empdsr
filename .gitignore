@@ -1,8 +1,38 @@
-data/
+# Build artifacts
 target/
-attachments/
-*.db
+*.jar
+*.war
+*.ear
 
+# Database files
+data/
+slave/
+*.db
+*.trace.db
+*.lock.db
+
+# User uploads
+attachments/FACILITY_*
+
+# Log files
+*.log
+app.log
+new_app*.log
+build*.log
+compile_error.txt
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Maven wrapper (keep)
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/

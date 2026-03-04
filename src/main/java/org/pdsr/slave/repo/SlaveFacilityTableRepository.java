@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SlaveFacilityTableRepository extends JpaRepository<facility_table, String> {
 	
-	@Query("SELECT f FROM facility_table f WHERE f.facility_code= ?1")
+	@Query("SELECT f FROM slave_facility_table f WHERE f.facility_code= ?1")
 	Optional<facility_table> findByFacility_code(String facility_code);
 
 }

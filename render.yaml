@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: empdsr-new
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: oregon
+    branch: main
+    healthCheckPath: /
+    envVars:
+      - key: JAVA_OPTS
+        value: "-Xmx512m -Xms256m"
+      - key: SPRING_PROFILES_ACTIVE
+        value: "production"
+    # Auto-deploy when you push to main branch
+    autoDeploy: true

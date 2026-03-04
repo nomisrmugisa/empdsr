@@ -8,7 +8,7 @@ import java.util.List;
 import org.pdsr.master.model.audit_audit;
 import org.pdsr.master.model.audit_case;
 import org.pdsr.master.model.audit_recommendation;
-import org.pdsr.master.model.sync_table;
+import org.pdsr.slave.model.SyncTable;
 import org.pdsr.master.repo.AuditAuditRepository;
 import org.pdsr.master.repo.AuditCaseRepository;
 import org.pdsr.master.repo.AuditRecommendRepository;
@@ -52,7 +52,7 @@ public class ScheduledTasks {
 			if (InternetAvailabilityChecker.isInternetAvailable()) {
 				Calendar cal = Calendar.getInstance();
 				cal.add(Calendar.DAY_OF_MONTH, -7);
-				sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+				SyncTable sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 
 				// alert for pending reviews
 				List<audit_case> auditsPending = acaseRepo.findActivePendingAudit(cal.getTime());
@@ -60,7 +60,7 @@ public class ScheduledTasks {
 					emailService.sendSimpleMessage(getRecipients(), "MPDSR PENDING REVIEW NOTIFICATION!",
 							"Hello Reviewers,\n" + "\nThere are " + auditsPending.size()
 									+ " deaths yet to be reviewed for this week" + "\nHealth Facility: "
-									+ sync.getSync_name() + " - " + sync.getSync_code()
+									+ sync.getSyncName() + " - " + sync.getSyncCode()
 									+ "\nThis is a PILOT IMPLEMENTATION of the Enhanced Automated MPDSR tool developed by Alex and Eliezer");
 				}
 
@@ -87,7 +87,7 @@ public class ScheduledTasks {
 					emailService.sendSimpleMessage(getRecipients(), "MPDSR OVERDUE ACTIONS NOTIFICATION!",
 							"Hello Reviewers,\n" + "\nThere are " + overdue.size()
 									+ " incomplete actions that have passed the deadline" + "\nHealth Facility: "
-									+ sync.getSync_name() + " - " + sync.getSync_code()
+									+ sync.getSyncName() + " - " + sync.getSyncCode()
 									+ "\nThis is a PILOT IMPLEMENTATION of the Enhanced Automated MPDSR tool developed by Alex and Eliezer");
 				}
 

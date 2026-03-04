@@ -15,7 +15,7 @@ import javax.validation.constraints.Size;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-@Entity
+@Entity(name = "slave_audit_case")
 public class audit_case implements Serializable {
 
 	/**

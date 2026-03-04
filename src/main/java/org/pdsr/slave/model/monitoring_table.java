@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.Immutable;
 
 @Immutable
-@Entity
+@Entity(name = "slave_monitoring_table")
 public class monitoring_table implements Serializable {
 
 	/**

@@ -8,12 +8,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 import org.pdsr.dhis2.Dhis2ProgramStagesResponse;
 import org.pdsr.dhis2.Dhis2StageDetailResponse;
 import org.pdsr.json.json_dhis2_dataValues;
 import org.pdsr.json.json_dhis2_form;
 import org.pdsr.master.model.case_identifiers;
-import org.pdsr.master.model.sync_table;
+import org.pdsr.slave.model.SyncTable;
 import org.pdsr.pojos.Dhis2Authorisation;
 import org.springframework.stereotype.Service;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -53,15 +56,28 @@ public class Dhis2SyncService {
     // ---------------------------------------------------------------
     // Main entry point — called by CaseEntryController on Sync button
     // Returns list of Object[] errors; empty = all synced successfully
+    // payloads is an output list populated with the JSON sent for each case
     // ---------------------------------------------------------------
     public List<Object[]> syncCases(List<case_identifiers> cases,
             Dhis2Authorisation dhis2,
-            sync_table synctable) {
+            SyncTable synctable,
+            List<String> payloads) {
 
         List<Object[]> errors = new ArrayList<>();
         String dhis2Url = dhis2.getDhis2_url();
         String username = dhis2.getDhis2_username();
         String password = dhis2.getDhis2_password();
+
+        // Guard: if URL is missing, report a clear error for every case instead of
+        // throwing an IllegalArgumentException ("URI is not absolute")
+        if (dhis2Url == null || dhis2Url.isBlank()) {
+            for (case_identifiers item : cases) {
+                errors.add(new Object[] {
+                        "DHIS2 URL is not configured — please enter the DHIS2 server URL and try again.",
+                        item.getCase_uuid(), TAB_CASE_ENTRY });
+            }
+            return errors;
+        }
 
         for (case_identifiers item : cases) {
 
@@ -120,8 +136,23 @@ public class Dhis2SyncService {
             json_dhis2_form d = buildEvent(item, synctable, dhis2, programUID,
                     isMaternalDeath, isPerinatalDeath, isNeonatalDeath, liveIds);
 
+            // Serialize to JSON for debug display on the UI
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                mapper.enable(SerializationFeature.INDENT_OUTPUT);
+                String json = mapper.writeValueAsString(d);
+                payloads.add("Case " + item.getCase_uuid() + ":\n" + json);
+            } catch (Exception e) {
+                payloads.add("Case " + item.getCase_uuid() + ": [could not serialize: " + e.getMessage() + "]");
+            }
+
             String eventsUrl = dhis2Url + "/api/events";
-            serviceApi.saveForm(d, eventsUrl, username, password);
+            String postError = serviceApi.saveForm(d, eventsUrl, username, password);
+            if (postError != null) {
+                errors.add(new Object[] {
+                        "DHIS2 rejected case (sync error): " + postError,
+                        item.getCase_uuid(), TAB_CASE_ENTRY });
+            }
         }
 
         return errors;
@@ -262,7 +293,7 @@ public class Dhis2SyncService {
     // Only adds a dataValue if the DE id exists in the live set.
     // ---------------------------------------------------------------
     private json_dhis2_form buildEvent(case_identifiers item,
-            sync_table synctable,
+            SyncTable synctable,
             Dhis2Authorisation dhis2,
             String programUID,
             boolean isMaternalDeath,
@@ -276,10 +307,9 @@ public class Dhis2SyncService {
         json_dhis2_form d = new json_dhis2_form();
 
         // Event metadata
-        int uuidLength = item.getCase_uuid().length();
-        d.setEvent(item.getCase_uuid().substring(uuidLength - 11));
+        d.setEvent(toDhis2Uid(item.getCase_uuid()));
         d.setProgram(programUID);
-        d.setOrgUnit(synctable.getSync_code());
+        d.setOrgUnit("MJu9Pwi3twb");
         d.setEventDate(dateFmt.format(item.getCase_date()));
         d.setStatus(CONSTANTS.DHIS2_FORM_STATUS);
         d.setStoredBy(dhis2.getDhis2_username());
@@ -319,7 +349,7 @@ public class Dhis2SyncService {
 
             dv(d, liveIds, villageDe, item.getBiodata().getBiodata_village());
             dv(d, liveIds, locationDe, item.getBiodata().getBiodata_location());
-            dv(d, liveIds, districtDe, synctable.getSync_name());
+            dv(d, liveIds, districtDe, synctable.getSyncName());
             dv(d, liveIds, nokDe, item.getBiodata().getBiodata_nok());
 
             if (isMaternalDeath)
@@ -578,5 +608,28 @@ public class Dhis2SyncService {
     private void safeSetMinute(Calendar cal, Integer minute) {
         if (minute != null)
             cal.set(Calendar.MINUTE, minute);
+    }
+
+    /**
+     * Derives a DHIS2-compliant UID (exactly 11 chars) deterministically from a
+     * Java UUID string. DHIS2 requires: first char in [a-zA-Z], remaining 10
+     * chars in [a-zA-Z0-9]. Using the same UUID always produces the same UID,
+     * so re-syncing the same case never creates a duplicate event in DHIS2.
+     */
+    private static String toDhis2Uid(String caseUuid) {
+        // Strip hyphens → 32 hex chars (16 bytes)
+        String hex = caseUuid.replace("-", "");
+        final char[] LETTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray(); // 52
+        final char[] ALNUM   = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray(); // 62
+        StringBuilder uid = new StringBuilder(11);
+        // First char must be a letter
+        int b0 = Integer.parseInt(hex.substring(0, 2), 16);
+        uid.append(LETTERS[b0 % 52]);
+        // Remaining 10 chars from bytes 1–10
+        for (int i = 1; i <= 10; i++) {
+            int b = Integer.parseInt(hex.substring(i * 2, i * 2 + 2), 16);
+            uid.append(ALNUM[b % 62]);
+        }
+        return uid.toString();
     }
 }

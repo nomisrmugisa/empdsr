@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import org.hibernate.annotations.Immutable;
 
 @Immutable
-@Entity
+@Entity(name = "slave_cfactor_table")
 public class cfactor_table implements Serializable {
 
 	/**

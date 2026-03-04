@@ -3,15 +3,15 @@
 
 -- Insert the MPDRSUganda license record into sync_table
 -- This will prevent the "Not Activated" message from appearing
-MERGE INTO sync_table (sync_id, sync_code, sync_name, sync_email, sync_url, sync_json) 
-KEY(sync_id) 
+MERGE INTO SYNC_TABLE (SYNC_ID, SYNC_UUID, SYNC_CODE, SYNC_NAME, SYNC_EMAIL, SYNC_JSON) 
+KEY(SYNC_ID) 
 VALUES (
-    'MPDRSUganda',           -- sync_id (LICENSE_ID)
-    'TEST001',              -- sync_code (FACILITY_ID from facilities.csv)
-    'Mulago Hospital',       -- sync_name (facility name from facilities.csv)
-    'admin@example.com',    -- sync_email
-    'https://olincgroup.com/pdsr/mytest',  -- sync_url
-    null                    -- sync_json
+    'MPDRSUganda',           -- SYNC_ID
+    'LICENSE-UG-001',       -- SYNC_UUID
+    'TEST001',              -- SYNC_CODE
+    'Mulago Hospital',       -- SYNC_NAME
+    'admin@example.com',    -- SYNC_EMAIL
+    null                    -- SYNC_JSON
 );
 
 -- Insert dropdown options for Relationship to Next of Kin
@@ -774,7 +774,17 @@ MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) v
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',88,'Not Stated');
 
 -- User and Role Initialization
-MERGE INTO user_table(username, enabled, password, usercontact, useremail, userfullname, alerted) KEY(username) 
+MERGE INTO user_table(username, enabled, password, usercontact, useremail, userfullname, alerted) KEY(username)
+VALUES (
+    'webadmin'
+    , true
+    , '$2a$10$SLlNbnvkIqatweZxewyZUeF6yrGexjppQpJgntGXCxWMQCaT3ORdi'
+    , '233246926396'
+    , 'webadmin@kintampo-hrc.org'
+    , 'ROOT ADMINISTRATOR',false
+);
+
+MERGE INTO slave_user_table(username, enabled, password, usercontact, useremail, userfullname, alerted) KEY(username)
 VALUES (
     'webadmin'
     , true
@@ -792,6 +802,15 @@ MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_VIEWS', 'View an
 MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_NATIONAL', 'National level viewing');
 MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_REGIONAL', 'Regional level viewing');
 MERGE INTO group_table KEY(group_role, group_desc) values('ROLE_DISTRICT', 'District level viewing');
+
+MERGE INTO slave_group_table KEY(group_role, group_desc) values('ROLE_ENTRY', 'Enter cases into the system');
+MERGE INTO slave_group_table KEY(group_role, group_desc) values('ROLE_AUDIT', 'Review and recommend actions on submitted cases');
+MERGE INTO slave_group_table KEY(group_role, group_desc) values('ROLE_TASKS', 'Monitor and change action status');
+MERGE INTO slave_group_table KEY(group_role, group_desc) values('ROLE_SETUP', 'Manage users, facility code from the controls section');
+MERGE INTO slave_group_table KEY(group_role, group_desc) values('ROLE_VIEWS', 'View analysis and reports');
+MERGE INTO slave_group_table KEY(group_role, group_desc) values('ROLE_NATIONAL', 'National level viewing');
+MERGE INTO slave_group_table KEY(group_role, group_desc) values('ROLE_REGIONAL', 'Regional level viewing');
+MERGE INTO slave_group_table KEY(group_role, group_desc) values('ROLE_DISTRICT', 'District level viewing');
 
 DELETE FROM user_group WHERE username='webadmin';
 MERGE INTO user_group KEY(username, group_role) values('webadmin', 'ROLE_ENTRY');

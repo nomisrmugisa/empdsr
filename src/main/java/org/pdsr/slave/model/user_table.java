@@ -15,7 +15,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-@Entity
+@Entity(name = "slave_user_table")
 public class user_table implements Serializable {
 
 	/**

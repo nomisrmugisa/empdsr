@@ -17,7 +17,7 @@ import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-@Entity
+@Entity(name = "slave_case_antenatal")
 public class case_antenatal implements Serializable {
 
 	/**

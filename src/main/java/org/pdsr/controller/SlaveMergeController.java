@@ -34,7 +34,7 @@ import org.pdsr.master.model.monitoring_table;
 import org.pdsr.master.model.placentacheck_table;
 import org.pdsr.master.model.resuscitation_table;
 import org.pdsr.master.model.risk_table;
-import org.pdsr.master.model.sync_table;
+import org.pdsr.slave.model.SyncTable;
 import org.pdsr.master.model.weekly_monitoring;
 import org.pdsr.master.model.weekly_table;
 import org.pdsr.master.model.wmPK;
@@ -219,7 +219,7 @@ public class SlaveMergeController {
 
 		}
 
-		sync_table object = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		SyncTable object = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		// merge case entries from slave to master (overrides if exists)
 		if (selected.isMerge_cases()) {
 			mergeCaseIdentifier(object);
@@ -279,7 +279,7 @@ public class SlaveMergeController {
 		}
 	}
 
-	private void mergeCaseIdentifier(sync_table facility) {
+	private void mergeCaseIdentifier(SyncTable facility) {
 		List<org.pdsr.slave.model.case_identifiers> sdeaths = scaseRepo.findAll();
 		if (sdeaths != null && sdeaths.size() > 0) {
 			List<case_identifiers> deaths = new ArrayList<case_identifiers>();

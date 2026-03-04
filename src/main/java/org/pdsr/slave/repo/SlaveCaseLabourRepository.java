@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SlaveCaseLabourRepository extends JpaRepository<case_labour, String> {
 
-	@Query("select a.complications from case_labour a where a.labour_uuid=?1")
+	@Query("select a.complications from slave_case_labour a where a.labour_uuid=?1")
 	List<complication_table> findComplicationsByUuid(String uuid);
 
 }

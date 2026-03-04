@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SlaveMconditionsRepository extends JpaRepository<mcondition_table, String> {
 	
-	@Query("select m FROM mcondition_table m WHERE m.icdmgroup=?1")
+	@Query("select m FROM slave_mcondition_table m WHERE m.icdmgroup=?1")
 	List<mcondition_table> findByIcdmgroup(String icdgroup);
 
 }

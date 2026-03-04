@@ -14,13 +14,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SlaveCaseBirthRepository extends JpaRepository<case_birth, String> {
 
-	@Query("select a.abnormalities from case_birth a where a.birth_uuid=?1")
+	@Query("select a.abnormalities from slave_case_birth a where a.birth_uuid=?1")
 	List<abnormality_table> findComplicationsByUuid(String birth_uuid);
 
-	@Query("select a.cordfaults from case_birth a where a.birth_uuid=?1")
+	@Query("select a.cordfaults from slave_case_birth a where a.birth_uuid=?1")
 	List<cordfault_table> findCordfaultsByUuid(String birth_uuid);
 
-	@Query("select a.placentachecks from case_birth a where a.birth_uuid=?1")
+	@Query("select a.placentachecks from slave_case_birth a where a.birth_uuid=?1")
 	List<placentacheck_table> findPlacentachecksByUuid(String birth_uuid);
 
 }

@@ -10,7 +10,7 @@ import java.util.Map;
 
 import org.pdsr.CONSTANTS;
 import org.pdsr.master.model.facility_table;
-import org.pdsr.master.model.sync_table;
+import org.pdsr.slave.model.SyncTable;
 import org.pdsr.master.repo.AuditAuditRepository;
 import org.pdsr.master.repo.AuditRecommendRepository;
 import org.pdsr.master.repo.CaseRepository;
@@ -80,8 +80,8 @@ public class HomeController {
 			return "home";
 		}
 
-		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", sync.getSync_name());
+		SyncTable sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", sync.getSyncName());
 		facilityLevel(model);
 		return "home";
 	}
@@ -93,9 +93,9 @@ public class HomeController {
 			return "home";
 		}
 
-		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", sync.getSync_name());
-		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
+		SyncTable sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", sync.getSyncName());
+		facility_table facility = facRepo.findByFacility_code(sync.getSyncCode()).get();
 		districtLevel(model, facility);
 		return "home";
 
@@ -108,9 +108,9 @@ public class HomeController {
 			return "home";
 		}
 
-		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", sync.getSync_name());
-		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
+		SyncTable sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", sync.getSyncName());
+		facility_table facility = facRepo.findByFacility_code(sync.getSyncCode()).get();
 		model.addAttribute("district", "active");
 		model.addAttribute("page", "active");
 		model.addAttribute("country_name", facility.getParent().getFacility_name());
@@ -128,9 +128,9 @@ public class HomeController {
 			return "home";
 		}
 
-		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", sync.getSync_name());
-		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
+		SyncTable sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", sync.getSyncName());
+		facility_table facility = facRepo.findByFacility_code(sync.getSyncCode()).get();
 		districtIndicators(model, search, facility);
 
 		return "home";
@@ -145,9 +145,9 @@ public class HomeController {
 			return "home";
 		}
 
-		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", sync.getSync_name());
-		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
+		SyncTable sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", sync.getSyncName());
+		facility_table facility = facRepo.findByFacility_code(sync.getSyncCode()).get();
 		regionalLevel(model, facility);
 		return "home";
 	}
@@ -159,9 +159,9 @@ public class HomeController {
 			return "home";
 		}
 
-		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", sync.getSync_name());
-		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
+		SyncTable sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", sync.getSyncName());
+		facility_table facility = facRepo.findByFacility_code(sync.getSyncCode()).get();
 		model.addAttribute("country_name", facility.getParent().getParent().getParent().getFacility_name());
 		model.addAttribute("regional", "active");
 		model.addAttribute("page", "active");
@@ -178,9 +178,9 @@ public class HomeController {
 			return "home";
 		}
 
-		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", sync.getSync_name());
-		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
+		SyncTable sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", sync.getSyncName());
+		facility_table facility = facRepo.findByFacility_code(sync.getSyncCode()).get();
 		regionalIndicators(model, search, facility, null);
 
 		return "home";
@@ -193,9 +193,9 @@ public class HomeController {
 			return "home";
 		}
 
-		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", sync.getSync_name());
-		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
+		SyncTable sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", sync.getSyncName());
+		facility_table facility = facRepo.findByFacility_code(sync.getSyncCode()).get();
 		nationalLevel(model, facility);
 
 		return "home";
@@ -208,9 +208,9 @@ public class HomeController {
 			return "home";
 		}
 
-		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", sync.getSync_name());
-		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
+		SyncTable sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", sync.getSyncName());
+		facility_table facility = facRepo.findByFacility_code(sync.getSyncCode()).get();
 		model.addAttribute("national", "active");
 		model.addAttribute("national_level", facility.getParent().getParent().getParent().getFacility_name());
 		model.addAttribute("page", "active");
@@ -228,9 +228,9 @@ public class HomeController {
 			return "home";
 		}
 
-		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", sync.getSync_name());
-		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
+		SyncTable sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", sync.getSyncName());
+		facility_table facility = facRepo.findByFacility_code(sync.getSyncCode()).get();
 		nationalIndicators(model, search, facility);
 
 		return "home";
@@ -243,9 +243,9 @@ public class HomeController {
 			return "home";
 		}
 
-		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", sync.getSync_name());
-		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
+		SyncTable sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", sync.getSyncName());
+		facility_table facility = facRepo.findByFacility_code(sync.getSyncCode()).get();
 		model.addAttribute("national", "active");
 		model.addAttribute("national_regional", region_name);
 		model.addAttribute("country_name", facility.getParent().getParent().getParent().getFacility_name());
@@ -265,9 +265,9 @@ public class HomeController {
 			return "home";
 		}
 
-		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", sync.getSync_name());
-		facility_table facility = facRepo.findByFacility_code(sync.getSync_code()).get();
+		SyncTable sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", sync.getSyncName());
+		facility_table facility = facRepo.findByFacility_code(sync.getSyncCode()).get();
 		regionalIndicators(model, search, facility, region_name);
 
 		return "home";

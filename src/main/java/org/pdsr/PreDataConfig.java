@@ -662,11 +662,27 @@ public class PreDataConfig {
 			res.add(new datamap("admission_options", 5, "Postpartum"));
 			res.add(new datamap("admission_options", 88, "Not Stated"));
 
+			res.add(new datamap("admissioncond_options", 1, "Stable"));
+			res.add(new datamap("admissioncond_options", 2, "Abnormal vital signs"));
+			res.add(new datamap("admissioncond_options", 3, "Unconscious"));
+			res.add(new datamap("admissioncond_options", 4, "Dead on arrival"));
+			res.add(new datamap("admissioncond_options", 88, "Not Stated"));
+
+			res.add(new datamap("levelconsc_options", 1, "Conscious"));
+			res.add(new datamap("levelconsc_options", 2, "Semi-conscious"));
+			res.add(new datamap("levelconsc_options", 3, "Unconscious"));
+			res.add(new datamap("levelconsc_options", 88, "Not Stated"));
+
 			res.add(new datamap("mode_options", 0, "Spontaneous Vaginal Delivery"));
 			res.add(new datamap("mode_options", 1, "Assisted Delivery (Vacuum/forceps)"));
 			res.add(new datamap("mode_options", 2, "Elective Caesarean Section"));
 			res.add(new datamap("mode_options", 3, "Emergency Caesarean Section"));
 			res.add(new datamap("mode_options", 88, "Not Stated"));
+
+			res.add(new datamap("decision_options", 0, "Less than 30 mins"));
+			res.add(new datamap("decision_options", 1, "30 mins - 1 hour"));
+			res.add(new datamap("decision_options", 2, "Greater than 1 hour"));
+			res.add(new datamap("decision_options", 88, "Not Stated"));
 
 			res.add(new datamap("startmode_options", 1, "Spontaneous"));
 			res.add(new datamap("startmode_options", 2, "Induced"));
@@ -685,8 +701,8 @@ public class PreDataConfig {
 			res.add(new datamap("provider_options", 88, "Not Stated"));
 
 			res.add(new datamap("birthloc_options", 0, "Health facility"));
-			res.add(new datamap("birthloc_options", 88, "Home"));
-			res.add(new datamap("birthloc_options", 88, "On way to facility"));
+			res.add(new datamap("birthloc_options", 1, "Home"));
+			res.add(new datamap("birthloc_options", 2, "On way to facility"));
 			res.add(new datamap("birthloc_options", 66, "Other"));
 			res.add(new datamap("birthloc_options", 77, "Unknown"));
 			res.add(new datamap("birthloc_options", 88, "Not Stated"));
@@ -774,6 +790,10 @@ public class PreDataConfig {
 			res.add(new datamap("icd10mm_options", 7, "Non obstetric complication"));
 			res.add(new datamap("icd10mm_options", 8, "Unknown"));
 			res.add(new datamap("icd10mm_options", 9, "Coincidental/Accidental"));
+
+			res.add(new datamap("nationality_options", 1, "National"));
+			res.add(new datamap("nationality_options", 2, "Refugee"));
+			res.add(new datamap("nationality_options", 3, "Foreigner"));
 
 			dmapRepo.saveAll(res);
 

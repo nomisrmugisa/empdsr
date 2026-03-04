@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 
-@Entity
+@Entity(name = "slave_mcgroup_table")
 public class mcgroup_table implements Serializable {
 
 	/**

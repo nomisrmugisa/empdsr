@@ -9,6 +9,10 @@
 
             <div class="row">
                 <div class="col-auto">
+                    <label class="control-label" th:text="#{dhis2_url}">DHIS2 URL</label>
+                    <input class="form-control form-control-sm" th:field="*{dhis2_url}" placeholder="https://example.org/hmis" required />
+                </div>
+                <div class="col-auto">
                     <label class="control-label" th:text="#{dhis2_username}"></label>
                     <input class="form-control form-control-sm" th:field="*{dhis2_username}" required />
                 </div>
@@ -22,7 +26,21 @@
                 <button class="btn btn-primary" type="submit" th:utext="#{dhis2.button}"></button>
             </div>
 
-            <div class="row mt-3">
+            <!-- Status feedback shown after a sync attempt -->
+            <div th:if="${back != null and syncedCount == 0}" class="alert alert-info mt-3">
+                ℹ No pending cases found to sync. Cases must be submitted (not draft) and not yet
+                sent to DHIS2.
+            </div>
+            <div th:if="${back != null and syncedCount > 0 and #lists.isEmpty(errorlist)}"
+                class="alert alert-success mt-3">
+                ✅ All <span th:text="${syncedCount}"></span> case(s) synced to DHIS2 successfully.
+            </div>
+            <div th:if="${not #lists.isEmpty(errorlist)}" class="alert alert-warning mt-3">
+                ⚠ Sync completed with issues in <span th:text="${#lists.size(errorlist)}"></span>
+                case(s). Click a link below to fix each one:
+            </div>
+
+            <div class="row mt-2">
                 <div th:each="item: ${errorlist}">
                     <a class="text-danger" href="#"
                         th:href="@{/registry/edit/{id}?page={page}(id=${item[1]}, page=${item[2]})}">
@@ -30,7 +48,130 @@
                     </a>
                 </div>
             </div>
+
         </form>
+
+        <!-- Debug: show the JSON payloads attempted to be posted -->
+        <div th:if="${payloadList != null and not #lists.isEmpty(payloadList)}" class="mt-4">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <button class="btn btn-sm btn-outline-light" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#dhis2PayloadDebug">
+                        🔍 Debug: JSON Payloads Sent to DHIS2 (<span th:text="${#lists.size(payloadList)}"></span> case(s))
+                    </button>
+                </div>
+                <div id="dhis2PayloadDebug" class="collapse">
+                    <div class="card-body">
+                        <div th:each="payload, iterStat: ${payloadList}" class="mb-3">
+                            <h6 class="text-muted">Case <span th:text="${iterStat.index + 1}">1</span>:</h6>
+                            <pre style="background:#f8f9fa;border:1px solid #dee2e6;padding:15px;font-size:11px;overflow-x:auto;white-space:pre-wrap;word-break:break-all;border-radius:0.375rem;" th:text="${payload}"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DataElement Mapping Reference -->
+        <div th:if="${dataElementMapping != null}" class="mt-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <button class="btn btn-sm btn-outline-light" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#dhis2MappingReference">
+                        📋 Reference: DHIS2 DataElement Mapping
+                    </button>
+                </div>
+                <div id="dhis2MappingReference" class="collapse">
+                    <div class="card-body">
+                    <!-- Programs -->
+                    <div class="card mb-3">
+                        <div class="card-header bg-primary text-white">
+                            <h6 class="mb-0">🎯 DHIS2 Programs</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div th:each="program : ${dataElementMapping.programs}" class="col-md-6 mb-2">
+                                    <strong th:text="${program.key}">Program Name</strong>:
+                                    <code th:text="${program.value}">Program UID</code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fixed Values -->
+                    <div class="card mb-3">
+                        <div class="card-header bg-success text-white">
+                            <h6 class="mb-0">⚙️ Fixed Values</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div th:each="fixed : ${dataElementMapping.fixedValues}" class="col-md-3 mb-2">
+                                    <strong th:text="${fixed.key}">Key</strong>:
+                                    <code th:text="${fixed.value}">Value</code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Attribute Option Combos -->
+                    <div class="card mb-3">
+                        <div class="card-header bg-warning text-dark">
+                            <h6 class="mb-0">🏷️ Attribute Option Combos (Nationality)</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div th:each="combo : ${dataElementMapping.attributeCombos}" class="col-md-4 mb-2">
+                                    <strong th:text="${combo.key}">Nationality</strong>:
+                                    <code th:text="${combo.value}">Combo UID</code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DataElements by Category -->
+                    <div th:each="category : ${dataElementMapping.categories}" class="card mb-3">
+                        <div class="card-header bg-info text-white">
+                            <h6 class="mb-0">📝 <span th:text="${category.key}">Category</span></h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-sm table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>DataElement ID</th>
+                                            <th>Field</th>
+                                            <th>Description</th>
+                                            <th>Programs</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="de : ${category.value}">
+                                            <td><code th:text="${de.id}">DE ID</code></td>
+                                            <td th:text="${de.field}">Field</td>
+                                            <td th:text="${de.description}">Description</td>
+                                            <td>
+                                                <span th:text="${de.programs}"
+                                                      th:class="${de.programs == 'All'} ? 'badge bg-success' : (${de.programs == 'Maternal'} ? 'badge bg-primary' : 'badge bg-secondary')">Programs</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                        <!-- Summary -->
+                        <div class="alert alert-info">
+                            <h6>📊 Summary</h6>
+                            <ul class="mb-0">
+                                <li><strong>Total DataElements:</strong> <span th:text="${#aggregates.sum(dataElementMapping.categories.![value.size()])}">0</span></li>
+                                <li><strong>Programs:</strong> <span th:text="${#maps.size(dataElementMapping.programs)}">0</span></li>
+                                <li><strong>Categories:</strong> <span th:text="${#maps.size(dataElementMapping.categories)}">0</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </content>
 

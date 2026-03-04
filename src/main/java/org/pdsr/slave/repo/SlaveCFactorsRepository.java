@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SlaveCFactorsRepository extends JpaRepository<cfactor_table, Integer> {
 	
-	@Query("select c FROM cfactor_table c WHERE c.idgroup=?1")
+	@Query("select c FROM slave_cfactor_table c WHERE c.idgroup=?1")
 	List<cfactor_table> findByIdgroup(Integer idgroup);
 
 }

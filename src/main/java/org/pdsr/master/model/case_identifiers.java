@@ -82,8 +82,8 @@ public class case_identifiers implements Serializable {
 	
 	@JsonIgnore
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "case_sync", referencedColumnName = "sync_id", insertable = true, updatable = true)
-	private sync_table case_sync;
+	@JoinColumn(name = "case_sync", referencedColumnName = "SYNC_ID", insertable = true, updatable = true)
+	private org.pdsr.slave.model.SyncTable case_sync;
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_biodata biodata;
@@ -302,11 +302,11 @@ public class case_identifiers implements Serializable {
 		this.case_status = case_status;
 	}
 
-	public sync_table getCase_sync() {
+	public org.pdsr.slave.model.SyncTable getCase_sync() {
 		return case_sync;
 	}
 
-	public void setCase_sync(sync_table case_sync) {
+	public void setCase_sync(org.pdsr.slave.model.SyncTable case_sync) {
 		this.case_sync = case_sync;
 	}
 

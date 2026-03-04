@@ -42,7 +42,7 @@ import org.pdsr.master.model.datamapPK;
 import org.pdsr.master.model.icd_codes;
 import org.pdsr.master.model.mcgroup_table;
 import org.pdsr.master.model.mcondition_table;
-import org.pdsr.master.model.sync_table;
+import org.pdsr.slave.model.SyncTable;
 import org.pdsr.master.repo.AuditAuditRepository;
 import org.pdsr.master.repo.AuditCaseRepository;
 import org.pdsr.master.repo.AuditRecommendRepository;
@@ -126,8 +126,8 @@ public class CaseAuditController {
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", synctable.getSync_name());
+		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", synctable.getSyncName());
 
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DAY_OF_MONTH, -7);
@@ -170,9 +170,9 @@ public class CaseAuditController {
 		};
 		json_algorithm algorithm = new json_algorithm();
 
-		if (synctable.getSync_json() != null && synctable.getSync_json().trim() != "") {
+		if (synctable.getSyncJson() != null && synctable.getSyncJson().trim() != "") {
 			try {
-				algorithm = objectMapper.readValue(synctable.getSync_json(), mapType1);
+				algorithm = objectMapper.readValue(synctable.getSyncJson(), mapType1);
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
 			}
@@ -197,8 +197,8 @@ public class CaseAuditController {
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", synctable.getSync_name());
+		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", synctable.getSyncName());
 
 		autoSelectCases();
 
@@ -211,8 +211,8 @@ public class CaseAuditController {
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", synctable.getSync_name());
+		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", synctable.getSyncName());
 
 		CaseWrapper selected = new CaseWrapper();
 		selected.setId("casewrapper");
@@ -394,11 +394,11 @@ public class CaseAuditController {
 			try {
 				if (InternetAvailabilityChecker.isInternetAvailable()) {
 
-					sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+					SyncTable sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 					emailService.sendSimpleMessage(getRecipients(), "MPDSR NEW REVIEWS NOTIFICATION!",
 							"Hello Reviewers,\n" + "\nThere are " + selectedForAuditing.size()
 									+ " deaths ready to be reviewed this week" + "\nHealth Facility: "
-									+ sync.getSync_name() + " - " + sync.getSync_code()
+									+ sync.getSyncName() + " - " + sync.getSyncCode()
 									+ "\nThis is a PILOT IMPLEMENTATION of the Enhanced Automated MPDSR tool developed by Alex and Eliezer");
 				}
 			} catch (IOException e) {
@@ -446,9 +446,9 @@ public class CaseAuditController {
 			persDeque.push(4);
 
 			// Fetch the persistent deque
-			sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-			json_algorithm algorithm = (synctable.getSync_json() != null && synctable.getSync_json().trim() != "")
-					? objectMapper.readValue(synctable.getSync_json(), mapType1)
+			SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+			json_algorithm algorithm = (synctable.getSyncJson() != null && synctable.getSyncJson().trim() != "")
+					? objectMapper.readValue(synctable.getSyncJson(), mapType1)
 					: new json_algorithm();
 
 			if (algorithm.getAlg_deque() != null) {
@@ -741,18 +741,18 @@ public class CaseAuditController {
 
 			algorithm.setAlg_deque(persDeque);
 			final String arrayToJson = objectMapper.writeValueAsString(algorithm);
-			synctable.setSync_json(arrayToJson);
+			synctable.setSyncJson(arrayToJson);
 			syncRepo.save(synctable);
 
 			if (selectedForAuditing.size() > 0) {
 				try {
 					if (InternetAvailabilityChecker.isInternetAvailable()) {
 
-						sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+						SyncTable sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 						emailService.sendSimpleMessage(getRecipients(), "MPDSR NEW REVIEWS NOTIFICATION!",
 								"Hello Reviewers,\n" + "\nYou are " + selectedForAuditing.size()
 										+ " death case(s) ready to be reviewed this week" + "\nHealth Facility: "
-										+ sync.getSync_name() + " - " + sync.getSync_code()
+										+ sync.getSyncName() + " - " + sync.getSyncCode()
 										+ "\nThis is a PILOT IMPLEMENTATION of the Enhanced Automated MPDSR tool developed by Alex and Eliezer");
 					}
 				} catch (IOException e) {
@@ -785,8 +785,8 @@ public class CaseAuditController {
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", synctable.getSync_name());
+		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", synctable.getSyncName());
 
 		if (success != null) {
 			model.addAttribute("success", "Saved Successfully");
@@ -957,8 +957,8 @@ public class CaseAuditController {
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", synctable.getSync_name());
+		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", synctable.getSyncName());
 
 		if (success != null) {
 			model.addAttribute("success", "Saved Successfully");
@@ -1058,8 +1058,8 @@ public class CaseAuditController {
 			return "home";
 		}
 
-		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-		model.addAttribute("myf", synctable.getSync_name());
+		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		model.addAttribute("myf", synctable.getSyncName());
 
 		audit_recommendation selected = rcaseRepo.findById(recommendation_uuid).get();
 		if (selected.getRecommendation_status() == 2) {

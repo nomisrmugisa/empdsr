@@ -12,7 +12,7 @@ import org.springframework.jdbc.datasource.init.ScriptUtils;
 
 @Configuration
 public class InMemoryConfig {
-	private final String SAMPLE_DATA = "classpath:data-h2.sql";
+	private final String SAMPLE_DATA = "classpath:data.sql";
 	
 	@Autowired
 	@Qualifier("jdbcTemplate")

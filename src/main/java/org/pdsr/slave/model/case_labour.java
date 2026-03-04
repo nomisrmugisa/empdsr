@@ -22,7 +22,7 @@ import javax.validation.constraints.Size;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-@Entity
+@Entity(name = "slave_case_labour")
 public class case_labour implements Serializable {
 
 	/**

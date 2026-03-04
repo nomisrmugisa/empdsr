@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SlaveAuditCaseRepository extends JpaRepository<audit_case, String> {
-	@Query("select DISTINCT a FROM audit_case a LEFT JOIN audit_audit t ON(a.audit_uuid=t.audit_uuid) "
+	@Query("select DISTINCT a FROM slave_audit_case a LEFT JOIN slave_audit_audit t ON(a.audit_uuid=t.audit_uuid) "
 			+ "WHERE a.audit_date >=?1 AND t.audit_uuid IS NULL")
 	List<audit_case> findActivePendingAudit(java.util.Date lowerLimit);
 

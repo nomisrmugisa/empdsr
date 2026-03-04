@@ -25,7 +25,7 @@ import org.hibernate.envers.NotAudited;
 import org.springframework.format.annotation.DateTimeFormat;
 
 
-@Entity
+@Entity(name = "slave_audit_audit")
 public class audit_audit implements Serializable {
 
 	/**
