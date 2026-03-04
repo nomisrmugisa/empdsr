@@ -3089,6 +3089,15 @@ public class CaseEntryController {
 		map.put(null, "Select one");
 		List<datamap> transOptions = mapRepo.findByMap_feature("trans_options");
 		System.out.println("DEBUG: Found " + transOptions.size() + " trans_options in database");
+
+		// If no data found, initialize it directly
+		if (transOptions.isEmpty()) {
+			System.out.println("DEBUG: No trans_options found, initializing directly...");
+			initializeTransportationOptions();
+			transOptions = mapRepo.findByMap_feature("trans_options");
+			System.out.println("DEBUG: After initialization, found " + transOptions.size() + " trans_options");
+		}
+
 		for (datamap elem : transOptions) {
 			System.out.println("DEBUG: trans_option - value: " + elem.getMap_value() + ", label: " + elem.getMap_label());
 			map.put(elem.getMap_value(), elem.getMap_label());
@@ -3096,6 +3105,25 @@ public class CaseEntryController {
 		System.out.println("DEBUG: Final trans_options map size: " + map.size());
 
 		return map;
+	}
+
+	private void initializeTransportationOptions() {
+		try {
+			System.out.println("DEBUG: Initializing transportation options directly...");
+			mapRepo.save(new datamap("trans_options", 0, "On foot"));
+			mapRepo.save(new datamap("trans_options", 1, "Tricycle"));
+			mapRepo.save(new datamap("trans_options", 2, "Motor bike"));
+			mapRepo.save(new datamap("trans_options", 3, "Vehicle (Commercial)"));
+			mapRepo.save(new datamap("trans_options", 4, "Vehicle (Private)"));
+			mapRepo.save(new datamap("trans_options", 5, "Ambulance"));
+			mapRepo.save(new datamap("trans_options", 66, "Other"));
+			mapRepo.save(new datamap("trans_options", 88, "Not Stated"));
+			mapRepo.save(new datamap("trans_options", 99, "Not Applicable"));
+			System.out.println("DEBUG: Transportation options initialized successfully");
+		} catch (Exception e) {
+			System.err.println("DEBUG: Error initializing transportation options: " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 	@ModelAttribute("period_options")
