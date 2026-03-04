@@ -621,6 +621,46 @@ public class CaseEntryController {
 		return "registry/case-dhis2";
 	}
 
+	@GetMapping("/debug-dropdown")
+	@ResponseBody
+	public String debugDropdown() {
+		StringBuilder debug = new StringBuilder();
+		debug.append("<h2>Dropdown Debug Information</h2>");
+
+		// Check trans_options
+		List<datamap> transOptions = mapRepo.findByMap_feature("trans_options");
+		debug.append("<h3>Trans Options (").append(transOptions.size()).append(" items):</h3>");
+		debug.append("<ul>");
+		for (datamap elem : transOptions) {
+			debug.append("<li>Value: ").append(elem.getMap_value())
+				 .append(", Label: ").append(elem.getMap_label()).append("</li>");
+		}
+		debug.append("</ul>");
+
+		// Check other options for comparison
+		List<datamap> sourceOptions = mapRepo.findByMap_feature("source_options");
+		debug.append("<h3>Source Options (").append(sourceOptions.size()).append(" items):</h3>");
+		debug.append("<ul>");
+		for (datamap elem : sourceOptions) {
+			debug.append("<li>Value: ").append(elem.getMap_value())
+				 .append(", Label: ").append(elem.getMap_label()).append("</li>");
+		}
+		debug.append("</ul>");
+
+		// Check all datamap features
+		List<datamap> allData = mapRepo.findAll();
+		debug.append("<h3>All Datamap Features (").append(allData.size()).append(" total items):</h3>");
+		Map<String, Long> featureCounts = allData.stream()
+			.collect(Collectors.groupingBy(datamap::getMap_feature, Collectors.counting()));
+		debug.append("<ul>");
+		for (Map.Entry<String, Long> entry : featureCounts.entrySet()) {
+			debug.append("<li>").append(entry.getKey()).append(": ").append(entry.getValue()).append(" items</li>");
+		}
+		debug.append("</ul>");
+
+		return debug.toString();
+	}
+
 	@Transactional
 	@PostMapping("/dhis2")
 	public String dhis2(Principal principal, Model model, @ModelAttribute Dhis2Authorisation dhis2) {
@@ -3047,9 +3087,13 @@ public class CaseEntryController {
 		final Map<Integer, String> map = new LinkedHashMap<>();
 
 		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("trans_options")) {
+		List<datamap> transOptions = mapRepo.findByMap_feature("trans_options");
+		System.out.println("DEBUG: Found " + transOptions.size() + " trans_options in database");
+		for (datamap elem : transOptions) {
+			System.out.println("DEBUG: trans_option - value: " + elem.getMap_value() + ", label: " + elem.getMap_label());
 			map.put(elem.getMap_value(), elem.getMap_label());
 		}
+		System.out.println("DEBUG: Final trans_options map size: " + map.size());
 
 		return map;
 	}
