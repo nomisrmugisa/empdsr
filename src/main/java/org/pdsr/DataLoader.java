@@ -5,6 +5,7 @@ import org.pdsr.master.repo.DatamapRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import javax.annotation.PostConstruct;
 
 @Component
 public class DataLoader implements CommandLineRunner {
@@ -12,9 +13,22 @@ public class DataLoader implements CommandLineRunner {
     @Autowired
     private DatamapRepository datamapRepository;
 
+    @PostConstruct
+    public void initializeData() {
+        System.out.println("DataLoader: @PostConstruct - Starting database initialization check...");
+        performInitialization();
+    }
+
     @Override
     public void run(String... args) throws Exception {
-        System.out.println("DataLoader: Starting database initialization check...");
+        System.out.println("DataLoader: CommandLineRunner - Starting database initialization check...");
+        performInitialization();
+    }
+
+    private void performInitialization() {
+        try {
+            System.out.println("DataLoader: Starting database initialization check...");
+            System.out.println("DataLoader: DatamapRepository is " + (datamapRepository != null ? "available" : "null"));
         
         // Check if trans_options data exists
         long transOptionsCount = datamapRepository.findByMap_feature("trans_options").size();
@@ -35,6 +49,10 @@ public class DataLoader implements CommandLineRunner {
         }
         
         System.out.println("DataLoader: Database initialization check completed");
+        } catch (Exception e) {
+            System.err.println("DataLoader: Error during initialization: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
     
     private void initializeTransportationOptions() {
