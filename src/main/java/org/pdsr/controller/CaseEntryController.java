@@ -3042,8 +3042,7 @@ public class CaseEntryController {
 
 			result.append("\nTransportation Options:\n");
 			for (datamap option : transOptions) {
-				result.append("- Code: ").append(option.getMap_code())
-					  .append(", Name: ").append(option.getMap_name())
+				result.append("- Feature: ").append(option.getMap_feature())
 					  .append(", Value: ").append(option.getMap_value())
 					  .append(", Label: ").append(option.getMap_label()).append("\n");
 			}
