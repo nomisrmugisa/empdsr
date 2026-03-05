@@ -3252,5 +3252,55 @@ public class CaseEntryController {
 		}
 	}
 
+	@ModelAttribute("admissioncond_options")
+	public Map<Integer, String> admissionCondOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		List<datamap> admissionCondOptions = mapRepo.findByMap_feature("admissioncond_options");
+		System.out.println("DEBUG: Found " + admissionCondOptions.size() + " admissioncond_options in database");
+
+		// If no data found, initialize it directly
+		if (admissionCondOptions.isEmpty()) {
+			System.out.println("DEBUG: No admissioncond_options found, initializing directly...");
+			initializeAdmissionConditionOptions();
+			admissionCondOptions = mapRepo.findByMap_feature("admissioncond_options");
+			System.out.println("DEBUG: After initialization, found " + admissionCondOptions.size() + " admissioncond_options");
+		}
+
+		for (datamap elem : admissionCondOptions) {
+			System.out.println("DEBUG: admissioncond_option - value: " + elem.getMap_value() + ", label: " + elem.getMap_label());
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+		System.out.println("DEBUG: Final admissioncond_options map size: " + map.size());
+
+		return map;
+	}
+
+	@ModelAttribute("levelconsc_options")
+	public Map<Integer, String> levelConscOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		List<datamap> levelConscOptions = mapRepo.findByMap_feature("levelconsc_options");
+		System.out.println("DEBUG: Found " + levelConscOptions.size() + " levelconsc_options in database");
+
+		// If no data found, initialize it directly
+		if (levelConscOptions.isEmpty()) {
+			System.out.println("DEBUG: No levelconsc_options found, initializing directly...");
+			initializeLevelConsciousnessOptions();
+			levelConscOptions = mapRepo.findByMap_feature("levelconsc_options");
+			System.out.println("DEBUG: After initialization, found " + levelConscOptions.size() + " levelconsc_options");
+		}
+
+		for (datamap elem : levelConscOptions) {
+			System.out.println("DEBUG: levelconsc_option - value: " + elem.getMap_value() + ", label: " + elem.getMap_label());
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+		System.out.println("DEBUG: Final levelconsc_options map size: " + map.size());
+
+		return map;
+	}
+
 }
 // end class
