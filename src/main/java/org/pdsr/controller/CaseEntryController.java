@@ -2786,14 +2786,52 @@ public class CaseEntryController {
 		return map;
 	}
 
+	@ModelAttribute("period_options")
+	public Map<Integer, String> periodOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		List<datamap> periodOptions = mapRepo.findByMap_feature("period_options");
+		System.out.println("DEBUG: Found " + periodOptions.size() + " period_options in database");
+
+		// If no data found, initialize it directly
+		if (periodOptions.isEmpty()) {
+			System.out.println("DEBUG: No period_options found, initializing directly...");
+			initializePeriodOptions();
+			periodOptions = mapRepo.findByMap_feature("period_options");
+			System.out.println("DEBUG: After initialization, found " + periodOptions.size() + " period_options");
+		}
+
+		for (datamap elem : periodOptions) {
+			System.out.println("DEBUG: period_option - value: " + elem.getMap_value() + ", label: " + elem.getMap_label());
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+		System.out.println("DEBUG: Final period_options map size: " + map.size());
+
+		return map;
+	}
+
 	@ModelAttribute("lbradmc_options")
 	public Map<Integer, String> lbrAdmcOptionsSelectOne() {
 		final Map<Integer, String> map = new LinkedHashMap<>();
 
 		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("admissioncond_options")) {
+		List<datamap> admissionCondOptions = mapRepo.findByMap_feature("admissioncond_options");
+		System.out.println("DEBUG: Found " + admissionCondOptions.size() + " admissioncond_options in database");
+
+		// If no data found, initialize it directly
+		if (admissionCondOptions.isEmpty()) {
+			System.out.println("DEBUG: No admissioncond_options found, initializing directly...");
+			initializeAdmissionConditionOptions();
+			admissionCondOptions = mapRepo.findByMap_feature("admissioncond_options");
+			System.out.println("DEBUG: After initialization, found " + admissionCondOptions.size() + " admissioncond_options");
+		}
+
+		for (datamap elem : admissionCondOptions) {
+			System.out.println("DEBUG: admissioncond_option - value: " + elem.getMap_value() + ", label: " + elem.getMap_label());
 			map.put(elem.getMap_value(), elem.getMap_label());
 		}
+		System.out.println("DEBUG: Final admissioncond_options map size: " + map.size());
 
 		return map;
 	}
@@ -2803,9 +2841,22 @@ public class CaseEntryController {
 		final Map<Integer, String> map = new LinkedHashMap<>();
 
 		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("levelconsc_options")) {
+		List<datamap> levelConscOptions = mapRepo.findByMap_feature("levelconsc_options");
+		System.out.println("DEBUG: Found " + levelConscOptions.size() + " levelconsc_options in database");
+
+		// If no data found, initialize it directly
+		if (levelConscOptions.isEmpty()) {
+			System.out.println("DEBUG: No levelconsc_options found, initializing directly...");
+			initializeLevelConsciousnessOptions();
+			levelConscOptions = mapRepo.findByMap_feature("levelconsc_options");
+			System.out.println("DEBUG: After initialization, found " + levelConscOptions.size() + " levelconsc_options");
+		}
+
+		for (datamap elem : levelConscOptions) {
+			System.out.println("DEBUG: levelconsc_option - value: " + elem.getMap_value() + ", label: " + elem.getMap_label());
 			map.put(elem.getMap_value(), elem.getMap_label());
 		}
+		System.out.println("DEBUG: Final levelconsc_options map size: " + map.size());
 
 		return map;
 	}
@@ -3030,6 +3081,7 @@ public class CaseEntryController {
 		result.append("=== DROPDOWN DEBUG INFO ===\n");
 
 		try {
+			// Check Transportation Options
 			List<datamap> transOptions = mapRepo.findByMap_feature("trans_options");
 			result.append("Found ").append(transOptions.size()).append(" trans_options in database\n");
 
@@ -3042,6 +3094,60 @@ public class CaseEntryController {
 
 			result.append("\nTransportation Options:\n");
 			for (datamap option : transOptions) {
+				result.append("- Feature: ").append(option.getMap_feature())
+					  .append(", Value: ").append(option.getMap_value())
+					  .append(", Label: ").append(option.getMap_label()).append("\n");
+			}
+
+			// Check Period Options
+			List<datamap> periodOptions = mapRepo.findByMap_feature("period_options");
+			result.append("\nFound ").append(periodOptions.size()).append(" period_options in database\n");
+
+			if (periodOptions.isEmpty()) {
+				result.append("No period_options found, initializing directly...\n");
+				initializePeriodOptions();
+				periodOptions = mapRepo.findByMap_feature("period_options");
+				result.append("After initialization, found ").append(periodOptions.size()).append(" period_options\n");
+			}
+
+			result.append("\nPeriod Options:\n");
+			for (datamap option : periodOptions) {
+				result.append("- Feature: ").append(option.getMap_feature())
+					  .append(", Value: ").append(option.getMap_value())
+					  .append(", Label: ").append(option.getMap_label()).append("\n");
+			}
+
+			// Check Admission Condition Options
+			List<datamap> admissionCondOptions = mapRepo.findByMap_feature("admissioncond_options");
+			result.append("\nFound ").append(admissionCondOptions.size()).append(" admissioncond_options in database\n");
+
+			if (admissionCondOptions.isEmpty()) {
+				result.append("No admissioncond_options found, initializing directly...\n");
+				initializeAdmissionConditionOptions();
+				admissionCondOptions = mapRepo.findByMap_feature("admissioncond_options");
+				result.append("After initialization, found ").append(admissionCondOptions.size()).append(" admissioncond_options\n");
+			}
+
+			result.append("\nAdmission Condition Options:\n");
+			for (datamap option : admissionCondOptions) {
+				result.append("- Feature: ").append(option.getMap_feature())
+					  .append(", Value: ").append(option.getMap_value())
+					  .append(", Label: ").append(option.getMap_label()).append("\n");
+			}
+
+			// Check Level of Consciousness Options
+			List<datamap> levelConscOptions = mapRepo.findByMap_feature("levelconsc_options");
+			result.append("\nFound ").append(levelConscOptions.size()).append(" levelconsc_options in database\n");
+
+			if (levelConscOptions.isEmpty()) {
+				result.append("No levelconsc_options found, initializing directly...\n");
+				initializeLevelConsciousnessOptions();
+				levelConscOptions = mapRepo.findByMap_feature("levelconsc_options");
+				result.append("After initialization, found ").append(levelConscOptions.size()).append(" levelconsc_options\n");
+			}
+
+			result.append("\nLevel of Consciousness Options:\n");
+			for (datamap option : levelConscOptions) {
 				result.append("- Feature: ").append(option.getMap_feature())
 					  .append(", Value: ").append(option.getMap_value())
 					  .append(", Label: ").append(option.getMap_label()).append("\n");
@@ -3095,6 +3201,53 @@ public class CaseEntryController {
 			System.out.println("DEBUG: Transportation options initialized successfully");
 		} catch (Exception e) {
 			System.err.println("DEBUG: Error initializing transportation options: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	private void initializePeriodOptions() {
+		try {
+			System.out.println("DEBUG: Initializing period options directly...");
+			mapRepo.save(new datamap("period_options", 0, "Antepartum"));
+			mapRepo.save(new datamap("period_options", 1, "Intrapartum"));
+			mapRepo.save(new datamap("period_options", 2, "Postpartum"));
+			mapRepo.save(new datamap("period_options", 88, "Not Stated"));
+			mapRepo.save(new datamap("period_options", 99, "Not Applicable"));
+			System.out.println("DEBUG: Period options initialized successfully");
+		} catch (Exception e) {
+			System.err.println("DEBUG: Error initializing period options: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	private void initializeAdmissionConditionOptions() {
+		try {
+			System.out.println("DEBUG: Initializing admission condition options directly...");
+			mapRepo.save(new datamap("admissioncond_options", 0, "Good"));
+			mapRepo.save(new datamap("admissioncond_options", 1, "Fair"));
+			mapRepo.save(new datamap("admissioncond_options", 2, "Poor"));
+			mapRepo.save(new datamap("admissioncond_options", 3, "Critical"));
+			mapRepo.save(new datamap("admissioncond_options", 88, "Not Stated"));
+			mapRepo.save(new datamap("admissioncond_options", 99, "Not Applicable"));
+			System.out.println("DEBUG: Admission condition options initialized successfully");
+		} catch (Exception e) {
+			System.err.println("DEBUG: Error initializing admission condition options: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	private void initializeLevelConsciousnessOptions() {
+		try {
+			System.out.println("DEBUG: Initializing level of consciousness options directly...");
+			mapRepo.save(new datamap("levelconsc_options", 0, "Alert"));
+			mapRepo.save(new datamap("levelconsc_options", 1, "Verbal"));
+			mapRepo.save(new datamap("levelconsc_options", 2, "Pain"));
+			mapRepo.save(new datamap("levelconsc_options", 3, "Unresponsive"));
+			mapRepo.save(new datamap("levelconsc_options", 88, "Not Stated"));
+			mapRepo.save(new datamap("levelconsc_options", 99, "Not Applicable"));
+			System.out.println("DEBUG: Level of consciousness options initialized successfully");
+		} catch (Exception e) {
+			System.err.println("DEBUG: Error initializing level of consciousness options: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
