@@ -751,6 +751,10 @@ public class CaseEntryController {
 		}
 
 		switch (page) {
+			case 0: {
+				// Overview page - just show case identifiers, no special setup needed
+				break;
+			}
 			case 1: {
 				model.addAttribute("bioactive", "active");
 				if (selected.getBiodata() == null) {
@@ -935,6 +939,12 @@ public class CaseEntryController {
 		selected.setCase_status(0);// reset the submission status to not submitted (incomplete)
 
 		switch (page) {
+			case 0: {
+				// Overview page - just save basic case identifiers
+				selected.setCase_status(0);
+				caseRepo.save(selected);
+				break;
+			}
 			case 1: {
 
 				try {

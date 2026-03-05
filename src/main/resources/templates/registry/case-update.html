@@ -70,7 +70,7 @@
 			method="POST" class="needs-validation" novalidate>
 			<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
 
-			<!-- <div th:if="${page==0}" th:insert="fragments/update-case :: case_identifiers"></div> -->
+			<div th:if="${page==0}" th:insert="fragments/update-case :: case_identifiers"></div>
 			<div th:if="${page==1}" th:insert="fragments/update-case :: case_biodata"></div>
 			<div th:if="${page==2}" th:insert="fragments/update-case :: case_referral"></div>
 			<div th:if="${page==3}" th:insert="fragments/update-case :: case_pregnancy"></div>
