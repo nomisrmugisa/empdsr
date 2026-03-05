@@ -3153,6 +3153,24 @@ public class CaseEntryController {
 					  .append(", Label: ").append(option.getMap_label()).append("\n");
 			}
 
+			// Check Start Mode Options
+			List<datamap> startmodeOptions = mapRepo.findByMap_feature("startmode_options");
+			result.append("\nFound ").append(startmodeOptions.size()).append(" startmode_options in database\n");
+
+			if (startmodeOptions.isEmpty()) {
+				result.append("No startmode_options found, initializing directly...\n");
+				initializeStartModeOptions();
+				startmodeOptions = mapRepo.findByMap_feature("startmode_options");
+				result.append("After initialization, found ").append(startmodeOptions.size()).append(" startmode_options\n");
+			}
+
+			result.append("\nStart Mode Options:\n");
+			for (datamap option : startmodeOptions) {
+				result.append("- Feature: ").append(option.getMap_feature())
+					  .append(", Value: ").append(option.getMap_value())
+					  .append(", Label: ").append(option.getMap_label()).append("\n");
+			}
+
 		} catch (Exception e) {
 			result.append("ERROR: ").append(e.getMessage()).append("\n");
 			e.printStackTrace();
@@ -3252,6 +3270,23 @@ public class CaseEntryController {
 		}
 	}
 
+	private void initializeStartModeOptions() {
+		try {
+			System.out.println("DEBUG: Initializing start mode options directly...");
+			mapRepo.save(new datamap("startmode_options", 0, "Spontaneous"));
+			mapRepo.save(new datamap("startmode_options", 1, "Induced"));
+			mapRepo.save(new datamap("startmode_options", 2, "Augmented"));
+			mapRepo.save(new datamap("startmode_options", 3, "Elective Caesarean"));
+			mapRepo.save(new datamap("startmode_options", 4, "Emergency Caesarean"));
+			mapRepo.save(new datamap("startmode_options", 88, "Not Stated"));
+			mapRepo.save(new datamap("startmode_options", 99, "Not Applicable"));
+			System.out.println("DEBUG: Start mode options initialized successfully");
+		} catch (Exception e) {
+			System.err.println("DEBUG: Error initializing start mode options: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
 	@ModelAttribute("admissioncond_options")
 	public Map<Integer, String> admissionCondOptionsSelectOne() {
 		final Map<Integer, String> map = new LinkedHashMap<>();
@@ -3298,6 +3333,31 @@ public class CaseEntryController {
 			map.put(elem.getMap_value(), elem.getMap_label());
 		}
 		System.out.println("DEBUG: Final levelconsc_options map size: " + map.size());
+
+		return map;
+	}
+
+	@ModelAttribute("startmode_options")
+	public Map<Integer, String> startmodeOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		List<datamap> startmodeOptions = mapRepo.findByMap_feature("startmode_options");
+		System.out.println("DEBUG: Found " + startmodeOptions.size() + " startmode_options in database");
+
+		// If no data found, initialize it directly
+		if (startmodeOptions.isEmpty()) {
+			System.out.println("DEBUG: No startmode_options found, initializing directly...");
+			initializeStartModeOptions();
+			startmodeOptions = mapRepo.findByMap_feature("startmode_options");
+			System.out.println("DEBUG: After initialization, found " + startmodeOptions.size() + " startmode_options");
+		}
+
+		for (datamap elem : startmodeOptions) {
+			System.out.println("DEBUG: startmode_option - value: " + elem.getMap_value() + ", label: " + elem.getMap_label());
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+		System.out.println("DEBUG: Final startmode_options map size: " + map.size());
 
 		return map;
 	}
