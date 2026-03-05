@@ -3023,5 +3023,82 @@ public class CaseEntryController {
 		return map;
 	}
 
+	@GetMapping("/debug-dropdown")
+	@ResponseBody
+	public String debugDropdown() {
+		StringBuilder result = new StringBuilder();
+		result.append("=== DROPDOWN DEBUG INFO ===\n");
+
+		try {
+			List<datamap> transOptions = mapRepo.findByMap_feature("trans_options");
+			result.append("Found ").append(transOptions.size()).append(" trans_options in database\n");
+
+			if (transOptions.isEmpty()) {
+				result.append("No trans_options found, initializing directly...\n");
+				initializeTransportationOptions();
+				transOptions = mapRepo.findByMap_feature("trans_options");
+				result.append("After initialization, found ").append(transOptions.size()).append(" trans_options\n");
+			}
+
+			result.append("\nTransportation Options:\n");
+			for (datamap option : transOptions) {
+				result.append("- Code: ").append(option.getMap_code())
+					  .append(", Name: ").append(option.getMap_name())
+					  .append(", Value: ").append(option.getMap_value())
+					  .append(", Label: ").append(option.getMap_label()).append("\n");
+			}
+
+		} catch (Exception e) {
+			result.append("ERROR: ").append(e.getMessage()).append("\n");
+			e.printStackTrace();
+		}
+
+		return result.toString();
+	}
+
+	@ModelAttribute("trans_options")
+	public Map<Integer, String> transOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		List<datamap> transOptions = mapRepo.findByMap_feature("trans_options");
+		System.out.println("DEBUG: Found " + transOptions.size() + " trans_options in database");
+
+		// If no data found, initialize it directly
+		if (transOptions.isEmpty()) {
+			System.out.println("DEBUG: No trans_options found, initializing directly...");
+			initializeTransportationOptions();
+			transOptions = mapRepo.findByMap_feature("trans_options");
+			System.out.println("DEBUG: After initialization, found " + transOptions.size() + " trans_options");
+		}
+
+		for (datamap elem : transOptions) {
+			System.out.println("DEBUG: trans_option - value: " + elem.getMap_value() + ", label: " + elem.getMap_label());
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+		System.out.println("DEBUG: Final trans_options map size: " + map.size());
+
+		return map;
+	}
+
+	private void initializeTransportationOptions() {
+		try {
+			System.out.println("DEBUG: Initializing transportation options directly...");
+			mapRepo.save(new datamap("trans_options", 0, "On foot"));
+			mapRepo.save(new datamap("trans_options", 1, "Tricycle"));
+			mapRepo.save(new datamap("trans_options", 2, "Motor bike"));
+			mapRepo.save(new datamap("trans_options", 3, "Vehicle (Commercial)"));
+			mapRepo.save(new datamap("trans_options", 4, "Vehicle (Private)"));
+			mapRepo.save(new datamap("trans_options", 5, "Ambulance"));
+			mapRepo.save(new datamap("trans_options", 66, "Other"));
+			mapRepo.save(new datamap("trans_options", 88, "Not Stated"));
+			mapRepo.save(new datamap("trans_options", 99, "Not Applicable"));
+			System.out.println("DEBUG: Transportation options initialized successfully");
+		} catch (Exception e) {
+			System.err.println("DEBUG: Error initializing transportation options: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
 }
 // end class
