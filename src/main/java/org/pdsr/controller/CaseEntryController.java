@@ -2108,10 +2108,22 @@ public class CaseEntryController {
 		final Map<Integer, String> map = new LinkedHashMap<>();
 
 		map.put(null, "Select one");
-		for (int i = 1; i < 25; i++) {
+		for (int i = 1; i < 16; i++) {
 			map.put(i, i + "");
 		}
 		map.put(88, "Not stated");
+
+		return map;
+	}
+
+	@ModelAttribute("decision_options")
+	public Map<Integer, String> decisionOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("decision_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
 
 		return map;
 	}
