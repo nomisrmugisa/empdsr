@@ -34,7 +34,12 @@
     --MERGE INTO country_table KEY(country_uuid) values('3','Sierra Leone');
     MERGE INTO country_table KEY(country_uuid) values('4','Uganda');
     --MERGE INTO country_table KEY(country_uuid) values('5','Ethiopia');
-	
+
+    -- Preload Central/Kampala/Mulago for testing
+    MERGE INTO region_table(region_uuid, region_name, country) KEY(region_uuid) values('REG_CENTRAL','Central','4');
+    MERGE INTO district_table(district_uuid, district_name, region) KEY(district_uuid) values('DIST_KAMPALA','Kampala','REG_CENTRAL');
+    MERGE INTO facility_table(facility_uuid, facility_code, facility_name, type_facility, district) KEY(facility_uuid) values('FAC_MULAGO','0102','Mulago Hospital',1,'DIST_KAMPALA');
+
 	MERGE INTO ipts_table KEY(ipt_name) values('IPT1','none');
     MERGE INTO ipts_table KEY(ipt_name) values('IPT2','none');
     MERGE INTO ipts_table KEY(ipt_name) values('IPT3','none');
