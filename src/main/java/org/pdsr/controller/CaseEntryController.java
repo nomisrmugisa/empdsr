@@ -2200,6 +2200,54 @@ public class CaseEntryController {
 		return posnegOptionsSelectOne();
 	}
 
+	@ModelAttribute("provider_options")
+	public Map<Integer, String> providerOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("provider_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("birthloc_options")
+	public Map<Integer, String> birthlocOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("birthloc_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("liqourvolume_options")
+	public Map<Integer, String> liqourvolumeOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("liqourvolume_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("liqourcolor_options")
+	public Map<Integer, String> liqourcolorOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("liqourcolor_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
 	@ModelAttribute("liqourodour_options")
 	public Map<Integer, String> liqourodourOptionsSelectOne() {
 		final Map<Integer, String> map = new LinkedHashMap<>();
