@@ -672,6 +672,13 @@ public class PreDataConfig {
 			res.add(new datamap("manner_of_death_options", 8, "Pending investigation"));
 			res.add(new datamap("manner_of_death_options", 88, "Unknown"));
 
+			res.add(new datamap("interval_unit_options", 1, "Minutes"));
+			res.add(new datamap("interval_unit_options", 2, "Hours"));
+			res.add(new datamap("interval_unit_options", 3, "Days"));
+			res.add(new datamap("interval_unit_options", 4, "Weeks"));
+			res.add(new datamap("interval_unit_options", 5, "Months"));
+			res.add(new datamap("interval_unit_options", 6, "Years"));
+
 			res.add(new datamap("mode_options", 0, "Spontaneous Vaginal Delivery"));
 			res.add(new datamap("mode_options", 1, "Assisted Delivery (Vacuum/forceps)"));
 			res.add(new datamap("mode_options", 2, "Elective Caesarean Section"));

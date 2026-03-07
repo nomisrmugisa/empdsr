@@ -232,6 +232,9 @@ public class case_mdeath implements Serializable {
 	private String mdeath_cod_a_interval;
 
 	@Column
+	private Integer mdeath_cod_a_interval_unit;
+
+	@Column
 	private String mdeath_cod_a_code;
 
 	@Lob
@@ -240,6 +243,9 @@ public class case_mdeath implements Serializable {
 
 	@Column
 	private String mdeath_cod_b_interval;
+
+	@Column
+	private Integer mdeath_cod_b_interval_unit;
 
 	@Column
 	private String mdeath_cod_b_code;
@@ -252,6 +258,9 @@ public class case_mdeath implements Serializable {
 	private String mdeath_cod_c_interval;
 
 	@Column
+	private Integer mdeath_cod_c_interval_unit;
+
+	@Column
 	private String mdeath_cod_c_code;
 
 	@Lob
@@ -260,6 +269,9 @@ public class case_mdeath implements Serializable {
 
 	@Column
 	private String mdeath_cod_d_interval;
+
+	@Column
+	private Integer mdeath_cod_d_interval_unit;
 
 	@Column
 	private String mdeath_cod_d_code;
@@ -795,6 +807,9 @@ public class case_mdeath implements Serializable {
 	public String getMdeath_cod_a_interval() { return mdeath_cod_a_interval; }
 	public void setMdeath_cod_a_interval(String mdeath_cod_a_interval) { this.mdeath_cod_a_interval = mdeath_cod_a_interval; }
 
+	public Integer getMdeath_cod_a_interval_unit() { return mdeath_cod_a_interval_unit; }
+	public void setMdeath_cod_a_interval_unit(Integer mdeath_cod_a_interval_unit) { this.mdeath_cod_a_interval_unit = mdeath_cod_a_interval_unit; }
+
 	public String getMdeath_cod_a_code() { return mdeath_cod_a_code; }
 	public void setMdeath_cod_a_code(String mdeath_cod_a_code) { this.mdeath_cod_a_code = mdeath_cod_a_code; }
 
@@ -803,6 +818,9 @@ public class case_mdeath implements Serializable {
 
 	public String getMdeath_cod_b_interval() { return mdeath_cod_b_interval; }
 	public void setMdeath_cod_b_interval(String mdeath_cod_b_interval) { this.mdeath_cod_b_interval = mdeath_cod_b_interval; }
+
+	public Integer getMdeath_cod_b_interval_unit() { return mdeath_cod_b_interval_unit; }
+	public void setMdeath_cod_b_interval_unit(Integer mdeath_cod_b_interval_unit) { this.mdeath_cod_b_interval_unit = mdeath_cod_b_interval_unit; }
 
 	public String getMdeath_cod_b_code() { return mdeath_cod_b_code; }
 	public void setMdeath_cod_b_code(String mdeath_cod_b_code) { this.mdeath_cod_b_code = mdeath_cod_b_code; }
@@ -813,6 +831,9 @@ public class case_mdeath implements Serializable {
 	public String getMdeath_cod_c_interval() { return mdeath_cod_c_interval; }
 	public void setMdeath_cod_c_interval(String mdeath_cod_c_interval) { this.mdeath_cod_c_interval = mdeath_cod_c_interval; }
 
+	public Integer getMdeath_cod_c_interval_unit() { return mdeath_cod_c_interval_unit; }
+	public void setMdeath_cod_c_interval_unit(Integer mdeath_cod_c_interval_unit) { this.mdeath_cod_c_interval_unit = mdeath_cod_c_interval_unit; }
+
 	public String getMdeath_cod_c_code() { return mdeath_cod_c_code; }
 	public void setMdeath_cod_c_code(String mdeath_cod_c_code) { this.mdeath_cod_c_code = mdeath_cod_c_code; }
 
@@ -821,6 +842,9 @@ public class case_mdeath implements Serializable {
 
 	public String getMdeath_cod_d_interval() { return mdeath_cod_d_interval; }
 	public void setMdeath_cod_d_interval(String mdeath_cod_d_interval) { this.mdeath_cod_d_interval = mdeath_cod_d_interval; }
+
+	public Integer getMdeath_cod_d_interval_unit() { return mdeath_cod_d_interval_unit; }
+	public void setMdeath_cod_d_interval_unit(Integer mdeath_cod_d_interval_unit) { this.mdeath_cod_d_interval_unit = mdeath_cod_d_interval_unit; }
 
 	public String getMdeath_cod_d_code() { return mdeath_cod_d_code; }
 	public void setMdeath_cod_d_code(String mdeath_cod_d_code) { this.mdeath_cod_d_code = mdeath_cod_d_code; }

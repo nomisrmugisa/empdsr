@@ -2777,15 +2777,19 @@ public class CaseEntryController {
 				// WHO Medical Certificate of Cause of Death
 				new json_data(getQuestion("label.mdeath_cod_a"), o.getMdeath_cod_a(), true),
 				new json_data(getQuestion("label.mdeath_cod_a_interval"), o.getMdeath_cod_a_interval(), true),
+				new json_data(getQuestion("label.mdeath_interval_unit"), getAnswer("interval_unit_options", o.getMdeath_cod_a_interval_unit()), true),
 				new json_data(getQuestion("label.mdeath_cod_a_code"), o.getMdeath_cod_a_code(), true),
 				new json_data(getQuestion("label.mdeath_cod_b"), o.getMdeath_cod_b(), true),
 				new json_data(getQuestion("label.mdeath_cod_b_interval"), o.getMdeath_cod_b_interval(), true),
+				new json_data(getQuestion("label.mdeath_interval_unit"), getAnswer("interval_unit_options", o.getMdeath_cod_b_interval_unit()), true),
 				new json_data(getQuestion("label.mdeath_cod_b_code"), o.getMdeath_cod_b_code(), true),
 				new json_data(getQuestion("label.mdeath_cod_c"), o.getMdeath_cod_c(), true),
 				new json_data(getQuestion("label.mdeath_cod_c_interval"), o.getMdeath_cod_c_interval(), true),
+				new json_data(getQuestion("label.mdeath_interval_unit"), getAnswer("interval_unit_options", o.getMdeath_cod_c_interval_unit()), true),
 				new json_data(getQuestion("label.mdeath_cod_c_code"), o.getMdeath_cod_c_code(), true),
 				new json_data(getQuestion("label.mdeath_cod_d"), o.getMdeath_cod_d(), true),
 				new json_data(getQuestion("label.mdeath_cod_d_interval"), o.getMdeath_cod_d_interval(), true),
+				new json_data(getQuestion("label.mdeath_interval_unit"), getAnswer("interval_unit_options", o.getMdeath_cod_d_interval_unit()), true),
 				new json_data(getQuestion("label.mdeath_cod_d_code"), o.getMdeath_cod_d_code(), true),
 				new json_data(getQuestion("label.mdeath_cod_other"), o.getMdeath_cod_other(), true),
 				new json_data(getQuestion("label.mdeath_manner"),
@@ -3140,6 +3144,18 @@ public class CaseEntryController {
 
 		map.put(null, "Select one");
 		for (datamap elem : mapRepo.findByMap_feature("manner_of_death_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("interval_unit_options")
+	public Map<Integer, String> intervalUnitOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select unit");
+		for (datamap elem : mapRepo.findByMap_feature("interval_unit_options")) {
 			map.put(elem.getMap_value(), elem.getMap_label());
 		}
 
