@@ -2772,7 +2772,33 @@ public class CaseEntryController {
 				new json_data(getQuestion("label.mdeath_autopsy_antec_cod"), o.getMdeath_autopsy_antec_cod(), true),
 				new json_data(getQuestion("label.mdeath_autopsy_ops_cod"), o.getMdeath_autopsy_ops_cod(), true),
 				new json_data(getQuestion("label.mdeath_autopsy_icd_mm"),
-						getAnswer("autopsyby_options", o.getMdeath_autopsy_icd_mm()), true)
+						getAnswer("autopsyby_options", o.getMdeath_autopsy_icd_mm()), true),
+
+				// WHO Medical Certificate of Cause of Death
+				new json_data(getQuestion("label.mdeath_cod_a"), o.getMdeath_cod_a(), true),
+				new json_data(getQuestion("label.mdeath_cod_a_interval"), o.getMdeath_cod_a_interval(), true),
+				new json_data(getQuestion("label.mdeath_cod_a_code"), o.getMdeath_cod_a_code(), true),
+				new json_data(getQuestion("label.mdeath_cod_b"), o.getMdeath_cod_b(), true),
+				new json_data(getQuestion("label.mdeath_cod_b_interval"), o.getMdeath_cod_b_interval(), true),
+				new json_data(getQuestion("label.mdeath_cod_b_code"), o.getMdeath_cod_b_code(), true),
+				new json_data(getQuestion("label.mdeath_cod_c"), o.getMdeath_cod_c(), true),
+				new json_data(getQuestion("label.mdeath_cod_c_interval"), o.getMdeath_cod_c_interval(), true),
+				new json_data(getQuestion("label.mdeath_cod_c_code"), o.getMdeath_cod_c_code(), true),
+				new json_data(getQuestion("label.mdeath_cod_d"), o.getMdeath_cod_d(), true),
+				new json_data(getQuestion("label.mdeath_cod_d_interval"), o.getMdeath_cod_d_interval(), true),
+				new json_data(getQuestion("label.mdeath_cod_d_code"), o.getMdeath_cod_d_code(), true),
+				new json_data(getQuestion("label.mdeath_cod_other"), o.getMdeath_cod_other(), true),
+				new json_data(getQuestion("label.mdeath_manner"),
+						getAnswer("manner_of_death_options", o.getMdeath_manner()), true),
+				new json_data(getQuestion("label.mdeath_surgery"),
+						getAnswer("yesnodk_options", o.getMdeath_surgery()), true),
+				new json_data(getQuestion("label.mdeath_surgery_date"),
+						(o.getMdeath_surgery_date() == null) ? ""
+								: new SimpleDateFormat("dd-MMM-yyyy").format(o.getMdeath_surgery_date()),
+						true),
+				new json_data(getQuestion("label.mdeath_surgery_reason"), o.getMdeath_surgery_reason(), true),
+				new json_data(getQuestion("label.mdeath_autopsy_findings_used"),
+						getAnswer("yesnodk_options", o.getMdeath_autopsy_findings_used()), true)
 
 		).collect(Collectors.toList());
 
@@ -3102,6 +3128,18 @@ public class CaseEntryController {
 
 		map.put(null, "Select one");
 		for (datamap elem : mapRepo.findByMap_feature("admission_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("manner_of_death_options")
+	public Map<Integer, String> mannerOfDeathOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("manner_of_death_options")) {
 			map.put(elem.getMap_value(), elem.getMap_label());
 		}
 

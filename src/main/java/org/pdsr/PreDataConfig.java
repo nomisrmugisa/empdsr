@@ -662,6 +662,16 @@ public class PreDataConfig {
 			res.add(new datamap("admission_options", 5, "Postpartum"));
 			res.add(new datamap("admission_options", 88, "Not Stated"));
 
+			res.add(new datamap("manner_of_death_options", 1, "Disease"));
+			res.add(new datamap("manner_of_death_options", 2, "Accident"));
+			res.add(new datamap("manner_of_death_options", 3, "Intentional self-harm"));
+			res.add(new datamap("manner_of_death_options", 4, "Assault"));
+			res.add(new datamap("manner_of_death_options", 5, "Legal intervention"));
+			res.add(new datamap("manner_of_death_options", 6, "War"));
+			res.add(new datamap("manner_of_death_options", 7, "Could not be determined"));
+			res.add(new datamap("manner_of_death_options", 8, "Pending investigation"));
+			res.add(new datamap("manner_of_death_options", 88, "Unknown"));
+
 			res.add(new datamap("mode_options", 0, "Spontaneous Vaginal Delivery"));
 			res.add(new datamap("mode_options", 1, "Assisted Delivery (Vacuum/forceps)"));
 			res.add(new datamap("mode_options", 2, "Elective Caesarean Section"));

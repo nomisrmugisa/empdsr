@@ -2455,6 +2455,136 @@
 		</div>
 	</fieldset>
 
+	<!-- WHO Medical Certificate of Cause of Death -->
+	<h4 class="text-light p-1 rounded mt-4" style="background-color: rgb(100, 60, 60)" th:text="#{title.mdeath_who_certificate}"></h4>
+
+	<!-- Frame A: Cause of Death Chain -->
+	<h5 class="mt-3 mb-2" th:text="#{label.mdeath_frame_a}"></h5>
+	<table class="table table-bordered table-sm">
+		<thead class="table-light">
+			<tr>
+				<th style="width:5%"></th>
+				<th style="width:40%" th:text="#{label.mdeath_cause_of_death}"></th>
+				<th style="width:30%" th:text="#{label.mdeath_interval}"></th>
+				<th style="width:25%" th:text="#{label.mdeath_cod_a_code}"></th>
+			</tr>
+		</thead>
+		<tbody>
+			<!-- Line a -->
+			<tr>
+				<td class="align-middle fw-bold">a</td>
+				<td>
+					<label class="form-label small mb-1" th:text="#{label.mdeath_cod_a}"></label>
+					<textarea rows="2" class="form-control form-control-sm" th:field="*{mdeath.mdeath_cod_a}"></textarea>
+				</td>
+				<td>
+					<input type="text" class="form-control form-control-sm mt-4" th:field="*{mdeath.mdeath_cod_a_interval}" placeholder="e.g. 2 hours, 3 days"/>
+				</td>
+				<td>
+					<input type="text" class="form-control form-control-sm mt-4" th:field="*{mdeath.mdeath_cod_a_code}" placeholder="ICD-10 code"/>
+				</td>
+			</tr>
+			<!-- Line b -->
+			<tr>
+				<td class="align-middle fw-bold">b</td>
+				<td>
+					<label class="form-label small mb-1" th:text="#{label.mdeath_cod_b}"></label>
+					<textarea rows="2" class="form-control form-control-sm" th:field="*{mdeath.mdeath_cod_b}"></textarea>
+				</td>
+				<td>
+					<input type="text" class="form-control form-control-sm mt-4" th:field="*{mdeath.mdeath_cod_b_interval}" placeholder="e.g. 2 hours, 3 days"/>
+				</td>
+				<td>
+					<input type="text" class="form-control form-control-sm mt-4" th:field="*{mdeath.mdeath_cod_b_code}" placeholder="ICD-10 code"/>
+				</td>
+			</tr>
+			<!-- Line c -->
+			<tr>
+				<td class="align-middle fw-bold">c</td>
+				<td>
+					<label class="form-label small mb-1" th:text="#{label.mdeath_cod_c}"></label>
+					<textarea rows="2" class="form-control form-control-sm" th:field="*{mdeath.mdeath_cod_c}"></textarea>
+				</td>
+				<td>
+					<input type="text" class="form-control form-control-sm mt-4" th:field="*{mdeath.mdeath_cod_c_interval}" placeholder="e.g. 2 hours, 3 days"/>
+				</td>
+				<td>
+					<input type="text" class="form-control form-control-sm mt-4" th:field="*{mdeath.mdeath_cod_c_code}" placeholder="ICD-10 code"/>
+				</td>
+			</tr>
+			<!-- Line d -->
+			<tr>
+				<td class="align-middle fw-bold">d</td>
+				<td>
+					<label class="form-label small mb-1" th:text="#{label.mdeath_cod_d}"></label>
+					<textarea rows="2" class="form-control form-control-sm" th:field="*{mdeath.mdeath_cod_d}"></textarea>
+				</td>
+				<td>
+					<input type="text" class="form-control form-control-sm mt-4" th:field="*{mdeath.mdeath_cod_d_interval}" placeholder="e.g. 2 hours, 3 days"/>
+				</td>
+				<td>
+					<input type="text" class="form-control form-control-sm mt-4" th:field="*{mdeath.mdeath_cod_d_code}" placeholder="ICD-10 code"/>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<!-- Frame B: Other Significant Conditions -->
+	<h5 class="mt-3 mb-2" th:text="#{label.mdeath_frame_b}"></h5>
+	<div class="row mb-3">
+		<div class="col-md-10">
+			<textarea rows="3" class="form-control form-control-sm" th:field="*{mdeath.mdeath_cod_other}"
+				th:placeholder="#{label.mdeath_cod_other}"></textarea>
+		</div>
+	</div>
+
+	<!-- Manner of Death -->
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_manner}"></label>
+		<div class="col-auto">
+			<select class="form-control form-control-sm" th:field="*{mdeath.mdeath_manner}">
+				<option th:each="option : ${manner_of_death_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<!-- Surgery within last 4 weeks -->
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_surgery}"></label>
+		<div class="col-auto">
+			<select id="mdeath_surgery" class="form-control form-control-sm" th:field="*{mdeath.mdeath_surgery}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_surgery_date}"></label>
+		<div class="col-auto">
+			<input type="date" class="form-control form-control-sm" th:field="*{mdeath.mdeath_surgery_date}" />
+		</div>
+	</div>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_surgery_reason}"></label>
+		<div class="col-md-6">
+			<textarea rows="2" class="form-control form-control-sm" th:field="*{mdeath.mdeath_surgery_reason}"></textarea>
+		</div>
+	</div>
+
+	<!-- Autopsy findings used -->
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_autopsy_findings_used}"></label>
+		<div class="col-auto">
+			<select class="form-control form-control-sm" th:field="*{mdeath.mdeath_autopsy_findings_used}">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
 	<fieldset hidden=true>
 		<input th:field="*{mdeath.mdeath_uuid}" />
 		<input th:field="*{mdeath.case_uuid}" />
