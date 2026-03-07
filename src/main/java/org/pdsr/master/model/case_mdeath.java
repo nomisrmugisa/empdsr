@@ -322,7 +322,14 @@ public class case_mdeath implements Serializable {
 
 	@Lob
 	@Column
-	private String mdeath_cod_other; // Frame B: Other significant conditions contributing to death
+	private String mdeath_cod_other; // Other significant conditions contributing to death
+
+	@Lob
+	@Column
+	private String mdeath_cod_underlying; // Final Underlying Cause of Death (auto-assigned from lowest line)
+
+	@Column
+	private String mdeath_cod_underlying_code; // ICD-11 code for final underlying cause
 
 	@Column
 	private Integer mdeath_manner; // Manner of death (Disease, Accident, Intentional self-harm, etc.)
@@ -1035,6 +1042,22 @@ public class case_mdeath implements Serializable {
 
 	public void setMdeath_cod_other(String mdeath_cod_other) {
 		this.mdeath_cod_other = mdeath_cod_other;
+	}
+
+	public String getMdeath_cod_underlying() {
+		return mdeath_cod_underlying;
+	}
+
+	public void setMdeath_cod_underlying(String mdeath_cod_underlying) {
+		this.mdeath_cod_underlying = mdeath_cod_underlying;
+	}
+
+	public String getMdeath_cod_underlying_code() {
+		return mdeath_cod_underlying_code;
+	}
+
+	public void setMdeath_cod_underlying_code(String mdeath_cod_underlying_code) {
+		this.mdeath_cod_underlying_code = mdeath_cod_underlying_code;
 	}
 
 	public Integer getMdeath_manner() {

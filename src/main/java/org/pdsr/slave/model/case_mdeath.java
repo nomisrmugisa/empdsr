@@ -280,6 +280,13 @@ public class case_mdeath implements Serializable {
 	@Column
 	private String mdeath_cod_other;
 
+	@Lob
+	@Column
+	private String mdeath_cod_underlying;
+
+	@Column
+	private String mdeath_cod_underlying_code;
+
 	@Column
 	private Integer mdeath_manner;
 
@@ -851,6 +858,12 @@ public class case_mdeath implements Serializable {
 
 	public String getMdeath_cod_other() { return mdeath_cod_other; }
 	public void setMdeath_cod_other(String mdeath_cod_other) { this.mdeath_cod_other = mdeath_cod_other; }
+
+	public String getMdeath_cod_underlying() { return mdeath_cod_underlying; }
+	public void setMdeath_cod_underlying(String mdeath_cod_underlying) { this.mdeath_cod_underlying = mdeath_cod_underlying; }
+
+	public String getMdeath_cod_underlying_code() { return mdeath_cod_underlying_code; }
+	public void setMdeath_cod_underlying_code(String mdeath_cod_underlying_code) { this.mdeath_cod_underlying_code = mdeath_cod_underlying_code; }
 
 	public Integer getMdeath_manner() { return mdeath_manner; }
 	public void setMdeath_manner(Integer mdeath_manner) { this.mdeath_manner = mdeath_manner; }

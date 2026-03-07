@@ -2792,6 +2792,8 @@ public class CaseEntryController {
 				new json_data(getQuestion("label.mdeath_interval_unit"), getAnswer("interval_unit_options", o.getMdeath_cod_d_interval_unit()), true),
 				new json_data(getQuestion("label.mdeath_cod_d_code"), o.getMdeath_cod_d_code(), true),
 				new json_data(getQuestion("label.mdeath_cod_other"), o.getMdeath_cod_other(), true),
+				new json_data(getQuestion("label.mdeath_cod_underlying"), o.getMdeath_cod_underlying(), true),
+				new json_data(getQuestion("label.mdeath_cod_underlying_code"), o.getMdeath_cod_underlying_code(), true),
 				new json_data(getQuestion("label.mdeath_manner"),
 						getAnswer("manner_of_death_options", o.getMdeath_manner()), true),
 				new json_data(getQuestion("label.mdeath_surgery"),

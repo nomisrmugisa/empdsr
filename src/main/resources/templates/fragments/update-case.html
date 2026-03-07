@@ -2558,6 +2558,64 @@
 		</div>
 	</div>
 
+	<!-- Final Underlying Cause of Death -->
+	<div class="row mb-3">
+		<label class="col-md-3 col-form-label border-bottom" data-bs-toggle="tooltip" data-bs-placement="top"
+			title="This is the lowest line in the table and represents the final underlying cause of death">
+			<span th:text="#{label.mdeath_cod_underlying}"></span>
+			<i class="bi bi-info-circle-fill text-primary ms-1" style="cursor:pointer;"></i>
+		</label>
+		<div class="col-md-5">
+			<textarea rows="2" class="form-control form-control-sm" th:field="*{mdeath.mdeath_cod_underlying}" id="mdeath_cod_underlying" readonly="readonly"></textarea>
+		</div>
+		<div class="col-md-1 col-form-label text-center fw-bold">ICD-11</div>
+		<div class="col-md-3">
+			<input type="text" class="form-control form-control-sm" th:field="*{mdeath.mdeath_cod_underlying_code}" id="mdeath_cod_underlying_code" readonly="readonly"/>
+		</div>
+	</div>
+
+	<!-- JS: Auto-assign final underlying cause from lowest filled line -->
+	<script th:inline="javascript">
+	document.addEventListener('DOMContentLoaded', function() {
+		var codFields = [
+			{ cause: 'mdeath.mdeath_cod_d', code: 'mdeath.mdeath_cod_d_code' },
+			{ cause: 'mdeath.mdeath_cod_c', code: 'mdeath.mdeath_cod_c_code' },
+			{ cause: 'mdeath.mdeath_cod_b', code: 'mdeath.mdeath_cod_b_code' },
+			{ cause: 'mdeath.mdeath_cod_a', code: 'mdeath.mdeath_cod_a_code' }
+		];
+
+		function updateUnderlying() {
+			var underCause = document.getElementById('mdeath_cod_underlying');
+			var underCode = document.getElementById('mdeath_cod_underlying_code');
+			if (!underCause || !underCode) return;
+			for (var i = 0; i < codFields.length; i++) {
+				var causeEl = document.getElementById(codFields[i].cause);
+				var codeEl = document.getElementById(codFields[i].code);
+				if (causeEl && causeEl.value && causeEl.value.trim() !== '') {
+					underCause.value = causeEl.value;
+					underCode.value = codeEl ? codeEl.value : '';
+					return;
+				}
+			}
+			underCause.value = '';
+			underCode.value = '';
+		}
+
+		codFields.forEach(function(f) {
+			var causeEl = document.getElementById(f.cause);
+			var codeEl = document.getElementById(f.code);
+			if (causeEl) causeEl.addEventListener('input', updateUnderlying);
+			if (codeEl) codeEl.addEventListener('input', updateUnderlying);
+		});
+
+		updateUnderlying();
+
+		// Initialize Bootstrap tooltips
+		var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+		tooltipTriggerList.forEach(function(el) { new bootstrap.Tooltip(el); });
+	});
+	</script>
+
 	<!-- Manner of Death -->
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_manner}"></label>

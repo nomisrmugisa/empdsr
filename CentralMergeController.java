@@ -1153,6 +1153,8 @@ public class CentralMergeController {
 					mcase.setMdeath_cod_d_interval_unit(s.getMdeath_cod_d_interval_unit());
 					mcase.setMdeath_cod_d_code(s.getMdeath_cod_d_code());
 					mcase.setMdeath_cod_other(s.getMdeath_cod_other());
+					mcase.setMdeath_cod_underlying(s.getMdeath_cod_underlying());
+					mcase.setMdeath_cod_underlying_code(s.getMdeath_cod_underlying_code());
 					mcase.setMdeath_manner(s.getMdeath_manner());
 					mcase.setMdeath_surgery(s.getMdeath_surgery());
 					mcase.setMdeath_surgery_date(s.getMdeath_surgery_date());
