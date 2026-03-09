@@ -734,7 +734,7 @@ public class CaseEntryController {
 			// Re-populate required model attributes before returning to the view
 			sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 			model.addAttribute("myf", synctable.getSync_name());
-			model.addAttribute("death_options", deathOptions());
+			model.addAttribute("death_options", deathOptionsSelectOne());
 			model.addAttribute("nationality_options", nationalityOptionsSelectOne());
 			return "registry/case-create";
 		}
@@ -3176,14 +3176,6 @@ public class CaseEntryController {
 		return map;
 	}
 
-	@ModelAttribute("death_options")
-	public Map<Integer, String> deathOptions() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-		map.put(77, "Still Birth");
-		map.put(88, "Early Neonatal Death");
-		map.put(99, "Maternal Death");
-		return map;
-	}
 
 	// return map;
 	// }

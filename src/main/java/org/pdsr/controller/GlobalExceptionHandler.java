@@ -55,15 +55,45 @@ public class GlobalExceptionHandler {
         return mav;
     }
 
+    @ExceptionHandler(javax.validation.ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ModelAndView handleConstraintViolationException(javax.validation.ConstraintViolationException ex, HttpServletRequest request) {
+        System.err.println("=== CONSTRAINT VIOLATION on URL: " + request.getRequestURL() + " ===");
+        StringBuilder msg = new StringBuilder("Database validation error occurred:<br><ul>");
+        ex.getConstraintViolations().forEach(cv -> {
+            String logMsg = "  Field: [" + cv.getPropertyPath() + "] value: [" + cv.getInvalidValue() + "] message: " + cv.getMessage();
+            System.err.println(logMsg);
+            msg.append("<li><b>").append(cv.getPropertyPath()).append("</b>: ").append(cv.getMessage()).append(" (Value: ").append(cv.getInvalidValue()).append(")</li>");
+        });
+        System.err.println("=== END CONSTRAINT VIOLATION ===");
+        msg.append("</ul><a href='javascript:window.history.back()'>Go Back</a>");
+
+        ModelAndView mav = new ModelAndView("error");
+        mav.addObject("message", msg.toString());
+        return mav;
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ModelAndView handleAllExceptions(Exception ex, HttpServletRequest request) {
+        // Unpack RollbackException to see if it contains a more specific cause
+        Throwable cause = ex;
+        if (ex instanceof org.springframework.transaction.TransactionSystemException) {
+            cause = ((org.springframework.transaction.TransactionSystemException) ex).getRootCause();
+        }
+
+        if (cause instanceof javax.validation.ConstraintViolationException) {
+            return handleConstraintViolationException((javax.validation.ConstraintViolationException) cause, request);
+        }
+
         System.err.println("=== UNEXPECTED ERROR on URL: " + request.getRequestURL() + " ===");
-        ex.printStackTrace();
+        if (cause != null) cause.printStackTrace();
+        else ex.printStackTrace();
         System.err.println("=== END UNEXPECTED ERROR ===");
 
         ModelAndView mav = new ModelAndView("error");
-        mav.addObject("message", "An unexpected error occurred: " + ex.getMessage());
+        String errorMsg = (cause != null) ? cause.getMessage() : ex.getMessage();
+        mav.addObject("message", "An unexpected error occurred: " + errorMsg);
         return mav;
     }
 }
