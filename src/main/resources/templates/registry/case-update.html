@@ -1358,7 +1358,166 @@
 		})();
 	</script>
 	<script>
+		function fillTestData() {
+			var form = document.querySelector('form');
+			if (!form) { alert('No form found!'); return; }
+
+			var names = ['Jane Doe', 'Mary Smith', 'Sarah Johnson', 'Alice Brown', 'Emma Wilson'];
+			var places = ['Kampala Hospital', 'Mulago', 'Entebbe Clinic', 'Jinja RRH', 'Mbarara RRH'];
+			var causes = ['Postpartum haemorrhage', 'Eclampsia', 'Sepsis', 'Obstructed labour', 'Ruptured uterus'];
+			var icdCodes = ['JA40', 'JA80.0', 'JB63', 'JB0D', 'JA43.1'];
+
+			function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+			function randomDate() {
+				var y = randomInt(2023, 2025);
+				var m = String(randomInt(1, 12)).padStart(2, '0');
+				var d = String(randomInt(1, 28)).padStart(2, '0');
+				return y + '-' + m + '-' + d;
+			}
+			function randomDateDDMMYYYY() {
+				var y = randomInt(2023, 2025);
+				var m = String(randomInt(1, 12)).padStart(2, '0');
+				var d = String(randomInt(1, 28)).padStart(2, '0');
+				return d + '/' + m + '/' + y;
+			}
+			function randomTime() {
+				return String(randomInt(0, 23)).padStart(2, '0') + ':' + String(randomInt(0, 59)).padStart(2, '0');
+			}
+			function randomPick(arr) { return arr[randomInt(0, arr.length - 1)]; }
+
+			function shouldSkip(el) {
+				if (el.type === 'hidden') return true;
+				if (el.readOnly) return true;
+				// Skip fields inside hidden fieldsets (attribute-based)
+				if (el.closest('fieldset[hidden]')) return true;
+				var n = (el.name || el.id || '').toLowerCase();
+				if (n.indexOf('uuid') !== -1 || n.indexOf('_sync') !== -1) return true;
+				if (n === 'case_id' || n === 'case_date') return true;
+				if (n.indexOf('case_status') !== -1) return true;
+				return false;
+			}
+
+			function fillField(el) {
+				var n = (el.name || el.id || '').toLowerCase();
+				var tag = el.tagName.toLowerCase();
+				// Temporarily enable if disabled
+				var wasDisabled = el.disabled;
+				el.disabled = false;
+
+				if (tag === 'select') {
+					var opts = el.querySelectorAll('option');
+					var validOpts = [];
+					opts.forEach(function (o) {
+						if (o.value !== '' && o.value !== '99' && o.value !== '88') validOpts.push(o);
+					});
+					if (validOpts.length > 0) {
+						el.value = randomPick(validOpts).value;
+					}
+				} else if (tag === 'textarea') {
+					if (n.indexOf('cod') !== -1) {
+						el.value = randomPick(causes);
+					} else {
+						el.value = 'Test: ' + randomPick(places) + ' - ' + randomPick(causes);
+					}
+				} else if (el.type === 'checkbox') {
+					el.checked = Math.random() > 0.5;
+				} else if (el.type === 'date') {
+					el.value = randomDate();
+				} else if (el.type === 'time') {
+					el.value = randomTime();
+				} else if (el.type === 'number') {
+					el.value = randomInt(1, 100);
+				} else {
+					// text or untyped input
+					if (el.classList.contains('datepicker')) {
+						el.value = randomDateDDMMYYYY();
+					} else if (el.classList.contains('timepicker')) {
+						el.value = randomTime();
+					} else if (n.indexOf('name') !== -1 || n.indexOf('mname') !== -1) {
+						el.value = randomPick(names);
+					} else if (n.indexOf('facility') !== -1 || n.indexOf('location') !== -1) {
+						el.value = randomPick(places);
+					} else if (n.indexOf('weight') !== -1) {
+						el.value = (randomInt(10, 45) / 10).toFixed(1);
+					} else if (n.indexOf('nin') !== -1 || n.indexOf('mid') !== -1) {
+						el.value = 'TEST' + randomInt(10000, 99999);
+					} else if (n.indexOf('code') !== -1 || n.indexOf('icd') !== -1) {
+						el.value = randomPick(icdCodes);
+					} else if (n.indexOf('interval') !== -1 || n.indexOf('_value') !== -1) {
+						el.value = randomInt(1, 30);
+					} else if (n.indexOf('hour') !== -1) {
+						el.value = randomInt(0, 23);
+					} else if (n.indexOf('minute') !== -1) {
+						el.value = randomInt(0, 59);
+					} else if (n.indexOf('contact') !== -1 || n.indexOf('phone') !== -1) {
+						el.value = '07' + randomInt(10000000, 99999999);
+					} else {
+						el.value = 'Test ' + randomInt(1, 999);
+					}
+				}
+				// Restore disabled state
+				if (wasDisabled) el.disabled = true;
+			}
+
+			// Show all jQuery-hidden fieldsets so fields inside them are accessible
+			$('fieldset').not('[hidden]').show();
+
+			function doFill() {
+				var count = 0;
+				var fields = form.querySelectorAll('input, select, textarea');
+				fields.forEach(function (el) {
+					if (shouldSkip(el)) return;
+					fillField(el);
+					count++;
+				});
+				return count;
+			}
+
+			// Pass 1: set all values (no events - avoids skip-logic interfering)
+			doFill();
+
+			// Pass 2 (after 80ms): trigger change/input events so skip-logic
+			//   fires and shows/hides fieldsets correctly
+			setTimeout(function () {
+				form.querySelectorAll('select').forEach(function (sel) {
+					if (!shouldSkip(sel)) {
+						sel.dispatchEvent(new Event('change', { bubbles: true }));
+					}
+				});
+
+				// Pass 3 (after another 80ms): re-fill everything that skip-logic
+				//   may have cleared, then show alert
+				setTimeout(function () {
+					$('fieldset').not('[hidden]').show();
+					var filled = doFill();
+
+					// Update datepicker widgets to reflect set values
+					$('.datepicker').each(function () {
+						var val = this.value;
+						if (val) {
+							try { $(this).datepicker('setDate', val); } catch (e) { }
+						}
+					});
+
+					// Trigger underlying cause auto-population if present
+					if (typeof updateUnderlyingCause === 'function') {
+						updateUnderlyingCause();
+					}
+
+					alert('Filled ' + filled + ' fields with test data! Review and click Save.');
+				}, 80);
+			}, 80);
+		}
+	</script>
+
+	<script>
 		$(document).ready(function () {
+			// Inject "Fill Test Data" button next to the Back button
+			var backBtn = $('a.btn.btn-light').first();
+			if (backBtn.length) {
+				backBtn.after('<button type="button" class="btn btn-warning ms-2" onclick="fillTestData()">&#x1F9EA; Fill Test Data</button>');
+			}
+
 			// Initialize all skip logic views
 			if (typeof changeAntenatalView === 'function') changeAntenatalView();
 			if (typeof changeAntenatalRiskView === 'function') changeAntenatalRiskView();

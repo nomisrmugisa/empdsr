@@ -103,6 +103,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -111,6 +113,51 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Controller
 @RequestMapping("/registry")
 public class CaseEntryController {
+
+	/** Accept dates in dd/MM/yyyy (datepicker) OR yyyy-MM-dd HH:mm:ss (DB timestamp rendered via th:field) */
+	@InitBinder
+	public void initBinder(WebDataBinder binder) {
+		binder.registerCustomEditor(Date.class, new java.beans.PropertyEditorSupport() {
+			private final String[] patterns = {
+				"dd/MM/yyyy",
+				"yyyy-MM-dd HH:mm:ss",
+				"yyyy-MM-dd HH:mm:ss.S",
+				"yyyy-MM-dd",
+				"HH:mm"
+			};
+			@Override
+			public void setAsText(String text) {
+				if (text == null || text.trim().isEmpty()) { setValue(null); return; }
+				for (String pattern : patterns) {
+					try {
+						SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+						sdf.setLenient(false);
+						setValue(sdf.parse(text.trim()));
+						return;
+					} catch (Exception ignored) {}
+				}
+				throw new IllegalArgumentException("Cannot parse date: " + text);
+			}
+			@Override
+			public String getAsText() {
+				Date d = (Date) getValue();
+				if (d == null) return "";
+				return new SimpleDateFormat("dd/MM/yyyy").format(d);
+			}
+		});
+        // Register custom editor for sync_table to bind by ID string
+        binder.registerCustomEditor(sync_table.class, new java.beans.PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) {
+                if (org.springframework.util.StringUtils.hasText(text)) {
+                    sync_table s = syncRepo.findById(text).orElse(null);
+                    setValue(s);
+                } else {
+                    setValue(null);
+                }
+            }
+        });
+	}
 
 	@Autowired
 	private ServiceApi api;
@@ -724,7 +771,27 @@ public class CaseEntryController {
 
 	@Transactional
 	@PostMapping("/add")
-	public String add(Principal principal, Model model, @ModelAttribute case_identifiers selected) {
+	public String add(Principal principal, Model model, @ModelAttribute("selected") case_identifiers selected,
+			BindingResult results) {
+
+		if (selected.getCase_date() == null) {
+			results.rejectValue("case_date", "error.notnull", "Entry date is required");
+		}
+		if (selected.getCase_death() == null) {
+			results.rejectValue("case_death", "error.notnull", "Type of case is required");
+		}
+
+		if (results.hasErrors()) {
+			model.addAttribute("selected", selected);
+			model.addAttribute("death_options", deathOptionsSelectOne());
+			// Re-populate required model attributes before returning to the view
+			sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+			model.addAttribute("myf", synctable.getSync_name());
+			model.addAttribute("death_options", deathOptionsSelectOne());
+			model.addAttribute("nationality_options", nationalityOptionsSelectOne());
+			return "registry/case-create";
+		}
+
 		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
@@ -797,6 +864,10 @@ public class CaseEntryController {
 		}
 
 		switch (page) {
+			case 0: {
+				// Overview page - just show case identifiers, no special setup needed
+				break;
+			}
 			case 1: {
 				model.addAttribute("bioactive", "active");
 				if (selected.getBiodata() == null) {
@@ -981,10 +1052,19 @@ public class CaseEntryController {
 		selected.setCase_status(0);// reset the submission status to not submitted (incomplete)
 
 		switch (page) {
+			case 0: {
+				// Overview page - just save basic case identifiers
+				selected.setCase_status(0);
+				caseRepo.save(selected);
+				break;
+			}
 			case 1: {
 
 				try {
 					case_biodata o = selected.getBiodata();
+					o.setBiodata_uuid(selected.getCase_uuid());
+					o.setCase_uuid(selected);
+
 					if (o.getBiodata_mage() == null || o.getBiodata_medu() == null || o.getBiodata_sex() == null) {
 						o.setData_complete(0);
 					} else {
@@ -1046,6 +1126,8 @@ public class CaseEntryController {
 					}
 
 					case_referral o = selected.getReferral();
+					o.setReferral_uuid(selected.getCase_uuid());
+					o.setCase_uuid(selected);
 
 					boolean referral_adatetime_expected = (o.getReferral_adatetime_notstated() == null
 							|| o.getReferral_adatetime_notstated() == 0);
@@ -1095,6 +1177,9 @@ public class CaseEntryController {
 				try {
 
 					case_pregnancy o = selected.getPregnancy();
+					o.setPregnancy_uuid(selected.getCase_uuid());
+					o.setCase_uuid(selected);
+
 					if (o.getPregnancy_days() == null || o.getPregnancy_type() == null
 							|| o.getPregnancy_weeks() == null) {
 						o.setData_complete(0);
@@ -1114,6 +1199,9 @@ public class CaseEntryController {
 				try {
 
 					case_antenatal o = selected.getAntenatal();
+					o.setAntenatal_uuid(selected.getCase_uuid());
+					o.setCase_uuid(selected);
+
 					if (o.getAntenatal_alcohol() == null || o.getAntenatal_attend() == null
 							|| o.getAntenatal_attendno() == null || o.getAntenatal_days() == null
 							|| o.getAntenatal_facility() == null || o.getAntenatal_facility().trim() == ""
@@ -1187,6 +1275,8 @@ public class CaseEntryController {
 					}
 
 					case_labour o = selected.getLabour();
+					o.setLabour_uuid(selected.getCase_uuid());
+					o.setCase_uuid(selected);
 
 					boolean labour_seedatetime_expected = (o.getLabour_seedatetime_notstated() == null
 							|| o.getLabour_seedatetime_notstated() == 0);
@@ -1278,6 +1368,9 @@ public class CaseEntryController {
 					}
 
 					case_delivery o = selected.getDelivery();
+					o.setDelivery_uuid(selected.getCase_uuid());
+					o.setCase_uuid(selected);
+
 					boolean delivery_not_answered = o.getDelivery_occured() == null;
 
 					boolean delivery_abortion_expected = (o.getDelivery_occured() != null
@@ -1365,6 +1458,8 @@ public class CaseEntryController {
 					}
 
 					case_birth o = selected.getBirth();
+					o.setBirth_uuid(selected.getCase_uuid());
+					o.setCase_uuid(selected);
 
 					boolean insistnormal_notselected = (o.getBirth_mode() != null
 							&& (o.getBirth_mode() == 0 || o.getBirth_mode() == 1)) && o.getBirth_insistnormal() == null;
@@ -1401,6 +1496,9 @@ public class CaseEntryController {
 					try {
 
 						case_fetalheart o = selected.getFetalheart();
+						o.setFetalheart_uuid(selected.getCase_uuid());
+						o.setCase_uuid(selected);
+
 						if (o.getFetalheart_arrival() == null || o.getFetalheart_lastheard() == null
 								|| o.getFetalheart_refered() == null) {
 							o.setData_complete(0);
@@ -1439,6 +1537,9 @@ public class CaseEntryController {
 						}
 
 						case_babydeath o = selected.getBabydeath();
+						o.setBaby_uuid(selected.getCase_uuid());
+						o.setCase_uuid(selected);
+
 						boolean baby_ddatetime_expected = (o.getBaby_ddatetime_notstated() == null
 								|| o.getBaby_ddatetime_notstated() == 0);
 
@@ -1488,6 +1589,8 @@ public class CaseEntryController {
 						}
 
 						case_mdeath o = selected.getMdeath();
+						o.setMdeath_uuid(selected.getCase_uuid());
+						o.setCase_uuid(selected);
 
 						boolean mdeath_early_interv_missing = o.getMdeath_early_evacuation() == null
 								&& o.getMdeath_early_antibiotic() == null && o.getMdeath_early_laparotomy() == null
@@ -1578,6 +1681,10 @@ public class CaseEntryController {
 			case 9: {
 
 				try {
+					case_notes o = selected.getNotes();
+					o.setNotes_uuid(selected.getCase_uuid());
+					o.setCase_uuid(selected);
+
 					MultipartFile file = selected.getNotes().getFile();
 					selected.getNotes().setBase64image(null);
 
@@ -1969,14 +2076,14 @@ public class CaseEntryController {
 				return 1;
 			} else if (deathDate.compareTo(deliveryDate) == 0) {
 				final Date deliveryTime = existing.getDelivery().getDelivery_time();
-				final Date deathTime = selected.getBabydeath().getBaby_dtime();
+				final Date deathTime = selected.getMdeath().getMdeath_time();
 
 				if (deliveryTime != null && deathTime != null) {
 					final Integer deliveryHour = existing.getDelivery().getDelivery_hour();
 					final Integer deliveryMins = existing.getDelivery().getDelivery_minute();
 
-					final Integer deathHour = selected.getBabydeath().getBaby_dhour();
-					final Integer deathMins = selected.getBabydeath().getBaby_dminute();
+					final Integer deathHour = selected.getMdeath().getMdeath_hour();
+					final Integer deathMins = selected.getMdeath().getMdeath_minute();
 
 					if (((deathHour * 60) + deathMins) <= ((deliveryHour * 60) + deliveryMins)) {
 						results.rejectValue("mdeath.mdeath_time", "error.time.death.before.delivery");
@@ -2157,10 +2264,22 @@ public class CaseEntryController {
 		final Map<Integer, String> map = new LinkedHashMap<>();
 
 		map.put(null, "Select one");
-		for (int i = 1; i < 25; i++) {
+		for (int i = 1; i < 16; i++) {
 			map.put(i, i + "");
 		}
 		map.put(88, "Not stated");
+
+		return map;
+	}
+
+	@ModelAttribute("decision_options")
+	public Map<Integer, String> decisionOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("decision_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
 
 		return map;
 	}
@@ -2235,6 +2354,54 @@ public class CaseEntryController {
 	@ModelAttribute("hiv_options")
 	public Map<Integer, String> hivOptionsAlias() {
 		return posnegOptionsSelectOne();
+	}
+
+	@ModelAttribute("provider_options")
+	public Map<Integer, String> providerOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("provider_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("birthloc_options")
+	public Map<Integer, String> birthlocOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("birthloc_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("liqourvolume_options")
+	public Map<Integer, String> liqourvolumeOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("liqourvolume_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("liqourcolor_options")
+	public Map<Integer, String> liqourcolorOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("liqourcolor_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
 	}
 
 	@ModelAttribute("liqourodour_options")
@@ -2761,7 +2928,39 @@ public class CaseEntryController {
 				new json_data(getQuestion("label.mdeath_autopsy_antec_cod"), o.getMdeath_autopsy_antec_cod(), true),
 				new json_data(getQuestion("label.mdeath_autopsy_ops_cod"), o.getMdeath_autopsy_ops_cod(), true),
 				new json_data(getQuestion("label.mdeath_autopsy_icd_mm"),
-						getAnswer("autopsyby_options", o.getMdeath_autopsy_icd_mm()), true)
+						getAnswer("autopsyby_options", o.getMdeath_autopsy_icd_mm()), true),
+
+				// WHO Medical Certificate of Cause of Death
+				new json_data(getQuestion("label.mdeath_cod_a"), o.getMdeath_cod_a(), true),
+				new json_data(getQuestion("label.mdeath_cod_a_interval"), o.getMdeath_cod_a_interval(), true),
+				new json_data(getQuestion("label.mdeath_interval_unit"), getAnswer("interval_unit_options", o.getMdeath_cod_a_interval_unit()), true),
+				new json_data(getQuestion("label.mdeath_cod_a_code"), o.getMdeath_cod_a_code(), true),
+				new json_data(getQuestion("label.mdeath_cod_b"), o.getMdeath_cod_b(), true),
+				new json_data(getQuestion("label.mdeath_cod_b_interval"), o.getMdeath_cod_b_interval(), true),
+				new json_data(getQuestion("label.mdeath_interval_unit"), getAnswer("interval_unit_options", o.getMdeath_cod_b_interval_unit()), true),
+				new json_data(getQuestion("label.mdeath_cod_b_code"), o.getMdeath_cod_b_code(), true),
+				new json_data(getQuestion("label.mdeath_cod_c"), o.getMdeath_cod_c(), true),
+				new json_data(getQuestion("label.mdeath_cod_c_interval"), o.getMdeath_cod_c_interval(), true),
+				new json_data(getQuestion("label.mdeath_interval_unit"), getAnswer("interval_unit_options", o.getMdeath_cod_c_interval_unit()), true),
+				new json_data(getQuestion("label.mdeath_cod_c_code"), o.getMdeath_cod_c_code(), true),
+				new json_data(getQuestion("label.mdeath_cod_d"), o.getMdeath_cod_d(), true),
+				new json_data(getQuestion("label.mdeath_cod_d_interval"), o.getMdeath_cod_d_interval(), true),
+				new json_data(getQuestion("label.mdeath_interval_unit"), getAnswer("interval_unit_options", o.getMdeath_cod_d_interval_unit()), true),
+				new json_data(getQuestion("label.mdeath_cod_d_code"), o.getMdeath_cod_d_code(), true),
+				new json_data(getQuestion("label.mdeath_cod_other"), o.getMdeath_cod_other(), true),
+				new json_data(getQuestion("label.mdeath_cod_underlying"), o.getMdeath_cod_underlying(), true),
+				new json_data(getQuestion("label.mdeath_cod_underlying_code"), o.getMdeath_cod_underlying_code(), true),
+				new json_data(getQuestion("label.mdeath_manner"),
+						getAnswer("manner_of_death_options", o.getMdeath_manner()), true),
+				new json_data(getQuestion("label.mdeath_surgery"),
+						getAnswer("yesnodk_options", o.getMdeath_surgery()), true),
+				new json_data(getQuestion("label.mdeath_surgery_date"),
+						(o.getMdeath_surgery_date() == null) ? ""
+								: new SimpleDateFormat("dd-MMM-yyyy").format(o.getMdeath_surgery_date()),
+						true),
+				new json_data(getQuestion("label.mdeath_surgery_reason"), o.getMdeath_surgery_reason(), true),
+				new json_data(getQuestion("label.mdeath_autopsy_findings_used"),
+						getAnswer("yesnodk_options", o.getMdeath_autopsy_findings_used()), true)
 
 		).collect(Collectors.toList());
 
@@ -2845,14 +3044,52 @@ public class CaseEntryController {
 		return map;
 	}
 
+	@ModelAttribute("period_options")
+	public Map<Integer, String> periodOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		List<datamap> periodOptions = mapRepo.findByMap_feature("period_options");
+		System.out.println("DEBUG: Found " + periodOptions.size() + " period_options in database");
+
+		// If no data found, initialize it directly
+		if (periodOptions.isEmpty()) {
+			System.out.println("DEBUG: No period_options found, initializing directly...");
+			initializePeriodOptions();
+			periodOptions = mapRepo.findByMap_feature("period_options");
+			System.out.println("DEBUG: After initialization, found " + periodOptions.size() + " period_options");
+		}
+
+		for (datamap elem : periodOptions) {
+			System.out.println("DEBUG: period_option - value: " + elem.getMap_value() + ", label: " + elem.getMap_label());
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+		System.out.println("DEBUG: Final period_options map size: " + map.size());
+
+		return map;
+	}
+
 	@ModelAttribute("lbradmc_options")
 	public Map<Integer, String> lbrAdmcOptionsSelectOne() {
 		final Map<Integer, String> map = new LinkedHashMap<>();
 
 		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("admissioncond_options")) {
+		List<datamap> admissionCondOptions = mapRepo.findByMap_feature("admissioncond_options");
+		System.out.println("DEBUG: Found " + admissionCondOptions.size() + " admissioncond_options in database");
+
+		// If no data found, initialize it directly
+		if (admissionCondOptions.isEmpty()) {
+			System.out.println("DEBUG: No admissioncond_options found, initializing directly...");
+			initializeAdmissionConditionOptions();
+			admissionCondOptions = mapRepo.findByMap_feature("admissioncond_options");
+			System.out.println("DEBUG: After initialization, found " + admissionCondOptions.size() + " admissioncond_options");
+		}
+
+		for (datamap elem : admissionCondOptions) {
+			System.out.println("DEBUG: admissioncond_option - value: " + elem.getMap_value() + ", label: " + elem.getMap_label());
 			map.put(elem.getMap_value(), elem.getMap_label());
 		}
+		System.out.println("DEBUG: Final admissioncond_options map size: " + map.size());
 
 		return map;
 	}
@@ -2862,9 +3099,22 @@ public class CaseEntryController {
 		final Map<Integer, String> map = new LinkedHashMap<>();
 
 		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("levelconsc_options")) {
+		List<datamap> levelConscOptions = mapRepo.findByMap_feature("levelconsc_options");
+		System.out.println("DEBUG: Found " + levelConscOptions.size() + " levelconsc_options in database");
+
+		// If no data found, initialize it directly
+		if (levelConscOptions.isEmpty()) {
+			System.out.println("DEBUG: No levelconsc_options found, initializing directly...");
+			initializeLevelConsciousnessOptions();
+			levelConscOptions = mapRepo.findByMap_feature("levelconsc_options");
+			System.out.println("DEBUG: After initialization, found " + levelConscOptions.size() + " levelconsc_options");
+		}
+
+		for (datamap elem : levelConscOptions) {
+			System.out.println("DEBUG: levelconsc_option - value: " + elem.getMap_value() + ", label: " + elem.getMap_label());
 			map.put(elem.getMap_value(), elem.getMap_label());
 		}
+		System.out.println("DEBUG: Final levelconsc_options map size: " + map.size());
 
 		return map;
 	}
@@ -3022,14 +3272,6 @@ public class CaseEntryController {
 		return map;
 	}
 
-	@ModelAttribute("death_options")
-	public Map<Integer, String> deathOptions() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-		map.put(77, "Still Birth");
-		map.put(88, "Early Neonatal Death");
-		map.put(99, "Maternal Death");
-		return map;
-	}
 
 	// return map;
 	// }
@@ -3040,6 +3282,30 @@ public class CaseEntryController {
 
 		map.put(null, "Select one");
 		for (datamap elem : mapRepo.findByMap_feature("admission_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("manner_of_death_options")
+	public Map<Integer, String> mannerOfDeathOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		for (datamap elem : mapRepo.findByMap_feature("manner_of_death_options")) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+
+		return map;
+	}
+
+	@ModelAttribute("interval_unit_options")
+	public Map<Integer, String> intervalUnitOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select unit");
+		for (datamap elem : mapRepo.findByMap_feature("interval_unit_options")) {
 			map.put(elem.getMap_value(), elem.getMap_label());
 		}
 
@@ -3080,6 +3346,111 @@ public class CaseEntryController {
 		}
 
 		return map;
+	}
+
+	@GetMapping("/debug-dropdown")
+	@ResponseBody
+	public String debugDropdown() {
+		StringBuilder result = new StringBuilder();
+		result.append("=== DROPDOWN DEBUG INFO ===\n");
+
+		try {
+			// Check Transportation Options
+			List<datamap> transOptions = mapRepo.findByMap_feature("trans_options");
+			result.append("Found ").append(transOptions.size()).append(" trans_options in database\n");
+
+			if (transOptions.isEmpty()) {
+				result.append("No trans_options found, initializing directly...\n");
+				initializeTransportationOptions();
+				transOptions = mapRepo.findByMap_feature("trans_options");
+				result.append("After initialization, found ").append(transOptions.size()).append(" trans_options\n");
+			}
+
+			result.append("\nTransportation Options:\n");
+			for (datamap option : transOptions) {
+				result.append("- Feature: ").append(option.getMap_feature())
+					  .append(", Value: ").append(option.getMap_value())
+					  .append(", Label: ").append(option.getMap_label()).append("\n");
+			}
+
+			// Check Period Options
+			List<datamap> periodOptions = mapRepo.findByMap_feature("period_options");
+			result.append("\nFound ").append(periodOptions.size()).append(" period_options in database\n");
+
+			if (periodOptions.isEmpty()) {
+				result.append("No period_options found, initializing directly...\n");
+				initializePeriodOptions();
+				periodOptions = mapRepo.findByMap_feature("period_options");
+				result.append("After initialization, found ").append(periodOptions.size()).append(" period_options\n");
+			}
+
+			result.append("\nPeriod Options:\n");
+			for (datamap option : periodOptions) {
+				result.append("- Feature: ").append(option.getMap_feature())
+					  .append(", Value: ").append(option.getMap_value())
+					  .append(", Label: ").append(option.getMap_label()).append("\n");
+			}
+
+			// Check Admission Condition Options
+			List<datamap> admissionCondOptions = mapRepo.findByMap_feature("admissioncond_options");
+			result.append("\nFound ").append(admissionCondOptions.size()).append(" admissioncond_options in database\n");
+
+			if (admissionCondOptions.isEmpty()) {
+				result.append("No admissioncond_options found, initializing directly...\n");
+				initializeAdmissionConditionOptions();
+				admissionCondOptions = mapRepo.findByMap_feature("admissioncond_options");
+				result.append("After initialization, found ").append(admissionCondOptions.size()).append(" admissioncond_options\n");
+			}
+
+			result.append("\nAdmission Condition Options:\n");
+			for (datamap option : admissionCondOptions) {
+				result.append("- Feature: ").append(option.getMap_feature())
+					  .append(", Value: ").append(option.getMap_value())
+					  .append(", Label: ").append(option.getMap_label()).append("\n");
+			}
+
+			// Check Level of Consciousness Options
+			List<datamap> levelConscOptions = mapRepo.findByMap_feature("levelconsc_options");
+			result.append("\nFound ").append(levelConscOptions.size()).append(" levelconsc_options in database\n");
+
+			if (levelConscOptions.isEmpty()) {
+				result.append("No levelconsc_options found, initializing directly...\n");
+				initializeLevelConsciousnessOptions();
+				levelConscOptions = mapRepo.findByMap_feature("levelconsc_options");
+				result.append("After initialization, found ").append(levelConscOptions.size()).append(" levelconsc_options\n");
+			}
+
+			result.append("\nLevel of Consciousness Options:\n");
+			for (datamap option : levelConscOptions) {
+				result.append("- Feature: ").append(option.getMap_feature())
+					  .append(", Value: ").append(option.getMap_value())
+					  .append(", Label: ").append(option.getMap_label()).append("\n");
+			}
+
+			// Check Start Mode Options
+			List<datamap> startmodeOptions = mapRepo.findByMap_feature("startmode_options");
+			result.append("\nFound ").append(startmodeOptions.size()).append(" startmode_options in database\n");
+
+			if (startmodeOptions.isEmpty()) {
+				result.append("No startmode_options found, initializing directly...\n");
+				initializeStartModeOptions();
+				startmodeOptions = mapRepo.findByMap_feature("startmode_options");
+				result.append("After initialization, found ").append(startmodeOptions.size()).append(" startmode_options\n");
+			}
+
+			result.append("\nStart Mode Options:\n");
+			for (datamap option : startmodeOptions) {
+				result.append("- Feature: ").append(option.getMap_feature())
+					  .append(", Value: ").append(option.getMap_value())
+					  .append(", Label: ").append(option.getMap_label()).append("\n");
+			}
+
+		} catch (Exception e) {
+			result.append("ERROR: ").append(e.getMessage()).append("\n");
+			e.printStackTrace();
+		}
+
+		return result.toString();
 	}
 
 	@ModelAttribute("trans_options")
@@ -3138,14 +3509,91 @@ public class CaseEntryController {
 		return map;
 	}
 
+	private void initializePeriodOptions() {
+		try {
+			System.out.println("DEBUG: Initializing period options directly...");
+			mapRepo.save(new datamap("period_options", 0, "Antepartum"));
+			mapRepo.save(new datamap("period_options", 1, "Intrapartum"));
+			mapRepo.save(new datamap("period_options", 2, "Postpartum"));
+			mapRepo.save(new datamap("period_options", 88, "Not Stated"));
+			mapRepo.save(new datamap("period_options", 99, "Not Applicable"));
+			System.out.println("DEBUG: Period options initialized successfully");
+		} catch (Exception e) {
+			System.err.println("DEBUG: Error initializing period options: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	private void initializeAdmissionConditionOptions() {
+		try {
+			System.out.println("DEBUG: Initializing admission condition options directly...");
+			mapRepo.save(new datamap("admissioncond_options", 0, "Good"));
+			mapRepo.save(new datamap("admissioncond_options", 1, "Fair"));
+			mapRepo.save(new datamap("admissioncond_options", 2, "Poor"));
+			mapRepo.save(new datamap("admissioncond_options", 3, "Critical"));
+			mapRepo.save(new datamap("admissioncond_options", 88, "Not Stated"));
+			mapRepo.save(new datamap("admissioncond_options", 99, "Not Applicable"));
+			System.out.println("DEBUG: Admission condition options initialized successfully");
+		} catch (Exception e) {
+			System.err.println("DEBUG: Error initializing admission condition options: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	private void initializeLevelConsciousnessOptions() {
+		try {
+			System.out.println("DEBUG: Initializing level of consciousness options directly...");
+			mapRepo.save(new datamap("levelconsc_options", 0, "Alert"));
+			mapRepo.save(new datamap("levelconsc_options", 1, "Verbal"));
+			mapRepo.save(new datamap("levelconsc_options", 2, "Pain"));
+			mapRepo.save(new datamap("levelconsc_options", 3, "Unresponsive"));
+			mapRepo.save(new datamap("levelconsc_options", 88, "Not Stated"));
+			mapRepo.save(new datamap("levelconsc_options", 99, "Not Applicable"));
+			System.out.println("DEBUG: Level of consciousness options initialized successfully");
+		} catch (Exception e) {
+			System.err.println("DEBUG: Error initializing level of consciousness options: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	private void initializeStartModeOptions() {
+		try {
+			System.out.println("DEBUG: Initializing start mode options directly...");
+			mapRepo.save(new datamap("startmode_options", 0, "Spontaneous"));
+			mapRepo.save(new datamap("startmode_options", 1, "Induced"));
+			mapRepo.save(new datamap("startmode_options", 2, "Augmented"));
+			mapRepo.save(new datamap("startmode_options", 3, "Elective Caesarean"));
+			mapRepo.save(new datamap("startmode_options", 4, "Emergency Caesarean"));
+			mapRepo.save(new datamap("startmode_options", 88, "Not Stated"));
+			mapRepo.save(new datamap("startmode_options", 99, "Not Applicable"));
+			System.out.println("DEBUG: Start mode options initialized successfully");
+		} catch (Exception e) {
+			System.err.println("DEBUG: Error initializing start mode options: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
 	@ModelAttribute("admissioncond_options")
 	public Map<Integer, String> admissionCondOptionsSelectOne() {
 		final Map<Integer, String> map = new LinkedHashMap<>();
 
 		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("admissioncond_options")) {
+		List<datamap> admissionCondOptions = mapRepo.findByMap_feature("admissioncond_options");
+		System.out.println("DEBUG: Found " + admissionCondOptions.size() + " admissioncond_options in database");
+
+		// If no data found, initialize it directly
+		if (admissionCondOptions.isEmpty()) {
+			System.out.println("DEBUG: No admissioncond_options found, initializing directly...");
+			initializeAdmissionConditionOptions();
+			admissionCondOptions = mapRepo.findByMap_feature("admissioncond_options");
+			System.out.println("DEBUG: After initialization, found " + admissionCondOptions.size() + " admissioncond_options");
+		}
+
+		for (datamap elem : admissionCondOptions) {
+			System.out.println("DEBUG: admissioncond_option - value: " + elem.getMap_value() + ", label: " + elem.getMap_label());
 			map.put(elem.getMap_value(), elem.getMap_label());
 		}
+		System.out.println("DEBUG: Final admissioncond_options map size: " + map.size());
 
 		return map;
 	}
@@ -3155,9 +3603,22 @@ public class CaseEntryController {
 		final Map<Integer, String> map = new LinkedHashMap<>();
 
 		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("levelconsc_options")) {
+		List<datamap> levelConscOptions = mapRepo.findByMap_feature("levelconsc_options");
+		System.out.println("DEBUG: Found " + levelConscOptions.size() + " levelconsc_options in database");
+
+		// If no data found, initialize it directly
+		if (levelConscOptions.isEmpty()) {
+			System.out.println("DEBUG: No levelconsc_options found, initializing directly...");
+			initializeLevelConsciousnessOptions();
+			levelConscOptions = mapRepo.findByMap_feature("levelconsc_options");
+			System.out.println("DEBUG: After initialization, found " + levelConscOptions.size() + " levelconsc_options");
+		}
+
+		for (datamap elem : levelConscOptions) {
+			System.out.println("DEBUG: levelconsc_option - value: " + elem.getMap_value() + ", label: " + elem.getMap_label());
 			map.put(elem.getMap_value(), elem.getMap_label());
 		}
+		System.out.println("DEBUG: Final levelconsc_options map size: " + map.size());
 
 		return map;
 	}
@@ -3170,6 +3631,30 @@ public class CaseEntryController {
 		for (datamap elem : mapRepo.findByMap_feature("provider_options")) {
 			map.put(elem.getMap_value(), elem.getMap_label());
 		}
+		return map;
+	}
+
+	@ModelAttribute("startmode_options")
+	public Map<Integer, String> startmodeOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+
+		map.put(null, "Select one");
+		List<datamap> startmodeOptions = mapRepo.findByMap_feature("startmode_options");
+		System.out.println("DEBUG: Found " + startmodeOptions.size() + " startmode_options in database");
+
+		// If no data found, initialize it directly
+		if (startmodeOptions.isEmpty()) {
+			System.out.println("DEBUG: No startmode_options found, initializing directly...");
+			initializeStartModeOptions();
+			startmodeOptions = mapRepo.findByMap_feature("startmode_options");
+			System.out.println("DEBUG: After initialization, found " + startmodeOptions.size() + " startmode_options");
+		}
+
+		for (datamap elem : startmodeOptions) {
+			System.out.println("DEBUG: startmode_option - value: " + elem.getMap_value() + ", label: " + elem.getMap_label());
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+		System.out.println("DEBUG: Final startmode_options map size: " + map.size());
 
 		return map;
 	}
@@ -3345,6 +3830,5 @@ public class CaseEntryController {
 		de.put("programs", programs);
 		return de;
 	}
-
 }
 // end class

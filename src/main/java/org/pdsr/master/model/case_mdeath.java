@@ -242,7 +242,7 @@ public class case_mdeath implements Serializable {
 	}
 
 	@Column
-	@Temporal(TemporalType.TIME)
+	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date mdeath_autopsy_date;
 
@@ -266,6 +266,87 @@ public class case_mdeath implements Serializable {
 
 	@Column
 	private Integer mdeath_autopsy_icd_mm;
+
+	// WHO Medical Certificate of Cause of Death fields
+	@Lob
+	@Column
+	private String mdeath_cod_a; // Immediate cause of death (Line a)
+
+	@Column
+	private String mdeath_cod_a_interval; // Time interval between onset and death
+
+	@Column
+	private Integer mdeath_cod_a_interval_unit; // Unit for interval (1=Minutes, 2=Hours, 3=Days, 4=Weeks, 5=Months, 6=Years)
+
+	@Column
+	private String mdeath_cod_a_code; // ICD-11 code for Line a
+
+	@Lob
+	@Column
+	private String mdeath_cod_b; // Antecedent cause (Line b) - due to (or as a consequence of)
+
+	@Column
+	private String mdeath_cod_b_interval;
+
+	@Column
+	private Integer mdeath_cod_b_interval_unit;
+
+	@Column
+	private String mdeath_cod_b_code;
+
+	@Lob
+	@Column
+	private String mdeath_cod_c; // Antecedent cause (Line c)
+
+	@Column
+	private String mdeath_cod_c_interval;
+
+	@Column
+	private Integer mdeath_cod_c_interval_unit;
+
+	@Column
+	private String mdeath_cod_c_code;
+
+	@Lob
+	@Column
+	private String mdeath_cod_d; // Underlying cause of death (Line d)
+
+	@Column
+	private String mdeath_cod_d_interval;
+
+	@Column
+	private Integer mdeath_cod_d_interval_unit;
+
+	@Column
+	private String mdeath_cod_d_code;
+
+	@Lob
+	@Column
+	private String mdeath_cod_other; // Other significant conditions contributing to death
+
+	@Lob
+	@Column
+	private String mdeath_cod_underlying; // Final Underlying Cause of Death (auto-assigned from lowest line)
+
+	@Column
+	private String mdeath_cod_underlying_code; // ICD-11 code for final underlying cause
+
+	@Column
+	private Integer mdeath_manner; // Manner of death (Disease, Accident, Intentional self-harm, etc.)
+
+	@Column
+	private Integer mdeath_surgery; // Was surgery performed within last 4 weeks? Yes/No
+
+	@Column
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
+	private Date mdeath_surgery_date; // Date of surgery
+
+	@Column
+	private String mdeath_surgery_reason; // Reason for surgery
+
+	@Column
+	private Integer mdeath_autopsy_findings_used; // Were autopsy findings used to determine cause of death?
 
 	@JsonIgnore
 	@Lob
@@ -825,6 +906,198 @@ public class case_mdeath implements Serializable {
 
 	public void setMdeath_postpart_oxytocin(Integer mdeath_postpart_oxytocin) {
 		this.mdeath_postpart_oxytocin = mdeath_postpart_oxytocin;
+	}
+
+	public String getMdeath_cod_a() {
+		return mdeath_cod_a;
+	}
+
+	public void setMdeath_cod_a(String mdeath_cod_a) {
+		this.mdeath_cod_a = mdeath_cod_a;
+	}
+
+	public String getMdeath_cod_a_interval() {
+		return mdeath_cod_a_interval;
+	}
+
+	public void setMdeath_cod_a_interval(String mdeath_cod_a_interval) {
+		this.mdeath_cod_a_interval = mdeath_cod_a_interval;
+	}
+
+	public Integer getMdeath_cod_a_interval_unit() {
+		return mdeath_cod_a_interval_unit;
+	}
+
+	public void setMdeath_cod_a_interval_unit(Integer mdeath_cod_a_interval_unit) {
+		this.mdeath_cod_a_interval_unit = mdeath_cod_a_interval_unit;
+	}
+
+	public String getMdeath_cod_a_code() {
+		return mdeath_cod_a_code;
+	}
+
+	public void setMdeath_cod_a_code(String mdeath_cod_a_code) {
+		this.mdeath_cod_a_code = mdeath_cod_a_code;
+	}
+
+	public String getMdeath_cod_b() {
+		return mdeath_cod_b;
+	}
+
+	public void setMdeath_cod_b(String mdeath_cod_b) {
+		this.mdeath_cod_b = mdeath_cod_b;
+	}
+
+	public String getMdeath_cod_b_interval() {
+		return mdeath_cod_b_interval;
+	}
+
+	public void setMdeath_cod_b_interval(String mdeath_cod_b_interval) {
+		this.mdeath_cod_b_interval = mdeath_cod_b_interval;
+	}
+
+	public Integer getMdeath_cod_b_interval_unit() {
+		return mdeath_cod_b_interval_unit;
+	}
+
+	public void setMdeath_cod_b_interval_unit(Integer mdeath_cod_b_interval_unit) {
+		this.mdeath_cod_b_interval_unit = mdeath_cod_b_interval_unit;
+	}
+
+	public String getMdeath_cod_b_code() {
+		return mdeath_cod_b_code;
+	}
+
+	public void setMdeath_cod_b_code(String mdeath_cod_b_code) {
+		this.mdeath_cod_b_code = mdeath_cod_b_code;
+	}
+
+	public String getMdeath_cod_c() {
+		return mdeath_cod_c;
+	}
+
+	public void setMdeath_cod_c(String mdeath_cod_c) {
+		this.mdeath_cod_c = mdeath_cod_c;
+	}
+
+	public String getMdeath_cod_c_interval() {
+		return mdeath_cod_c_interval;
+	}
+
+	public void setMdeath_cod_c_interval(String mdeath_cod_c_interval) {
+		this.mdeath_cod_c_interval = mdeath_cod_c_interval;
+	}
+
+	public Integer getMdeath_cod_c_interval_unit() {
+		return mdeath_cod_c_interval_unit;
+	}
+
+	public void setMdeath_cod_c_interval_unit(Integer mdeath_cod_c_interval_unit) {
+		this.mdeath_cod_c_interval_unit = mdeath_cod_c_interval_unit;
+	}
+
+	public String getMdeath_cod_c_code() {
+		return mdeath_cod_c_code;
+	}
+
+	public void setMdeath_cod_c_code(String mdeath_cod_c_code) {
+		this.mdeath_cod_c_code = mdeath_cod_c_code;
+	}
+
+	public String getMdeath_cod_d() {
+		return mdeath_cod_d;
+	}
+
+	public void setMdeath_cod_d(String mdeath_cod_d) {
+		this.mdeath_cod_d = mdeath_cod_d;
+	}
+
+	public String getMdeath_cod_d_interval() {
+		return mdeath_cod_d_interval;
+	}
+
+	public void setMdeath_cod_d_interval(String mdeath_cod_d_interval) {
+		this.mdeath_cod_d_interval = mdeath_cod_d_interval;
+	}
+
+	public Integer getMdeath_cod_d_interval_unit() {
+		return mdeath_cod_d_interval_unit;
+	}
+
+	public void setMdeath_cod_d_interval_unit(Integer mdeath_cod_d_interval_unit) {
+		this.mdeath_cod_d_interval_unit = mdeath_cod_d_interval_unit;
+	}
+
+	public String getMdeath_cod_d_code() {
+		return mdeath_cod_d_code;
+	}
+
+	public void setMdeath_cod_d_code(String mdeath_cod_d_code) {
+		this.mdeath_cod_d_code = mdeath_cod_d_code;
+	}
+
+	public String getMdeath_cod_other() {
+		return mdeath_cod_other;
+	}
+
+	public void setMdeath_cod_other(String mdeath_cod_other) {
+		this.mdeath_cod_other = mdeath_cod_other;
+	}
+
+	public String getMdeath_cod_underlying() {
+		return mdeath_cod_underlying;
+	}
+
+	public void setMdeath_cod_underlying(String mdeath_cod_underlying) {
+		this.mdeath_cod_underlying = mdeath_cod_underlying;
+	}
+
+	public String getMdeath_cod_underlying_code() {
+		return mdeath_cod_underlying_code;
+	}
+
+	public void setMdeath_cod_underlying_code(String mdeath_cod_underlying_code) {
+		this.mdeath_cod_underlying_code = mdeath_cod_underlying_code;
+	}
+
+	public Integer getMdeath_manner() {
+		return mdeath_manner;
+	}
+
+	public void setMdeath_manner(Integer mdeath_manner) {
+		this.mdeath_manner = mdeath_manner;
+	}
+
+	public Integer getMdeath_surgery() {
+		return mdeath_surgery;
+	}
+
+	public void setMdeath_surgery(Integer mdeath_surgery) {
+		this.mdeath_surgery = mdeath_surgery;
+	}
+
+	public Date getMdeath_surgery_date() {
+		return mdeath_surgery_date;
+	}
+
+	public void setMdeath_surgery_date(Date mdeath_surgery_date) {
+		this.mdeath_surgery_date = mdeath_surgery_date;
+	}
+
+	public String getMdeath_surgery_reason() {
+		return mdeath_surgery_reason;
+	}
+
+	public void setMdeath_surgery_reason(String mdeath_surgery_reason) {
+		this.mdeath_surgery_reason = mdeath_surgery_reason;
+	}
+
+	public Integer getMdeath_autopsy_findings_used() {
+		return mdeath_autopsy_findings_used;
+	}
+
+	public void setMdeath_autopsy_findings_used(Integer mdeath_autopsy_findings_used) {
+		this.mdeath_autopsy_findings_used = mdeath_autopsy_findings_used;
 	}
 
 	public String getMdeath_json() {

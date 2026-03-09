@@ -1136,6 +1136,31 @@ public class CentralMergeController {
 					mcase.setMdeath_other_icuventilation(s.getMdeath_other_icuventilation());
 					mcase.setMdeath_new_intervention(s.getMdeath_new_intervention());
 
+					mcase.setMdeath_cod_a(s.getMdeath_cod_a());
+					mcase.setMdeath_cod_a_interval(s.getMdeath_cod_a_interval());
+					mcase.setMdeath_cod_a_interval_unit(s.getMdeath_cod_a_interval_unit());
+					mcase.setMdeath_cod_a_code(s.getMdeath_cod_a_code());
+					mcase.setMdeath_cod_b(s.getMdeath_cod_b());
+					mcase.setMdeath_cod_b_interval(s.getMdeath_cod_b_interval());
+					mcase.setMdeath_cod_b_interval_unit(s.getMdeath_cod_b_interval_unit());
+					mcase.setMdeath_cod_b_code(s.getMdeath_cod_b_code());
+					mcase.setMdeath_cod_c(s.getMdeath_cod_c());
+					mcase.setMdeath_cod_c_interval(s.getMdeath_cod_c_interval());
+					mcase.setMdeath_cod_c_interval_unit(s.getMdeath_cod_c_interval_unit());
+					mcase.setMdeath_cod_c_code(s.getMdeath_cod_c_code());
+					mcase.setMdeath_cod_d(s.getMdeath_cod_d());
+					mcase.setMdeath_cod_d_interval(s.getMdeath_cod_d_interval());
+					mcase.setMdeath_cod_d_interval_unit(s.getMdeath_cod_d_interval_unit());
+					mcase.setMdeath_cod_d_code(s.getMdeath_cod_d_code());
+					mcase.setMdeath_cod_other(s.getMdeath_cod_other());
+					mcase.setMdeath_cod_underlying(s.getMdeath_cod_underlying());
+					mcase.setMdeath_cod_underlying_code(s.getMdeath_cod_underlying_code());
+					mcase.setMdeath_manner(s.getMdeath_manner());
+					mcase.setMdeath_surgery(s.getMdeath_surgery());
+					mcase.setMdeath_surgery_date(s.getMdeath_surgery_date());
+					mcase.setMdeath_surgery_reason(s.getMdeath_surgery_reason());
+					mcase.setMdeath_autopsy_findings_used(s.getMdeath_autopsy_findings_used());
+
 					mcase.setMdeath_json(s.getMdeath_json());
 
 					mcase.setData_complete(s.getData_complete());
