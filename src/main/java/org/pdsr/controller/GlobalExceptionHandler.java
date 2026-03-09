@@ -76,14 +76,31 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ModelAndView handleAllExceptions(Exception ex, HttpServletRequest request) {
-        // Unpack RollbackException to see if it contains a more specific cause
+        // Unpack RollbackException or TransactionSystemException to see if it contains a more specific cause
         Throwable cause = ex;
         if (ex instanceof org.springframework.transaction.TransactionSystemException) {
             cause = ((org.springframework.transaction.TransactionSystemException) ex).getRootCause();
+        } else if (ex instanceof javax.persistence.RollbackException) {
+            cause = ((javax.persistence.RollbackException) ex).getCause();
         }
 
         if (cause instanceof javax.validation.ConstraintViolationException) {
             return handleConstraintViolationException((javax.validation.ConstraintViolationException) cause, request);
+        }
+        
+        // Handle Hibernate-specific ConstraintViolationException
+        if (cause instanceof org.hibernate.exception.ConstraintViolationException) {
+            org.hibernate.exception.ConstraintViolationException hce = (org.hibernate.exception.ConstraintViolationException) cause;
+            System.err.println("=== HIBERNATE CONSTRAINT VIOLATION on URL: " + request.getRequestURL() + " ===");
+            System.err.println("  Constraint: " + hce.getConstraintName());
+            System.err.println("  SQL: " + hce.getSql());
+            System.err.println("  Message: " + hce.getMessage());
+            if (hce.getCause() != null) System.err.println("  Cause: " + hce.getCause().getMessage());
+            System.err.println("=== END HIBERNATE CONSTRAINT VIOLATION ===");
+            
+            ModelAndView mav = new ModelAndView("error");
+            mav.addObject("message", "Database constraint violation: " + hce.getConstraintName() + ". Please ensure all required fields are filled correctly.");
+            return mav;
         }
 
         System.err.println("=== UNEXPECTED ERROR on URL: " + request.getRequestURL() + " ===");

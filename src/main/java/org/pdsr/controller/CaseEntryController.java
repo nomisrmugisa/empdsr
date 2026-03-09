@@ -725,12 +725,19 @@ public class CaseEntryController {
 
 	@Transactional
 	@PostMapping("/add")
-	public String add(Principal principal, Model model, @ModelAttribute("selected") case_identifiers selected, BindingResult results) {
+	public String add(Principal principal, Model model, @ModelAttribute("selected") case_identifiers selected,
+			BindingResult results) {
+
+		if (selected.getCase_date() == null) {
+			results.rejectValue("case_date", "error.notnull", "Entry date is required");
+		}
+		if (selected.getCase_death() == null) {
+			results.rejectValue("case_death", "error.notnull", "Type of case is required");
+		}
+
 		if (results.hasErrors()) {
-			System.err.println("=== BINDING ERROR IN /add ===");
-			results.getFieldErrors().forEach(fe -> 
-				System.err.println("  Field: [" + fe.getField() + "] rejected value: [" + fe.getRejectedValue() + "] reason: " + fe.getDefaultMessage())
-			);
+			model.addAttribute("selected", selected);
+			model.addAttribute("death_options", deathOptionsSelectOne());
 			// Re-populate required model attributes before returning to the view
 			sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 			model.addAttribute("myf", synctable.getSync_name());
@@ -1009,6 +1016,9 @@ public class CaseEntryController {
 
 				try {
 					case_biodata o = selected.getBiodata();
+					o.setBiodata_uuid(selected.getCase_uuid());
+					o.setCase_uuid(selected);
+
 					if (o.getBiodata_mage() == null || o.getBiodata_medu() == null || o.getBiodata_sex() == null) {
 						o.setData_complete(0);
 					} else {
@@ -1070,6 +1080,8 @@ public class CaseEntryController {
 					}
 
 					case_referral o = selected.getReferral();
+					o.setReferral_uuid(selected.getCase_uuid());
+					o.setCase_uuid(selected);
 
 					boolean referral_adatetime_expected = (o.getReferral_adatetime_notstated() == null
 							|| o.getReferral_adatetime_notstated() == 0);
@@ -1119,6 +1131,9 @@ public class CaseEntryController {
 				try {
 
 					case_pregnancy o = selected.getPregnancy();
+					o.setPregnancy_uuid(selected.getCase_uuid());
+					o.setCase_uuid(selected);
+
 					if (o.getPregnancy_days() == null || o.getPregnancy_type() == null
 							|| o.getPregnancy_weeks() == null) {
 						o.setData_complete(0);
@@ -1138,6 +1153,9 @@ public class CaseEntryController {
 				try {
 
 					case_antenatal o = selected.getAntenatal();
+					o.setAntenatal_uuid(selected.getCase_uuid());
+					o.setCase_uuid(selected);
+
 					if (o.getAntenatal_alcohol() == null || o.getAntenatal_attend() == null
 							|| o.getAntenatal_attendno() == null || o.getAntenatal_days() == null
 							|| o.getAntenatal_facility() == null || o.getAntenatal_facility().trim() == ""
@@ -1211,6 +1229,8 @@ public class CaseEntryController {
 					}
 
 					case_labour o = selected.getLabour();
+					o.setLabour_uuid(selected.getCase_uuid());
+					o.setCase_uuid(selected);
 
 					boolean labour_seedatetime_expected = (o.getLabour_seedatetime_notstated() == null
 							|| o.getLabour_seedatetime_notstated() == 0);
@@ -1302,6 +1322,9 @@ public class CaseEntryController {
 					}
 
 					case_delivery o = selected.getDelivery();
+					o.setDelivery_uuid(selected.getCase_uuid());
+					o.setCase_uuid(selected);
+
 					boolean delivery_not_answered = o.getDelivery_occured() == null;
 
 					boolean delivery_abortion_expected = (o.getDelivery_occured() != null
@@ -1389,6 +1412,8 @@ public class CaseEntryController {
 					}
 
 					case_birth o = selected.getBirth();
+					o.setBirth_uuid(selected.getCase_uuid());
+					o.setCase_uuid(selected);
 
 					boolean insistnormal_notselected = (o.getBirth_mode() != null
 							&& (o.getBirth_mode() == 0 || o.getBirth_mode() == 1)) && o.getBirth_insistnormal() == null;
@@ -1425,6 +1450,9 @@ public class CaseEntryController {
 					try {
 
 						case_fetalheart o = selected.getFetalheart();
+						o.setFetalheart_uuid(selected.getCase_uuid());
+						o.setCase_uuid(selected);
+
 						if (o.getFetalheart_arrival() == null || o.getFetalheart_lastheard() == null
 								|| o.getFetalheart_refered() == null) {
 							o.setData_complete(0);
@@ -1463,6 +1491,9 @@ public class CaseEntryController {
 						}
 
 						case_babydeath o = selected.getBabydeath();
+						o.setBabydeath_uuid(selected.getCase_uuid());
+						o.setCase_uuid(selected);
+
 						boolean baby_ddatetime_expected = (o.getBaby_ddatetime_notstated() == null
 								|| o.getBaby_ddatetime_notstated() == 0);
 
@@ -1512,6 +1543,8 @@ public class CaseEntryController {
 						}
 
 						case_mdeath o = selected.getMdeath();
+						o.setMdeath_uuid(selected.getCase_uuid());
+						o.setCase_uuid(selected);
 
 						boolean mdeath_early_interv_missing = o.getMdeath_early_evacuation() == null
 								&& o.getMdeath_early_antibiotic() == null && o.getMdeath_early_laparotomy() == null
@@ -1602,6 +1635,10 @@ public class CaseEntryController {
 			case 9: {
 
 				try {
+					case_notes o = selected.getNotes();
+					o.setNotes_uuid(selected.getCase_uuid());
+					o.setCase_uuid(selected);
+
 					MultipartFile file = selected.getNotes().getFile();
 					selected.getNotes().setBase64image(null);
 
