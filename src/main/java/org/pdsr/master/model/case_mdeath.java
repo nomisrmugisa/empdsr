@@ -242,7 +242,7 @@ public class case_mdeath implements Serializable {
 	}
 
 	@Column
-	@Temporal(TemporalType.TIME)
+	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date mdeath_autopsy_date;
 
