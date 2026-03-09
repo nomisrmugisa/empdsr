@@ -103,6 +103,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -111,6 +113,39 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Controller
 @RequestMapping("/registry")
 public class CaseEntryController {
+
+	/** Accept dates in dd/MM/yyyy (datepicker) OR yyyy-MM-dd HH:mm:ss (DB timestamp rendered via th:field) */
+	@InitBinder
+	public void initBinder(WebDataBinder binder) {
+		binder.registerCustomEditor(Date.class, new java.beans.PropertyEditorSupport() {
+			private final String[] patterns = {
+				"dd/MM/yyyy",
+				"yyyy-MM-dd HH:mm:ss",
+				"yyyy-MM-dd HH:mm:ss.S",
+				"yyyy-MM-dd",
+				"HH:mm"
+			};
+			@Override
+			public void setAsText(String text) {
+				if (text == null || text.trim().isEmpty()) { setValue(null); return; }
+				for (String pattern : patterns) {
+					try {
+						SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+						sdf.setLenient(false);
+						setValue(sdf.parse(text.trim()));
+						return;
+					} catch (Exception ignored) {}
+				}
+				throw new IllegalArgumentException("Cannot parse date: " + text);
+			}
+			@Override
+			public String getAsText() {
+				Date d = (Date) getValue();
+				if (d == null) return "";
+				return new SimpleDateFormat("dd/MM/yyyy").format(d);
+			}
+		});
+	}
 
 	@Autowired
 	private ServiceApi api;
