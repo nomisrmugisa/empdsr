@@ -1491,7 +1491,7 @@ public class CaseEntryController {
 						}
 
 						case_babydeath o = selected.getBabydeath();
-						o.setBabydeath_uuid(selected.getCase_uuid());
+						o.setBaby_uuid(selected.getCase_uuid());
 						o.setCase_uuid(selected);
 
 						boolean baby_ddatetime_expected = (o.getBaby_ddatetime_notstated() == null
