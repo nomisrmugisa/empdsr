@@ -145,6 +145,18 @@ public class CaseEntryController {
 				return new SimpleDateFormat("dd/MM/yyyy").format(d);
 			}
 		});
+        // Register custom editor for sync_table to bind by ID string
+        binder.registerCustomEditor(sync_table.class, new java.beans.PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) {
+                if (org.springframework.util.StringUtils.hasText(text)) {
+                    sync_table s = syncRepo.findById(text).orElse(null);
+                    setValue(s);
+                } else {
+                    setValue(null);
+                }
+            }
+        });
 	}
 
 	@Autowired
