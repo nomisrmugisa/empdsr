@@ -725,7 +725,20 @@ public class CaseEntryController {
 
 	@Transactional
 	@PostMapping("/add")
-	public String add(Principal principal, Model model, @ModelAttribute case_identifiers selected) {
+	public String add(Principal principal, Model model, @ModelAttribute("selected") case_identifiers selected, BindingResult results) {
+		if (results.hasErrors()) {
+			System.err.println("=== BINDING ERROR IN /add ===");
+			results.getFieldErrors().forEach(fe -> 
+				System.err.println("  Field: [" + fe.getField() + "] rejected value: [" + fe.getRejectedValue() + "] reason: " + fe.getDefaultMessage())
+			);
+			// Re-populate required model attributes before returning to the view
+			sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+			model.addAttribute("myf", synctable.getSync_name());
+			model.addAttribute("death_options", getOptions("death_options"));
+			model.addAttribute("nationality_options", getOptions("nationality_options"));
+			return "registry/case-create";
+		}
+
 		if (!syncRepo.findById(CONSTANTS.LICENSE_ID).isPresent()) {
 			model.addAttribute("activated", "0");
 			return "home";
