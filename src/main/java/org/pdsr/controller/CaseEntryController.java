@@ -734,8 +734,8 @@ public class CaseEntryController {
 			// Re-populate required model attributes before returning to the view
 			sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 			model.addAttribute("myf", synctable.getSync_name());
-			model.addAttribute("death_options", getOptions("death_options"));
-			model.addAttribute("nationality_options", getOptions("nationality_options"));
+			model.addAttribute("death_options", deathOptions());
+			model.addAttribute("nationality_options", nationalityOptionsSelectOne());
 			return "registry/case-create";
 		}
 
