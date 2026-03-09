@@ -2617,18 +2617,8 @@
 	});
 	</script>
 
-	<!-- Frame C: Manner of Death -->
-	<h5 class="mt-3 mb-2" th:text="#{label.mdeath_frame_c}"></h5>
-
-	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_manner}"></label>
-		<div class="col-auto">
-			<select class="form-control form-control-sm" th:field="*{mdeath.mdeath_manner}">
-				<option th:each="option : ${manner_of_death_options}" th:value="${option.key}" th:text="${option.value}">
-				</option>
-			</select>
-		</div>
-	</div>
+	<!-- Frame B: Other medical data -->
+	<h5 class="mt-3 mb-2" th:text="#{label.mdeath_frame_b}"></h5>
 
 	<!-- Surgery within last 4 weeks -->
 	<div class="row mb-3">
@@ -2655,12 +2645,37 @@
 		</div>
 	</div>
 
-	<!-- Autopsy findings used -->
+	<!-- Was an autopsy requested -->
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_autopsy}"></label>
+		<div class="col-auto">
+			<select id="mdeath_autopsy" class="form-control form-control-sm" th:field="*{mdeath.mdeath_autopsy}"
+				onchange="changeMdeathAutopsyDynamic(this)">
+				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<!-- Autopsy findings used in certification -->
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_autopsy_findings_used}"></label>
 		<div class="col-auto">
 			<select class="form-control form-control-sm" th:field="*{mdeath.mdeath_autopsy_findings_used}">
 				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
+				</option>
+			</select>
+		</div>
+	</div>
+
+	<!-- Frame C: Manner of Death -->
+	<h5 class="mt-3 mb-2" th:text="#{label.mdeath_frame_c}"></h5>
+
+	<div class="row mb-3">
+		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_manner}"></label>
+		<div class="col-auto">
+			<select class="form-control form-control-sm" th:field="*{mdeath.mdeath_manner}">
+				<option th:each="option : ${manner_of_death_options}" th:value="${option.key}" th:text="${option.value}">
 				</option>
 			</select>
 		</div>
