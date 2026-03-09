@@ -2466,8 +2466,8 @@
 				<th style="width:5%"></th>
 				<th style="width:35%" th:text="#{label.mdeath_cause_of_death}"></th>
 				<th style="width:20%">ICD-11 Code</th>
-				<th style="width:15%" th:text="#{label.mdeath_interval_value}"></th>
 				<th style="width:15%" th:text="#{label.mdeath_interval_unit}"></th>
+				<th style="width:15%" th:text="#{label.mdeath_interval_value}"></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -2482,12 +2482,12 @@
 					<input type="text" class="form-control form-control-sm mt-4" th:field="*{mdeath.mdeath_cod_a_code}" placeholder="ICD-11 code"/>
 				</td>
 				<td>
-					<input type="number" min="0" class="form-control form-control-sm mt-4" th:field="*{mdeath.mdeath_cod_a_interval}" placeholder="e.g. 2"/>
-				</td>
-				<td>
 					<select class="form-control form-control-sm mt-4" th:field="*{mdeath.mdeath_cod_a_interval_unit}">
 						<option th:each="option : ${interval_unit_options}" th:value="${option.key}" th:text="${option.value}"></option>
 					</select>
+				</td>
+				<td>
+					<input type="number" min="0" class="form-control form-control-sm mt-4" th:field="*{mdeath.mdeath_cod_a_interval}" placeholder="e.g. 2"/>
 				</td>
 			</tr>
 			<!-- Line b -->
@@ -2501,12 +2501,12 @@
 					<input type="text" class="form-control form-control-sm mt-4" th:field="*{mdeath.mdeath_cod_b_code}" placeholder="ICD-11 code"/>
 				</td>
 				<td>
-					<input type="number" min="0" class="form-control form-control-sm mt-4" th:field="*{mdeath.mdeath_cod_b_interval}" placeholder="e.g. 3"/>
-				</td>
-				<td>
 					<select class="form-control form-control-sm mt-4" th:field="*{mdeath.mdeath_cod_b_interval_unit}">
 						<option th:each="option : ${interval_unit_options}" th:value="${option.key}" th:text="${option.value}"></option>
 					</select>
+				</td>
+				<td>
+					<input type="number" min="0" class="form-control form-control-sm mt-4" th:field="*{mdeath.mdeath_cod_b_interval}" placeholder="e.g. 3"/>
 				</td>
 			</tr>
 			<!-- Line c -->
@@ -2520,12 +2520,12 @@
 					<input type="text" class="form-control form-control-sm mt-4" th:field="*{mdeath.mdeath_cod_c_code}" placeholder="ICD-11 code"/>
 				</td>
 				<td>
-					<input type="number" min="0" class="form-control form-control-sm mt-4" th:field="*{mdeath.mdeath_cod_c_interval}" placeholder="e.g. 5"/>
-				</td>
-				<td>
 					<select class="form-control form-control-sm mt-4" th:field="*{mdeath.mdeath_cod_c_interval_unit}">
 						<option th:each="option : ${interval_unit_options}" th:value="${option.key}" th:text="${option.value}"></option>
 					</select>
+				</td>
+				<td>
+					<input type="number" min="0" class="form-control form-control-sm mt-4" th:field="*{mdeath.mdeath_cod_c_interval}" placeholder="e.g. 5"/>
 				</td>
 			</tr>
 			<!-- Line d -->
@@ -2539,12 +2539,12 @@
 					<input type="text" class="form-control form-control-sm mt-4" th:field="*{mdeath.mdeath_cod_d_code}" placeholder="ICD-11 code"/>
 				</td>
 				<td>
-					<input type="number" min="0" class="form-control form-control-sm mt-4" th:field="*{mdeath.mdeath_cod_d_interval}" placeholder="e.g. 1"/>
-				</td>
-				<td>
 					<select class="form-control form-control-sm mt-4" th:field="*{mdeath.mdeath_cod_d_interval_unit}">
 						<option th:each="option : ${interval_unit_options}" th:value="${option.key}" th:text="${option.value}"></option>
 					</select>
+				</td>
+				<td>
+					<input type="number" min="0" class="form-control form-control-sm mt-4" th:field="*{mdeath.mdeath_cod_d_interval}" placeholder="e.g. 1"/>
 				</td>
 			</tr>
 		</tbody>
