@@ -1458,39 +1458,54 @@
 				if (wasDisabled) el.disabled = true;
 			}
 
-			var filled = 0;
-			// First pass: show all hidden fieldsets so fields are accessible
+			// Show all jQuery-hidden fieldsets so fields inside them are accessible
 			$('fieldset').not('[hidden]').show();
 
-			// Fill all fields
-			var fields = form.querySelectorAll('input, select, textarea');
-			fields.forEach(function (el) {
-				if (shouldSkip(el)) return;
-				fillField(el);
-				filled++;
-			});
+			function doFill() {
+				var count = 0;
+				var fields = form.querySelectorAll('input, select, textarea');
+				fields.forEach(function (el) {
+					if (shouldSkip(el)) return;
+					fillField(el);
+					count++;
+				});
+				return count;
+			}
 
-			// Now trigger change on selects to update skip-logic visibility
-			// Use a small delay so values are set first
+			// Pass 1: set all values (no events - avoids skip-logic interfering)
+			doFill();
+
+			// Pass 2 (after 80ms): trigger change/input events so skip-logic
+			//   fires and shows/hides fieldsets correctly
 			setTimeout(function () {
 				form.querySelectorAll('select').forEach(function (sel) {
 					if (!shouldSkip(sel)) {
 						sel.dispatchEvent(new Event('change', { bubbles: true }));
 					}
 				});
-				// Trigger input on textareas/inputs for auto-population scripts
-				form.querySelectorAll('textarea, input[type="text"]').forEach(function (el) {
-					if (!shouldSkip(el)) {
-						el.dispatchEvent(new Event('input', { bubbles: true }));
-					}
-				});
-				// Trigger underlying cause auto-population if present
-				if (typeof updateUnderlyingCause === 'function') {
-					updateUnderlyingCause();
-				}
-			}, 100);
 
-			alert('Filled ' + filled + ' fields with test data! Review and click Save.');
+				// Pass 3 (after another 80ms): re-fill everything that skip-logic
+				//   may have cleared, then show alert
+				setTimeout(function () {
+					$('fieldset').not('[hidden]').show();
+					var filled = doFill();
+
+					// Update datepicker widgets to reflect set values
+					$('.datepicker').each(function () {
+						var val = this.value;
+						if (val) {
+							try { $(this).datepicker('setDate', val); } catch (e) { }
+						}
+					});
+
+					// Trigger underlying cause auto-population if present
+					if (typeof updateUnderlyingCause === 'function') {
+						updateUnderlyingCause();
+					}
+
+					alert('Filled ' + filled + ' fields with test data! Review and click Save.');
+				}, 80);
+			}, 80);
 		}
 	</script>
 
