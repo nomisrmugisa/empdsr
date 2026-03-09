@@ -2645,18 +2645,6 @@
 		</div>
 	</div>
 
-	<!-- Was an autopsy requested -->
-	<div class="row mb-3">
-		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_autopsy}"></label>
-		<div class="col-auto">
-			<select id="mdeath_autopsy" class="form-control form-control-sm" th:field="*{mdeath.mdeath_autopsy}"
-				onchange="changeMdeathAutopsyDynamic(this)">
-				<option th:each="option : ${yesnodk_options}" th:value="${option.key}" th:text="${option.value}">
-				</option>
-			</select>
-		</div>
-	</div>
-
 	<!-- Autopsy findings used in certification -->
 	<div class="row mb-3">
 		<label class="col-md-4 col-form-label border-bottom" th:text="#{label.mdeath_autopsy_findings_used}"></label>
