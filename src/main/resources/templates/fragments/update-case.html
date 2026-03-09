@@ -2550,14 +2550,6 @@
 		</tbody>
 	</table>
 
-	<!-- Other Significant Conditions (part of Frame A) -->
-	<div class="row mb-3">
-		<label class="col-md-3 col-form-label border-bottom" th:text="#{label.mdeath_cod_other}"></label>
-		<div class="col-md-9">
-			<textarea rows="3" class="form-control form-control-sm" th:field="*{mdeath.mdeath_cod_other}"></textarea>
-		</div>
-	</div>
-
 	<!-- Final Underlying Cause of Death -->
 	<div class="row mb-3">
 		<label class="col-md-3 col-form-label border-bottom" data-bs-toggle="tooltip" data-bs-placement="top"
@@ -2615,6 +2607,15 @@
 		tooltipTriggerList.forEach(function(el) { new bootstrap.Tooltip(el); });
 	});
 	</script>
+
+	<!-- Frame B: Other Significant Conditions -->
+	<h5 class="mt-3 mb-2" th:text="#{label.mdeath_frame_b}"></h5>
+	<div class="row mb-3">
+		<div class="col-md-10">
+			<textarea rows="3" class="form-control form-control-sm" th:field="*{mdeath.mdeath_cod_other}"
+				th:placeholder="#{label.mdeath_cod_other}"></textarea>
+		</div>
+	</div>
 
 	<!-- Manner of Death -->
 	<div class="row mb-3">
