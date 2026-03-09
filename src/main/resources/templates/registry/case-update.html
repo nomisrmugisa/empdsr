@@ -1357,7 +1357,118 @@
 		})();
 	</script>
 	<script>
+		function fillTestData() {
+			var form = document.querySelector('form');
+			if (!form) return;
+
+			var names = ['Jane Doe', 'Mary Smith', 'Sarah Johnson', 'Alice Brown', 'Emma Wilson'];
+			var places = ['Kampala Hospital', 'Mulago', 'Entebbe Clinic', 'Jinja RRH', 'Mbarara RRH'];
+			var causes = ['Postpartum haemorrhage', 'Eclampsia', 'Sepsis', 'Obstructed labour', 'Ruptured uterus'];
+			var icdCodes = ['JA40', 'JA80.0', 'JB63', 'JB0D', 'JA43.1'];
+
+			function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+			function randomDate() {
+				var y = randomInt(2023, 2025);
+				var m = String(randomInt(1, 12)).padStart(2, '0');
+				var d = String(randomInt(1, 28)).padStart(2, '0');
+				return y + '-' + m + '-' + d;
+			}
+			function randomDateDDMMYYYY() {
+				var y = randomInt(2023, 2025);
+				var m = String(randomInt(1, 12)).padStart(2, '0');
+				var d = String(randomInt(1, 28)).padStart(2, '0');
+				return d + '/' + m + '/' + y;
+			}
+			function randomTime() {
+				return String(randomInt(0, 23)).padStart(2, '0') + ':' + String(randomInt(0, 59)).padStart(2, '0');
+			}
+			function randomPick(arr) { return arr[randomInt(0, arr.length - 1)]; }
+
+			var fields = form.querySelectorAll('input, select, textarea');
+			fields.forEach(function (el) {
+				// Skip hidden, readonly, disabled, and UUID/sync fields
+				if (el.type === 'hidden' || el.readOnly || el.disabled) return;
+				if (el.closest('fieldset[hidden]')) return;
+				var n = (el.name || el.id || '').toLowerCase();
+				if (n.indexOf('uuid') !== -1 || n.indexOf('case_uuid') !== -1 || n.indexOf('case_sync') !== -1) return;
+				if (n.indexOf('case_id') !== -1 || n.indexOf('case_date') !== -1) return;
+
+				var tag = el.tagName.toLowerCase();
+
+				if (tag === 'select') {
+					var opts = el.querySelectorAll('option');
+					var validOpts = [];
+					opts.forEach(function (o) {
+						if (o.value !== '' && o.value !== '99' && o.value !== '88') validOpts.push(o);
+					});
+					if (validOpts.length > 0) {
+						el.value = randomPick(validOpts).value;
+						// Trigger change event for skip-logic
+						$(el).trigger('change');
+					}
+				} else if (tag === 'textarea') {
+					if (n.indexOf('cod_a') !== -1 || n.indexOf('cod_b') !== -1 || n.indexOf('cod_c') !== -1 || n.indexOf('cod_d') !== -1) {
+						el.value = randomPick(causes);
+					} else if (n.indexOf('cod_other') !== -1 || n.indexOf('cod_underlying') !== -1) {
+						el.value = randomPick(causes);
+					} else {
+						el.value = 'Test data: ' + randomPick(places) + ' - ' + randomPick(causes);
+					}
+					$(el).trigger('input');
+				} else if (el.type === 'checkbox') {
+					el.checked = Math.random() > 0.5;
+					$(el).trigger('change');
+				} else if (el.type === 'date') {
+					el.value = randomDate();
+				} else if (el.type === 'time') {
+					el.value = randomTime();
+				} else if (el.type === 'number') {
+					el.value = randomInt(1, 100);
+				} else if (el.type === 'text' || el.type === '') {
+					if (el.classList.contains('datepicker')) {
+						el.value = randomDateDDMMYYYY();
+					} else if (el.classList.contains('timepicker')) {
+						el.value = randomTime();
+					} else if (n.indexOf('name') !== -1 || n.indexOf('mname') !== -1) {
+						el.value = randomPick(names);
+					} else if (n.indexOf('facility') !== -1 || n.indexOf('location') !== -1) {
+						el.value = randomPick(places);
+					} else if (n.indexOf('weight') !== -1) {
+						el.value = (randomInt(10, 45) / 10).toFixed(1);
+					} else if (n.indexOf('nin') !== -1 || n.indexOf('mid') !== -1) {
+						el.value = 'TEST' + randomInt(10000, 99999);
+					} else if (n.indexOf('code') !== -1 || n.indexOf('icd') !== -1) {
+						el.value = randomPick(icdCodes);
+					} else if (n.indexOf('interval') !== -1 || n.indexOf('value') !== -1) {
+						el.value = randomInt(1, 30);
+					} else if (n.indexOf('hour') !== -1) {
+						el.value = randomInt(0, 23);
+					} else if (n.indexOf('minute') !== -1) {
+						el.value = randomInt(0, 59);
+					} else {
+						el.value = 'Test ' + randomInt(1, 999);
+					}
+					$(el).trigger('input');
+				}
+			});
+
+			// Trigger the underlying cause auto-population if present
+			if (typeof updateUnderlyingCause === 'function') {
+				updateUnderlyingCause();
+			}
+
+			alert('Test data filled! Review and click Save.');
+		}
+	</script>
+
+	<script>
 		$(document).ready(function () {
+			// Inject "Fill Test Data" button next to the Back button
+			var backBtn = $('a.btn.btn-light').first();
+			if (backBtn.length) {
+				backBtn.after('<button type="button" class="btn btn-warning ms-2" onclick="fillTestData()">&#x1F9EA; Fill Test Data</button>');
+			}
+
 			// Initialize all skip logic views
 			if (typeof changeAntenatalView === 'function') changeAntenatalView();
 			if (typeof changeAntenatalRiskView === 'function') changeAntenatalRiskView();
