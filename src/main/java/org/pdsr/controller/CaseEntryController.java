@@ -1920,14 +1920,14 @@ public class CaseEntryController {
 				return 1;
 			} else if (deathDate.compareTo(deliveryDate) == 0) {
 				final Date deliveryTime = existing.getDelivery().getDelivery_time();
-				final Date deathTime = selected.getBabydeath().getBaby_dtime();
+				final Date deathTime = selected.getMdeath().getMdeath_time();
 
 				if (deliveryTime != null && deathTime != null) {
 					final Integer deliveryHour = existing.getDelivery().getDelivery_hour();
 					final Integer deliveryMins = existing.getDelivery().getDelivery_minute();
 
-					final Integer deathHour = selected.getBabydeath().getBaby_dhour();
-					final Integer deathMins = selected.getBabydeath().getBaby_dminute();
+					final Integer deathHour = selected.getMdeath().getMdeath_hour();
+					final Integer deathMins = selected.getMdeath().getMdeath_minute();
 
 					if (((deathHour * 60) + deathMins) <= ((deliveryHour * 60) + deliveryMins)) {
 						results.rejectValue("mdeath.mdeath_time", "error.time.death.before.delivery");
