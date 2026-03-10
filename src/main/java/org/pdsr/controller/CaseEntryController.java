@@ -1819,7 +1819,8 @@ public class CaseEntryController {
 								+ "\nHealth Facility: " + sync.getSyncName() + " - " + sync.getSyncCode()
 								+ "\nThis is a PILOT IMPLEMENTATION of the Enhanced Automated MPDSR tool developed by Alex and Eliezer");
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 		return "redirect:/registry?page=1&success=yes";
