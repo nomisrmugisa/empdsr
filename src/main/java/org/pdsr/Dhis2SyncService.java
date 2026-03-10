@@ -61,7 +61,8 @@ public class Dhis2SyncService {
     public List<Object[]> syncCases(List<case_identifiers> cases,
             Dhis2Authorisation dhis2,
             SyncTable synctable,
-            List<String> payloads) {
+            List<String> payloads,
+            List<String> responses) {
 
         List<Object[]> errors = new ArrayList<>();
         String dhis2Url = dhis2.getDhis2_url();
@@ -147,10 +148,12 @@ public class Dhis2SyncService {
             }
 
             String eventsUrl = dhis2Url + "/api/events";
-            String postError = serviceApi.saveForm(d, eventsUrl, username, password);
-            if (postError != null) {
+            String response = serviceApi.saveForm(d, eventsUrl, username, password);
+            responses.add("Case " + item.getCase_uuid() + ":\n" + response);
+
+            if (response != null && response.startsWith("Error:")) {
                 errors.add(new Object[] {
-                        "DHIS2 rejected case (sync error): " + postError,
+                        "DHIS2 rejected case (sync error): " + response,
                         item.getCase_uuid(), TAB_CASE_ENTRY });
             }
         }

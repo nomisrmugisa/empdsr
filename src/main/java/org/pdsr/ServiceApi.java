@@ -264,7 +264,7 @@ public class ServiceApi {
 	}
 
 	/// DHIS2 SAVE FORM
-	/// Returns null on success, or the error message string on failure.
+	/// Returns the response body on success, or the error message string on failure.
 	public String saveForm(json_dhis2_form json, String dhis2_url, String dhis2_username,
 			String dhis2_password) {
 
@@ -272,13 +272,13 @@ public class ServiceApi {
 
 			RestTemplate rt = builder.basicAuthentication(dhis2_username, dhis2_password).build();
 
-			rt.postForObject(dhis2_url, json, json_dhis2_form.class);
+			ResponseEntity<String> response = rt.postForEntity(dhis2_url, json, String.class);
 
-			return null; // success
+			return response.getBody(); // success - return raw JSON response
 
 		} catch (RestClientException ex) {
 			System.err.println("[DHIS2] saveForm error: " + ex.getMessage());
-			return ex.getMessage();
+			return "Error: " + ex.getMessage();
 		}
 	}
 

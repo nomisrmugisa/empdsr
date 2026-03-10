@@ -758,12 +758,15 @@ public class CaseEntryController {
 		// Delegate full sync to Dhis2SyncService (pre-flight validation + 3-step API
 		// chain + POST)
 		List<String> payloadList = new ArrayList<>();
-		List<Object[]> syncErrors = dhis2SyncService.syncCases(entered_cases, dhis2, synctable, payloadList);
+		List<String> responseList = new ArrayList<>();
+		List<Object[]> syncErrors = dhis2SyncService.syncCases(entered_cases, dhis2, synctable, payloadList,
+				responseList);
 
 		model.addAttribute("dhis2", dhis2);
 		model.addAttribute("errorlist", syncErrors);
 		model.addAttribute("syncedCount", entered_cases.size());
 		model.addAttribute("payloadList", payloadList);
+		model.addAttribute("responseList", responseList);
 		if (syncErrors.isEmpty()) {
 			model.addAttribute("back", "back");
 		}
