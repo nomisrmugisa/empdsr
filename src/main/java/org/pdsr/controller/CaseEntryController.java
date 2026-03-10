@@ -3036,7 +3036,7 @@ public class CaseEntryController {
 		return map;
 	}
 
-	@ModelAttribute("lbradmc_options")
+	@ModelAttribute("admissioncond_options")
 	public Map<Integer, String> lbrAdmcOptionsSelectOne() {
 		final Map<Integer, String> map = new LinkedHashMap<>();
 
@@ -3061,7 +3061,7 @@ public class CaseEntryController {
 		return map;
 	}
 
-	@ModelAttribute("lbrcons_options")
+	@ModelAttribute("levelconsc_options")
 	public Map<Integer, String> lbrConsOptionsSelectOne() {
 		final Map<Integer, String> map = new LinkedHashMap<>();
 
