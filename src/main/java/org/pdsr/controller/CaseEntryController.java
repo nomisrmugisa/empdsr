@@ -3466,5 +3466,109 @@ public class CaseEntryController {
 		de.put("programs", programs);
 		return de;
 	}
+
+	@GetMapping("/debug-dropdown")
+	@ResponseBody
+	public String debugDropdown() {
+		StringBuilder result = new StringBuilder();
+		result.append("=== DROPDOWN DEBUG INFO ===\n");
+		try {
+			List<datamap> transOptions = mapRepo.findByMap_feature("trans_options");
+			result.append("Found ").append(transOptions.size()).append(" trans_options\n");
+			List<datamap> periodOptions = mapRepo.findByMap_feature("period_options");
+			result.append("Found ").append(periodOptions.size()).append(" period_options\n");
+		} catch (Exception e) {
+			result.append("ERROR: ").append(e.getMessage());
+		}
+		return result.toString();
+	}
+
+	@ModelAttribute("trans_options")
+	public Map<Integer, String> transOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+		map.put(null, "Select one");
+		List<datamap> transOptions = mapRepo.findByMap_feature("trans_options");
+		if (transOptions.isEmpty()) {
+			initializeTransportationOptions();
+			transOptions = mapRepo.findByMap_feature("trans_options");
+		}
+		for (datamap elem : transOptions) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+		return map;
+	}
+
+	@ModelAttribute("startmode_options")
+	public Map<Integer, String> startmodeOptionsSelectOne() {
+		final Map<Integer, String> map = new LinkedHashMap<>();
+		map.put(null, "Select one");
+		List<datamap> startmodeOptions = mapRepo.findByMap_feature("startmode_options");
+		if (startmodeOptions.isEmpty()) {
+			initializeStartModeOptions();
+			startmodeOptions = mapRepo.findByMap_feature("startmode_options");
+		}
+		for (datamap elem : startmodeOptions) {
+			map.put(elem.getMap_value(), elem.getMap_label());
+		}
+		return map;
+	}
+
+	private void initializeTransportationOptions() {
+		try {
+			mapRepo.save(new datamap("trans_options", 0, "On foot"));
+			mapRepo.save(new datamap("trans_options", 1, "Tricycle"));
+			mapRepo.save(new datamap("trans_options", 2, "Motor bike"));
+			mapRepo.save(new datamap("trans_options", 3, "Vehicle (Commercial)"));
+			mapRepo.save(new datamap("trans_options", 4, "Vehicle (Private)"));
+			mapRepo.save(new datamap("trans_options", 5, "Ambulance"));
+			mapRepo.save(new datamap("trans_options", 66, "Other"));
+			mapRepo.save(new datamap("trans_options", 88, "Not Stated"));
+			mapRepo.save(new datamap("trans_options", 99, "Not Applicable"));
+		} catch (Exception e) { e.printStackTrace(); }
+	}
+
+	private void initializePeriodOptions() {
+		try {
+			mapRepo.save(new datamap("period_options", 0, "Antepartum"));
+			mapRepo.save(new datamap("period_options", 1, "Intrapartum"));
+			mapRepo.save(new datamap("period_options", 2, "Postpartum"));
+			mapRepo.save(new datamap("period_options", 88, "Not Stated"));
+			mapRepo.save(new datamap("period_options", 99, "Not Applicable"));
+		} catch (Exception e) { e.printStackTrace(); }
+	}
+
+	private void initializeAdmissionConditionOptions() {
+		try {
+			mapRepo.save(new datamap("admissioncond_options", 0, "Good"));
+			mapRepo.save(new datamap("admissioncond_options", 1, "Fair"));
+			mapRepo.save(new datamap("admissioncond_options", 2, "Poor"));
+			mapRepo.save(new datamap("admissioncond_options", 3, "Critical"));
+			mapRepo.save(new datamap("admissioncond_options", 88, "Not Stated"));
+			mapRepo.save(new datamap("admissioncond_options", 99, "Not Applicable"));
+		} catch (Exception e) { e.printStackTrace(); }
+	}
+
+	private void initializeLevelConsciousnessOptions() {
+		try {
+			mapRepo.save(new datamap("levelconsc_options", 0, "Alert"));
+			mapRepo.save(new datamap("levelconsc_options", 1, "Verbal"));
+			mapRepo.save(new datamap("levelconsc_options", 2, "Pain"));
+			mapRepo.save(new datamap("levelconsc_options", 3, "Unresponsive"));
+			mapRepo.save(new datamap("levelconsc_options", 88, "Not Stated"));
+			mapRepo.save(new datamap("levelconsc_options", 99, "Not Applicable"));
+		} catch (Exception e) { e.printStackTrace(); }
+	}
+
+	private void initializeStartModeOptions() {
+		try {
+			mapRepo.save(new datamap("startmode_options", 0, "Spontaneous"));
+			mapRepo.save(new datamap("startmode_options", 1, "Induced"));
+			mapRepo.save(new datamap("startmode_options", 2, "Augmented"));
+			mapRepo.save(new datamap("startmode_options", 3, "Elective Caesarean"));
+			mapRepo.save(new datamap("startmode_options", 4, "Emergency Caesarean"));
+			mapRepo.save(new datamap("startmode_options", 88, "Not Stated"));
+			mapRepo.save(new datamap("startmode_options", 99, "Not Applicable"));
+		} catch (Exception e) { e.printStackTrace(); }
+	}
 }
 // end class
