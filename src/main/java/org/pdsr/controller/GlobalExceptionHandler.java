@@ -93,7 +93,6 @@ public class GlobalExceptionHandler {
             org.hibernate.exception.ConstraintViolationException hce = (org.hibernate.exception.ConstraintViolationException) cause;
             System.err.println("=== HIBERNATE CONSTRAINT VIOLATION on URL: " + request.getRequestURL() + " ===");
             System.err.println("  Constraint: " + hce.getConstraintName());
-            System.err.println("  SQL: " + hce.getSql());
             System.err.println("  Message: " + hce.getMessage());
             if (hce.getCause() != null) System.err.println("  Cause: " + hce.getCause().getMessage());
             System.err.println("=== END HIBERNATE CONSTRAINT VIOLATION ===");

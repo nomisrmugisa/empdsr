@@ -145,12 +145,12 @@ public class CaseEntryController {
 				return new SimpleDateFormat("dd/MM/yyyy").format(d);
 			}
 		});
-        // Register custom editor for sync_table to bind by ID string
-        binder.registerCustomEditor(sync_table.class, new java.beans.PropertyEditorSupport() {
+        // Register custom editor for SyncTable to bind by ID string
+        binder.registerCustomEditor(SyncTable.class, new java.beans.PropertyEditorSupport() {
             @Override
             public void setAsText(String text) {
                 if (org.springframework.util.StringUtils.hasText(text)) {
-                    sync_table s = syncRepo.findById(text).orElse(null);
+                    SyncTable s = syncRepo.findById(text).orElse(null);
                     setValue(s);
                 } else {
                     setValue(null);
@@ -785,7 +785,7 @@ public class CaseEntryController {
 			model.addAttribute("selected", selected);
 			model.addAttribute("death_options", deathOptionsSelectOne());
 			// Re-populate required model attributes before returning to the view
-			sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+			SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 			model.addAttribute("myf", synctable.getSync_name());
 			model.addAttribute("death_options", deathOptionsSelectOne());
 			model.addAttribute("nationality_options", nationalityOptionsSelectOne());
@@ -1053,9 +1053,16 @@ public class CaseEntryController {
 
 		switch (page) {
 			case 0: {
-				// Overview page - just save basic case identifiers
-				selected.setCase_status(0);
-				caseRepo.save(selected);
+				// Page 0 (Case Identifiers): copy editable fields onto the existing entity
+				// (which already has valid case_sync, case_date, case_id, case_death)
+				// then save existing to avoid nullifying the ManyToOne case_sync relationship.
+				existing.setCase_mid(selected.getCase_mid());
+				existing.setCase_mname(selected.getCase_mname());
+				existing.setCase_nationality(selected.getCase_nationality());
+				existing.setCase_nin(selected.getCase_nin());
+				existing.setData_sent(0);
+				existing.setCase_status(0);
+				caseRepo.save(existing);
 				break;
 			}
 			case 1: {
@@ -1704,19 +1711,6 @@ public class CaseEntryController {
 				} catch (JsonProcessingException e) {
 					e.printStackTrace();
 				}
-				break;
-			}
-			case 0: {
-				// Page 0 (Case Identifiers): copy editable fields onto the existing entity
-				// (which already has valid case_sync, case_date, case_id, case_death)
-				// then save existing to avoid nullifying the ManyToOne case_sync relationship.
-				existing.setCase_mid(selected.getCase_mid());
-				existing.setCase_mname(selected.getCase_mname());
-				existing.setCase_nationality(selected.getCase_nationality());
-				existing.setCase_nin(selected.getCase_nin());
-				existing.setData_sent(0);
-				existing.setCase_status(0);
-				caseRepo.save(existing);
 				break;
 			}
 			default: {
@@ -3348,364 +3342,6 @@ public class CaseEntryController {
 		return map;
 	}
 
-	@GetMapping("/debug-dropdown")
-	@ResponseBody
-	public String debugDropdown() {
-		StringBuilder result = new StringBuilder();
-		result.append("=== DROPDOWN DEBUG INFO ===\n");
-
-		try {
-			// Check Transportation Options
-			List<datamap> transOptions = mapRepo.findByMap_feature("trans_options");
-			result.append("Found ").append(transOptions.size()).append(" trans_options in database\n");
-
-			if (transOptions.isEmpty()) {
-				result.append("No trans_options found, initializing directly...\n");
-				initializeTransportationOptions();
-				transOptions = mapRepo.findByMap_feature("trans_options");
-				result.append("After initialization, found ").append(transOptions.size()).append(" trans_options\n");
-			}
-
-			result.append("\nTransportation Options:\n");
-			for (datamap option : transOptions) {
-				result.append("- Feature: ").append(option.getMap_feature())
-					  .append(", Value: ").append(option.getMap_value())
-					  .append(", Label: ").append(option.getMap_label()).append("\n");
-			}
-
-			// Check Period Options
-			List<datamap> periodOptions = mapRepo.findByMap_feature("period_options");
-			result.append("\nFound ").append(periodOptions.size()).append(" period_options in database\n");
-
-			if (periodOptions.isEmpty()) {
-				result.append("No period_options found, initializing directly...\n");
-				initializePeriodOptions();
-				periodOptions = mapRepo.findByMap_feature("period_options");
-				result.append("After initialization, found ").append(periodOptions.size()).append(" period_options\n");
-			}
-
-			result.append("\nPeriod Options:\n");
-			for (datamap option : periodOptions) {
-				result.append("- Feature: ").append(option.getMap_feature())
-					  .append(", Value: ").append(option.getMap_value())
-					  .append(", Label: ").append(option.getMap_label()).append("\n");
-			}
-
-			// Check Admission Condition Options
-			List<datamap> admissionCondOptions = mapRepo.findByMap_feature("admissioncond_options");
-			result.append("\nFound ").append(admissionCondOptions.size()).append(" admissioncond_options in database\n");
-
-			if (admissionCondOptions.isEmpty()) {
-				result.append("No admissioncond_options found, initializing directly...\n");
-				initializeAdmissionConditionOptions();
-				admissionCondOptions = mapRepo.findByMap_feature("admissioncond_options");
-				result.append("After initialization, found ").append(admissionCondOptions.size()).append(" admissioncond_options\n");
-			}
-
-			result.append("\nAdmission Condition Options:\n");
-			for (datamap option : admissionCondOptions) {
-				result.append("- Feature: ").append(option.getMap_feature())
-					  .append(", Value: ").append(option.getMap_value())
-					  .append(", Label: ").append(option.getMap_label()).append("\n");
-			}
-
-			// Check Level of Consciousness Options
-			List<datamap> levelConscOptions = mapRepo.findByMap_feature("levelconsc_options");
-			result.append("\nFound ").append(levelConscOptions.size()).append(" levelconsc_options in database\n");
-
-			if (levelConscOptions.isEmpty()) {
-				result.append("No levelconsc_options found, initializing directly...\n");
-				initializeLevelConsciousnessOptions();
-				levelConscOptions = mapRepo.findByMap_feature("levelconsc_options");
-				result.append("After initialization, found ").append(levelConscOptions.size()).append(" levelconsc_options\n");
-			}
-
-			result.append("\nLevel of Consciousness Options:\n");
-			for (datamap option : levelConscOptions) {
-				result.append("- Feature: ").append(option.getMap_feature())
-					  .append(", Value: ").append(option.getMap_value())
-					  .append(", Label: ").append(option.getMap_label()).append("\n");
-			}
-
-			// Check Start Mode Options
-			List<datamap> startmodeOptions = mapRepo.findByMap_feature("startmode_options");
-			result.append("\nFound ").append(startmodeOptions.size()).append(" startmode_options in database\n");
-
-			if (startmodeOptions.isEmpty()) {
-				result.append("No startmode_options found, initializing directly...\n");
-				initializeStartModeOptions();
-				startmodeOptions = mapRepo.findByMap_feature("startmode_options");
-				result.append("After initialization, found ").append(startmodeOptions.size()).append(" startmode_options\n");
-			}
-
-			result.append("\nStart Mode Options:\n");
-			for (datamap option : startmodeOptions) {
-				result.append("- Feature: ").append(option.getMap_feature())
-					  .append(", Value: ").append(option.getMap_value())
-					  .append(", Label: ").append(option.getMap_label()).append("\n");
-			}
-
-		} catch (Exception e) {
-			result.append("ERROR: ").append(e.getMessage()).append("\n");
-			e.printStackTrace();
-		}
-
-		return result.toString();
-	}
-
-	@ModelAttribute("trans_options")
-	public Map<Integer, String> transOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		List<datamap> transOptions = mapRepo.findByMap_feature("trans_options");
-		System.out.println("DEBUG: Found " + transOptions.size() + " trans_options in database");
-
-		// If no data found, initialize it directly
-		if (transOptions.isEmpty()) {
-			System.out.println("DEBUG: No trans_options found, initializing directly...");
-			initializeTransportationOptions();
-			transOptions = mapRepo.findByMap_feature("trans_options");
-			System.out.println("DEBUG: After initialization, found " + transOptions.size() + " trans_options");
-		}
-
-		for (datamap elem : transOptions) {
-			System.out.println("DEBUG: trans_option - value: " + elem.getMap_value() + ", label: " + elem.getMap_label());
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
-		System.out.println("DEBUG: Final trans_options map size: " + map.size());
-
-		return map;
-	}
-
-	private void initializeTransportationOptions() {
-		try {
-			System.out.println("DEBUG: Initializing transportation options directly...");
-			mapRepo.save(new datamap("trans_options", 0, "On foot"));
-			mapRepo.save(new datamap("trans_options", 1, "Tricycle"));
-			mapRepo.save(new datamap("trans_options", 2, "Motor bike"));
-			mapRepo.save(new datamap("trans_options", 3, "Vehicle (Commercial)"));
-			mapRepo.save(new datamap("trans_options", 4, "Vehicle (Private)"));
-			mapRepo.save(new datamap("trans_options", 5, "Ambulance"));
-			mapRepo.save(new datamap("trans_options", 66, "Other"));
-			mapRepo.save(new datamap("trans_options", 88, "Not Stated"));
-			mapRepo.save(new datamap("trans_options", 99, "Not Applicable"));
-			System.out.println("DEBUG: Transportation options initialized successfully");
-		} catch (Exception e) {
-			System.err.println("DEBUG: Error initializing transportation options: " + e.getMessage());
-			e.printStackTrace();
-		}
-	}
-
-	@ModelAttribute("period_options")
-	public Map<Integer, String> periodOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("period_options")) {
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
-
-		return map;
-	}
-
-	private void initializePeriodOptions() {
-		try {
-			System.out.println("DEBUG: Initializing period options directly...");
-			mapRepo.save(new datamap("period_options", 0, "Antepartum"));
-			mapRepo.save(new datamap("period_options", 1, "Intrapartum"));
-			mapRepo.save(new datamap("period_options", 2, "Postpartum"));
-			mapRepo.save(new datamap("period_options", 88, "Not Stated"));
-			mapRepo.save(new datamap("period_options", 99, "Not Applicable"));
-			System.out.println("DEBUG: Period options initialized successfully");
-		} catch (Exception e) {
-			System.err.println("DEBUG: Error initializing period options: " + e.getMessage());
-			e.printStackTrace();
-		}
-	}
-
-	private void initializeAdmissionConditionOptions() {
-		try {
-			System.out.println("DEBUG: Initializing admission condition options directly...");
-			mapRepo.save(new datamap("admissioncond_options", 0, "Good"));
-			mapRepo.save(new datamap("admissioncond_options", 1, "Fair"));
-			mapRepo.save(new datamap("admissioncond_options", 2, "Poor"));
-			mapRepo.save(new datamap("admissioncond_options", 3, "Critical"));
-			mapRepo.save(new datamap("admissioncond_options", 88, "Not Stated"));
-			mapRepo.save(new datamap("admissioncond_options", 99, "Not Applicable"));
-			System.out.println("DEBUG: Admission condition options initialized successfully");
-		} catch (Exception e) {
-			System.err.println("DEBUG: Error initializing admission condition options: " + e.getMessage());
-			e.printStackTrace();
-		}
-	}
-
-	private void initializeLevelConsciousnessOptions() {
-		try {
-			System.out.println("DEBUG: Initializing level of consciousness options directly...");
-			mapRepo.save(new datamap("levelconsc_options", 0, "Alert"));
-			mapRepo.save(new datamap("levelconsc_options", 1, "Verbal"));
-			mapRepo.save(new datamap("levelconsc_options", 2, "Pain"));
-			mapRepo.save(new datamap("levelconsc_options", 3, "Unresponsive"));
-			mapRepo.save(new datamap("levelconsc_options", 88, "Not Stated"));
-			mapRepo.save(new datamap("levelconsc_options", 99, "Not Applicable"));
-			System.out.println("DEBUG: Level of consciousness options initialized successfully");
-		} catch (Exception e) {
-			System.err.println("DEBUG: Error initializing level of consciousness options: " + e.getMessage());
-			e.printStackTrace();
-		}
-	}
-
-	private void initializeStartModeOptions() {
-		try {
-			System.out.println("DEBUG: Initializing start mode options directly...");
-			mapRepo.save(new datamap("startmode_options", 0, "Spontaneous"));
-			mapRepo.save(new datamap("startmode_options", 1, "Induced"));
-			mapRepo.save(new datamap("startmode_options", 2, "Augmented"));
-			mapRepo.save(new datamap("startmode_options", 3, "Elective Caesarean"));
-			mapRepo.save(new datamap("startmode_options", 4, "Emergency Caesarean"));
-			mapRepo.save(new datamap("startmode_options", 88, "Not Stated"));
-			mapRepo.save(new datamap("startmode_options", 99, "Not Applicable"));
-			System.out.println("DEBUG: Start mode options initialized successfully");
-		} catch (Exception e) {
-			System.err.println("DEBUG: Error initializing start mode options: " + e.getMessage());
-			e.printStackTrace();
-		}
-	}
-
-	@ModelAttribute("admissioncond_options")
-	public Map<Integer, String> admissionCondOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		List<datamap> admissionCondOptions = mapRepo.findByMap_feature("admissioncond_options");
-		System.out.println("DEBUG: Found " + admissionCondOptions.size() + " admissioncond_options in database");
-
-		// If no data found, initialize it directly
-		if (admissionCondOptions.isEmpty()) {
-			System.out.println("DEBUG: No admissioncond_options found, initializing directly...");
-			initializeAdmissionConditionOptions();
-			admissionCondOptions = mapRepo.findByMap_feature("admissioncond_options");
-			System.out.println("DEBUG: After initialization, found " + admissionCondOptions.size() + " admissioncond_options");
-		}
-
-		for (datamap elem : admissionCondOptions) {
-			System.out.println("DEBUG: admissioncond_option - value: " + elem.getMap_value() + ", label: " + elem.getMap_label());
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
-		System.out.println("DEBUG: Final admissioncond_options map size: " + map.size());
-
-		return map;
-	}
-
-	@ModelAttribute("levelconsc_options")
-	public Map<Integer, String> levelConscOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		List<datamap> levelConscOptions = mapRepo.findByMap_feature("levelconsc_options");
-		System.out.println("DEBUG: Found " + levelConscOptions.size() + " levelconsc_options in database");
-
-		// If no data found, initialize it directly
-		if (levelConscOptions.isEmpty()) {
-			System.out.println("DEBUG: No levelconsc_options found, initializing directly...");
-			initializeLevelConsciousnessOptions();
-			levelConscOptions = mapRepo.findByMap_feature("levelconsc_options");
-			System.out.println("DEBUG: After initialization, found " + levelConscOptions.size() + " levelconsc_options");
-		}
-
-		for (datamap elem : levelConscOptions) {
-			System.out.println("DEBUG: levelconsc_option - value: " + elem.getMap_value() + ", label: " + elem.getMap_label());
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
-		System.out.println("DEBUG: Final levelconsc_options map size: " + map.size());
-
-		return map;
-	}
-
-	@ModelAttribute("provider_options")
-	public Map<Integer, String> providerOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("provider_options")) {
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
-		return map;
-	}
-
-	@ModelAttribute("startmode_options")
-	public Map<Integer, String> startmodeOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		List<datamap> startmodeOptions = mapRepo.findByMap_feature("startmode_options");
-		System.out.println("DEBUG: Found " + startmodeOptions.size() + " startmode_options in database");
-
-		// If no data found, initialize it directly
-		if (startmodeOptions.isEmpty()) {
-			System.out.println("DEBUG: No startmode_options found, initializing directly...");
-			initializeStartModeOptions();
-			startmodeOptions = mapRepo.findByMap_feature("startmode_options");
-			System.out.println("DEBUG: After initialization, found " + startmodeOptions.size() + " startmode_options");
-		}
-
-		for (datamap elem : startmodeOptions) {
-			System.out.println("DEBUG: startmode_option - value: " + elem.getMap_value() + ", label: " + elem.getMap_label());
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
-		System.out.println("DEBUG: Final startmode_options map size: " + map.size());
-
-		return map;
-	}
-
-	@ModelAttribute("decision_options")
-	public Map<Integer, String> decisionOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("decision_options")) {
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
-
-		return map;
-	}
-
-	@ModelAttribute("birthloc_options")
-	public Map<Integer, String> birthlocOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("birthloc_options")) {
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
-
-		return map;
-	}
-
-	@ModelAttribute("liqourvolume_options")
-	public Map<Integer, String> liqourvolumeOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("liqourvolume_options")) {
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
-
-		return map;
-	}
-
-	@ModelAttribute("liqourcolor_options")
-	public Map<Integer, String> liqourcolorOptionsSelectOne() {
-		final Map<Integer, String> map = new LinkedHashMap<>();
-
-		map.put(null, "Select one");
-		for (datamap elem : mapRepo.findByMap_feature("liqourcolor_options")) {
-			map.put(elem.getMap_value(), elem.getMap_label());
-		}
-
-		return map;
-	}
 
 	/**
 	 * Generate dataElement mapping information for UI display
