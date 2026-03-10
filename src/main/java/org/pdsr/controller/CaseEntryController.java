@@ -162,6 +162,67 @@ public class CaseEntryController {
                 return (s != null) ? s.getSyncId() : "";
             }
         });
+
+        binder.registerCustomEditor(abnormality_table.class, new java.beans.PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) {
+                if (org.springframework.util.StringUtils.hasText(text)) {
+                    setValue(abnoRepo.findById(text).orElse(null));
+                } else {
+                    setValue(null);
+                }
+            }
+        });
+        binder.registerCustomEditor(cordfault_table.class, new java.beans.PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) {
+                if (org.springframework.util.StringUtils.hasText(text)) {
+                    setValue(cordRepo.findById(text).orElse(null));
+                } else {
+                    setValue(null);
+                }
+            }
+        });
+        binder.registerCustomEditor(placentacheck_table.class, new java.beans.PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) {
+                if (org.springframework.util.StringUtils.hasText(text)) {
+                    setValue(placRepo.findById(text).orElse(null));
+                } else {
+                    setValue(null);
+                }
+            }
+        });
+        binder.registerCustomEditor(ipts_table.class, new java.beans.PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) {
+                if (org.springframework.util.StringUtils.hasText(text)) {
+                    setValue(iptsRepo.findById(text).orElse(null));
+                } else {
+                    setValue(null);
+                }
+            }
+        });
+        binder.registerCustomEditor(ttdp_table.class, new java.beans.PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) {
+                if (org.springframework.util.StringUtils.hasText(text)) {
+                    setValue(ttdpRepo.findById(text).orElse(null));
+                } else {
+                    setValue(null);
+                }
+            }
+        });
+        binder.registerCustomEditor(risk_table.class, new java.beans.PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) {
+                if (org.springframework.util.StringUtils.hasText(text)) {
+                    setValue(riskRepo.findById(text).orElse(null));
+                } else {
+                    setValue(null);
+                }
+            }
+        });
 	}
 
 	@Autowired
