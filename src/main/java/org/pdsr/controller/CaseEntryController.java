@@ -156,6 +156,11 @@ public class CaseEntryController {
                     setValue(null);
                 }
             }
+            @Override
+            public String getAsText() {
+                SyncTable s = (SyncTable) getValue();
+                return (s != null) ? s.getSyncId() : "";
+            }
         });
 	}
 
@@ -1008,6 +1013,14 @@ public class CaseEntryController {
 		model.addAttribute("myf", synctable.getSyncName());
 
 		case_identifiers existing = caseRepo.findById(selected.getCase_uuid()).get();
+		
+		// Robustness: ensure mandatory fields are preserved from existing record
+		// to avoid ConstraintViolationException if UI/binding fails to provide them.
+		if (selected.getCase_sync() == null) selected.setCase_sync(existing.getCase_sync());
+		if (selected.getCase_date() == null) selected.setCase_date(existing.getCase_date());
+		if (selected.getCase_id() == null) selected.setCase_id(existing.getCase_id());
+		if (selected.getCase_death() == null) selected.setCase_death(existing.getCase_death());
+		
 		selected.setData_sent(0);// reset the data sending indicator when any record is edited
 		selected.setCase_status(0);// reset the submission status to not submitted (incomplete)
 
