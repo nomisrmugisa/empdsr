@@ -23,7 +23,9 @@ public class InMemoryConfig {
 
 	@PostConstruct
 	public void loadIfInMemory() throws Exception {
-		Resource resource = resourceLoader.getResource(SAMPLE_DATA);
-		ScriptUtils.executeSqlScript(datasource.getDataSource().getConnection(), resource);
+		// Commented out to avoid redundant execution. 
+		// Spring Boot's spring.sql.init.mode=always already handles data.sql.
+		// Resource resource = resourceLoader.getResource(SAMPLE_DATA);
+		// ScriptUtils.executeSqlScript(datasource.getDataSource().getConnection(), resource);
 	}
 }
