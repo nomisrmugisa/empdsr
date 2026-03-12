@@ -5,8 +5,8 @@ target/
 *.ear
 
 # Database files
-data/
-slave/
+/data/
+/slave/
 *.db
 *.trace.db
 *.lock.db
