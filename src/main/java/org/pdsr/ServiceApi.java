@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import javax.annotation.PostConstruct;
 
 import org.pdsr.dhis2.Dhis2Form;
 import org.pdsr.json.DecryptedAuditAudit;
@@ -43,16 +44,21 @@ public class ServiceApi {
 
 	private final RestTemplateBuilder builder;
 
+	private final SlaveSyncTableRepository syncRepo;
+
 	public ServiceApi(final RestTemplateBuilder builder, SlaveSyncTableRepository syncRepo) {
 		this.builder = builder;
+		this.syncRepo = syncRepo;
+	}
 
+	@PostConstruct
+	public void init() {
 		Optional<SyncTable> sync = syncRepo.findById(CONSTANTS.LICENSE_ID);
 
 		if (sync.isPresent()) {
-
 			// In our new SyncTable, sync_url was merged into sync_id or handled differently.
 			// Defaulting to local main server or syncId for now.
-			BASE_URL = "http://localhost:5000/api"; 
+			BASE_URL = "http://localhost:5000/api";
 			FAC_CODE = sync.get().getSyncCode();
 		}
 	}
