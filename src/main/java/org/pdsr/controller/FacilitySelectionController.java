@@ -19,6 +19,10 @@ import java.io.IOException;
 import org.pdsr.master.repo.UserTableRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
+import org.pdsr.master.repo.SyncTableRepository;
+import org.pdsr.slave.model.SyncTable;
+import org.pdsr.CONSTANTS;
+import java.util.Optional;
 
 @Controller
 public class FacilitySelectionController {
@@ -28,6 +32,9 @@ public class FacilitySelectionController {
 
     @Autowired
     private UserTableRepository userRepo;
+
+    @Autowired
+    private SyncTableRepository syncRepo;
 
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -55,7 +62,9 @@ public class FacilitySelectionController {
         }
 
         if (facilities.size() == 1) {
-            session.setAttribute("selectedFacility", facilities.get(0));
+            OrganisationUnit selected = facilities.get(0);
+            session.setAttribute("selectedFacility", selected);
+            updateGlobalSync(selected);
             return "redirect:/";
         }
 
@@ -85,10 +94,21 @@ public class FacilitySelectionController {
 
         if (selected != null) {
             session.setAttribute("selectedFacility", selected);
+            updateGlobalSync(selected);
             return "redirect:/";
         }
 
         return "redirect:/select-facility?error";
+    }
+
+    private void updateGlobalSync(OrganisationUnit selected) {
+        Optional<SyncTable> syncOpt = syncRepo.findById(CONSTANTS.LICENSE_ID);
+        if (syncOpt.isPresent()) {
+            SyncTable sync = syncOpt.get();
+            sync.setSyncName(selected.getName());
+            sync.setSyncCode(selected.getId()); // Use DHIS2 ID as code
+            syncRepo.save(sync);
+        }
     }
 
     private List<OrganisationUnit> getCachedFacilities(String username) {
