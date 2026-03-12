@@ -56,7 +56,7 @@ public class FacilitySelectionController {
 
         if (facilities.size() == 1) {
             session.setAttribute("selectedFacility", facilities.get(0));
-            return "redirect:/dashboard";
+            return "redirect:/";
         }
 
         model.addAttribute("facilities", facilities);
@@ -85,7 +85,7 @@ public class FacilitySelectionController {
 
         if (selected != null) {
             session.setAttribute("selectedFacility", selected);
-            return "redirect:/dashboard";
+            return "redirect:/";
         }
 
         return "redirect:/select-facility?error";
