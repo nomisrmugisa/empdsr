@@ -33,7 +33,7 @@ import org.pdsr.master.model.wmPK;
 import org.pdsr.master.repo.AuditRecommendRepository;
 import org.pdsr.master.repo.MonitoringTableRepository;
 import org.pdsr.master.repo.MonitoringToolRepository;
-import org.pdsr.master.repo.SyncTableRepository;
+import org.pdsr.slave.repo.SlaveSyncTableRepository;
 import org.pdsr.master.repo.WeeklyMonitoringTableRepository;
 import org.pdsr.master.repo.WeeklyTableRepository;
 import org.pdsr.pojos.upload;
@@ -62,7 +62,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ReportController {
 
 	@Autowired
-	private SyncTableRepository syncRepo;
+	private SlaveSyncTableRepository syncRepo;
 
 	@Autowired
 	private MonitoringTableRepository monRepo;

@@ -3,7 +3,7 @@ package org.pdsr.dhis2;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
 import org.pdsr.CONSTANTS;
-import org.pdsr.master.repo.SyncTableRepository;
+import org.pdsr.slave.repo.SlaveSyncTableRepository;
 import org.pdsr.slave.model.SyncTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +24,7 @@ public class DHIS2AuthService {
     private static final Logger logger = LoggerFactory.getLogger(DHIS2AuthService.class);
 
     @Autowired
-    private SyncTableRepository syncRepo;
+    private SlaveSyncTableRepository syncRepo;
 
     @Value("${dhis2.api.version:40}")
     private String apiVersion;

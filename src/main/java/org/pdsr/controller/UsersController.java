@@ -7,7 +7,7 @@ import org.pdsr.slave.model.SyncTable;
 import org.pdsr.master.model.user_table;
 import org.pdsr.master.repo.FacilityTableRepository;
 import org.pdsr.master.repo.GroupTableRepository;
-import org.pdsr.master.repo.SyncTableRepository;
+import org.pdsr.slave.repo.SlaveSyncTableRepository;
 import org.pdsr.master.repo.UserTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class UsersController {
 
 	@Autowired
-	private SyncTableRepository syncRepo;
+	private SlaveSyncTableRepository syncRepo;
 
 	@Autowired
 	private UserTableRepository userRepo;

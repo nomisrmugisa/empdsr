@@ -26,7 +26,7 @@ import org.pdsr.master.model.weekly_monitoring;
 import org.pdsr.master.repo.AuditAuditRepository;
 import org.pdsr.master.repo.AuditRecommendRepository;
 import org.pdsr.master.repo.CaseRepository;
-import org.pdsr.master.repo.SyncTableRepository;
+import org.pdsr.slave.repo.SlaveSyncTableRepository;
 import org.pdsr.master.repo.WeeklyMonitoringTableRepository;
 import org.pdsr.summary.model.SummaryPK;
 import org.pdsr.summary.model.big_audit_audit;
@@ -49,7 +49,7 @@ public class CentralPushController {
 	private ServiceApi api;
 
 	@Autowired
-	private SyncTableRepository syncRepo;
+	private SlaveSyncTableRepository syncRepo;
 
 	@Autowired
 	private WeeklyMonitoringTableRepository weekMRepo;

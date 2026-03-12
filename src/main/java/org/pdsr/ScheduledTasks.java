@@ -12,7 +12,7 @@ import org.pdsr.slave.model.SyncTable;
 import org.pdsr.master.repo.AuditAuditRepository;
 import org.pdsr.master.repo.AuditCaseRepository;
 import org.pdsr.master.repo.AuditRecommendRepository;
-import org.pdsr.master.repo.SyncTableRepository;
+import org.pdsr.slave.repo.SlaveSyncTableRepository;
 import org.pdsr.master.repo.UserTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 public class ScheduledTasks {
 
 	@Autowired
-	private SyncTableRepository syncRepo;
+	private SlaveSyncTableRepository syncRepo;
 	
 	@Autowired
 	private UserTableRepository userRepo;

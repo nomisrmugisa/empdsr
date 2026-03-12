@@ -3,7 +3,7 @@ package org.pdsr;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import org.pdsr.master.repo.SyncTableRepository;
+import org.pdsr.slave.repo.SlaveSyncTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
@@ -18,7 +18,7 @@ public class EmailService {
 	private JavaMailSender emailSender;
 	
 	@Autowired
-	private SyncTableRepository syncRepo;
+	private SlaveSyncTableRepository syncRepo;
 
 	public void sendSimpleMessage(String[] to, String subject, String text) {
 

@@ -16,7 +16,7 @@ import org.pdsr.json.json_dhis2_form;
 import org.pdsr.json.json_redcap;
 import org.pdsr.master.model.facility_table;
 import org.pdsr.slave.model.SyncTable;
-import org.pdsr.master.repo.SyncTableRepository;
+import org.pdsr.slave.repo.SlaveSyncTableRepository;
 import org.pdsr.summary.model.big_audit_audit;
 import org.pdsr.summary.model.big_audit_recommendation;
 import org.pdsr.summary.model.big_case_identifiers;
@@ -43,7 +43,7 @@ public class ServiceApi {
 
 	private final RestTemplateBuilder builder;
 
-	public ServiceApi(final RestTemplateBuilder builder, SyncTableRepository syncRepo) {
+	public ServiceApi(final RestTemplateBuilder builder, SlaveSyncTableRepository syncRepo) {
 		this.builder = builder;
 
 		Optional<SyncTable> sync = syncRepo.findById(CONSTANTS.LICENSE_ID);

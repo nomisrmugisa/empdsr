@@ -16,7 +16,7 @@ import org.pdsr.master.repo.AuditRecommendRepository;
 import org.pdsr.master.repo.CaseRepository;
 import org.pdsr.master.repo.FacilityTableRepository;
 import org.pdsr.master.repo.IcdCodesRepository;
-import org.pdsr.master.repo.SyncTableRepository;
+import org.pdsr.slave.repo.SlaveSyncTableRepository;
 import org.pdsr.master.repo.WeeklyMonitoringTableRepository;
 import org.pdsr.pojos.icdpm;
 import org.pdsr.pojos.wmindicators;
@@ -41,7 +41,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class HomeController {
 
 	@Autowired
-	private SyncTableRepository syncRepo;
+	private SlaveSyncTableRepository syncRepo;
 
 	@Autowired
 	private FacilityTableRepository facRepo;
