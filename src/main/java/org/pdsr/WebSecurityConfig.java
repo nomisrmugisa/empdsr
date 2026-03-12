@@ -24,10 +24,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private DHIS2AuthenticationProvider dhis2AuthProvider;
 
-	@Bean
-	public BCryptPasswordEncoder bCryptPasswordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
