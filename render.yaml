@@ -5,7 +5,7 @@ services:
     dockerfilePath: ./Dockerfile
     plan: free
     region: oregon
-    branch: new_main_empdsr
+    branch: main
     healthCheckPath: /
     envVars:
       - key: JAVA_OPTS
