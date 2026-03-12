@@ -12,7 +12,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
+import java.util.Collections;
 import java.util.List;
+import java.io.IOException;
+
+import org.pdsr.master.repo.UserTableRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 @Controller
 public class FacilitySelectionController {
@@ -20,16 +26,31 @@ public class FacilitySelectionController {
     @Autowired
     private DHIS2AuthService dhis2AuthService;
 
+    @Autowired
+    private UserTableRepository userRepo;
+
+    private final ObjectMapper mapper = new ObjectMapper();
+
     @GetMapping("/select-facility")
     public String showFacilitySelection(Model model, HttpSession session) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
-        String password = (String) auth.getCredentials();
+        String password = (auth.getCredentials() != null) ? auth.getCredentials().toString() : null;
 
-        List<OrganisationUnit> facilities = dhis2AuthService.getUserFacilities(username, password);
+        List<OrganisationUnit> facilities = Collections.emptyList();
+        
+        // Try to get live units from DHIS2 if online
+        if (password != null) {
+            facilities = dhis2AuthService.getUserFacilities(username, password);
+        }
+        
+        // Fallback to local cache if DHIS2 is unreachable or credentials not available (RememberMe)
+        if (facilities.isEmpty()) {
+            facilities = getCachedFacilities(username);
+        }
         
         if (facilities.isEmpty()) {
-            model.addAttribute("error", "No facilities assigned to your DHIS2 account.");
+            model.addAttribute("error", "No facilities found. Please login while online once to sync your account.");
             return "login";
         }
 
@@ -46,9 +67,17 @@ public class FacilitySelectionController {
     public String selectFacility(@RequestParam("facilityId") String facilityId, HttpSession session) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
-        String password = (String) auth.getCredentials();
+        String password = (auth.getCredentials() != null) ? auth.getCredentials().toString() : null;
 
-        List<OrganisationUnit> facilities = dhis2AuthService.getUserFacilities(username, password);
+        List<OrganisationUnit> facilities = Collections.emptyList();
+        if (password != null) {
+            facilities = dhis2AuthService.getUserFacilities(username, password);
+        }
+        
+        if (facilities.isEmpty()) {
+            facilities = getCachedFacilities(username);
+        }
+
         OrganisationUnit selected = facilities.stream()
                 .filter(f -> f.getId().equals(facilityId))
                 .findFirst()
@@ -60,5 +89,19 @@ public class FacilitySelectionController {
         }
 
         return "redirect:/select-facility?error";
+    }
+
+    private List<OrganisationUnit> getCachedFacilities(String username) {
+        return userRepo.findById(username).map(user -> {
+            String json = user.getUnitsJson();
+            if (json != null && !json.isEmpty()) {
+                try {
+                    return mapper.readValue(json, new TypeReference<List<OrganisationUnit>>() {});
+                } catch (IOException e) {
+                    return Collections.<OrganisationUnit>emptyList();
+                }
+            }
+            return Collections.<OrganisationUnit>emptyList();
+        }).orElse(Collections.emptyList());
     }
 }

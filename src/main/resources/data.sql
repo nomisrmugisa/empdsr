@@ -11,7 +11,7 @@ VALUES (
     'TEST001',              -- SYNC_CODE
     'Mulago Hospital',       -- SYNC_NAME
     'admin@example.com',    -- SYNC_EMAIL
-    null                    -- SYNC_JSON
+    'https://ug.sk-engine.online/hmis' -- SYNC_JSON (used as DHIS2 Base URL)
 );
 
 -- Insert dropdown options for Relationship to Next of Kin

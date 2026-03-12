@@ -64,6 +64,9 @@ public class user_table implements Serializable {
 	@JoinTable(name = "user_group", joinColumns = @JoinColumn(name = "username"), inverseJoinColumns = @JoinColumn(name = "group_role"))
 	private List<group_table> groups = new ArrayList<>();
 
+	@Column(name = "units_json", length = 10000)
+	private String unitsJson;
+
 	public String getUsername() {
 		return username;
 	}
@@ -135,6 +138,14 @@ public class user_table implements Serializable {
 
 	public void setGroups(List<group_table> groups) {
 		this.groups = groups;
+	}
+
+	public String getUnitsJson() {
+		return unitsJson;
+	}
+
+	public void setUnitsJson(String unitsJson) {
+		this.unitsJson = unitsJson;
 	}
 
 	@Override

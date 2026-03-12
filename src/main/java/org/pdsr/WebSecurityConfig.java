@@ -42,7 +42,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.permitAll()
 				.and()
 			.logout()
-				.permitAll();
+				.permitAll()
+				.and()
+			.rememberMe()
+				.rememberMeParameter("remember-me")
+				.key("pdsr-secret-key")
+				.tokenValiditySeconds(2592000); // 30 days
 
 		http.csrf().disable();
 		http.headers().frameOptions().disable();
