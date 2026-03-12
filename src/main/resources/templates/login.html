@@ -108,6 +108,12 @@
 		<div class="box">
 			<h3 class="font-weight-bold text-center mb-4">DHIS2 Login</h3>
 
+			<div th:if="${param.error}"
+				style="background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 0.9em;">
+				Invalid DHIS2 username or password.
+				<br><small>Please check your credentials and try again.</small>
+			</div>
+
 			<label for="username">DHIS2 Username</label>
 			<input id="username" name="username" onFocus="field_focus(this, 'username');"
 				onblur="field_blur(this, 'username');" class="email" />
