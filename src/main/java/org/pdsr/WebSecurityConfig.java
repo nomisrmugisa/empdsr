@@ -25,6 +25,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	private DHIS2AuthenticationProvider dhis2AuthProvider;
 
 
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
@@ -63,7 +66,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		// Use local DB authentication
-		auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
+		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
 		
 		// Use DHIS2 authentication
 		auth.authenticationProvider(dhis2AuthProvider);
