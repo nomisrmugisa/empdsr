@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Select Facility - PDSR</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.6.0/css/bootstrap.min.css}">
+    <style>
+        body {
+            background: #f4f7f6;
+            display: flex;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .selection-card {
+            max-width: 500px;
+            margin: auto;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            background: white;
+        }
+
+        .facility-item {
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #e0e0e0;
+            margin-bottom: 0.5rem;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .facility-item:hover {
+            background: #e3f2fd;
+            border-color: #2196f3;
+            transform: translateY(-2px);
+        }
+
+        .btn-select {
+            width: 100%;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="selection-card">
+            <h3 class="text-center font-weight-bold mb-4">Select Facility</h3>
+            <p class="text-muted text-center mb-4">You are assigned to multiple facilities in DHIS2. Please select one
+                to proceed.</p>
+
+            <form th:action="@{/select-facility}" method="post">
+                <div th:each="facility : ${facilities}" class="facility-item"
+                    onclick="this.querySelector('input').checked = true; document.getElementById('selectBtn').disabled = false;">
+                    <div class="custom-control custom-radio">
+                        <input type="radio" th:id="${facility.id}" name="facilityId" th:value="${facility.id}"
+                            class="custom-control-input">
+                        <label class="custom-control-label font-weight-bold" th:for="${facility.id}"
+                            th:text="${facility.name}"></label>
+                        <div class="small text-muted" th:text="'Level ' + ${facility.level}"></div>
+                    </div>
+                </div>
+
+                <button id="selectBtn" type="submit" class="btn btn-primary btn-select" disabled>Continue to
+                    Dashboard</button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

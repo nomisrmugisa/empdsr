@@ -3,22 +3,25 @@ package org.pdsr;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.pdsr.security.DHIS2AuthenticationProvider;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Qualifier("userDetailsServiceImpl")
 	@Autowired
-	private UserDetailsServiceImpl userDetailsServiceImpl;
+	private UserDetailsServiceImpl userDetailsService;
+
+	@Autowired
+	private DHIS2AuthenticationProvider dhis2AuthProvider;
 
 	@Bean
 	BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -32,8 +35,13 @@ public class WebSecurityConfig {
 		// code
 
 		http.authorizeRequests(requests -> requests
+				.antMatchers("/login", "/select-facility", "/webjars/**", "/css/**", "/js/**").permitAll()
 				.anyRequest().authenticated())
-				.formLogin(login -> login.loginPage("/login").failureUrl("/login?error").permitAll())
+				.formLogin(login -> login
+						.loginPage("/login")
+						.defaultSuccessUrl("/select-facility", true)
+						.failureUrl("/login?error")
+						.permitAll())
 				.logout(logout -> logout.permitAll());
 
 		http.csrf().disable();// for h2-console
