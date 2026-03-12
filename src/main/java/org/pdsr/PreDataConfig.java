@@ -137,7 +137,7 @@ public class PreDataConfig {
 
 		}
 
-		{
+		if (resRepo.count() == 0) {
 			List<resuscitation_table> res = new ArrayList<>();
 			res.add(new resuscitation_table("Suction and stimulation", "Suction and stimulation"));
 			res.add(new resuscitation_table("IPPV bag and mask", "IPPV bag and mask"));
@@ -155,7 +155,7 @@ public class PreDataConfig {
 			resRepo.saveAll(res);
 		}
 
-		{
+		if (riskRepo.count() == 0) {
 			List<risk_table> res = new ArrayList<>();
 			res.add(new risk_table("Cervical / uterine surgery", "none"));
 			res.add(new risk_table("Last delivery > 10 years", "none"));
@@ -172,7 +172,7 @@ public class PreDataConfig {
 			riskRepo.saveAll(res);
 		}
 
-		{
+		if (compRepo.count() == 0) {
 			List<complication_table> res = new ArrayList<>();
 			res.add(new complication_table("Cephalo-pelvic disproportion (CPD)", "none"));
 			res.add(new complication_table("Premature rupture of membranes", "none"));
@@ -192,7 +192,7 @@ public class PreDataConfig {
 			compRepo.saveAll(res);
 		}
 
-		{
+		if (abnorRepo.count() == 0) {
 			List<abnormality_table> res = new ArrayList<>();
 			res.add(new abnormality_table("Microcephaly", "none"));
 			res.add(new abnormality_table("Exomphalos major", "none"));
@@ -207,14 +207,14 @@ public class PreDataConfig {
 			abnorRepo.saveAll(res);
 		}
 
-		{
+		if (cordRepo.count() == 0) {
 			List<cordfault_table> res = new ArrayList<>();
 			res.add(new cordfault_table("Kinks and knots", "none"));
 			res.add(new cordfault_table("Degenerated cord", "none"));
 			cordRepo.saveAll(res);
 		}
 
-		{
+		if (placentaRepo.count() == 0) {
 			List<placentacheck_table> res = new ArrayList<>();
 			res.add(new placentacheck_table("Small size", "none"));
 			res.add(new placentacheck_table("Pale placenta", "none"));
@@ -229,7 +229,7 @@ public class PreDataConfig {
 			placentaRepo.saveAll(res);
 		}
 
-		{
+		if (diagRepo.count() == 0) {
 			List<diagnoses_table> res = new ArrayList<>();
 			res.add(new diagnoses_table("Prematurity", "Prematurity"));
 			res.add(new diagnoses_table("Neonatal Jaundice", "Neonatal Jaundice"));
@@ -249,20 +249,18 @@ public class PreDataConfig {
 			res.add(new diagnoses_table("Asphyxia (HIE)", "Asphyxia (HIE)"));
 			res.add(new diagnoses_table("Big baby (Macrosomia)", "Big baby (Macrosomia)"));
 			diagRepo.saveAll(res);
-
 		}
 
-		{
+		if (mcgrpRepo.count() == 0) {
 			List<mcgroup_table> res = new ArrayList<>();
 			res.add(new mcgroup_table("M1", "Complications of placenta, cord and membranes"));
 			res.add(new mcgroup_table("M2", "Maternal complications of pregnancy"));
 			res.add(new mcgroup_table("M3", "Other complications of labour and delivery"));
 			res.add(new mcgroup_table("M4", "Maternal medical and surgical conditions"));
 			mcgrpRepo.saveAll(res);
-
 		}
 
-		{
+		if (mcondRepo.count() == 0) {
 			List<mcondition_table> res = new ArrayList<>();
 			res.add(new mcondition_table("M1.1", "M1", "placenta praevia"));
 			res.add(new mcondition_table("M1.2", "M1", "other forms of placental separation and haemorrhage"));
@@ -311,7 +309,7 @@ public class PreDataConfig {
 
 		}
 
-		{
+		if (cfactorRepo.count() == 0) {
 			List<cfactor_table> res = new ArrayList<>();
 			res.add(new cfactor_table(101, 100, "Never initiated antenatal care"));
 			res.add(new cfactor_table(102, 100, "Booked late in pregnancy"));
@@ -388,7 +386,7 @@ public class PreDataConfig {
 
 		}
 
-		{
+		if (monRepo.count() == 0) {
 			List<monitoring_table> res = new ArrayList<>();
 
 			res.add(new monitoring_table(10, "Total Deliveries", 100, "Total deliveries", "mothers who gave birth",
@@ -442,10 +440,9 @@ public class PreDataConfig {
 					"women who died in pregnancy or around child birth", true));
 
 			monRepo.saveAll(res);
-
 		}
 
-		{
+		if (dmapRepo.count() == 0) {
 			List<datamap> res = new ArrayList<>();
 
 			res.add(new datamap("death_options", 1, "Stillbirth"));

@@ -6,7 +6,7 @@ services:
     plan: free
     region: oregon
     branch: main
-    healthCheckPath: /
+    healthCheckPath: /login
     envVars:
       - key: JAVA_OPTS
         value: "-Xmx512m -Xms256m"
