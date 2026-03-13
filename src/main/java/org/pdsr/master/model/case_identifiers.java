@@ -18,7 +18,6 @@ import javax.validation.constraints.Size;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -80,10 +79,8 @@ public class case_identifiers implements Serializable {
 	@Transient
 	private Double similarity_score;// similarity strength based on fellegi-stunter model
 	
-	@JsonIgnore
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "case_sync", referencedColumnName = "SYNC_ID", insertable = true, updatable = true)
-	private org.pdsr.slave.model.SyncTable case_sync;
+	@Column(name = "case_sync")
+	private String case_sync;
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "case_uuid")
 	private case_biodata biodata;
@@ -302,11 +299,11 @@ public class case_identifiers implements Serializable {
 		this.case_status = case_status;
 	}
 
-	public org.pdsr.slave.model.SyncTable getCase_sync() {
+	public String getCase_sync() {
 		return case_sync;
 	}
 
-	public void setCase_sync(org.pdsr.slave.model.SyncTable case_sync) {
+	public void setCase_sync(String case_sync) {
 		this.case_sync = case_sync;
 	}
 

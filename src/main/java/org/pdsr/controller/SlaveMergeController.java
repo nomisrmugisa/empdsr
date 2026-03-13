@@ -294,7 +294,7 @@ public class SlaveMergeController {
 				death.setCase_death(s.getCase_death());
 				death.setData_sent(s.getData_sent());
 
-				death.setCase_sync(facility);
+				death.setCase_sync(facility.getSyncId());
 
 				deaths.add(death);
 

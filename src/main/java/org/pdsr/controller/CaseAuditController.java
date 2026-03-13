@@ -906,7 +906,7 @@ public class CaseAuditController {
 
 		model.addAttribute("mcond_options", map);
 
-		model.addAttribute("facility_code", caseRepo.findById(case_uuid).get().getCase_sync().getSync_code());
+		model.addAttribute("facility_code", caseRepo.findById(case_uuid).get().getCase_sync());
 
 		return "auditing/audit-create";
 	}

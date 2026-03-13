@@ -404,7 +404,7 @@ public class CaseEntryController {
 
 				page1.setCase_status(0);// entry
 				page1.setData_sent(0);
-				page1.setCase_sync(synctable);
+				page1.setCase_sync(synctable.getSyncId());
 				caseRepo.save(page1);
 
 				case_biodata page2 = new case_biodata();
@@ -790,7 +790,7 @@ public class CaseEntryController {
 
 		Optional<SyncTable> code = syncRepo.findById(CONSTANTS.LICENSE_ID);
 		if (code.isPresent()) {
-			selected.setCase_sync(synctable);
+			selected.setCase_sync(synctable.getSyncId());
 		}
 
 		model.addAttribute("selected", selected);
@@ -833,7 +833,7 @@ public class CaseEntryController {
 		selected.setCase_id("T" + selected.getCase_death() + "C" + (new java.util.Date().getTime()));
 		selected.setCase_status(0);
 		selected.setData_sent(0);
-		selected.setCase_sync(synctable);
+		selected.setCase_sync(synctable.getSyncId());
 
 		caseRepo.save(selected);
 
