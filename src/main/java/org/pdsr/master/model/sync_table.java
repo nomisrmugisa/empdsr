@@ -82,8 +82,14 @@ public class sync_table implements Serializable {
     }
 
     // CamelCase aliases for compatibility
-    public String getSyncName() { return sync_name; }
-    public String getSyncCode() { return sync_code; }
-    public String getSyncJson() { return sync_url; }
-    public void setSyncJson(String json) { this.sync_url = json; }
+    public String getSyncId()             { return sync_id; }
+    public void   setSyncId(String id)    { this.sync_id = id; }
+    public String getSyncName()           { return sync_name; }
+    public void   setSyncName(String n)   { this.sync_name = n; }
+    public String getSyncCode()           { return sync_code; }
+    public void   setSyncCode(String c)   { this.sync_code = c; }
+    public String getSyncEmail()          { return sync_email; }
+    public void   setSyncEmail(String e)  { this.sync_email = e; }
+    public String getSyncJson()           { return sync_url; }
+    public void   setSyncJson(String j)   { this.sync_url = j; }
 }

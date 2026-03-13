@@ -3,7 +3,7 @@ package org.pdsr.controller;
 import java.security.Principal;
 
 import org.pdsr.CONSTANTS;
-import org.pdsr.slave.model.SyncTable;
+import org.pdsr.master.model.sync_table;
 import org.pdsr.master.model.user_table;
 import org.pdsr.master.repo.FacilityTableRepository;
 import org.pdsr.master.repo.GroupTableRepository;
@@ -59,7 +59,7 @@ public class UsersController {
 			return "home";
 		}
 
-		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSyncName());
 
 		model.addAttribute("selected", new user_table());

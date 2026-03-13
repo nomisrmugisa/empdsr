@@ -20,7 +20,7 @@ import org.pdsr.master.repo.UserTableRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.pdsr.master.repo.SyncTableRepository;
-import org.pdsr.slave.model.SyncTable;
+import org.pdsr.master.model.sync_table;
 import org.pdsr.CONSTANTS;
 import java.util.Optional;
 
@@ -102,9 +102,9 @@ public class FacilitySelectionController {
     }
 
     private void updateGlobalSync(OrganisationUnit selected) {
-        Optional<SyncTable> syncOpt = syncRepo.findById(CONSTANTS.LICENSE_ID);
+        Optional<sync_table> syncOpt = syncRepo.findById(CONSTANTS.LICENSE_ID);
         if (syncOpt.isPresent()) {
-            SyncTable sync = syncOpt.get();
+            sync_table sync = syncOpt.get();
             sync.setSyncName(selected.getName());
             sync.setSyncCode(selected.getId()); // Use DHIS2 ID as code
             syncRepo.save(sync);
