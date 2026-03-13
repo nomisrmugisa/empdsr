@@ -37,8 +37,9 @@ public class DHIS2AuthenticationProvider implements AuthenticationProvider {
 
         logger.info("Processing DHIS2 login request for user: {}", username);
 
+        Optional<DHIS2User> dhis2User = Optional.empty();
         try {
-            Optional<DHIS2User> dhis2User = dhis2AuthService.authenticate(username, password);
+            dhis2User = dhis2AuthService.authenticate(username, password);
 
             if (dhis2User.isPresent()) {
                 logger.info("Successfully authenticated user: {} via DHIS2. Updating local cache.", username);
@@ -78,8 +79,12 @@ public class DHIS2AuthenticationProvider implements AuthenticationProvider {
             return null; 
         }
 
-        logger.warn("DHIS2 authentication explicitly failed for user: {}", username);
-        throw new BadCredentialsException("DHIS2 Authentication failed");
+        if (!dhis2User.isPresent()) {
+            logger.warn("DHIS2 authentication explicitly failed for user: {}. Will try local fallback.", username);
+            return null; // Returning null allows Spring Security to try the next AuthenticationProvider (Local DB)
+        }
+
+        return null; // Should not reach here
     }
 
     @Override

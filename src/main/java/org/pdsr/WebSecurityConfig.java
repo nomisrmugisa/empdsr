@@ -65,10 +65,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		// Use local DB authentication
-		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
-		
-		// Use DHIS2 authentication
+		// Use DHIS2 authentication first
 		auth.authenticationProvider(dhis2AuthProvider);
+
+		// Use local DB authentication as fallback
+		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
 	}
 }
