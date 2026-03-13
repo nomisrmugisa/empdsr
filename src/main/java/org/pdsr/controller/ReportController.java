@@ -26,7 +26,7 @@ import org.pdsr.ReportExcelExporter;
 import org.pdsr.master.model.audit_recommendation;
 import org.pdsr.master.model.monitoring_table;
 import org.pdsr.master.model.monitoring_tool;
-import org.pdsr.slave.model.SyncTable;
+import org.pdsr.master.model.sync_table;
 import org.pdsr.master.model.weekly_monitoring;
 import org.pdsr.master.model.weekly_table;
 import org.pdsr.master.model.wmPK;
@@ -91,7 +91,7 @@ public class ReportController {
 
 		}
 
-		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSyncName());
 
 		List<Object[]> weeklist = weekRepo.findAllWeeklyYearAndMonth();
@@ -128,7 +128,7 @@ public class ReportController {
 			return "reporting/report-retrieve";
 		}
 
-		final SyncTable sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		final sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", sync.getSyncName());
 
 		Calendar cal = Calendar.getInstance();
@@ -284,7 +284,7 @@ public class ReportController {
 			return "home";
 		}
 
-		SyncTable sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		List<monitoring_table> monlist = monRepo.findGlabels(true);
 		List<weekly_monitoring> headlist = new ArrayList<>();
 		for (monitoring_table elem : monlist) {

@@ -42,7 +42,7 @@ import org.pdsr.master.model.datamapPK;
 import org.pdsr.master.model.icd_codes;
 import org.pdsr.master.model.mcgroup_table;
 import org.pdsr.master.model.mcondition_table;
-import org.pdsr.slave.model.SyncTable;
+import org.pdsr.master.model.sync_table;
 import org.pdsr.master.repo.AuditAuditRepository;
 import org.pdsr.master.repo.AuditCaseRepository;
 import org.pdsr.master.repo.AuditRecommendRepository;
@@ -126,7 +126,7 @@ public class CaseAuditController {
 			return "home";
 		}
 
-		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSyncName());
 
 		Calendar cal = Calendar.getInstance();
@@ -197,7 +197,7 @@ public class CaseAuditController {
 			return "home";
 		}
 
-		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSyncName());
 
 		autoSelectCases();
@@ -211,7 +211,7 @@ public class CaseAuditController {
 			return "home";
 		}
 
-		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSyncName());
 
 		CaseWrapper selected = new CaseWrapper();
@@ -394,7 +394,7 @@ public class CaseAuditController {
 			try {
 				if (InternetAvailabilityChecker.isInternetAvailable()) {
 
-					SyncTable sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+					sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 					emailService.sendSimpleMessage(getRecipients(), "MPDSR NEW REVIEWS NOTIFICATION!",
 							"Hello Reviewers,\n" + "\nThere are " + selectedForAuditing.size()
 									+ " deaths ready to be reviewed this week" + "\nHealth Facility: "
@@ -446,7 +446,7 @@ public class CaseAuditController {
 			persDeque.push(4);
 
 			// Fetch the persistent deque
-			SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+			sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 			json_algorithm algorithm = (synctable.getSyncJson() != null && synctable.getSyncJson().trim() != "")
 					? objectMapper.readValue(synctable.getSyncJson(), mapType1)
 					: new json_algorithm();
@@ -748,7 +748,7 @@ public class CaseAuditController {
 				try {
 					if (InternetAvailabilityChecker.isInternetAvailable()) {
 
-						SyncTable sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+						sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 						emailService.sendSimpleMessage(getRecipients(), "MPDSR NEW REVIEWS NOTIFICATION!",
 								"Hello Reviewers,\n" + "\nYou are " + selectedForAuditing.size()
 										+ " death case(s) ready to be reviewed this week" + "\nHealth Facility: "
@@ -785,7 +785,7 @@ public class CaseAuditController {
 			return "home";
 		}
 
-		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSyncName());
 
 		if (success != null) {
@@ -957,7 +957,7 @@ public class CaseAuditController {
 			return "home";
 		}
 
-		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSyncName());
 
 		if (success != null) {
@@ -1058,7 +1058,7 @@ public class CaseAuditController {
 			return "home";
 		}
 
-		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSyncName());
 
 		audit_recommendation selected = rcaseRepo.findById(recommendation_uuid).get();

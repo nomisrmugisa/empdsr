@@ -80,4 +80,10 @@ public class sync_table implements Serializable {
     public void setSync_url(String sync_url) {
         this.sync_url = sync_url;
     }
+
+    // CamelCase aliases for compatibility
+    public String getSyncName() { return sync_name; }
+    public String getSyncCode() { return sync_code; }
+    public String getSyncJson() { return sync_url; }
+    public void setSyncJson(String json) { this.sync_url = json; }
 }
