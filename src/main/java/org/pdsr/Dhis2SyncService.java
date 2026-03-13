@@ -16,7 +16,7 @@ import org.pdsr.dhis2.Dhis2StageDetailResponse;
 import org.pdsr.json.json_dhis2_dataValues;
 import org.pdsr.json.json_dhis2_form;
 import org.pdsr.master.model.case_identifiers;
-import org.pdsr.slave.model.SyncTable;
+import org.pdsr.master.model.sync_table;
 import org.pdsr.pojos.Dhis2Authorisation;
 import org.springframework.stereotype.Service;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -60,7 +60,7 @@ public class Dhis2SyncService {
     // ---------------------------------------------------------------
     public List<Object[]> syncCases(List<case_identifiers> cases,
             Dhis2Authorisation dhis2,
-            SyncTable synctable,
+            sync_table synctable,
             List<String> payloads,
             List<String> responses) {
 
@@ -296,7 +296,7 @@ public class Dhis2SyncService {
     // Only adds a dataValue if the DE id exists in the live set.
     // ---------------------------------------------------------------
     private json_dhis2_form buildEvent(case_identifiers item,
-            SyncTable synctable,
+            sync_table synctable,
             Dhis2Authorisation dhis2,
             String programUID,
             boolean isMaternalDeath,
