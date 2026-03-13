@@ -54,7 +54,7 @@ import org.pdsr.master.repo.CasePregnancyRepository;
 import org.pdsr.master.repo.CaseReferralRepository;
 import org.pdsr.master.repo.CaseRepository;
 import org.pdsr.master.repo.MonitoringTableRepository;
-import org.pdsr.slave.repo.SlaveSyncTableRepository;
+import org.pdsr.master.repo.SyncTableRepository;
 import org.pdsr.master.repo.WeeklyMonitoringTableRepository;
 import org.pdsr.master.repo.WeeklyTableRepository;
 import org.pdsr.pojos.datamerger;
@@ -89,7 +89,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class SlaveMergeController {
 
 	@Autowired
-	private SlaveSyncTableRepository syncRepo;
+	private SyncTableRepository syncRepo;
 
 	@Autowired
 	private MonitoringTableRepository monRepo;

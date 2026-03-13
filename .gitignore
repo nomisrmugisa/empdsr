@@ -23,7 +23,6 @@ compile_error.txt
 
 # IDE files
 .idea/
-.vscode/
 *.iml
 *.ipr
 *.iws
@@ -37,3 +36,6 @@ Thumbs.db
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+temp_auto_push.bat
+temp_interactive_push.bat
+.gitignore

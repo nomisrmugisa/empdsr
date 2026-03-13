@@ -19,7 +19,7 @@ import java.io.IOException;
 import org.pdsr.master.repo.UserTableRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
-import org.pdsr.slave.repo.SlaveSyncTableRepository;
+import org.pdsr.master.repo.SyncTableRepository;
 import org.pdsr.slave.model.SyncTable;
 import org.pdsr.CONSTANTS;
 import java.util.Optional;
@@ -33,8 +33,8 @@ public class FacilitySelectionController {
     @Autowired
     private UserTableRepository userRepo;
 
-    @Autowired
-    private SlaveSyncTableRepository syncRepo;
+    	@Autowired
+	private SyncTableRepository syncRepo;
 
     private final ObjectMapper mapper = new ObjectMapper();
 
