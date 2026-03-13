@@ -16,8 +16,8 @@ import org.pdsr.json.EncryptedMessage;
 import org.pdsr.json.json_dhis2_form;
 import org.pdsr.json.json_redcap;
 import org.pdsr.master.model.facility_table;
-import org.pdsr.slave.model.SyncTable;
-import org.pdsr.slave.repo.SlaveSyncTableRepository;
+import org.pdsr.master.model.sync_table;
+import org.pdsr.master.repo.SyncTableRepository;
 import org.pdsr.summary.model.big_audit_audit;
 import org.pdsr.summary.model.big_audit_recommendation;
 import org.pdsr.summary.model.big_case_identifiers;
@@ -44,21 +44,20 @@ public class ServiceApi {
 
 	private final RestTemplateBuilder builder;
 
-	private final SlaveSyncTableRepository syncRepo;
+	private final SyncTableRepository syncRepo;
 
-	public ServiceApi(final RestTemplateBuilder builder, SlaveSyncTableRepository syncRepo) {
+	public ServiceApi(final RestTemplateBuilder builder, SyncTableRepository syncRepo) {
 		this.builder = builder;
 		this.syncRepo = syncRepo;
 	}
 
 	@PostConstruct
 	public void init() {
-		Optional<SyncTable> sync = syncRepo.findById(CONSTANTS.LICENSE_ID);
+		Optional<sync_table> sync = syncRepo.findById(CONSTANTS.LICENSE_ID);
 
 		if (sync.isPresent()) {
-			// In our new SyncTable, sync_url was merged into sync_id or handled differently.
-			// Defaulting to local main server or syncId for now.
-			BASE_URL = "http://localhost:5000/api";
+			// In our new sync_table, sync_url handles the base URL.
+			BASE_URL = sync.get().getSync_url();
 			FAC_CODE = sync.get().getSyncCode();
 		}
 	}

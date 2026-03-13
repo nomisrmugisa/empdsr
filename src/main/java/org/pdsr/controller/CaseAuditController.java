@@ -52,7 +52,7 @@ import org.pdsr.master.repo.DatamapRepository;
 import org.pdsr.master.repo.IcdCodesRepository;
 import org.pdsr.master.repo.McgroupRepository;
 import org.pdsr.master.repo.MconditionsRepository;
-import org.pdsr.slave.repo.SlaveSyncTableRepository;
+import org.pdsr.master.repo.SyncTableRepository;
 import org.pdsr.master.repo.UserTableRepository;
 import org.pdsr.pojos.CaseWrapper;
 import org.pdsr.pojos.icdpm;
@@ -80,7 +80,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class CaseAuditController {
 
 	@Autowired
-	private SlaveSyncTableRepository syncRepo;
+	private SyncTableRepository syncRepo;
 
 	@Autowired
 	private UserTableRepository userRepo;
