@@ -24,7 +24,7 @@ import org.pdsr.master.repo.CaseRepository;
 import org.pdsr.master.repo.FacilityTableRepository;
 import org.pdsr.master.repo.IcdCodesRepository;
 import org.pdsr.master.repo.IcdDiagnosesRepository;
-import org.pdsr.slave.repo.SlaveSyncTableRepository;
+import org.pdsr.master.repo.SyncTableRepository;
 import org.pdsr.pojos.casedeleter;
 import org.pdsr.pojos.facilities;
 import org.pdsr.summary.model.SummaryPK;
@@ -49,7 +49,7 @@ import com.opencsv.bean.CsvToBeanBuilder;
 public class SetupController {
 
 	@Autowired
-	private SlaveSyncTableRepository syncRepo;
+	private SyncTableRepository syncRepo;
 
 	@Autowired
 	private IcdCodesRepository icdRepo;

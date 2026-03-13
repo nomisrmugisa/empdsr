@@ -82,7 +82,7 @@ import org.pdsr.master.repo.IptsTableRepository;
 import org.pdsr.master.repo.PlacentacheckTableRepository;
 import org.pdsr.master.repo.ResuscitationTableRepository;
 import org.pdsr.master.repo.RiskTableRepository;
-import org.pdsr.slave.repo.SlaveSyncTableRepository;
+import org.pdsr.master.repo.SyncTableRepository;
 import org.pdsr.master.repo.TtdpTableRepository;
 import org.pdsr.master.repo.UserTableRepository;
 import org.pdsr.pojos.RedcapExtraction;
@@ -232,7 +232,7 @@ public class CaseEntryController {
 	private Dhis2SyncService dhis2SyncService;
 
 	@Autowired
-	private SlaveSyncTableRepository syncRepo;
+	private SyncTableRepository syncRepo;
 
 	@Autowired
 	private UserTableRepository userRepo;
