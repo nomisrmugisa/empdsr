@@ -57,7 +57,7 @@ import org.pdsr.master.model.icd_diagnoses;
 import org.pdsr.master.model.placentacheck_table;
 import org.pdsr.master.model.resuscitation_table;
 import org.pdsr.master.model.risk_table;
-import org.pdsr.slave.model.SyncTable;
+import org.pdsr.master.model.sync_table;
 import org.pdsr.master.model.ttdp_table;
 import org.pdsr.master.model.ipts_table;
 import org.pdsr.master.repo.AbnormalityTableRepository;
@@ -145,12 +145,12 @@ public class CaseEntryController {
 				return new SimpleDateFormat("dd/MM/yyyy").format(d);
 			}
 		});
-        // Register custom editor for SyncTable to bind by ID string
-        binder.registerCustomEditor(SyncTable.class, new java.beans.PropertyEditorSupport() {
+        // Register custom editor for sync_table to bind by ID string
+        binder.registerCustomEditor(sync_table.class, new java.beans.PropertyEditorSupport() {
             @Override
             public void setAsText(String text) {
                 if (org.springframework.util.StringUtils.hasText(text)) {
-                    SyncTable s = syncRepo.findById(text).orElse(null);
+                    sync_table s = syncRepo.findById(text).orElse(null);
                     setValue(s);
                 } else {
                     setValue(null);
@@ -158,7 +158,7 @@ public class CaseEntryController {
             }
             @Override
             public String getAsText() {
-                SyncTable s = (SyncTable) getValue();
+                sync_table s = (sync_table) getValue();
                 return (s != null) ? s.getSyncId() : "";
             }
         });
@@ -320,7 +320,7 @@ public class CaseEntryController {
 			return "home";
 		}
 
-		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSyncName());
 
 		List<case_identifiers> entered_cases = caseRepo.findByDraftCases();// find cases not yet submitted
@@ -343,7 +343,7 @@ public class CaseEntryController {
 			return "home";
 		}
 
-		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSyncName());
 
 		RedcapExtraction redcap = new RedcapExtraction();
@@ -363,7 +363,7 @@ public class CaseEntryController {
 			return "home";
 		}
 
-		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSyncName());
 
 		List<case_identifiers> entered_cases = caseRepo.findByDraftCases();// find cases not yet submitted
@@ -720,7 +720,7 @@ public class CaseEntryController {
 			return "home";
 		}
 
-		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSyncName());
 
 		Dhis2Authorisation dhis2 = new Dhis2Authorisation();
@@ -743,7 +743,7 @@ public class CaseEntryController {
 			return "home";
 		}
 
-		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSyncName());
 
 		// Always ensure dhis2_url is set from synctable (fallback if form did not
@@ -782,13 +782,13 @@ public class CaseEntryController {
 			return "home";
 		}
 
-		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSyncName());
 
 		case_identifiers selected = new case_identifiers();
 		selected.setCase_date(new Date());
 
-		Optional<SyncTable> code = syncRepo.findById(CONSTANTS.LICENSE_ID);
+		Optional<sync_table> code = syncRepo.findById(CONSTANTS.LICENSE_ID);
 		if (code.isPresent()) {
 			selected.setCase_sync(synctable.getSyncId());
 		}
@@ -814,7 +814,7 @@ public class CaseEntryController {
 			model.addAttribute("selected", selected);
 			model.addAttribute("death_options", deathOptionsSelectOne());
 			// Re-populate required model attributes before returning to the view
-			SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+			sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 			model.addAttribute("myf", synctable.getSync_name());
 			model.addAttribute("death_options", deathOptionsSelectOne());
 			model.addAttribute("nationality_options", nationalityOptionsSelectOne());
@@ -826,7 +826,7 @@ public class CaseEntryController {
 			return "home";
 		}
 
-		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSyncName());
 
 		selected.setCase_uuid(UUID.randomUUID().toString());
@@ -849,7 +849,7 @@ public class CaseEntryController {
 			return "home";
 		}
 
-		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSyncName());
 
 		case_identifiers selected = caseRepo.findById(case_uuid).get();
@@ -1073,7 +1073,7 @@ public class CaseEntryController {
 			return "home";
 		}
 
-		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSyncName());
 
 		case_identifiers existing = caseRepo.findById(selected.getCase_uuid()).get();
@@ -1769,7 +1769,7 @@ public class CaseEntryController {
 			return "home";
 		}
 
-		SyncTable synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSyncName());
 
 		case_identifiers selected = caseRepo.findById(case_uuid).get();
@@ -1815,7 +1815,7 @@ public class CaseEntryController {
 		try {
 			if (InternetAvailabilityChecker.isInternetAvailable()) {
 
-				SyncTable sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
+				sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 				emailService.sendSimpleMessage(getRecipients(), "MPDSR DEATH NOTIFICATION!",
 						"Hello, \nThis is is to notify you of a " + getAnswer("death_options", selected.getCase_death())
 								+ "\nMother's age: " + selected.getBiodata().getBiodata_mage() + datetoShow
