@@ -6,15 +6,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Component
 public class DHIS2AuthenticationProvider implements AuthenticationProvider {
@@ -67,11 +68,19 @@ public class DHIS2AuthenticationProvider implements AuthenticationProvider {
                 
                 userRepo.save(localUser);
 
-                return new UsernamePasswordAuthenticationToken(
-                        username, 
-                        password, 
-                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
-                );
+                // Load the user's existing group roles from the local DB so that
+                // DHIS2-authenticated users get the same permissions as local users
+                Set<GrantedAuthority> authorities = new HashSet<>();
+                org.pdsr.master.model.user_table savedUser = userRepo.findById(username)
+                        .orElse(localUser);
+                for (org.pdsr.master.model.group_table g : savedUser.getGroups()) {
+                    authorities.add(new SimpleGrantedAuthority(g.getGroup_role()));
+                }
+                if (authorities.isEmpty()) {
+                    authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+                }
+
+                return new UsernamePasswordAuthenticationToken(username, password, authorities);
             }
         } catch (Exception e) {
             logger.error("DHIS2 Server unreachable or error occurred for user: {}. Falling back to local auth if available.", username, e);
