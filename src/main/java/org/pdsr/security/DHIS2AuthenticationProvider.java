@@ -2,6 +2,7 @@ package org.pdsr.security;
 
 import org.pdsr.dhis2.DHIS2AuthService;
 import org.pdsr.dhis2.DHIS2User;
+import org.pdsr.enums.GroupRoles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -32,6 +34,7 @@ public class DHIS2AuthenticationProvider implements AuthenticationProvider {
     private org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder passwordEncoder;
 
     @Override
+    @Transactional
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
@@ -69,7 +72,9 @@ public class DHIS2AuthenticationProvider implements AuthenticationProvider {
                 userRepo.save(localUser);
 
                 // Load the user's existing group roles from the local DB so that
-                // DHIS2-authenticated users get the same permissions as local users
+                // DHIS2-authenticated users get the same permissions as local users.
+                // If no roles are assigned yet (new DHIS2 user), grant all roles —
+                // DHIS2 authentication is already the authorization gate.
                 Set<GrantedAuthority> authorities = new HashSet<>();
                 org.pdsr.master.model.user_table savedUser = userRepo.findById(username)
                         .orElse(localUser);
@@ -77,7 +82,9 @@ public class DHIS2AuthenticationProvider implements AuthenticationProvider {
                     authorities.add(new SimpleGrantedAuthority(g.getGroup_role()));
                 }
                 if (authorities.isEmpty()) {
-                    authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+                    for (GroupRoles role : GroupRoles.values()) {
+                        authorities.add(new SimpleGrantedAuthority(role.getId()));
+                    }
                 }
 
                 return new UsernamePasswordAuthenticationToken(username, password, authorities);
