@@ -773,6 +773,23 @@ MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) v
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',51,'years and above');
 MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('mage_options',88,'Not Stated');
 
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('manner_of_death_options',1,'Disease');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('manner_of_death_options',2,'Accident');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('manner_of_death_options',3,'Intentional self-harm');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('manner_of_death_options',4,'Assault');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('manner_of_death_options',5,'Legal intervention');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('manner_of_death_options',6,'War');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('manner_of_death_options',7,'Could not be determined');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('manner_of_death_options',8,'Pending investigation');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('manner_of_death_options',88,'Unknown');
+
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('interval_unit_options',1,'Minutes');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('interval_unit_options',2,'Hours');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('interval_unit_options',3,'Days');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('interval_unit_options',4,'Weeks');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('interval_unit_options',5,'Months');
+MERGE INTO datamap(map_feature,map_value,map_label) KEY(map_feature,map_value) values('interval_unit_options',6,'Years');
+
 -- User and Role Initialization
 MERGE INTO user_table(username, enabled, password, usercontact, useremail, userfullname, alerted) KEY(username)
 VALUES (
