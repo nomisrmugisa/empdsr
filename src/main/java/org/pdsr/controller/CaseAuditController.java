@@ -36,7 +36,10 @@ import org.pdsr.json.json_list;
 import org.pdsr.master.model.audit_audit;
 import org.pdsr.master.model.audit_case;
 import org.pdsr.master.model.audit_recommendation;
+import org.pdsr.master.model.case_babydeath;
+import org.pdsr.master.model.case_birth;
 import org.pdsr.master.model.case_identifiers;
+import org.pdsr.master.model.case_mdeath;
 import org.pdsr.master.model.datamap;
 import org.pdsr.master.model.datamapPK;
 import org.pdsr.master.model.icd_codes;
@@ -129,10 +132,46 @@ public class CaseAuditController {
 		sync_table synctable = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
 		model.addAttribute("myf", synctable.getSyncName());
 
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DAY_OF_MONTH, -7);
-		model.addAttribute("items", acaseRepo.findActivePendingAudit(cal.getTime()));//// pick data selected at least
-																						//// seven days ago
+		// Recover orphaned cases: status=2 but no audit_case entry (caused by a
+		// previous crash between caseRepo.save and acaseRepo.saveAll).
+		List<case_identifiers> orphaned = caseRepo.findOrphanedAuditCases();
+		if (!orphaned.isEmpty()) {
+			ObjectMapper recoveryMapper = new ObjectMapper();
+			recoveryMapper.configure(Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+			recoveryMapper.configure(Feature.ALLOW_SINGLE_QUOTES, true);
+			TypeReference<List<json_data>> recMapType = new TypeReference<List<json_data>>() {};
+
+			List<audit_case> recovery = new ArrayList<>();
+			for (case_identifiers c : orphaned) {
+				audit_case acase = new audit_case();
+				acase.setAudit_uuid(c.getCase_uuid());
+				acase.setAudit_date(new java.util.Date());
+				acase.setCase_death(c.getCase_death());
+
+				// Rebuild audit_data from all case JSON sections so the edit page can load it
+				json_list fulldata = new json_list();
+				try { if (c.getBiodata() != null && c.getBiodata().getBiodata_json() != null) fulldata.setBiodata(recoveryMapper.readValue(c.getBiodata().getBiodata_json(), recMapType)); } catch (Exception e) { e.printStackTrace(); }
+				try { if (c.getPregnancy() != null && c.getPregnancy().getPregnancy_json() != null) fulldata.setPregnancy(recoveryMapper.readValue(c.getPregnancy().getPregnancy_json(), recMapType)); } catch (Exception e) { e.printStackTrace(); }
+				try { if (c.getReferral() != null && c.getReferral().getReferral_json() != null) fulldata.setReferral(recoveryMapper.readValue(c.getReferral().getReferral_json(), recMapType)); } catch (Exception e) { e.printStackTrace(); }
+				try { if (c.getDelivery() != null && c.getDelivery().getDelivery_json() != null) fulldata.setDelivery(recoveryMapper.readValue(c.getDelivery().getDelivery_json(), recMapType)); } catch (Exception e) { e.printStackTrace(); }
+				try { if (c.getAntenatal() != null && c.getAntenatal().getAntenatal_json() != null) fulldata.setAntenatal(recoveryMapper.readValue(c.getAntenatal().getAntenatal_json(), recMapType)); } catch (Exception e) { e.printStackTrace(); }
+				try { if (c.getLabour() != null && c.getLabour().getLabour_json() != null) fulldata.setLabour(recoveryMapper.readValue(c.getLabour().getLabour_json(), recMapType)); } catch (Exception e) { e.printStackTrace(); }
+				try { if (c.getBirth() != null && c.getBirth().getBirth_json() != null) fulldata.setBirth(recoveryMapper.readValue(c.getBirth().getBirth_json(), recMapType)); } catch (Exception e) { e.printStackTrace(); }
+				try { if (c.getCase_death() == 1 && c.getFetalheart() != null && c.getFetalheart().getFetalheart_json() != null) fulldata.setFetalheart(recoveryMapper.readValue(c.getFetalheart().getFetalheart_json(), recMapType)); } catch (Exception e) { e.printStackTrace(); }
+				try { if (c.getCase_death() == 2 && c.getBabydeath() != null && c.getBabydeath().getBaby_json() != null) fulldata.setBabydeath(recoveryMapper.readValue(c.getBabydeath().getBaby_json(), recMapType)); } catch (Exception e) { e.printStackTrace(); }
+				try { if (c.getCase_death() == 3 && c.getMdeath() != null && c.getMdeath().getMdeath_json() != null) fulldata.setMdeath(recoveryMapper.readValue(c.getMdeath().getMdeath_json(), recMapType)); } catch (Exception e) { e.printStackTrace(); }
+				try { if (c.getNotes() != null && c.getNotes().getNotes_json() != null) fulldata.setNotes(recoveryMapper.readValue(c.getNotes().getNotes_json(), recMapType)); } catch (Exception e) { e.printStackTrace(); }
+
+				try { acase.setAudit_data(recoveryMapper.writeValueAsString(fulldata)); } catch (Exception e) { e.printStackTrace(); }
+
+				recovery.add(acase);
+			}
+			acaseRepo.saveAll(recovery);
+		}
+
+		// Show all pending audit cases regardless of when they were selected
+		// (removed the 7-day restriction so recently-recovered cases also appear)
+		model.addAttribute("items", acaseRepo.findActivePendingAudit(new java.util.Date(0)));
 
 		model.addAttribute("items1", tcaseRepo.findByPendingRecommendation());
 
@@ -156,6 +195,10 @@ public class CaseAuditController {
 				elem.setBg_color("fw-bold");
 			}
 
+			// Populate the human-readable case ID for display in the recommendations table
+			String auditUuid = elem.getAudit_uuid().getAudit_uuid();
+			caseRepo.findById(auditUuid).ifPresent(c -> elem.setCase_id(c.getCase_id()));
+
 			recommendations.add(elem);
 		}
 
@@ -170,18 +213,19 @@ public class CaseAuditController {
 		};
 		json_algorithm algorithm = new json_algorithm();
 
-		if (synctable.getSyncJson() != null && synctable.getSyncJson().trim() != "") {
+		String syncJsonValue = synctable.getSyncJson();
+		if (syncJsonValue != null && !syncJsonValue.trim().isEmpty() && syncJsonValue.trim().startsWith("{")) {
 			try {
-				algorithm = objectMapper.readValue(synctable.getSyncJson(), mapType1);
+				algorithm = objectMapper.readValue(syncJsonValue, mapType1);
 			} catch (JsonProcessingException e) {
-				e.printStackTrace();
+				// sync_json contains non-algorithm data (e.g. a URL); skip silently
 			}
 
 			// if audits have been done for the given week, then don't run the algorithm
-			final boolean isyear = Calendar.getInstance().get(Calendar.YEAR) == algorithm.getAlg_year();
-			final boolean ismnth = Calendar.getInstance().get(Calendar.MONTH) == algorithm.getAlg_month();
-			final boolean isweek = Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) == algorithm.getAlg_week();
-			final boolean isdone = algorithm.getAlg_totalcases() == Utils.EXPECTED_CASES_PER_WEEK;
+			final boolean isyear = algorithm.getAlg_year() != null && Calendar.getInstance().get(Calendar.YEAR) == algorithm.getAlg_year();
+			final boolean ismnth = algorithm.getAlg_month() != null && Calendar.getInstance().get(Calendar.MONTH) == algorithm.getAlg_month();
+			final boolean isweek = algorithm.getAlg_week() != null && Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) == algorithm.getAlg_week();
+			final boolean isdone = algorithm.getAlg_totalcases() != null && algorithm.getAlg_totalcases() == Utils.EXPECTED_CASES_PER_WEEK;
 
 			if (isyear && ismnth && isweek && isdone) {
 				model.addAttribute("done", "done");
@@ -242,19 +286,23 @@ public class CaseAuditController {
 //		TypeReference<json_algorithm> mapType1 = new TypeReference<json_algorithm>() {
 //		};
 
-		// create a bucket for the selected cases for auditing
-		List<case_identifiers> pendingAudit = selected.getRcases();
-//		System.out.println("Id : " + selected.getId());
-//		System.out.println("cases size: " + selected.getRcases().size());
-//		System.out.println("cases: " + selected.getRcases().get(0));
+		// Re-fetch full entities from DB using the submitted UUIDs
+		List<case_identifiers> pendingAudit = new ArrayList<>();
+		for (String uuid : selected.getRcases()) {
+			Optional<case_identifiers> opt = caseRepo.findById(uuid);
+			if (opt.isPresent()) {
+				pendingAudit.add(opt.get());
+			}
+		}
 
 		List<audit_case> selectedForAuditing = new ArrayList<>();
+		// Collect status changes separately — only commit them AFTER audit_case rows are saved
+		List<case_identifiers> statusToUpdate = new ArrayList<>();
 
 		for (case_identifiers scase : pendingAudit) {
 
-//			System.out.print("case is: " + scase.getCase_id());
+			// Do NOT save status=2 here; defer until audit_case is safely persisted
 			scase.setCase_status(2);
-			caseRepo.save(scase);
 
 			// create a new audit for the case
 			audit_case acase = new audit_case();
@@ -265,114 +313,71 @@ public class CaseAuditController {
 			// extract the json array from the case into a one big list object
 			json_list fulldata = new json_list();
 
-			List<json_data> biodata;
 			try {
-				biodata = objectMapper.readValue(scase.getBiodata().getBiodata_json(), mapType);
-				fulldata.setBiodata(biodata);
-			} catch (JsonProcessingException e) {
-
-				e.printStackTrace();
-			}
-
-			List<json_data> pregdata;
-			try {
-				pregdata = objectMapper.readValue(scase.getPregnancy().getPregnancy_json(), mapType);
-				fulldata.setPregnancy(pregdata);
-			} catch (JsonProcessingException e) {
-
-				e.printStackTrace();
-			}
-
-			List<json_data> refdata;
-			try {
-				refdata = objectMapper.readValue(scase.getReferral().getReferral_json(), mapType);
-				fulldata.setReferral(refdata);
-			} catch (JsonProcessingException e) {
-
-				e.printStackTrace();
-			}
-
-			List<json_data> deldata;
-			try {
-				deldata = objectMapper.readValue(scase.getDelivery().getDelivery_json(), mapType);
-				fulldata.setDelivery(deldata);
-			} catch (JsonProcessingException e) {
-
-				e.printStackTrace();
-			}
-
-			List<json_data> antedata;
-			try {
-				antedata = objectMapper.readValue(scase.getAntenatal().getAntenatal_json(), mapType);
-				fulldata.setAntenatal(antedata);
-			} catch (JsonProcessingException e) {
-
-				e.printStackTrace();
-			}
-
-			if (scase.getLabour() != null) {
-				List<json_data> labdata;
-				try {
-					labdata = objectMapper.readValue(scase.getLabour().getLabour_json(), mapType);
-					fulldata.setLabour(labdata);
-				} catch (JsonProcessingException e) {
-
-					e.printStackTrace();
+				if (scase.getBiodata() != null && scase.getBiodata().getBiodata_json() != null) {
+					fulldata.setBiodata(objectMapper.readValue(scase.getBiodata().getBiodata_json(), mapType));
 				}
-			}
+			} catch (JsonProcessingException e) { e.printStackTrace(); }
 
-			if (scase.getBirth() != null && scase.getBirth().getBirth_json() != null) {
-				List<json_data> birdata;
-				try {
-					birdata = objectMapper.readValue(scase.getBirth().getBirth_json(), mapType);
-					fulldata.setBirth(birdata);
-				} catch (JsonProcessingException e) {
-
-					e.printStackTrace();
-				}
-			}
-
-			if (scase.getCase_death() == 1 && scase.getFetalheart() != null) {
-				List<json_data> fetdata;
-				try {
-					fetdata = objectMapper.readValue(scase.getFetalheart().getFetalheart_json(), mapType);
-					fulldata.setFetalheart(fetdata);
-				} catch (JsonProcessingException e) {
-
-					e.printStackTrace();
-				}
-			}
-
-			if (scase.getCase_death() == 2 && scase.getBabydeath() != null) {
-				List<json_data> bdtdata;
-				try {
-					bdtdata = objectMapper.readValue(scase.getBabydeath().getBaby_json(), mapType);
-					fulldata.setBabydeath(bdtdata);
-				} catch (JsonProcessingException e) {
-
-					e.printStackTrace();
-				}
-			}
-
-			if (scase.getCase_death() == 3 && scase.getMdeath() != null) {
-				List<json_data> mdthdata;
-				try {
-					mdthdata = objectMapper.readValue(scase.getMdeath().getMdeath_json(), mapType);
-					fulldata.setMdeath(mdthdata);
-				} catch (JsonProcessingException e) {
-
-					e.printStackTrace();
-				}
-			}
-
-			List<json_data> notedata;
 			try {
-				notedata = objectMapper.readValue(scase.getNotes().getNotes_json(), mapType);
-				fulldata.setNotes(notedata);
-			} catch (JsonProcessingException e) {
+				if (scase.getPregnancy() != null && scase.getPregnancy().getPregnancy_json() != null) {
+					fulldata.setPregnancy(objectMapper.readValue(scase.getPregnancy().getPregnancy_json(), mapType));
+				}
+			} catch (JsonProcessingException e) { e.printStackTrace(); }
 
-				e.printStackTrace();
-			}
+			try {
+				if (scase.getReferral() != null && scase.getReferral().getReferral_json() != null) {
+					fulldata.setReferral(objectMapper.readValue(scase.getReferral().getReferral_json(), mapType));
+				}
+			} catch (JsonProcessingException e) { e.printStackTrace(); }
+
+			try {
+				if (scase.getDelivery() != null && scase.getDelivery().getDelivery_json() != null) {
+					fulldata.setDelivery(objectMapper.readValue(scase.getDelivery().getDelivery_json(), mapType));
+				}
+			} catch (JsonProcessingException e) { e.printStackTrace(); }
+
+			try {
+				if (scase.getAntenatal() != null && scase.getAntenatal().getAntenatal_json() != null) {
+					fulldata.setAntenatal(objectMapper.readValue(scase.getAntenatal().getAntenatal_json(), mapType));
+				}
+			} catch (JsonProcessingException e) { e.printStackTrace(); }
+
+			try {
+				if (scase.getLabour() != null && scase.getLabour().getLabour_json() != null) {
+					fulldata.setLabour(objectMapper.readValue(scase.getLabour().getLabour_json(), mapType));
+				}
+			} catch (JsonProcessingException e) { e.printStackTrace(); }
+
+			try {
+				if (scase.getBirth() != null && scase.getBirth().getBirth_json() != null) {
+					fulldata.setBirth(objectMapper.readValue(scase.getBirth().getBirth_json(), mapType));
+				}
+			} catch (JsonProcessingException e) { e.printStackTrace(); }
+
+			try {
+				if (scase.getCase_death() == 1 && scase.getFetalheart() != null && scase.getFetalheart().getFetalheart_json() != null) {
+					fulldata.setFetalheart(objectMapper.readValue(scase.getFetalheart().getFetalheart_json(), mapType));
+				}
+			} catch (JsonProcessingException e) { e.printStackTrace(); }
+
+			try {
+				if (scase.getCase_death() == 2 && scase.getBabydeath() != null && scase.getBabydeath().getBaby_json() != null) {
+					fulldata.setBabydeath(objectMapper.readValue(scase.getBabydeath().getBaby_json(), mapType));
+				}
+			} catch (JsonProcessingException e) { e.printStackTrace(); }
+
+			try {
+				if (scase.getCase_death() == 3 && scase.getMdeath() != null && scase.getMdeath().getMdeath_json() != null) {
+					fulldata.setMdeath(objectMapper.readValue(scase.getMdeath().getMdeath_json(), mapType));
+				}
+			} catch (JsonProcessingException e) { e.printStackTrace(); }
+
+			try {
+				if (scase.getNotes() != null && scase.getNotes().getNotes_json() != null) {
+					fulldata.setNotes(objectMapper.readValue(scase.getNotes().getNotes_json(), mapType));
+				}
+			} catch (JsonProcessingException e) { e.printStackTrace(); }
 
 			// convert the big list back to JSON data String
 			String arrayToJson;
@@ -387,24 +392,32 @@ public class CaseAuditController {
 
 			// add the new audit for case into the bucket of selected cases for auditing
 			selectedForAuditing.add(acase);
+			// queue the case for status=2 update (saved only after audit_case is persisted)
+			statusToUpdate.add(scase);
 
 		}
 
 		if (selectedForAuditing.size() > 0) {
+			// Save audit_case rows FIRST — if this succeeds, then commit the status change
+			acaseRepo.saveAll(selectedForAuditing);
+			// Only now mark cases as status=2 so they're visible in the auditing module
+			caseRepo.saveAll(statusToUpdate);
+
 			try {
 				if (InternetAvailabilityChecker.isInternetAvailable()) {
-
-					sync_table sync = syncRepo.findById(CONSTANTS.LICENSE_ID).get();
-					emailService.sendSimpleMessage(getRecipients(), "MPDSR NEW REVIEWS NOTIFICATION!",
-							"Hello Reviewers,\n" + "\nThere are " + selectedForAuditing.size()
-									+ " deaths ready to be reviewed this week" + "\nHealth Facility: "
-									+ sync.getSyncName() + " - " + sync.getSyncCode()
-									+ "\nThis is a PILOT IMPLEMENTATION of the Enhanced Automated MPDSR tool developed by Alex and Eliezer");
+					Optional<sync_table> syncOpt = syncRepo.findById(CONSTANTS.LICENSE_ID);
+					if (syncOpt.isPresent()) {
+						sync_table sync = syncOpt.get();
+						emailService.sendSimpleMessage(getRecipients(), "MPDSR NEW REVIEWS NOTIFICATION!",
+								"Hello Reviewers,\n" + "\nThere are " + selectedForAuditing.size()
+										+ " deaths ready to be reviewed this week" + "\nHealth Facility: "
+										+ sync.getSyncName() + " - " + sync.getSyncCode()
+										+ "\nThis is a PILOT IMPLEMENTATION of the Enhanced Automated MPDSR tool developed by Alex and Eliezer");
+					}
 				}
-			} catch (IOException e) {
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-
-			acaseRepo.saveAll(selectedForAuditing);
 		}
 
 		return "redirect:/auditing";
@@ -826,10 +839,6 @@ public class CaseAuditController {
 
 			model.addAttribute("selected", tcase);
 
-			if (icdRepo.findById(tcase.getAudit_icd10()).isPresent()) {
-				model.addAttribute("icdsel", icdRepo.findById(tcase.getAudit_icd10()).get());
-			}
-
 			final Integer death = tcase.getAudit_death();
 			switch (death) {
 			case 1: {
@@ -867,8 +876,47 @@ public class CaseAuditController {
 			audit_audit tcase = new audit_audit();
 			tcase.setAudit_uuid(case_uuid);
 			tcase.setAudit_case(acase);
-			model.addAttribute("selected", tcase);
 
+			// Pre-select "Type of death from review" to match the original case type.
+			// Neonatal → 3, Maternal → 4.
+			// Stillbirth (1 or 2) is left null because the reviewer must choose
+			// between Intrapartum (1) and Antepartum (2).
+			if (acase.getCase_death() == CONSTANTS.NEONATAL_DEATH) {
+				tcase.setAudit_death(3);
+			} else if (acase.getCase_death() == CONSTANTS.MATERNAL_DEATH) {
+				tcase.setAudit_death(4);
+			}
+
+			model.addAttribute("selected", tcase);
+		}
+
+		// If audit_data is missing (e.g. recovered orphan from a previous build that
+		// didn't populate it), rebuild it now from the original case data and persist it.
+		if (acase.getAudit_data() == null || acase.getAudit_data().isEmpty()) {
+			Optional<case_identifiers> cOpt = caseRepo.findById(case_uuid);
+			if (cOpt.isPresent()) {
+				case_identifiers c = cOpt.get();
+				TypeReference<List<json_data>> rawMapType = new TypeReference<List<json_data>>() {};
+				ObjectMapper rm = new ObjectMapper();
+				rm.configure(Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+				rm.configure(Feature.ALLOW_SINGLE_QUOTES, true);
+				json_list fd = new json_list();
+				try { if (c.getBiodata() != null && c.getBiodata().getBiodata_json() != null) fd.setBiodata(rm.readValue(c.getBiodata().getBiodata_json(), rawMapType)); } catch (Exception ex) { ex.printStackTrace(); }
+				try { if (c.getPregnancy() != null && c.getPregnancy().getPregnancy_json() != null) fd.setPregnancy(rm.readValue(c.getPregnancy().getPregnancy_json(), rawMapType)); } catch (Exception ex) { ex.printStackTrace(); }
+				try { if (c.getReferral() != null && c.getReferral().getReferral_json() != null) fd.setReferral(rm.readValue(c.getReferral().getReferral_json(), rawMapType)); } catch (Exception ex) { ex.printStackTrace(); }
+				try { if (c.getDelivery() != null && c.getDelivery().getDelivery_json() != null) fd.setDelivery(rm.readValue(c.getDelivery().getDelivery_json(), rawMapType)); } catch (Exception ex) { ex.printStackTrace(); }
+				try { if (c.getAntenatal() != null && c.getAntenatal().getAntenatal_json() != null) fd.setAntenatal(rm.readValue(c.getAntenatal().getAntenatal_json(), rawMapType)); } catch (Exception ex) { ex.printStackTrace(); }
+				try { if (c.getLabour() != null && c.getLabour().getLabour_json() != null) fd.setLabour(rm.readValue(c.getLabour().getLabour_json(), rawMapType)); } catch (Exception ex) { ex.printStackTrace(); }
+				try { if (c.getBirth() != null && c.getBirth().getBirth_json() != null) fd.setBirth(rm.readValue(c.getBirth().getBirth_json(), rawMapType)); } catch (Exception ex) { ex.printStackTrace(); }
+				try { if (c.getCase_death() == 1 && c.getFetalheart() != null && c.getFetalheart().getFetalheart_json() != null) fd.setFetalheart(rm.readValue(c.getFetalheart().getFetalheart_json(), rawMapType)); } catch (Exception ex) { ex.printStackTrace(); }
+				try { if (c.getCase_death() == 2 && c.getBabydeath() != null && c.getBabydeath().getBaby_json() != null) fd.setBabydeath(rm.readValue(c.getBabydeath().getBaby_json(), rawMapType)); } catch (Exception ex) { ex.printStackTrace(); }
+				try { if (c.getCase_death() == 3 && c.getMdeath() != null && c.getMdeath().getMdeath_json() != null) fd.setMdeath(rm.readValue(c.getMdeath().getMdeath_json(), rawMapType)); } catch (Exception ex) { ex.printStackTrace(); }
+				try { if (c.getNotes() != null && c.getNotes().getNotes_json() != null) fd.setNotes(rm.readValue(c.getNotes().getNotes_json(), rawMapType)); } catch (Exception ex) { ex.printStackTrace(); }
+				try {
+					acase.setAudit_data(rm.writeValueAsString(fd));
+					acaseRepo.save(acase);
+				} catch (Exception ex) { ex.printStackTrace(); }
+			}
 		}
 
 		try {
@@ -887,7 +935,8 @@ public class CaseAuditController {
 			model.addAttribute("casebabydeath", dataset.getBabydeath());
 			model.addAttribute("casenotes", dataset.getNotes());
 
-		} catch (JsonProcessingException e) {
+		} catch (Exception e) {
+			// catches both JsonProcessingException and IllegalArgumentException (null audit_data)
 			e.printStackTrace();
 		}
 
@@ -906,7 +955,17 @@ public class CaseAuditController {
 
 		model.addAttribute("mcond_options", map);
 
-		model.addAttribute("facility_code", caseRepo.findById(case_uuid).get().getCase_sync());
+		case_identifiers cid = caseRepo.findById(case_uuid).get();
+		model.addAttribute("facility_code", cid.getCase_sync());
+
+			Map<String, String> icd11_options = buildAuditIcd11Options(cid);
+			if (selected.isPresent()) {
+				String savedIcd = trimToNull(selected.get().getAudit_icd10());
+				if (savedIcd != null) {
+					icd11_options.putIfAbsent(savedIcd, savedIcd);
+				}
+			}
+		model.addAttribute("icd11_options", icd11_options);
 
 		return "auditing/audit-create";
 	}
@@ -940,7 +999,7 @@ public class CaseAuditController {
 			return "auditing/audit-create";
 		}
 
-		if (selected.getMaternal_condition() == 1
+		if (Integer.valueOf(1).equals(selected.getMaternal_condition())
 				&& (selected.getMaternal_conditions() == null || selected.getMaternal_conditions().isEmpty())) {
 			return "redirect:/auditing/edit/" + case_uuid + "?error=yes";
 		}
@@ -1179,8 +1238,13 @@ public class CaseAuditController {
 	public @ResponseBody icdpm findPMCode(@RequestParam(value = "audit_death", required = true) Integer audit_death,
 			@RequestParam(value = "audit_icd10", required = true) String audit_icd10) {
 
-		if (!"".equals(audit_icd10)) {
-			icd_codes icd = icdRepo.findICDByICD(audit_icd10).get();
+		String icdCode = trimToNull(audit_icd10);
+		if (icdCode != null) {
+			Optional<icd_codes> icdOpt = icdRepo.findICDByICD(icdCode);
+			if (!icdOpt.isPresent()) {
+				return new icdpm(null, null);
+			}
+			icd_codes icd = icdOpt.get();
 
 			if (audit_death == 1) {
 				return new icdpm(icd.getIcd_pmi(), icd.getIcd_pmi_desc());
@@ -1197,6 +1261,59 @@ public class CaseAuditController {
 			}
 		}
 		return new icdpm(null, null);
+	}
+
+	private Map<String, String> buildAuditIcd11Options(case_identifiers cid) {
+		Map<String, String> icd11_options = new LinkedHashMap<>();
+		if (cid == null || cid.getCase_death() == null) {
+			return icd11_options;
+		}
+
+		if (cid.getCase_death() == CONSTANTS.STILL_BIRTH && cid.getBirth() != null) {
+			case_birth birth = cid.getBirth();
+			addIcd11Option(icd11_options, birth.getBirth_cod_fetus_code(), "(Fetus)", birth.getBirth_cod_fetus_text());
+			addIcd11Option(icd11_options, birth.getBirth_cod_maternal_code(), "(Maternal)", birth.getBirth_cod_maternal_text());
+			addIcd11Option(icd11_options, birth.getBirth_cod_other_code(), "(Other)", birth.getBirth_cod_other_text());
+			return icd11_options;
+		}
+
+		if (cid.getCase_death() == CONSTANTS.NEONATAL_DEATH && cid.getBabydeath() != null) {
+			case_babydeath babydeath = cid.getBabydeath();
+			addIcd11Option(icd11_options, babydeath.getBaby_cod_underlying_code(), "(Underlying)", babydeath.getBaby_cod_underlying());
+			addIcd11Option(icd11_options, babydeath.getBaby_cod_a_code(), "(a)", babydeath.getBaby_cod_a());
+			addIcd11Option(icd11_options, babydeath.getBaby_cod_b_code(), "(b)", babydeath.getBaby_cod_b());
+			addIcd11Option(icd11_options, babydeath.getBaby_cod_c_code(), "(c)", babydeath.getBaby_cod_c());
+			addIcd11Option(icd11_options, babydeath.getBaby_cod_d_code(), "(d)", babydeath.getBaby_cod_d());
+			return icd11_options;
+		}
+
+		if (cid.getCase_death() == CONSTANTS.MATERNAL_DEATH && cid.getMdeath() != null) {
+			case_mdeath md = cid.getMdeath();
+			addIcd11Option(icd11_options, md.getMdeath_cod_underlying_code(), "(Underlying)", md.getMdeath_cod_underlying());
+			addIcd11Option(icd11_options, md.getMdeath_cod_a_code(), "(a)", md.getMdeath_cod_a());
+			addIcd11Option(icd11_options, md.getMdeath_cod_b_code(), "(b)", md.getMdeath_cod_b());
+			addIcd11Option(icd11_options, md.getMdeath_cod_c_code(), "(c)", md.getMdeath_cod_c());
+			addIcd11Option(icd11_options, md.getMdeath_cod_d_code(), "(d)", md.getMdeath_cod_d());
+		}
+
+		return icd11_options;
+	}
+
+	private void addIcd11Option(Map<String, String> options, String code, String prefix, String text) {
+		String optionCode = trimToNull(code);
+		String optionText = trimToNull(text);
+		if (optionCode == null) {
+			return;
+		}
+		options.putIfAbsent(optionCode, prefix + " " + (optionText != null ? optionText : optionCode));
+	}
+
+	private String trimToNull(String value) {
+		if (value == null) {
+			return null;
+		}
+		String trimmed = value.trim();
+		return trimmed.isEmpty() ? null : trimmed;
 	}
 
 	@ModelAttribute("cstatus_options")
